@@ -37,13 +37,22 @@ function certsans() {
   local -r certificate_options="no_aux, no_header, no_issuer, \
                                 no_pubkey, no_serial, no_sigdump, \
                                 no_signame, no_validity, no_version"
-  local -r text=$(echo "${info}" | openssl x509 -text -certopt "${certificate_options}")
+  local -r text=$(
+    echo "${info}" | openssl x509 -text -certopt "${certificate_options}"
+  )
 
   echo -e 'Common Name:\n'
-  echo "${text}" | grep 'Subject:' | sed -e 's/^.*CN=//' | sed -e 's/\/emailAddress=.*//'
+  echo "${text}" \
+    | grep 'Subject:' \
+    | sed -e 's/^.*CN=//' \
+    | sed -e 's/\/emailAddress=.*//'
 
   echo -e '\nSubject Alternative Name(s):\n'
-  echo "${text}" | grep -A 1 'Subject Alternative Name:' | sed -e '2s/DNS://g' -e 's/ //g' | tr ',' '\n' | tail -n +2
+  echo "${text}" \
+    | grep -A 1 'Subject Alternative Name:' \
+    | sed -e '2s/DNS://g' -e 's/ //g' \
+    | tr ',' '\n' \
+    | tail -n +2
 }
 
 function shinatra() {
