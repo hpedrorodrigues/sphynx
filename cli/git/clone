@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNXC_DIR}/.internal/all.sh"
+source "${SPHYNXN_DIR}/shared/shared.sh"
+source "${SPHYNXN_DIR}/core/clone.sh"
+
+##? Clone projects
+##?
+##? Usage:
+##?     clone <username> <project-name>
+##?
+##? Examples:
+##?     clone 'Google' 'knative-gcp'
+##?     clone 'kubernetes' 'kubernetes'
+
+sx::parse_arguments "${@}"
+
+sx::git::clone::repository "${username:-}" "${project_name:-}"

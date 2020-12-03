@@ -1,0 +1,29 @@
+- name: Detecting - Pip is available
+  stat:
+    path: "{{ pip_binary }}"
+  register: pip
+
+- name: Updating Pip
+  pip:
+    name: pip
+    state: latest
+    executable: "{{ pip_binary }}"
+  when: pip.stat.exists
+
+- name: Getting all installed Pip packages
+  command: "{{ pip_binary }} list"
+  register: installed_packages
+  check_mode: no
+  changed_when: false
+  when: pip.stat.exists
+
+- name: Installing Pip packages
+  pip:
+    name: "{{ pip_packages }}"
+    state: present
+    executable: "{{ pip_binary }}"
+  with_items: "{{ pip_packages }}"
+  when:
+    - pip.stat.exists
+    - pip_packages | count > 0
+    - item not in installed_packages.stdout

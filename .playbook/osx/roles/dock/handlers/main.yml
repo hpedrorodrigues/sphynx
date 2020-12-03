@@ -1,0 +1,2 @@
+- name: Restart Dock
+  shell: killall Dock || echo

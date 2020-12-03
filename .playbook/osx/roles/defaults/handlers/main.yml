@@ -1,0 +1,11 @@
+- name: Restart Finder
+  shell: killall Finder || echo
+
+- name: Restart Dock
+  shell: killall Dock || echo
+
+- name: Restart System UI Server
+  shell: killall SystemUIServer || echo
+
+- name: Restart Mail
+  shell: killall Mail || echo

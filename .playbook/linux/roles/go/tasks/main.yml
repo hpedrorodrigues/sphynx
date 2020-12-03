@@ -1,0 +1,18 @@
+- name: Detecting - Go is available
+  stat:
+    path: "{{ go_bin }}"
+  register: go
+
+- name: Creating Go configuration directory
+  file:
+    path: "{{ go_workspace }}"
+    state: directory
+
+- name: Installing Go packages
+  shell: "GOPATH={{ go_workspace }} {{ go_bin }} get -u {{ item.repository }}"
+  with_items: "{{ go_packages }}"
+  register: go_packages
+  changed_when: go_packages.rc != 0
+  when:
+    - go.stat.exists
+    - go_packages | count > 0

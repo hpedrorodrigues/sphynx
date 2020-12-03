@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNXC_DIR}/.internal/all.sh"
+source "${SPHYNXN_DIR}/shared/shared.sh"
+source "${SPHYNXN_DIR}/core/project.sh"
+
+##? Print current active project or switch to another project
+##?
+##? Usage:
+##?     project [--current]
+##?
+##? Options:
+##?     -c --current  Current project being used
+##?
+##? Examples:
+##?     project
+##?     project --current
+
+sx::parse_arguments "${@}"
+
+sx::openshift::project "${current:-false}"

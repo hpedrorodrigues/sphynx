@@ -1,0 +1,57 @@
+{
+  "editor.cursorBlinking": "phase",
+  "editor.cursorSmoothCaretAnimation": true,
+  "editor.cursorStyle": "line-thin",
+  "editor.minimap.maxColumn": 100,
+  "editor.minimap.renderCharacters": false,
+  "editor.minimap.showSlider": "always",
+  "editor.renderWhitespace": "all",
+  "editor.rulers": [80, 100],
+  "editor.scrollBeyondLastLine": false,
+  "editor.smoothScrolling": true,
+  "editor.suggestSelection": "first",
+  "editor.tabSize": 2,
+  "explorer.confirmDragAndDrop": false,
+  "explorer.openEditors.visible": 0,
+  "files.associations": {
+    ".gitignore_global": "ignore",
+    ".gitsecrets": "properties"
+  },
+  "files.exclude": {
+    "**/.git": true,
+    "**/.idea": true,
+    "**/build": true,
+    "**/node_modules": true,
+    "**/target": true,
+    "**/vendor": true,
+    "**/__pycache__": true
+  },
+  "files.trimTrailingWhitespace": true,
+  "search.exclude": {
+    "**/.git": true,
+    "**/.idea": true,
+    "**/build": true,
+    "**/node_modules": true,
+    "**/target": true,
+    "**/vendor": true,
+    "**/__pycache__": true
+  },
+  "telemetry.enableCrashReporter": false,
+  "telemetry.enableTelemetry": false,
+  "vsintellicode.modify.editor.suggestSelection": "choseToUpdateConfiguration",
+  "workbench.colorCustomizations": {
+    "[Material Theme Darker]": {
+      "list.activeSelectionForeground": "#dfe2e2",
+      "list.inactiveSelectionForeground": "#dfe2e2",
+      "sideBar.foreground": "#738598"
+    }
+  },
+  "workbench.colorTheme": "Material Theme Darker",
+  "workbench.editor.enablePreview": false,
+  "workbench.editor.highlightModifiedTabs": true,
+  "workbench.iconTheme": "eq-material-theme-icons-darker",
+  "workbench.settings.enableNaturalLanguageSearch": false,
+  "workbench.welcome.enabled": false,
+  "cSpell.language": "en,pt-BR",
+  "go.formatTool": "goimports"
+}

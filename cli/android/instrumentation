@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNXC_DIR}/.internal/all.sh"
+source "${SPHYNXN_DIR}/shared/shared.sh"
+source "${SPHYNXN_DIR}/core/instrumentation.sh"
+
+##? Manage instrumentation applications
+##?
+##? Usage:
+##?     instrumentation (--ls | --uninstall <package-filter>)
+##?
+##? Options:
+##?     --ls  List all instrumentation apps available on device
+##?     -u --uninstall <package-filter>  Uninstalls an available instrumentation app
+##?
+##? Examples:
+##?     instrumentation -u "webview_shell"
+##?     instrumentation --uninstall "org.chromium.webview_shell"
+##?     instrumentation --ls
+
+sx::parse_arguments "${@}"
+
+if [ -n "${uninstall:-}" ]; then
+  sx::android::instrumentation::uninstall "${uninstall}"
+elif ${ls:-}; then
+  sx::android::instrumentation::list
+else
+  sx::error::illegal_arguments "${*}"
+fi

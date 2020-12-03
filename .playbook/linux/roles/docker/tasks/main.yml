@@ -1,0 +1,38 @@
+- name: Detecting - Docker is available
+  stat:
+    path: "/usr/bin/docker"
+  register: docker
+
+- name: Installing Docker CE repository
+  shell: |
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+    sudo add-apt-repository \
+      "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+      $(lsb_release -cs) \
+      stable"
+  register: new_docker_repo
+  when:
+    - not docker.stat.exists
+
+- name: Updating repositories cache and installing Docker CE
+  apt:
+    name: ["docker-ce", "docker-ce-cli", "containerd.io"]
+    state: present
+    update_cache: yes
+  when:
+    - docker.stat.exists or new_docker_repo.rc == 0
+
+- name: Adding current user to the docker group
+  user:
+    name: "{{ ansible_env.USER }}"
+    groups: docker
+    append: true
+  when:
+    - docker.stat.exists or new_docker_repo.rc == 0
+
+- name: Starting docker and enabling it to start after the system reboot
+  systemd:
+    name: docker
+    state: started
+    enabled: yes
+    masked: no

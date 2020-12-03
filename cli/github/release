@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNXC_DIR}/.internal/all.sh"
+source "${SPHYNXN_DIR}/shared/shared.sh"
+source "${SPHYNXN_DIR}/core/release.sh"
+
+##? Handle Github releases
+##?
+##? Usage:
+##?     release <username> <project-name> (--list | --download-latest-assets)
+##?
+##? Options:
+##?     -l --list  List last 30 available releases
+##?     -d --download-latest-assets  Download assets from last release
+##?
+##? Examples:
+##?     release kubernetes kubernetes -l
+
+sx::parse_arguments "${@}"
+
+if ${list:-false}; then
+  sx::github::release::list "${username:-}" "${project_name:-}"
+elif ${download_latest_assets:-false}; then
+  sx::github::release::download_assets "${username:-}" "${project_name:-}"
+else
+  sx::error::illegal_arguments "${*}"
+fi

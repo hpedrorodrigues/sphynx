@@ -1,0 +1,63 @@
+[include]
+  path = ~/.gitsecrets
+[alias]
+  dsf = "!f() { [ -z \"${GIT_PREFIX}\" ] || cd \"${GIT_PREFIX}\" && git diff --color \"${@}\" | diff-so-fancy  | less --tabs=4 -RFX; }; f"
+  l = log --pretty='format:%C(yellow)%h %C(blue)%ad %C(reset)%s%C(red)%d %C(green)%an%C(reset), %C(cyan)%ar' --date=short
+
+  ## References: https://github.com/mathiasbynens/dotfiles/blob/main/.gitconfig
+  # List aliases
+  aliases = config --get-regexp alias
+  # Interactive rebase with the given number of latest commits.
+  rh = "!r() { git rebase -i HEAD~$1; }; r"
+  # List contributors with number of commits.
+  contributors = shortlog --summary --numbered
+  # Show the user email for the current repository.
+  whoami = config user.email
+  # Find branches containing commit
+  fb = "!f() { git branch -a --contains $1; }; f"
+  # Find tags containing commit
+  ft = "!f() { git describe --always --contains $1; }; f"
+  # Find commits by commit message
+  fm = "!f() { git log --pretty=format:'%C(yellow)%h  %Cblue%ad  %Creset%s%Cgreen  [%cn] %Cred%d' --decorate --date=short --grep=$1; }; f"
+[apply]
+  whitespace = fix
+[color "branch"]
+  current = green
+  local = yellow
+  remote = cyan
+[color "diff"]
+  frag = cyan
+  meta = yellow
+  new = green
+  old = red
+[color "status"]
+  added = green
+  changed = yellow
+  untracked = red
+[color]
+  ui = auto
+[core]
+  attributesfile = ~/.gitattributes
+  autocrlf = input
+  editor = vim
+  excludesfile = ~/.gitignore_global
+  ignorecase = false
+  whitespace = fix,trailing-space
+[filter "lfs"]
+  clean = git-lfs clean -- %f
+  process = git-lfs filter-process
+  required = true
+  smudge = git-lfs smudge -- %f
+[push]
+  default = simple
+[pull]
+  rebase = true
+[rerere]
+  enabled = 1
+[merge]
+  tool = meld
+[mergetool]
+  prompt = false
+  keepBackup = false
+[init]
+  defaultBranch = main

@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+
+# Make vim the default editor
+export VISUAL='vim'
+export EDITOR="${VISUAL}"
+
+# Make less the default pager
+export LESS='-iRFXMx4'
+export PAGER='less'
+export MANPAGER="${PAGER}"
+
+### Loading personal scripts
+
+readonly DOTFILES_DIR="${HOME}/.sphynx"
+
+readonly DOTFILES=(
+  # Common
+  "${DOTFILES_DIR}/kubernetes"
+  "${DOTFILES_DIR}/alien"
+  "${DOTFILES_DIR}/git"
+  "${DOTFILES_DIR}/network"
+  "${DOTFILES_DIR}/common_functions"
+  "${DOTFILES_DIR}/common_aliases"
+  "${DOTFILES_DIR}/aliases"
+  "${DOTFILES_DIR}/fs"
+
+  # Secrets
+  "${DOTFILES_DIR}/personal"
+)
+
+for dotfile in ${DOTFILES[*]}; do
+  if [ -f "${dotfile}" ]; then
+    source "${dotfile}"
+  else
+    echo "!!! No such file \"${dotfile}\". Ignoring it." >&2
+  fi
+done
+
+#|> NVM
+# I'm disabling nvm for now because it makes the shell startup really slow
+if ${NVM_ENABLED:-false}; then
+  export NVM_DIR="${HOME}/.nvm"
+
+  [ -s "${NVM_DIR}/nvm.sh" ] && source "${NVM_DIR}/nvm.sh"
+  [ -s "${NVM_DIR}/bash_completion" ] && source "${NVM_DIR}/bash_completion"
+fi
+
+#|> Krew
+export KREW_BIN="${HOME}/.krew/bin"
+
+[ -d "${KREW_BIN}" ] && export PATH="${PATH}:${KREW_BIN}"
+
+#|> AWS CLI
+export AWS_PROFILE='sphynx'
+
+#|> Homebrew/Linuxbrew
+# https://docs.brew.sh/Analytics
+export HOMEBREW_NO_ANALYTICS=1

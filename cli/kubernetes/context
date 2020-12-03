@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNXC_DIR}/.internal/all.sh"
+source "${SPHYNXN_DIR}/shared/shared.sh"
+source "${SPHYNXN_DIR}/core/context.sh"
+
+##? Change current context
+##?
+##? Usage:
+##?     context [<query>]
+##?
+##? Examples:
+##?     context
+##?     context prd
+
+sx::parse_arguments "${@}"
+
+sx::k8s::context "${query:-}"

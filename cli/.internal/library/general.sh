@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+function sx::uuid() {
+  sx::os::ensure_supported_os
+
+  local -r id="$(uuidgen)"
+
+  if sx::os::is_osx; then
+    sx::log::info "${id}"
+  else
+    sx::log::info "${id^^}"
+  fi
+}

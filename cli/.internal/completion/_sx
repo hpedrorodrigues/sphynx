@@ -1,0 +1,17 @@
+#compdef sx
+
+# References:
+#
+# - http://zsh.sourceforge.net/Doc/Release/Completion-System.html
+# - https://github.com/zsh-users/zsh/blob/master/Completion/bashcompinit
+
+completion_dirname="${SPHYNX_DIR:-}/cli/.internal/completion"
+
+_sx() {
+  local current_word="${words[-1]}"
+
+  # shellcheck disable=SC2068  # Double quote array expansions
+  _arguments "*: :($("${completion_dirname}/complete" "${current_word}" ${words}))"
+}
+
+_sx "${@}"

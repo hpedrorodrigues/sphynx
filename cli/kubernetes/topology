@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNXC_DIR}/.internal/all.sh"
+source "${SPHYNXN_DIR}/shared/shared.sh"
+source "${SPHYNXN_DIR}/core/topology.sh"
+
+##? Show K8S pods distribution throughout the cluster
+##?
+##? Usage:
+##?     topology [<query> --all-namespaces --resources --show-labels --selector <selector>]
+##?
+##? Options:
+##?   -a --all-namespaces  Run this command considering all pods of all namespaces
+##?   -r --resources  Run this command considering resource usage
+##?   --show-labels  Show instance labels
+##?   -l --selector <selector>  Selector (label query) to filter on
+##?
+##? Examples:
+##?     topology --all-namespaces
+##?     topology --resources
+##?     topology --show-labels
+##?     topology --selector app=app
+
+sx::parse_arguments "${@}"
+
+sx::k8s::topology \
+  "${query:-}" \
+  "${selector:-}" \
+  "${all_namespaces:-false}" \
+  "${resources:-false}" \
+  "${show_labels:-false}"

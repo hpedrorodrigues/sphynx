@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNXC_DIR}/.internal/all.sh"
+source "${SPHYNXN_DIR}/shared/shared.sh"
+source "${SPHYNXN_DIR}/core/application.sh"
+
+##? Manage applications
+##?
+##? Usage:
+##?     application (--clear <package-filter> | --stop <package-filter> | --ls | --find <package-filter>)
+##?
+##? Options:
+##?     -c --clear <package-filter>  Clears data of the given app
+##?     -s --stop <package-filter>  Kills the process of the given app
+##?     --ls  List all apps (packages) available on device
+##?     -f --find <package-filter>  Find package that matches the filter
+##?
+##? Examples:
+##?     application -c "whatsapp"
+##?     application --clear "com.google.android.keep"
+##?     application -s "telegram"
+##?     application --stop "org.chromium.webview_shell"
+
+sx::parse_arguments "${@}"
+
+if [ -n "${stop:-}" ]; then
+  sx::android::application::stop "${stop}"
+elif [ -n "${clear:-}" ]; then
+  sx::android::application::clear_data "${clear}"
+elif ${ls:-}; then
+  sx::android::application::list_packages
+elif [ -n "${find:-}" ]; then
+  sx::android::application::find "${find}"
+else
+  sx::error::illegal_arguments "${*}"
+fi

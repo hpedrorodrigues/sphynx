@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# Available keys: defaults read com.apple.screencapture
+
+readonly domain='com.apple.screencapture'
+
+
+# Save screenshots to the pictures folder
+readonly screenshots_path="${HOME}/Pictures"
+mkdir -p "${screenshots_path}"
+defaults write ${domain} location -string "${screenshots_path}"
+
+# Save screenshots in PNG format (other options: BMP, GIF, JPG, PDF, TIFF)
+defaults write ${domain} type -string 'PNG'
+
+# Disable shadow in screenshots
+defaults write ${domain} disable-shadow -bool true

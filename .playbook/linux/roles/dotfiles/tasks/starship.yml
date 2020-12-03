@@ -1,0 +1,15 @@
+- name: Creating Starship configuration directory
+  file: "path={{ ansible_env.HOME }}/.config/starship mode=0755 state=directory"
+
+- name: Detecting - Starship is available
+  stat:
+    path: "{{ ansible_env.HOME }}/.config/starship/starship.toml"
+  register: starship
+
+- name: Installing Starship settings
+  file:
+    src: "{{ applications_directory }}/common/starship/starship.toml"
+    dest: "{{ ansible_env.HOME }}/.config/starship/starship.toml"
+    state: link
+  when:
+    - not starship.stat.exists

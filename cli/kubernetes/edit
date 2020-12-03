@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNXC_DIR}/.internal/all.sh"
+source "${SPHYNXN_DIR}/shared/shared.sh"
+source "${SPHYNXN_DIR}/core/edit.sh"
+
+##? Edit a resource using the default editor
+##?
+##? Usage:
+##?     edit [<query>] [--namespace <name> | --all-namespaces]
+##?
+##? Options:
+##?     -n --namespace <name>  The namespace scope for requests
+##?     -a --all-namespaces  All namespaces
+##?
+##? Examples:
+##?     edit
+##?     edit state-metrics
+##?     edit --namespace kube-system
+##?     edit --all-namespaces
+
+sx::parse_arguments "${@}"
+
+sx::k8s::edit "${query:-}" "${namespace:-}" "${all_namespaces:-false}"

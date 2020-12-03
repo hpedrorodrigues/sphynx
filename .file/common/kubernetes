@@ -1,0 +1,126 @@
+#!/usr/bin/env bash
+
+## Aliases
+
+alias k='kubectl'
+alias sk='kubectl --namespace kube-system'
+alias pk='kubectl --namespace kube-public'
+alias mk='kubectl --namespace monitoring'
+alias nlk='kubectl --namespace kube-node-lease'
+
+# i.e kx pods.spec
+# i.e kx deploy.spec.template.spec
+alias kx='kubectl explain'
+alias kxr='kubectl explain --recursive'
+
+# Kubernetes API Query
+# i.e kq /apis
+# i.e kq /healthz/etcd
+# i.e kq /logs/kube-apiserver.log
+# i.e kq /apis/metrics.k8s.io/v1beta1/nodes
+alias kq='kubectl get --raw'
+
+alias kk='kubectl krew'
+
+alias ks='sx kubernetes ls'
+alias kd='sx kubernetes describe'
+alias ke='sx kubernetes edit'
+alias kex='sx kubernetes exec'
+alias kg='sx kubernetes get'
+alias kl='sx kubernetes logs'
+alias kns='sx kubernetes namespace'
+alias ktx='sx kubernetes context'
+alias krs='sx kubernetes rollout status'
+alias krr='sx kubernetes rollout restart'
+alias krh='sx kubernetes rollout history'
+alias kpf='sx kubernetes port-forward'
+alias kto='sx kubernetes topology'
+
+alias kc='kubectl top pods --sort-by=cpu --all-namespaces'
+alias km='kubectl top pods --sort-by=memory --all-namespaces'
+
+## Functions
+
+# Run a command in all namespaces
+function ka() {
+  kubectl "${@}" --all-namespaces
+}
+
+function kenc() {
+  echo -n "${@}" | base64
+}
+
+function kdec() {
+  echo "${@}" | base64 --decode
+}
+
+function kimg() {
+  # shellcheck disable=SC2068  # Double quote array expansions
+  kubectl get pods \
+    --output jsonpath='{range .items[*]}{"\n"}{.metadata.name}{","}{range .spec.containers[*]}{.image}{" "}{end}{end}' \
+    ${@} \
+    | sort -u \
+    | column -t -s ','
+}
+
+function kgp() {
+  # shellcheck disable=SC2068  # Double quote array expansions
+  kubectl get pods \
+    ${@} \
+    | GREP_COLOR='01;32' grep --color=always -E 'Completed|$' \
+    | GREP_COLOR='01;32' grep --color=always -E 'Running|$' \
+    | GREP_COLOR='01;33' grep --color=always -E 'ContainerCreating|$' \
+    | GREP_COLOR='01;33' grep --color=always -E 'Pending|$' \
+    | GREP_COLOR='01;33' grep --color=always -E 'Terminating|$' \
+    | GREP_COLOR='01;31' grep --color=always -E 'CreateContainerConfigError|$' \
+    | GREP_COLOR='01;31' grep --color=always -E 'ErrImagePull|$' \
+    | GREP_COLOR='01;31' grep --color=always -E 'Error|$' \
+    | GREP_COLOR='01;31' grep --color=always -E 'CrashLoopBackOff|$' \
+    | GREP_COLOR='01;31' grep --color=always -E 'ImagePullBackOff|$'
+}
+
+# Display all pods not running
+function knr() {
+  # shellcheck disable=SC2016  # Expressions don't expand in single quotes, use double quotes for that
+  # shellcheck disable=SC2068  # Double quote array expansions
+  kubectl get pods \
+    --output go-template \
+    --template='{{range .items}}{{$name := .metadata.name}}{{$namespace := .metadata.namespace}}{{if ne .status.phase "Running"}}{{$name}}{{"\n"}}{{else}}{{range .status.containerStatuses}}{{if not .ready}}{{$namespace}}{{","}}{{$name}}{{"\n"}}{{end}}{{end}}{{end}}{{end}}' \
+    ${@} \
+    | sort -u \
+    | column -t -s ','
+}
+
+# Run an image to debug network issues
+function kdeb() {
+  local -r pod_name='debug'
+  local -r pod_hash="$(uuidgen | cut -d '-' -f 1 | tr '[:upper:]' '[:lower:]')"
+
+  kubectl run "${pod_name}-${pod_hash}" \
+    --rm \
+    --stdin \
+    --tty \
+    --image-pull-policy 'Always' \
+    --restart 'Never' \
+    --labels "app=${pod_name}" \
+    --env 'SOURCE=sphynx' \
+    --grace-period '1' \
+    --image 'hpedrorodrigues/alien:debug'
+}
+
+# Print the current api server address
+function kurl() {
+  kubectl config view \
+    --minify \
+    --output jsonpath="{.clusters[*].cluster.server}"
+}
+
+# Based on https://github.com/kubernetes/kubernetes/issues/24330#issuecomment-265750353
+function kdrs() {
+  # shellcheck disable=SC2068  # Double quote array expansions
+  kubectl get replicasets \
+    ${@} \
+    --output json \
+    | jq -r '.items[] | select(.spec.replicas | contains(0)) | "kubectl delete rs -n \(.metadata.namespace) \(.metadata.name)"' \
+    | xargs -I % sh -c '%'
+}

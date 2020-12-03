@@ -1,0 +1,55 @@
+- name: Detecting - Zsh is available
+  stat:
+    path: "/usr/bin/zsh"
+  register: zsh
+
+- name: Installing Zsh package
+  become: true
+  apt:
+    name: zsh
+    state: present
+    update_cache: yes
+  register: new_zsh
+  when:
+    - not zsh.stat.exists
+
+- name: Making Zsh the default shell
+  become: true
+  user:
+    name: "{{ ansible_env.USER }}"
+    shell: "/bin/zsh"
+  when:
+    - zsh.stat.exists or new_zsh is success
+    - lookup('env','SHELL') != '/bin/zsh'
+
+- name: Detecting - Oh My Zsh is available
+  stat:
+    path: "{{ ansible_env.HOME }}/.oh-my-zsh"
+  register: ohmyzsh
+  when:
+    - zsh.stat.exists or new_zsh is success
+
+- name: Installing Oh My Zsh
+  git:
+    repo: "https://github.com/robbyrussell/oh-my-zsh"
+    dest: "{{ ansible_env.HOME }}/.oh-my-zsh"
+  when:
+    - not ohmyzsh.stat.exists
+    - zsh.stat.exists or new_zsh is success
+
+- name: Installing Dotfiles
+  command: "{{ sphynx_cli }} dotfiles configure"
+  when:
+    - zsh.stat.exists or new_zsh is success
+
+- name: Configuring Vundle
+  include: vundle.yml
+
+- name: Configuring Fonts
+  include: fonts.yml
+
+- name: Configuring Alacritty
+  include: alacritty.yml
+
+- name: Configuring Starship
+  include: starship.yml

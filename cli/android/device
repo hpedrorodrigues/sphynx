@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNXC_DIR}/.internal/all.sh"
+source "${SPHYNXN_DIR}/shared/shared.sh"
+source "${SPHYNXN_DIR}/core/device.sh"
+
+##? Manage devices
+##?
+##? Usage:
+##?     device (--connect | --disconnect | --battery)
+##?
+##? Options:
+##?     -c --connect  Connects to the device using TCP instead of USB
+##?     -d --disconnect  Kills the TCP connection with device
+##?     -b --battery  Shows info about battery
+##?
+##? Examples:
+##?     device --connect
+##?     device --disconnect
+##?     device --battery
+
+sx::parse_arguments "${@}"
+
+if ${connect:-}; then
+  sx::android::device::connect_via_tcp
+elif ${disconnect:-}; then
+  sx::android::device::disconnect_via_tcp
+elif ${battery:-}; then
+  sx::android::device::battery_stats
+else
+  sx::error::illegal_arguments "${*}"
+fi

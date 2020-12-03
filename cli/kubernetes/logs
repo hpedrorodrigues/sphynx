@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNXC_DIR}/.internal/all.sh"
+source "${SPHYNXN_DIR}/shared/shared.sh"
+source "${SPHYNXN_DIR}/core/logs.sh"
+
+##? Print the logs for a container in a pod or specified resource
+##?
+##? Usage:
+##?     logs [<query>] [--namespace <name> | --all-namespaces] [--previous --container <name>]
+##?
+##? Options:
+##?     -n --namespace <name>  The namespace scope for requests
+##?     -a --all-namespaces  All namespaces
+##?     -c --container <name>  The specific container to tail the logs from
+##?     -p --previous  Print the logs for the previous instance of the container in a pod if it exists
+##?
+##? Examples:
+##?     logs
+##?     logs kafka
+##?     logs --namespace kube-system
+##?     logs --all-namespaces --container nginx --previous
+
+sx::parse_arguments "${@}"
+
+sx::k8s::logs \
+  "${query:-}" \
+  "${namespace:-}" \
+  "${container:-}" \
+  "${all_namespaces:-false}" \
+  "${previous:-false}"

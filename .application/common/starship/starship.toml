@@ -1,0 +1,68 @@
+scan_timeout = 15
+
+format = """
+$username\
+$hostname\
+$directory\
+$git_branch\
+$git_commit\
+$git_status\
+$kubernetes\
+$aws\
+$gcloud\
+$cmd_duration\
+$line_break\
+$jobs\
+$character
+"""
+
+[username]
+show_always = true
+style_user = "bold white"
+format = "[$user]($style)"
+
+[hostname]
+ssh_only = false
+style = "white"
+format = "@[$hostname]($style) "
+
+[kubernetes]
+disabled = false
+style = "fg:#8be9fd"
+format = "[$symbol$context(\\($namespace\\))]($style) "
+
+[directory]
+truncation_length = 7
+truncate_to_repo = false
+style = "bold white"
+
+[git_branch]
+style = "fg:#50fa7b"
+format = "[$symbol$branch]($style) "
+
+[git_commit]
+commit_hash_length = 5
+style = "fg:#50fa7b"
+only_detached = false
+
+[git_status]
+style = "fg:#50fa7b"
+
+[aws]
+symbol = "☁️ "
+style = "fg:#bd93f9"
+format = "[$symbol$profile(\\($region\\))]($style) "
+
+[gcloud]
+symbol = "☁️ "
+style = "fg:#ff79c6"
+format = "[$symbol$project(\\($region\\))]($style) "
+
+[cmd_duration]
+min_time = 5_000
+style = "bright-red"
+format = "[$duration]($style) "
+
+[character]
+success_symbol = "[♪](bold green)"
+error_symbol = "[✗](bold red)"

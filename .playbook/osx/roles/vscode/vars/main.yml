@@ -1,0 +1,23 @@
+vscode_settings_files:
+  - settings.json
+  - keybindings.json
+
+vscode_extensions:
+  - bungcip.better-toml
+  - christian-kohler.path-intellisense
+  - CoenraadS.bracket-pair-colorizer-2
+  - DavidAnson.vscode-markdownlint
+  - eamodio.gitlens
+  - EditorConfig.EditorConfig
+  - Equinusocio.vsc-community-material-theme
+  - Equinusocio.vsc-material-theme
+  - equinusocio.vsc-material-theme-icons
+  - golang.go
+  - ipedrazas.kubernetes-snippets
+  - k--kato.intellij-idea-keybindings
+  - ms-azuretools.vscode-docker
+  - ms-kubernetes-tools.vscode-kubernetes-tools
+  - naumovs.color-highlight
+  - redhat.vscode-yaml
+  - streetsidesoftware.code-spell-checker
+  - streetsidesoftware.code-spell-checker-portuguese-brazilian

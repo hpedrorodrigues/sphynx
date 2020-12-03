@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNXC_DIR}/.internal/all.sh"
+source "${SPHYNXN_DIR}/shared/shared.sh"
+source "${SPHYNXN_DIR}/core/pull-apk.sh"
+source "${SPHYNXN_DIR}/core/analyze.sh"
+
+##? Handle bundle files (.aab)
+##?
+##? Usage:
+##?     bundle --to-apk <path> [--install]
+##?
+##? Options:
+##?     --to-apk <path>  The path to bundle file [default: ./]
+##?     --install  Install the converted APK on device
+##?
+##? Examples:
+##?     bundle --to-apk /tmp/bundle.aab
+##?     bundle --to-apk /tmp/bundle.aab --install
+
+sx::parse_arguments "${@}"
+
+sx::android::bundle "${to_apk:-}" "${install:-false}"

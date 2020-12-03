@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNXC_DIR}/.internal/all.sh"
+source "${SPHYNXN_DIR}/shared/shared.sh"
+source "${SPHYNXN_DIR}/core/dns.sh"
+
+##? DNS utility functions
+##?
+##? Usage:
+##?     dns (--flush | --query <address>)
+##?
+##? Options:
+##?     --flush  Clear the DNS cache "Root access required"
+##?     --query <address>  Resolve DNS address using multiple DNS Servers
+##?
+##? Examples:
+##?     dns --flush
+##?     dns --query github.com
+
+sx::parse_arguments "${@}"
+
+if ${flush:-false}; then
+  sx::system::flush_dns_cache
+elif [ -n "${query:-}" ]; then
+  sx::system::query_dns "${query}"
+else
+  sx::error::illegal_arguments "${*}"
+fi

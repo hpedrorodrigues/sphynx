@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+
+# Set language and text formats (english/US)
+defaults write NSGlobalDomain AppleLanguages -array 'en'
+defaults write NSGlobalDomain AppleLocale -string 'en_US@currency=USD'
+defaults write NSGlobalDomain AppleMeasurementUnits -string 'Centimeters'
+defaults write NSGlobalDomain AppleMetricUnits -bool true
+
+# Enable firewall. Possible values:
+#   0 = off
+#   1 = on for specific sevices
+#   2 = on for essential services
+# sudo defaults write /Library/Preferences/com.apple.alf globalstate -int 0
+
+# Disable remote apple events
+# sudo systemsetup -setremoteappleevents off
+
+# Disable remote login
+# sudo systemsetup -setremotelogin off
+
+# Disable wake-on modem
+# sudo systemsetup -setwakeonmodem off
+
+# Disable wake-on LAN
+# sudo systemsetup -setwakeonnetworkaccess off
+
+# Disable guest account login
+sudo defaults write /Library/Preferences/com.apple.loginwindow GuestEnabled -bool false
+
+# Disable the “Are you sure you want to open this application?” dialog
+defaults write com.apple.LaunchServices LSQuarantine -bool false
+
+# Disable the sound effects on boot
+sudo nvram SystemAudioVolume=' '
+
+# Menu bar: enable transparency
+defaults write NSGlobalDomain AppleEnableMenuBarTransparency -bool true
+
+# Restart automatically if the computer freezes
+sudo systemsetup -setrestartfreeze on
+
+# Make Dock more transparent
+defaults write com.apple.dock hide-mirror -bool true
+
+# Network
+readonly computer_name='sparrow'
+
+sudo scutil --set ComputerName "${computer_name}"
+sudo scutil --set HostName "${computer_name}"
+sudo scutil --set LocalHostName "${computer_name}"
+
+sudo defaults write /Library/Preferences/SystemConfiguration/com.apple.smb.server NetBIOSName -string "${computer_name}"

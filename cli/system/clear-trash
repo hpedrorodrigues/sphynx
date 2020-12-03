@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNXC_DIR}/.internal/all.sh"
+source "${SPHYNXN_DIR}/shared/shared.sh"
+source "${SPHYNXN_DIR}/core/clear-trash.sh"
+
+##? Clear the trash directory
+##?
+##? Usage:
+##?     clear-trash
+##?
+##? Examples:
+##?     clear-trash
+
+sx::parse_arguments "${@}"
+
+sx::system::clear_trash

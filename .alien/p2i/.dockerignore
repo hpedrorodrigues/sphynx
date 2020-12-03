@@ -1,0 +1,11 @@
+# Folder
+
+node_modules
+
+# File
+
+*.png
+*.jpeg
+*.md
+chrome.json
+.gitignore

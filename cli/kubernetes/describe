@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNXC_DIR}/.internal/all.sh"
+source "${SPHYNXN_DIR}/shared/shared.sh"
+source "${SPHYNXN_DIR}/core/describe.sh"
+
+##? Show details of a specific resource
+##?
+##? Usage:
+##?     describe [<query>] [--namespace <name> | --all-namespaces]
+##?
+##? Options:
+##?     -n --namespace <name>  The namespace scope for requests
+##?     -a --all-namespaces  All namespaces
+##?
+##? Examples:
+##?     describe
+##?     describe prometheus
+##?     describe --namespace kube-system
+##?     describe --all-namespaces
+
+sx::parse_arguments "${@}"
+
+sx::k8s::describe "${query:-}" "${namespace:-}" "${all_namespaces:-false}"

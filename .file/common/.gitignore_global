@@ -1,0 +1,57 @@
+# Compiled source
+*.class
+*.dll
+*.exe
+*.o
+*.so
+*.apk
+*.ap_
+*.dex
+
+# Compressed files
+*.7z
+*.jar
+*.rar
+*.zip
+*.gz
+*.bzip
+*.xz
+*.lzma
+*.tar
+
+# Packing-only formats
+*.iso
+
+# Package management formats
+*.dmg
+*.xpi
+*.gem
+*.egg
+*.deb
+*.rpm
+
+# Logs and databases
+*.log
+*.sqlite
+
+# OS generated files
+.DS_Store
+
+# Thumbnails
+._*
+
+# Files that might appear on external disk
+.Spotlight-V100
+.Trashes
+
+# Windows image file caches
+Thumbs.db
+
+# Folder config file
+Desktop.ini
+
+# Vim
+.swp
+.swo
+.*.swp
+.*.swo

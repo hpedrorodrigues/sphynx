@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNXC_DIR}/.internal/all.sh"
+source "${SPHYNXN_DIR}/shared/shared.sh"
+source "${SPHYNXN_DIR}/core/fetch.sh"
+
+##? Fetch project files
+##?
+##? Usage:
+##?     fetch <username> <project-name> <filepath>
+##?
+##? Examples:
+##?     fetch torvalds linux Makefile
+##?     fetch kubernetes kubernetes README.md
+
+sx::parse_arguments "${@}"
+
+sx::github::fetch::file "${username:-}" "${project_name:-}" "${filepath:-}"

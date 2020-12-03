@@ -1,0 +1,39 @@
+- name: Detecting - Jetbrains Toolbox is available
+  stat:
+    path: /opt/jetbrains-toolbox
+  register: toolbox_folder
+
+- name: Downloading Jetbrains Toolbox
+  get_url:
+    url: "{{ toolbox_url }}"
+    dest: "{{ toolbox_dest }}"
+  when:
+    - not toolbox_folder.stat.exists
+
+- name: Unarchiving Jetbrains Toolbox
+  unarchive:
+    src: "{{ toolbox_dest }}"
+    dest: /tmp
+    remote_src: yes
+  when:
+    - not toolbox_folder.stat.exists
+
+- name: Copying Jetbrains Toolbox folder
+  become: true
+  command: mv /tmp/jetbrains-toolbox-{{ toolbox_version }} /opt/jetbrains-toolbox
+  when:
+    - not toolbox_folder.stat.exists
+
+- name: Copying Jetbrains Toolbox icon
+  copy:
+    src: icon.png
+    dest: /opt/jetbrains-toolbox/icon.png
+  when:
+    - not toolbox_folder.stat.exists
+
+- name: Creating Jetbrains Toolbox launcher
+  template:
+    src: jetbrains-toolbox.desktop.j2
+    dest: "{{ ansible_env.HOME }}/.local/share/applications/jetbrains-toolbox.desktop"
+  when:
+    - not toolbox_folder.stat.exists

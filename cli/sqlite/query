@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNXC_DIR}/.internal/all.sh"
+source "${SPHYNXN_DIR}/shared/shared.sh"
+source "${SPHYNXN_DIR}/core/query.sh"
+
+##? Run queries in sqlite databases
+##?
+##? Usage:
+##?     query <query> --file <file>
+##?
+##? Options:
+##?     -f --file <file>  File to run the given query
+##?
+##? Examples:
+##?     query "SELECT * FROM db.sqlite_master;" -f database.db
+##?     query ".tables" -f database.db
+
+sx::parse_arguments "${@}"
+
+sx::sqlite::run_query "${file:-}" "${query:-}"

@@ -1,0 +1,23 @@
+- name: Detecting - Spectacle is available
+  stat:
+    path: /Applications/Spectacle.app
+  register: spectacle
+
+- name: Installing Spectacle application
+  homebrew_cask:
+    name: "spectacle"
+    state: present
+  register: new_spectacle
+  when:
+    - not spectacle.stat.exists
+
+- name: Installing personal Spectacle settings
+  file:
+    src: "{{ applications_directory }}/osx/spectacle/Shortcuts.json"
+    dest: "{{ ansible_env.HOME }}/Library/Application Support/Spectacle/Shortcuts.json"
+    state: link
+    force: yes
+  notify:
+    - Restart Spectacle
+  when:
+    - spectacle.stat.exists or new_spectacle.rc == 0

@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNXC_DIR}/.internal/all.sh"
+source "${SPHYNXN_DIR}/shared/shared.sh"
+source "${SPHYNXN_DIR}/core/clipboard.sh"
+
+##? Clipboard handling
+##?
+##? Usage:
+##?     clipboard (copy | paste)
+##?
+##? Examples:
+##?     clipboard copy
+##?     clipboard paste
+
+sx::parse_arguments "${@}"
+
+if ${copy:-false}; then
+  sx::system::clipboard::copy
+elif ${paste:-false}; then
+  sx::system::clipboard::paste
+else
+  sx::error::illegal_arguments "${*}"
+fi

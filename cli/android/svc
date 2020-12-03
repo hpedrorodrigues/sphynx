@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNXC_DIR}/.internal/all.sh"
+source "${SPHYNXN_DIR}/shared/shared.sh"
+source "${SPHYNXN_DIR}/core/svc.sh"
+
+##? Manage device services
+##?
+##? Usage:
+##?     svc (--wifi <state> | --bluetooth <state>)
+##?
+##? Options:
+##?     -w --wifi <state>  Changes wifi state (on|off)
+##?     -b --bluetooth <state>  Changes bluetooth state (on|off)
+##?
+##? Examples:
+##?     svc -w on
+##?     svc --wifi off
+##?     svc --bluetooth on
+
+sx::parse_arguments "${@}"
+
+if [ -n "${wifi:-}" ]; then
+  if [ "${wifi}" = 'on' ]; then
+    sx::android::service::change_wifi_state 'enable'
+  elif [ "${wifi}" = 'off' ]; then
+    sx::android::service::change_wifi_state 'disable'
+  else
+    sx::error::illegal_arguments "${*}"
+  fi
+elif [ -n "${bluetooth:-}" ]; then
+  if [ "${bluetooth}" = 'on' ]; then
+    sx::android::service::change_bluetooth_state 'enable'
+  elif [ "${bluetooth}" = 'off' ]; then
+    sx::android::service::change_bluetooth_state 'disable'
+  else
+    sx::error::illegal_arguments "${*}"
+  fi
+else
+  sx::error::illegal_arguments "${*}"
+fi

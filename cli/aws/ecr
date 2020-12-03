@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNXC_DIR}/.internal/all.sh"
+source "${SPHYNXN_DIR}/shared/shared.sh"
+source "${SPHYNXN_DIR}/core/ecr.sh"
+
+##? Amazon Elastic Container Registry utilities
+##?
+##? Usage:
+##?     ecr --delete-untagged
+##?
+##? Options:
+##?     -d --delete-untagged  Delete all untagged images from all repositories
+##?
+##? Examples:
+##?     ecr --delete-untagged
+
+sx::parse_arguments "${@}"
+
+if ${delete_untagged:-false}; then
+  sx::aws::ecr::delete_untagged
+fi

@@ -1,0 +1,11 @@
+- name: Detecting - Snap is available
+  stat:
+    path: "/usr/bin/snap"
+  register: snap
+
+- name: Installing Snap packages
+  command: "snap install {{ item.name | default(item) }} {{ item.options | default(None) }}"
+  with_items: "{{ snap_packages }}"
+  when:
+    - snap.stat.exists
+    - snap_packages | count > 0

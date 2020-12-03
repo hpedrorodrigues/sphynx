@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNXC_DIR}/.internal/all.sh"
+source "${SPHYNX_DIR}/.file/common/alien"
+
+##? Run formatters
+##?
+##? Usage:
+##?     fmt
+
+sx::parse_arguments "${@}"
+
+sx::self::fmt

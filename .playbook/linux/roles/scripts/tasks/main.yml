@@ -1,0 +1,37 @@
+- name: Detecting - Inventory is available
+  stat:
+    path: "{{ inventory_path }}"
+  register: inventory
+
+- name: Getting current inventory state
+  shell: "test -f {{ inventory_path }} && cat {{ inventory_path }} || true"
+  register: inventory_state
+  changed_when: false
+  when:
+    - inventory.stat.exists
+
+- name: Applying scripts
+  script: "{{ item }}"
+  with_items:
+    - "{{ lookup('fileglob', '*.sh').split(',') }}"
+  register: scripts
+  when:
+    - not inventory.stat.exists or lookup('file', item) | checksum not in inventory_state.stdout
+
+- name: Creating inventory file
+  file:
+    path: "{{ inventory_path }}"
+    state: touch
+  when:
+    - not inventory.stat.exists
+    - scripts is succeeded
+
+- name: Updating inventory with current state
+  lineinfile:
+    line: "{{ lookup('file', item) | checksum }}"
+    dest: "{{ inventory_path }}"
+    state: present
+  with_items:
+    - "{{ lookup('fileglob', '*.sh').split(',') }}"
+  when:
+    - not inventory.stat.exists or lookup('file', item) | checksum not in inventory_state.stdout

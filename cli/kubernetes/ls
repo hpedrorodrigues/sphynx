@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNXC_DIR}/.internal/all.sh"
+source "${SPHYNXN_DIR}/shared/shared.sh"
+source "${SPHYNXN_DIR}/core/ls.sh"
+
+##? Print one or many resources
+##?
+##? Usage:
+##?     ls [--namespace <name> | --all-namespaces] [--show-labels]
+##?
+##? Options:
+##?     -n --namespace <name>  The namespace scope for requests
+##?     -a --all-namespaces  List the resources across all namespaces
+##?     -l --show-labels  Show all labels as the last column
+##?
+##? Examples:
+##?     ls --namespace kube-system
+##?     ls --all-namespaces
+##?     ls --show-labels
+
+sx::parse_arguments "${@}"
+
+sx::k8s::list::resources \
+  "${namespace:-}" \
+  "${all_namespaces:-false}" \
+  "${show_labels:-false}"

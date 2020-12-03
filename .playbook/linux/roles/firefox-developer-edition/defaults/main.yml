@@ -1,0 +1,2 @@
+firefox_url: https://download.mozilla.org/?product=firefox-devedition-latest-ssl&os=linux64&lang=en-US
+firefox_dest: /tmp/firefox.tar.bz2

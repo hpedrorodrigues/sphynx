@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNXC_DIR}/.internal/all.sh"
+source "${SPHYNXN_DIR}/shared/shared.sh"
+source "${SPHYNXN_DIR}/core/port-forward.sh"
+
+##? Forward one local port to a pod
+##?
+##? Usage:
+##?     port-forward [<query>] [--namespace <name> | --all-namespaces] [--random-port]
+##?
+##? Options:
+##?     -n --namespace <name>  The namespace scope for requests
+##?     -a --all-namespaces  All namespaces
+##?     -r --random-port  Bind a random port locally
+##?
+##? Examples:
+##?     port-forward
+##?     port-forward nginx
+##?     port-forward --namespace kube-system --random-port
+##?     port-forward --all-namespaces
+
+sx::parse_arguments "${@}"
+
+sx::k8s::port_forward \
+  "${query:-}" \
+  "${namespace:-}" \
+  "${all_namespaces:-false}" \
+  "${random_port:-false}"

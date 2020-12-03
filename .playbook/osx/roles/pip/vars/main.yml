@@ -1,0 +1,11 @@
+pip_packages:
+  - PyYAML
+  - awscli
+  - docopt
+  - dotbot
+  - pip-tools
+  - powerline-status
+  - pylint
+  - requests
+  - setuptools
+  - youtube-dl

@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNXC_DIR}/.internal/all.sh"
+source "${SPHYNXN_DIR}/shared/shared.sh"
+source "${SPHYNXN_DIR}/core/ui.sh"
+source "${SPHYNXN_DIR}/core/system.sh"
+
+##? Manage MacOS system state
+##?
+##? Usage:
+##?     system (--screenshots-path <path> | --cleanup-dsstore | --wifi-password)
+##?
+##? Options:
+##?     --screenshots-path <path>  Changes the screenshots path
+##?     --cleanup-dsstore  Deletes all .DS_Store files in the current working directory tree
+##?     --wifi-password  Show the password for the current network
+##?
+##? Examples:
+##?     system --screenshots-path "${HOME}/Screenshots"
+##?     system --cleanup-dsstore
+##?     system --wifi-password
+
+sx::parse_arguments "${@}"
+
+if [ -n "${screenshots_path:-}" ]; then
+  sx::osx::change_screenshots_path "${screenshots_path}"
+elif ${cleanup_dsstore:-}; then
+  sx::osx::delete_index_files
+elif ${wifi_password:-}; then
+  sx::osx::current_wifi_password
+else
+  sx::error::illegal_arguments "${*}"
+fi

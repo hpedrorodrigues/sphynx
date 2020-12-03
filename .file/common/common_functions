@@ -1,0 +1,218 @@
+#!/usr/bin/env bash
+
+# Functions
+
+## Hashing
+function md5() {
+  sx security hash md5 "${*}"
+}
+
+function sha1() {
+  sx security hash sha1 "${*}"
+}
+
+function sha256() {
+  sx security hash sha256 "${*}"
+}
+
+## Translation
+function tle() {
+  # shellcheck disable=SC2068  # Double quote array expansions
+  trans en:pt ${@}
+}
+
+function tles() {
+  # shellcheck disable=SC2068  # Double quote array expansions
+  trans en:pt ${@} --speak
+}
+
+function tlp() {
+  # shellcheck disable=SC2068  # Double quote array expansions
+  trans pt:en ${@}
+}
+
+## General
+function o() {
+  sx system open "${*}"
+}
+
+function bo() {
+  sx browser open "${*}"
+}
+
+function loop() {
+  watch "${SHELL} -i -c '${*}'"
+}
+
+function csv() {
+  local -r func_name="${FUNCNAME[0]:-${funcstack[1]}}"
+  local -r file_name="${1}"
+
+  if [ -z "${file_name}" ]; then
+    echo '!!! This function needs a file as first argument' >&2
+    echo "!!! i.e ${func_name} test.csv" >&2
+    return 1
+  fi
+
+  if ! [ -f "${file_name}" ]; then
+    echo "!!! No such file \"${file_name}\"" >&2
+    return 1
+  fi
+
+  sed <"${file_name}" 's/"//g' | column -t -s ','
+}
+
+function man() {
+  env \
+    LESS_TERMCAP_mb="$(printf "\e[1;31m")" \
+    LESS_TERMCAP_md="$(printf "\e[1;31m")" \
+    LESS_TERMCAP_me="$(printf "\e[0m")" \
+    LESS_TERMCAP_se="$(printf "\e[0m")" \
+    LESS_TERMCAP_so="$(printf "\e[1;44;33m")" \
+    LESS_TERMCAP_ue="$(printf "\e[0m")" \
+    LESS_TERMCAP_us="$(printf "\e[1;32m")" \
+    /usr/bin/man "${*}"
+}
+
+function download_meaning() {
+  local -r func_name="${FUNCNAME[0]:-${funcstack[1]}}"
+  local -r word="${1}"
+
+  if [ -z "${word}" ]; then
+    echo '!!! This function needs a word as first argument' >&2
+    echo "!!! i.e ${func_name} struggle" >&2
+    return 1
+  fi
+
+  p2i \
+    --url "https://www.google.com/search?q=${word}+meaning" \
+    --selector '.lr_container' \
+    --filename "${word}.png"
+}
+
+function download_meaning_batch() {
+  local -r func_name="${FUNCNAME[0]:-${funcstack[1]}}"
+  local -r file_path="${1}"
+
+  if [ -z "${file_path}" ]; then
+    echo '!!! This function needs a file path as first argument' >&2
+    echo "!!! i.e ${func_name} words.txt" >&2
+    return 1
+  fi
+
+  if ! [ -f "${file_path}" ]; then
+    echo "!!! No such file \"${file_path}\"" >&2
+    return 1
+  fi
+
+  local -r file_content="$(tr '[:upper:]' '[:lower:]' <"${file_path}")"
+  echo "${file_content}" | sort -u | tee "${file_path}"
+
+  echo
+
+  while IFS= read -r word; do
+    download_meaning "${word}"
+  done <"${file_path}"
+}
+
+# New Go Workspace
+# i.e ngw my-project
+function ngw() {
+  local -r workspace_folder="${1:-$(mktemp -d)}"
+
+  if ! [ -d "${workspace_folder}" ]; then
+    mkdir -p "${workspace_folder}"
+  fi
+
+  echo -e 'package main\n\nfunc main() {\n\n}\n' \
+    >"${workspace_folder}/main.go"
+  echo -e 'package main\n\nimport "testing"\n\nfunc Test(t *testing.T) {\n\n}\n\n' \
+    >"${workspace_folder}/main_test.go"
+
+  cd "${workspace_folder}" \
+    && go mod init "$(basename "${workspace_folder}")" \
+    && code . \
+    && echo "${workspace_folder}"
+}
+
+function load_aws_profile() {
+  local -r func_name="${FUNCNAME[0]:-${funcstack[1]}}"
+  local -r profile="${1}"
+
+  if [ -z "${profile}" ]; then
+    echo '!!! This function needs an aws profile as first argument' >&2
+    echo "!!! i.e ${func_name} your_profile" >&2
+    return 1
+  fi
+
+  if ! [ -f "${HOME}/.aws/config" ]; then
+    echo '!!! No such file: ~/.aws/config' >&2
+    return 1
+  fi
+
+  if ! grep -q "\[profile ${profile}\]" "${HOME}/.aws/config" 2>/dev/null; then
+    local -r available_profiles="$(
+      grep -E '[profile [a-z]]' "${HOME}/.aws/config" \
+        | sed 's/\[profile //g' \
+        | sed 's/\]//g'
+    )"
+
+    if [ -z "${available_profiles}" ]; then
+      echo '!!! No profiles declared in ~/.aws/config' >&2
+    else
+      echo '!!! This profile is not declared in file ~/.aws/config' >&2
+      echo >&2
+      echo '    Available profiles:' >&2
+      echo -e "${available_profiles}" | xargs -I % echo '    - %' >&2
+    fi
+
+    return 1
+  fi
+
+  export AWS_PROFILE="${profile}"
+}
+
+function j() {
+  local -r func_name="${FUNCNAME[0]:-${funcstack[1]}}"
+  local -r version="${1:-}"
+
+  if [ -z "${version}" ]; then
+    echo '!!! This function needs a java version as first argument' >&2
+    echo "!!! i.e ${func_name} 8" >&2
+    echo "!!! i.e ${func_name} 11" >&2
+    return 1
+  fi
+
+  local -r env_value="$(eval echo "\${JAVA${version}_HOME}")"
+
+  if [ -n "${env_value}" ]; then
+    local -r new_version="${env_value}"
+  elif [ -f '/usr/libexec/java_home' ] \
+    && [ -n "$(/usr/libexec/java_home --version "${version}" --failfast 2>/dev/null)" ]; then
+    local -r new_version="$(/usr/libexec/java_home -v "${version}")"
+  else
+    echo "!!! There's no environment variable set or cli tool available for java version: ${version}." >&2
+    return 1
+  fi
+
+  export JAVA_HOME="${new_version}"
+  echo "JAVA_HOME=${JAVA_HOME}"
+}
+
+function runbg() {
+  "${@}" </dev/null &>/dev/null &
+}
+
+function fgpick() {
+  local -r n_jobs="$(jobs | wc -l | tr -d ' ')"
+
+  if [ "${n_jobs}" -eq 0 ]; then
+    echo '!!! No background jobs found' >&2
+    return 1
+  elif [ "${n_jobs}" -eq 1 ]; then
+    fg
+  else
+    local -r job_id="$(jobs | fzf | sed 's/\[\([0-9]*\)\].*/\1/')"
+    fg "%${job_id}"
+  fi
+}

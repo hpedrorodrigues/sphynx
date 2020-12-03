@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNXC_DIR}/.internal/all.sh"
+source "${SPHYNXN_DIR}/shared/shared.sh"
+source "${SPHYNXN_DIR}/core/benchmark.sh"
+
+##? Run benchmarks for shells
+##?
+##? Usage:
+##?     benchmark (zsh | bash)
+##?
+##? Examples:
+##?     benchmark zsh
+##?     benchmark bash
+
+sx::parse_arguments "${@}"
+
+if ${zsh:-false}; then
+  sx::shell::benchmark 'zsh'
+elif ${bash:-false}; then
+  sx::shell::benchmark 'bash'
+else
+  sx::error::illegal_arguments "${*}"
+fi

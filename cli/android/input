@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNXC_DIR}/.internal/all.sh"
+source "${SPHYNXN_DIR}/shared/shared.sh"
+source "${SPHYNXN_DIR}/core/input.sh"
+
+##? Manage input events
+##?
+##? Usage:
+##?     input (--text <text> | --clear)
+##?
+##? Options:
+##?     -t --text <text>  Text to be typed
+##?     -c --clear  Clears the edit text
+##?
+##? Examples:
+##?     input -t test
+##?     input --text "Amazing Android"
+
+sx::parse_arguments "${@}"
+
+if ${clear:-false}; then
+  sx::android::input::clear_text
+elif [ -n "${text:-}" ]; then
+  sx::android::input::type_text "${text}"
+else
+  sx::error::illegal_arguments "${*}"
+fi

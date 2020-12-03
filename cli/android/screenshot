@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNXC_DIR}/.internal/all.sh"
+source "${SPHYNXN_DIR}/shared/shared.sh"
+source "${SPHYNXN_DIR}/core/screenshot.sh"
+
+##? Take screenshots from devices
+##?
+##? Usage:
+##?     screenshot [--name <file>]
+##?
+##? Options:
+##?     -n --name <file>  Name of file to be saved
+##?
+##? Examples:
+##?     screenshot
+##?     screenshot --name "Screenshot.png"
+
+sx::parse_arguments "${@}"
+
+sx::android::screenshot::take "${name:-}"

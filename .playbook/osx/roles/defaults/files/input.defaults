@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+
+# Enable tap-to-click for this user and for the login screen
+defaults -currentHost write com.apple.AppleMultitouchTrackpad Clicking -bool true
+defaults -currentHost write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool true
+defaults write com.apple.AppleMultitouchTrackpad Clicking -bool true
+defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool true
+
+# Disable three finger drag
+defaults write com.apple.AppleMultitouchTrackpad TrackpadThreeFingerDrag -bool false
+defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadThreeFingerDrag -bool false
+
+defaults write com.apple.AppleMultitouchTrackpad Dragging -bool false
+defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Dragging -bool false
+
+# Enable "natural" (touchscreen-style) scrolling
+defaults write NSGlobalDomain com.apple.swipescrolldirection -bool true
+
+# fn + fkey for special behavior, not fkey alone
+defaults write NSGlobalDomain com.apple.keyboard.fnState -bool true
+
+# Keyboard shortcuts modifier key legend:
+#  @ = command
+#  ^ = control
+#  ~ = option
+#  $ = shift
+
+###### NOTE: These shortcuts will not show in System Preferences
+######       and setting new shortcuts there will overwrite these
+
+# All applications
+# Change tabs with cmd-opt-arrow
+defaults write NSGlobalDomain NSUserKeyEquivalents -dict-add "Show Next Tab"       "@~\U2192"
+defaults write NSGlobalDomain NSUserKeyEquivalents -dict-add "Show Previous Tab"   "@~\U2190"
+defaults write NSGlobalDomain NSUserKeyEquivalents -dict-add "Select Next Tab"     "@~\U2192"
+defaults write NSGlobalDomain NSUserKeyEquivalents -dict-add "Select Previous Tab" "@~\U2190"
+defaults write NSGlobalDomain NSUserKeyEquivalents -dict-add "Next Tab"            "@~\U2192"
+defaults write NSGlobalDomain NSUserKeyEquivalents -dict-add "Previous Tab"        "@~\U2190"
+
+# Keynote
+# Rehearse slideshow with cmd-opt-R
+defaults write com.apple.iWork.Keynote NSUserKeyEquivalents -dict-add "Rehearse Slideshow" "@~R"
+
+# New slide should be easier than new presentation
+defaults write com.apple.iWork.Keynote NSUserKeyEquivalents -dict-add "New" "@\$N"
+defaults write com.apple.iWork.Keynote NSUserKeyEquivalents -dict-add "New Slide" "@N"
+
+# Disable press-and-hold for keys in favor of key repeat
+defaults write -g ApplePressAndHoldEnabled -bool false
+
+# Set a really fast key repeat
+defaults write NSGlobalDomain KeyRepeat -int 1
+
+# Enable Tab/Cancel in Mac dialogs
+defaults write NSGlobalDomain AppleKeyboardUIMode -int 3

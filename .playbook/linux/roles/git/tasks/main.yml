@@ -1,0 +1,16 @@
+- name: Detecting - Git is available
+  stat:
+    path: /usr/bin/git
+  register: git
+
+- name: Cloning repositories
+  git: "repo={{ item.repo }} dest={{ item.dest }} update=no"
+  with_items: "{{ git_repositories }}"
+  when: git.stat.exists
+
+- name: Running hooks
+  shell: "{{ item.hooks }}"
+  with_items: "{{ git_repositories }}"
+  when:
+    - git.stat.exists
+    - item.hooks is defined

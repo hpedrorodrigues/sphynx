@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNXC_DIR}/.internal/all.sh"
+source "${SPHYNXN_DIR}/shared/shared.sh"
+source "${SPHYNXN_DIR}/core/pull-apk.sh"
+source "${SPHYNXN_DIR}/core/analyze.sh"
+
+##? Analyze applications
+##?
+##? Usage:
+##?     analyze (--apk <file> | --app <package-filter>)
+##?
+##? Options:
+##?     --apk <file>  Analyses app in the specified directory
+##?     --app <package-filter>  Analyses app installed on device
+##?
+##? Examples:
+##?     analyze --apk "android.apk"
+##?     analyze --apk "${HOME}/Downloads/twitter.apk"
+##?     analyze --app "telegram"
+##?     analyze --app "com.google.android.keep"
+
+sx::parse_arguments "${@}"
+
+if [ -n "${apk:-}" ]; then
+  sx::android::analyze_apk "${apk}"
+elif [ -n "${app:-}" ]; then
+  sx::android::analyze_app "${app}"
+else
+  sx::error::illegal_arguments "${*}"
+fi

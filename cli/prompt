@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNXC_DIR}/.internal/all.sh"
+
+##? Display a preview for each command available
+##?
+##? Usage:
+##?     prompt
+
+sx::parse_arguments "${@}"
+
+sx::self::prompt

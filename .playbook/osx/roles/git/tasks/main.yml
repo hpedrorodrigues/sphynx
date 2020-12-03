@@ -1,0 +1,9 @@
+- name: Detecting - Git is available
+  stat:
+    path: /usr/local/bin/git
+  register: git
+
+- name: Cloning repositories
+  git: "repo={{ item.repo }} dest={{ item.dest }} update=no"
+  with_items: "{{ git_repositories }}"
+  when: git.stat.exists

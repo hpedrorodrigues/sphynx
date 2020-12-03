@@ -1,0 +1,101 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+##? Alien CLI
+##?
+##? Usage:
+##?   alien [--build <tool_name> | --push <tool_name>] [--help]
+##?
+##? Commands:
+##?   -b | --build <tool_name>  Build docker image(s) [Default: all images]
+##?   -p | --push <tool_name>  Push docker image(s) to Dockerhub [Default: all images]
+##?   -h | --help  Print this help message
+
+export ALIEN_PATH="${ALIEN_PATH:-${SPHYNX_DIR}/.alien}"
+export ALIEN_REPOSITORY="${ALIEN_REPOSITORY:-hpedrorodrigues/alien}"
+
+function alien::print_help() {
+  grep '[#]#?' "${BASH_SOURCE[0]}" | cut -c 5-
+}
+
+function alien::clean_up() {
+  rm -rf "${SPHYNX_DIR}/.alien/p2i/node_modules"
+}
+
+function alien::run_over_all() {
+  local -r action="${1:-}"
+
+  if [ -z "${action}" ]; then
+    echo 'This function needs an argument (the action to run)' >&2
+    exit 1
+  fi
+
+  while IFS= read -r -d '' directory; do
+    echo -e "\n==|> Running \"${action}\" over \"${directory}\"\n"
+    "${action}" "${directory}"
+  done < <(find "${ALIEN_PATH}" ! -path "${ALIEN_PATH}" -type d -print0)
+}
+
+function alien::build_image() {
+  local -r recipe_path="${1:-}"
+
+  if [ -z "${recipe_path}" ]; then
+    echo 'This function needs an argument (the directory with the Dockerfile)' >&2
+    exit 1
+  fi
+
+  if ! [ -d "${recipe_path}" ]; then
+    echo 'The given directory does not exist' >&2
+    exit 1
+  fi
+
+  local -r tag="$(basename "${recipe_path}")"
+
+  docker \
+    build "${recipe_path}" \
+    --tag "${ALIEN_REPOSITORY}:${tag}"
+}
+
+function alien::push_image() {
+  local -r recipe_path="${1:-}"
+
+  if [ -z "${recipe_path}" ]; then
+    echo 'This function needs an argument (the directory with the Dockerfile)' >&2
+    exit 1
+  fi
+
+  local -r tag="$(basename "${recipe_path}")"
+
+  docker push "${ALIEN_REPOSITORY}:${tag}"
+}
+
+function alien::main() {
+  local -r cmd="${1:-}"
+
+  alien::clean_up
+
+  case ${cmd} in
+    -b | --build)
+      if [ -z "${2:-}" ]; then
+        alien::run_over_all alien::build_image
+      else
+        echo -e "\n==|> Building \"${ALIEN_PATH}/${2}\"\n"
+        alien::build_image "${ALIEN_PATH}/${2}"
+      fi
+      ;;
+    -p | --push)
+      if [ -z "${2:-}" ]; then
+        alien::run_over_all alien::push_image
+      else
+        echo -e "\n==|> Pushing \"${ALIEN_PATH}/${2}\"\n"
+        alien::push_image "${ALIEN_PATH}/${2}"
+      fi
+      ;;
+    *) alien::print_help ;;
+  esac
+}
+
+alien::main "${@}"

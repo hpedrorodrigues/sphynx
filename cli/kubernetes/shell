@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNXC_DIR}/.internal/all.sh"
+source "${SPHYNXN_DIR}/shared/shared.sh"
+source "${SPHYNXN_DIR}/core/shell.sh"
+
+##? Run a shell into a kubernetes node
+##?
+##? Notes:
+##?   Highly influenced by https://github.com/kvaps/kubectl-node-shell
+##?
+##? Usage:
+##?     shell [<query>]
+##?
+##? Examples:
+##?     shell
+
+sx::parse_arguments "${@}"
+
+sx::k8s::shell "${query:-}"

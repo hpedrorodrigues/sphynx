@@ -1,0 +1,15 @@
+- name: Creating Alacritty configuration directory
+  file: "path={{ ansible_env.HOME }}/.config/alacritty mode=0755 state=directory"
+
+- name: Detecting - Alacrity is available
+  stat:
+    path: "{{ ansible_env.HOME }}/.config/alacritty/alacritty.yml"
+  register: alacritty
+
+- name: Installing Alacritty settings
+  file:
+    src: "{{ applications_directory }}/osx/alacritty/alacritty.yaml"
+    dest: "{{ ansible_env.HOME }}/.config/alacritty/alacritty.yml"
+    state: link
+  when:
+    - not alacritty.stat.exists

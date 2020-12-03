@@ -1,0 +1,43 @@
+- name: Detecting - VSCode is available
+  stat:
+    path: "/Applications/Visual Studio Code.app"
+  register: vscode
+
+- name: Installing VSCode application
+  homebrew_cask:
+    name: "visual-studio-code"
+    state: present
+  when:
+    - not vscode.stat.exists
+
+- name: Creating VSCode directories
+  file:
+    path: "{{ ansible_env.HOME }}/Library/Application Support/Code/User"
+    state: directory
+
+- name: Installing personal VSCode settings
+  file:
+    src: "{{ applications_directory }}/osx/vscode/{{ item }}"
+    dest: "{{ ansible_env.HOME }}/Library/Application Support/Code/User/{{ item }}"
+    state: link
+    force: yes
+  with_items: "{{ vscode_settings_files }}"
+  notify:
+    - Restart VSCode
+  when:
+    - vscode.stat.exists
+
+- name: Getting all installed VSCode extensions
+  command: "code --list-extensions"
+  register: installed_extensions
+  changed_when: false
+  when:
+    - vscode.stat.exists
+
+- name: Installing VSCode extensions
+  command: "code --install-extension {{ item.name | default(item) }}"
+  with_items: "{{ vscode_extensions }}"
+  when:
+    - vscode.stat.exists
+    - vscode_extensions | count > 0
+    - item.name | default(item) not in installed_extensions.stdout

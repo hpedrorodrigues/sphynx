@@ -1,0 +1,6 @@
+- name: Installing fonts
+  become: true
+  file:
+    src: "{{ fonts_directory }}"
+    dest: "{{ ansible_env.HOME }}/.fonts"
+    state: link

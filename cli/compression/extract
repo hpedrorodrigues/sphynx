@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNXC_DIR}/.internal/all.sh"
+source "${SPHYNXN_DIR}/shared/shared.sh"
+source "${SPHYNXN_DIR}/core/extract.sh"
+
+##? Uncompress files
+##?
+##? Usage:
+##?     extract <file_path>
+##?
+##? Examples:
+##?     extract "file.zip"
+##?     extract "file.tar.gz"
+
+sx::parse_arguments "${@}"
+
+sx::compression::extract "${file_path:-}"

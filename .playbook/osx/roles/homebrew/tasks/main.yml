@@ -1,0 +1,90 @@
+- name: Detecting - Homebrew is available
+  stat:
+    path: /usr/local/bin/brew
+  register: homebrew
+
+- name: Installing Homebrew
+  shell: '/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"'
+  register: new_homebrew
+  when:
+    - not homebrew.stat.exists
+
+- name: Updating Homebrew
+  homebrew:
+    update_homebrew: yes
+  when:
+    - homebrew.stat.exists or new_homebrew.rc == 0
+
+- name: Getting all installed Homebrew repositories
+  command: brew tap-info --installed
+  register: installed_repositories
+  check_mode: no
+  changed_when: false
+  when:
+    - homebrew.stat.exists or new_homebrew.rc == 0
+
+- name: Tapping Homebrew repositories
+  homebrew_tap:
+    name: "{{ item.user_repo | default(item) }}"
+    url: "{{ item.url | default(None) }}"
+    state: present
+  with_items: "{{ homebrew_repositories }}"
+  when:
+    - homebrew.stat.exists or new_homebrew.rc == 0
+    - homebrew_repositories is defined and homebrew_repositories | count > 0
+    - (item.user_repo | default(item)) not in installed_repositories.stdout
+
+- name: Getting all installed Homebrew packages
+  command: brew list
+  register: installed_packages
+  check_mode: no
+  changed_when: false
+  when:
+    - homebrew.stat.exists or new_homebrew.rc == 0
+
+- name: Installing Homebrew packages
+  homebrew:
+    name: "{{ item.name | default(item) }}"
+    state: present
+    upgrade_all: yes
+    install_options: "{{ item.install_options | default(omit) }}"
+  with_items: "{{ homebrew_packages }}"
+  when:
+    - homebrew.stat.exists or new_homebrew.rc == 0
+    - homebrew_packages is defined and homebrew_packages | count > 0
+    - item.installed_name | default(item.name) | default(item) not in installed_packages.stdout.split('\n')
+
+- name: Detecting - Cask is available
+  command: brew info cask
+  register: cask
+  changed_when: false
+  when:
+    - homebrew.stat.exists or new_homebrew.rc == 0
+
+- name: Getting all installed Cask packages
+  command: brew cask list
+  register: installed_cask_packages
+  check_mode: no
+  changed_when: false
+  when:
+    - homebrew.stat.exists or new_homebrew.rc == 0
+    - cask.rc == 0
+
+- name: Installing Cask packages
+  homebrew_cask:
+    name: "{{ item.name | default(item) }}"
+    state: present
+    install_options: "{{ item.install_options | default(omit) }}"
+  with_items: "{{ homebrew_apps }}"
+  when:
+    - homebrew.stat.exists or new_homebrew.rc == 0
+    - cask.rc == 0
+    - homebrew_apps is defined and homebrew_apps | count > 0
+    - item.name | default(item) not in installed_cask_packages.stdout.split('\n')
+
+- name: Removing outdated package versions
+  command: brew cleanup
+  register: cleanup
+  changed_when: cleanup.stdout | length > 0
+  when:
+    - homebrew.stat.exists or new_homebrew.rc == 0

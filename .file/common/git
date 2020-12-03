@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+
+## Aliases
+
+alias g='git'
+alias gs='git status'
+alias gst='git status'
+alias gba='git branch --all'
+
+alias gbc='sx git branch --clear'
+alias gbs='sx git branch --switch'
+
+alias email='sx github email'
+
+## Functions
+
+function repo() {
+  sx git open "${*}"
+}
+
+function ggpull() {
+  local -r current_branch="$(git rev-parse --abbrev-ref HEAD)"
+  git pull origin "${current_branch}" "${@}"
+}
+
+function ggpush() {
+  local -r current_branch="$(git rev-parse --abbrev-ref HEAD)"
+  git push origin "${current_branch}" "${@}"
+}
+
+function gu() {
+  local -r current_branch="$(git rev-parse --abbrev-ref HEAD)"
+  git fetch origin --prune && git pull origin "${current_branch}"
+}

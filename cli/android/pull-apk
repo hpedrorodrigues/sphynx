@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNXC_DIR}/.internal/all.sh"
+source "${SPHYNXN_DIR}/shared/shared.sh"
+source "${SPHYNXN_DIR}/core/pull-apk.sh"
+
+##? Pull apks from device
+##?
+##? Usage:
+##?     pull-apk <package-filter>
+##?
+##? Examples:
+##?     pull-apk 'com.spotify.music'
+##?     pull-apk 'telegram'
+
+sx::parse_arguments "${@}"
+
+if [ -n "${package_filter:-}" ]; then
+  sx::android::pull_apk "${package_filter}"
+else
+  sx::error::illegal_arguments "${*}"
+fi

@@ -1,0 +1,17 @@
+# https://wiki.debian.org/Xsession
+# This file is executed by a script inside /etc/X11/Xsession.d/
+
+# Change caps_lock to control if pressed with other keys, to escape if pressed alone
+# Reference: https://gist.github.com/tanyuan/55bca522bf50363ae4573d4bdcf06e2e
+# I'm running these commands with a delay because another process is overriding these settings.
+(
+  if hash setxkbmap 2>/dev/null && hash xcape 2>/dev/null; then
+    sleep 10s
+
+    # Make CapsLock behave like Ctrl
+    setxkbmap -option ctrl:nocaps
+
+    # Make short-pressed Ctrl behave like Escape
+    xcape -e 'Control_L=Escape'
+  fi
+) &

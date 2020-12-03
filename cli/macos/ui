@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNXC_DIR}/.internal/all.sh"
+source "${SPHYNXN_DIR}/shared/shared.sh"
+source "${SPHYNXN_DIR}/core/ui.sh"
+
+##? Manage MacOS ui
+##?
+##? Usage:
+##?     ui (--restart | --hidden-files <state> | --spotlight-indexing <state>)
+##?
+##? Options:
+##?     --restart  The System UI Server will be restarted
+##?     --hidden-files <state>  Changes finder to display all files (on|off)
+##?     --spotlight-indexing <state>  Changes indexing state of Spotlight (on|off). Root access required.
+##?
+##? Examples:
+##?     ui --restart
+##?     ui --hidden-files on
+##?     ui --spotlight-indexing off
+
+sx::parse_arguments "${@}"
+
+if ${restart:-}; then
+  sx::osx::restart_ui
+elif [ -n "${hidden_files:-}" ]; then
+  if [ "${hidden_files}" = 'on' ] || [ "${hidden_files}" = 'off' ]; then
+    sx::osx::show_hidden_files "${hidden_files}"
+  else
+    sx::error::illegal_arguments "${*}"
+  fi
+elif [ -n "${spotlight_indexing:-}" ]; then
+  if [ "${spotlight_indexing}" = 'on' ] || [ "${spotlight_indexing}" = 'off' ]; then
+    sx::osx::change_spotlight_indexing_state "${spotlight_indexing}"
+  else
+    sx::error::illegal_arguments "${*}"
+  fi
+else
+  sx::error::illegal_arguments "${*}"
+fi

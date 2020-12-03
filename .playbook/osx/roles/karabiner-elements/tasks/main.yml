@@ -1,0 +1,28 @@
+- name: Detecting - Karabiner is available
+  stat:
+    path: "/Applications/Karabiner-Elements.app"
+  register: karabiner
+
+- name: Installing Karabiner application
+  homebrew_cask:
+    name: "karabiner-elements"
+    state: present
+  register: new_karabiner
+  when:
+    - not karabiner.stat.exists
+
+- name: Creating Karabiner directories
+  file:
+    path: "{{ ansible_env.HOME }}/.config/karabiner"
+    state: directory
+
+- name: Installing personal Karabiner settings
+  file:
+    src: "{{ applications_directory }}/osx/karabiner-elements/karabiner.json"
+    dest: "{{ ansible_env.HOME }}/.config/karabiner/karabiner.json"
+    state: link
+    force: yes
+  notify:
+    - Restart Karabiner
+  when:
+    - karabiner.stat.exists or new_karabiner.rc == 0

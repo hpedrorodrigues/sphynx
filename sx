@@ -1,0 +1,250 @@
+#!/usr/bin/env bash
+
+##? Sphynx
+##?
+##? Usage:
+##?   sx NAMESPACE COMMAND [options]
+##?
+##? Options:
+##?   sx --namespaces
+##?   sx --commands
+##?
+##? Global Options (This options can be passed to any command):
+##?   sx --help
+##?
+##?
+##? Find more information at: https://github.com/hpedrorodrigues/sphynx
+##?
+
+## Root user check
+
+if [ "${UID}" = '0' ]; then
+  echo '!!! You cannot run Sphynx as the root user' >&2
+  exit 1
+fi
+
+## Bash version check
+
+readonly MIN_REQUIRED_BASH_VERSION='5'
+
+if [ -z "${BASH_VERSION:-}" ]; then
+  echo '!!! Bash is required to run Sphynx' >&2
+  exit 1
+fi
+
+if [ -z "${BASH_VERSINFO:-}" ] || [ "${BASH_VERSINFO:-}" -lt "${MIN_REQUIRED_BASH_VERSION}" ]; then
+  cat >&2 <<EOF
+!!! It's recommended to use Sphynx with at least version 5.0.0(1)-release (current version is ${BASH_VERSION}).
+!!! Some commands may not work as expected!
+
+
+EOF
+fi
+
+## Environment variables
+
+export SPHYNX_EXEC="${BASH_SOURCE[0]}"
+export SPHYNX_EXEC_NAME="$(basename "${SPHYNX_EXEC}")"
+
+export SPHYNX_DIR="$(dirname "${SPHYNX_EXEC}")"
+export SPHYNXC_DIR="${SPHYNX_DIR}/cli"
+
+## Helper functions
+
+readonly error_message='The most similar namespaces (or global commands) are'
+
+function all_namespaces() {
+  find "${SPHYNXC_DIR}" \
+    -maxdepth 1 \
+    ! -path "${SPHYNXC_DIR}" \
+    ! -path '*?/.*?' \
+    -a -type d \
+    -o -type f -a \( -perm -u=x -o -perm -g=x -o -perm -o=x \) \
+    | sort \
+    | xargs -I % basename %
+}
+
+function find_namespace() {
+  local -r filter="${1}"
+
+  if [ -d "${SPHYNXC_DIR}/${filter}" ] || [ -f "${SPHYNXC_DIR}/${filter}" ]; then
+    echo "${SPHYNXC_DIR}/${filter}"
+  else
+    local -r namespaces="$(
+      find "${SPHYNXC_DIR}" \
+        -maxdepth 1 \
+        ! -path "${SPHYNXC_DIR}" \
+        ! -path '*?/.*?' \
+        -a -type d -a -name "${filter}*" \
+        -o -type f -a -name "${filter}*" -a \( -perm -u=x -o -perm -g=x -o -perm -o=x \)
+    )"
+    local -r n_namespaces=$(echo "${namespaces}" | wc -l | tr -d ' ')
+
+    if [ "${n_namespaces}" -gt 1 ]; then
+      echo "${error_message}:"
+
+      for namespace in ${namespaces}; do
+        echo "     $(basename "${namespace}")"
+      done
+
+      exit 1
+    else
+      echo "${namespaces}"
+    fi
+  fi
+}
+
+function commands() {
+  local -r namespace="$(find_namespace "${1}")"
+
+  # shellcheck disable=SC2038  # Use -print0/-0 or find -exec + to allow for non-alphanumeric filenames
+  find "${namespace}" \
+    -maxdepth 1 \
+    ! -path "${namespace}" \
+    -type f \
+    \( -perm -u=x -o -perm -g=x -o -perm -o=x \) \
+    | xargs -I % basename % \
+    | sort
+}
+
+function is_global_command() {
+  local -r filter="$(basename "${1}")"
+
+  find "${SPHYNXC_DIR}" \
+    -maxdepth 1 \
+    ! -path "${SPHYNXC_DIR}" \
+    ! -path '*?/.*?' \
+    -a -type f -a -name "${filter}*" -a \( -perm -u=x -o -perm -g=x -o -perm -o=x \) \
+    | grep -E '.*' &>/dev/null
+}
+
+function print_file() {
+  cat "${SPHYNX_EXEC}"
+}
+
+function print_help() {
+  print_file | grep '[#]#?' | cut -c 5-
+}
+
+function print_namespaces() {
+  echo -e 'Available namespaces:\n'
+  all_namespaces | xargs -I % echo "> %"
+}
+
+function print_commands() {
+  local -r n_arguments="${#}"
+  echo -e 'Available commands:'
+
+  if [ ${n_arguments} -eq 0 ]; then
+    for namespace in $(all_namespaces); do
+      echo -e "\n> ${namespace}"
+      commands "${namespace}" | xargs -I % echo "|-- %"
+    done
+  elif [ ${n_arguments} -eq 1 ]; then
+    echo && commands "${1}" | xargs -I % echo "|-- %"
+  else
+    echo "!!! Wrong number of arguments supplied. Expected (0|1) but received (${n_arguments})" >&2
+    exit 1
+  fi
+}
+
+function check_arguments() {
+  local -r n_arguments="${#}"
+
+  if [ ${n_arguments} -lt 1 ] || [[ ${*} == '--help' ]]; then
+    print_help
+    exit 0
+  fi
+
+  if [[ ${*} == *'--github'* ]]; then
+    if [ ${n_arguments} = 1 ]; then
+      echo '!!! The flag "--github" cannot be used with the base command' >&2
+      exit 1
+    elif [ ${n_arguments} = 2 ] && ! is_global_command "${1}"; then
+      echo '!!! The flag "--github" cannot be used with namespaces' >&2
+      exit 1
+    fi
+  fi
+
+  if [[ ${*} == *'--raw'* ]]; then
+    if [ ${n_arguments} = 1 ]; then
+      print_file
+      exit 0
+    elif [ ${n_arguments} = 2 ] && ! is_global_command "${1}"; then
+      echo '!!! The flag "--raw" cannot be used with namespaces' >&2
+      exit 1
+    fi
+  fi
+
+  if [[ ${*} == *'--commands'* ]]; then
+    if [ ${n_arguments} = 1 ]; then
+      print_commands
+      exit 0
+    else
+      echo '!!! The flag "--commands" can only be used with the base command' >&2
+      echo "!!! i.e ${SPHYNX_EXEC_NAME} --commands" >&2
+      exit 1
+    fi
+  fi
+
+  if [[ ${*} == *'--namespaces'* ]]; then
+    if [ ${n_arguments} = 1 ]; then
+      print_namespaces
+      exit 0
+    else
+      echo '!!! The flag "--namespaces" can only be used with the base command' >&2
+      echo "!!! i.e ${SPHYNX_EXEC_NAME} --namespaces" >&2
+      exit 1
+    fi
+  fi
+
+  local -r filter="${1}"
+  local -r namespace="$(find_namespace "${filter}")"
+
+  if [ -z "${namespace}" ]; then
+    echo -e "!!! No namespace matches for \"${filter}\".\n" >&2
+    print_namespaces >&2
+    exit 1
+  fi
+
+  if [[ ${namespace} == "${error_message}"* ]]; then
+    echo -e "!!! More than one match found for \"${filter}\".\n" >&2
+    echo "${namespace}" >&2
+    exit 1
+  fi
+
+  if [ "${n_arguments}" -lt 2 ] && [ ! -f "${namespace}" ]; then
+    print_commands "${filter}" >&2
+    exit 1
+  fi
+
+  if [ ! -f "${namespace}/${2}" ] && [ ! -f "${namespace}" ]; then
+    local -r pretty_namespace="$(basename "${namespace}")"
+    echo -e "!!! The command \"${2}\" does not exist at namespace **${pretty_namespace}**.\n" >&2
+
+    print_commands "${filter}" >&2
+    exit 1
+  fi
+}
+
+function main() {
+  check_arguments "${@}"
+
+  local -r namespace="$(find_namespace "${1}")"
+
+  if [ -f "${namespace}" ]; then
+    local -r cmd="${namespace}"
+    local -r shift='2'
+  else
+    local -r cmd="${namespace}/${2}"
+    local -r shift='3'
+  fi
+
+  export SPHYNXN_DIR="${namespace}"
+
+  exec "${cmd}" "${@:shift}"
+}
+
+## Running
+
+main "${@}"

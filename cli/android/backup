@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNXC_DIR}/.internal/all.sh"
+source "${SPHYNXN_DIR}/shared/shared.sh"
+source "${SPHYNXN_DIR}/core/backup.sh"
+
+##? Create and restore backups
+##?
+##? Usage:
+##?     backup (--app <package-filter> | --all | --restore <file-path>)
+##?
+##? Options:
+##?     --app <package-filter>  Creates a backup file of the given app data
+##?     --all  Creates a backup with all data available on device
+##?     -r --restore <file-path>  Restores a backup file in the current device
+##?
+##? Examples:
+##?     backup --app "whatsapp"
+##?     backup --app "com.twitter.android"
+##?     backup --all
+##?     backup --restore "spotify.adb"
+
+sx::parse_arguments "${@}"
+
+if [ -n "${app:-}" ]; then
+  sx::android::backup::package "${app}"
+elif ${all:-false}; then
+  sx::android::backup::all
+elif [ -n "${restore:-}" ]; then
+  sx::android::backup::restore "${restore}"
+else
+  sx::error::illegal_arguments "${*}"
+fi

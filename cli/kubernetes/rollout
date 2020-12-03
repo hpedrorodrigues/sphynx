@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNXC_DIR}/.internal/all.sh"
+source "${SPHYNXN_DIR}/shared/shared.sh"
+source "${SPHYNXN_DIR}/core/rollout.sh"
+
+##? Manage the rollout of a resource
+##?
+##? Usage:
+##?     rollout (status | restart | history) [<query>] [--namespace <name> | --all-namespaces]
+##?
+##? Options:
+##?     -n --namespace <name>  The namespace scope for requests
+##?     -a --all-namespaces  All namespaces
+##?
+##? Examples:
+##?     rollout status
+##?     rollout history --all-namespaces
+##?     rollout restart --namespace ingress-controller
+
+sx::parse_arguments "${@}"
+
+if ${status:-false}; then
+  sx::k8s::rollout::status "${query:-}" "${namespace:-}" "${all_namespaces:-false}"
+elif ${restart:-false}; then
+  sx::k8s::rollout::restart "${query:-}" "${namespace:-}" "${all_namespaces:-false}"
+elif ${history:-false}; then
+  sx::k8s::rollout::history "${query:-}" "${namespace:-}" "${all_namespaces:-false}"
+else
+  sx::error::illegal_arguments "${*}"
+fi

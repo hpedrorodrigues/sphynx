@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+### Bash customizations
+
+# https://www.gnu.org/software/bash/manual/html_node/Bash-Variables.html
+export HISTSIZE='32768'
+export HISTFILESIZE="${HISTSIZE}"
+export HISTIGNORE='ls:history:cd:cd -:* --help: *:pwd:exit'
+export HISTCONTROL='ignoreboth:erasedups'
+
+# Case-insensitive globbing (used in pathname expansion)
+shopt -s nocaseglob
+# Append to the Bash history file, rather than overwriting it
+shopt -s histappend
+# Autocorrect typos in path names when using `cd`
+shopt -s cdspell
+
+### Loading external scripts
+
+#|> Fuzzy Finder
+export FZF_BIN="${HOME}/.fzf.bash"
+
+[ -f "${FZF_BIN}" ] && source "${FZF_BIN}"
+
+#|> Sphynx
+export SPHYNX_DIR="${HOME}/Code/Personal/sphynx"
+
+echo "${PATH}" | grep "${SPHYNX_DIR}" -v -q \
+  && export PATH="${PATH}:${SPHYNX_DIR}"
+
+[ -f "${SPHYNX_DIR}/cli/.internal/completion/sx.bash" ] \
+  && source "${SPHYNX_DIR}/cli/.internal/completion/sx.bash"
+
+#|> Startship
+hash starship 2>/dev/null && eval "$(starship init bash)"

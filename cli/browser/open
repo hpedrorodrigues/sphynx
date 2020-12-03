@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNXC_DIR}/.internal/all.sh"
+source "${SPHYNXN_DIR}/shared/shared.sh"
+source "${SPHYNXN_DIR}/core/open.sh"
+
+##? Open resources using the available browser
+##?
+##? Usage:
+##?     open [<any>...]
+##?
+##? Examples:
+##?     open .
+##?     open "https://google.com"
+
+sx::parse_arguments "${@}"
+
+sx::browser::open "${any[@]:-.}"

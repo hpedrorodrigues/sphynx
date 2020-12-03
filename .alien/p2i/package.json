@@ -1,0 +1,11 @@
+{
+  "name": "p2i",
+  "version": "1.0.0",
+  "description": "A utility script to take screenshots from web pages",
+  "main": "index.js",
+  "author": "Pedro Rodrigues <github.com/hpedrorodrigues>",
+  "dependencies": {
+    "puppeteer": "^5.5.0",
+    "yargs": "^16.1.1"
+  }
+}

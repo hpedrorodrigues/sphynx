@@ -1,0 +1,20 @@
+- name: Detecting - Mac App Store CLI is available
+  stat:
+    path: /usr/local/bin/mas
+  register: mas
+
+- name: Getting all installed MAS apps
+  command: mas list
+  register: installed_applications
+  check_mode: no
+  changed_when: false
+  when:
+    - mas.stat.exists
+
+- name: Installing MAS apps
+  command: mas install '{{ item.id | default(item) }}'
+  loop: "{{ mas_applications }}"
+  when:
+    - mas.stat.exists
+    - mas_applications | count > 0
+    - item.id | default(item) | string not in installed_applications.stdout

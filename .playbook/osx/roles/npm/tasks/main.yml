@@ -1,0 +1,29 @@
+- name: Detecting - Node Package Manager is available
+  stat:
+    path: /usr/local/bin/npm
+  register: npm
+
+- name: Updating NPM
+  npm:
+    name: npm
+    state: present
+    global: yes
+  when: npm.stat.exists
+
+- name: Getting all installed NPM packages
+  command: npm list -g --depth=0
+  register: installed_packages
+  check_mode: no
+  changed_when: false
+  when: npm.stat.exists
+
+- name: Installing NPM packages
+  npm:
+    name: "{{ item }}"
+    state: present
+    global: yes
+  with_items: "{{ npm_packages }}"
+  when:
+    - npm.stat.exists
+    - npm_packages | count > 0
+    - item not in installed_packages.stdout

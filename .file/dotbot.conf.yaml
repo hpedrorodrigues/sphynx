@@ -1,0 +1,62 @@
+# This file should not be called directly but using the sphynx cli
+- defaults:
+    link:
+      relink: true
+      create: true
+      force: true
+- clean: ["~"]
+- clean:
+    ${HOME}/.sphynx:
+      force: true
+- link:
+    ${HOME}/.common_bashrc: ${SPHYNX_DIR}/.file/common/.common_bashrc
+    ${HOME}/.common_zshrc: ${SPHYNX_DIR}/.file/common/.common_zshrc
+    ${HOME}/.commonrc: ${SPHYNX_DIR}/.file/common/.commonrc
+    ${HOME}/.curlrc: ${SPHYNX_DIR}/.file/common/.curlrc
+    ${HOME}/.editorconfig: ${SPHYNX_DIR}/.file/common/.editorconfig
+    ${HOME}/.gitattributes: ${SPHYNX_DIR}/.file/common/.gitattributes
+    ${HOME}/.gitconfig: ${SPHYNX_DIR}/.file/common/.gitconfig
+    ${HOME}/.gitignore_global: ${SPHYNX_DIR}/.file/common/.gitignore_global
+    ${HOME}/.htoprc: ${SPHYNX_DIR}/.file/common/.htoprc
+    ${HOME}/.mongorc.js: ${SPHYNX_DIR}/.file/common/.mongorc.js
+    ${HOME}/.profile: ${SPHYNX_DIR}/.file/common/.profile
+    ${HOME}/.screenrc: ${SPHYNX_DIR}/.file/common/.screenrc
+    ${HOME}/.tmux.conf: ${SPHYNX_DIR}/.file/common/.tmux.conf
+    ${HOME}/.vimrc: ${SPHYNX_DIR}/.file/common/.vimrc
+    ${HOME}/.wgetrc: ${SPHYNX_DIR}/.file/common/.wgetrc
+    ${HOME}/.sphynx/alien: ${SPHYNX_DIR}/.file/common/alien
+    ${HOME}/.sphynx/common_aliases: ${SPHYNX_DIR}/.file/common/common_aliases
+    ${HOME}/.sphynx/common_functions: ${SPHYNX_DIR}/.file/common/common_functions
+    ${HOME}/.sphynx/fs: ${SPHYNX_DIR}/.file/common/fs
+    ${HOME}/.sphynx/git: ${SPHYNX_DIR}/.file/common/git
+    ${HOME}/.sphynx/kubernetes: ${SPHYNX_DIR}/.file/common/kubernetes
+    ${HOME}/.sphynx/network: ${SPHYNX_DIR}/.file/common/network
+- link:
+    ${HOME}/.bashrc:
+      if: '[ "$(uname)" = "Darwin" ]'
+      path: ${SPHYNX_DIR}/.file/os/osx/.bashrc
+    ${HOME}/.zshrc:
+      if: '[ "$(uname)" = "Darwin" ]'
+      path: ${SPHYNX_DIR}/.file/os/osx/.zshrc
+    ${HOME}/.zshenv:
+      if: '[ "$(uname)" = "Darwin" ]'
+      path: ${SPHYNX_DIR}/.file/os/osx/.zshenv
+    ${HOME}/.sphynx/aliases:
+      if: '[ "$(uname)" = "Darwin" ]'
+      path: ${SPHYNX_DIR}/.file/os/osx/aliases
+- link:
+    ${HOME}/.bashrc:
+      if: '[ "$(uname)" = "Linux" ]'
+      path: ${SPHYNX_DIR}/.file/os/linux/.bashrc
+    ${HOME}/.zshrc:
+      if: '[ "$(uname)" = "Linux" ]'
+      path: ${SPHYNX_DIR}/.file/os/linux/.zshrc
+    ${HOME}/.zshenv:
+      if: '[ "$(uname)" = "Linux" ]'
+      path: ${SPHYNX_DIR}/.file/os/linux/.zshenv
+    ${HOME}/.sphynx/aliases:
+      if: '[ "$(uname)" = "Linux" ]'
+      path: ${SPHYNX_DIR}/.file/os/linux/aliases
+    ${HOME}/.xsessionrc:
+      if: '[ "$(uname)" = "Linux" ]'
+      path: ${SPHYNX_DIR}/.file/os/linux/.xsessionrc

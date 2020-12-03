@@ -1,0 +1,21 @@
+- name: Detecting - Fuzzy Finder is available
+  stat:
+    path: "{{ linuxbrew_binary_dir }}/fzf"
+  register: fzf
+
+- name: Installing Fuzzy Finder package
+  command: "{{ linuxbrew_binary_dir }}/brew install fzf"
+  register: new_fzf
+  when:
+    - not fzf.stat.exists
+
+- name: Detecting - Fuzzy Finder requirements are installed (.fzf.bash and .fzf.zsh)
+  stat:
+    path: "{{ ansible_env.HOME }}/.fzf.zsh"
+  register: fzf_requirements
+
+- name: Installing Fuzzy Finder requirements
+  shell: "$({{ linuxbrew_binary_dir }}/brew --prefix)/opt/fzf/install"
+  when:
+    - fzf.stat.exists or new_fzf.rc == 0
+    - not fzf_requirements.stat.exists

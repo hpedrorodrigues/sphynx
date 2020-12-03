@@ -1,0 +1,18 @@
+- name: Creating VIM configuration directories
+  file: "path={{ item }} mode=0755 state=directory"
+  with_items:
+    - "{{ ansible_env.HOME }}/.vim/backups"
+    - "{{ ansible_env.HOME }}/.vim/swaps"
+    - "{{ ansible_env.HOME }}/.vim/undo"
+
+- name: Detecting - Vundle is available
+  stat:
+    path: "{{ ansible_env.HOME }}/.vim/bundle/Vundle.vim"
+  register: vundle
+
+- name: Installing Vundle plugins
+  command: vim +PluginInstall +qall
+  register: vundle_plugins
+  changed_when: vundle_plugins.rc != 0
+  when:
+    - vundle.stat.exists

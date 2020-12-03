@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNXC_DIR}/.internal/all.sh"
+source "${SPHYNXN_DIR}/shared/shared.sh"
+source "${SPHYNXN_DIR}/core/tmux.sh"
+
+##? tmux utility functions
+##?
+##? Usage:
+##?     tmux (colors | ls | new [<session_name>] | attach [<session_name>] | force-attach [<session_name>] | kill [<session_name>] | kill-all)
+##?
+##? Examples:
+##?     tmux colors
+##?     tmux ls
+##?     tmux new
+##?     tmux new mynewsession
+##?     tmux attach
+##?     tmux attach myoldsession
+##?     tmux force-attach
+##?     tmux force-attach myoldsession
+##?     tmux kill
+##?     tmux kill mysession
+
+sx::parse_arguments "${@}"
+
+if ${colors:-false}; then
+  sx::terminal::tmux::colors
+elif ${ls:-false}; then
+  sx::terminal::tmux::ls
+elif ${new:-false}; then
+  sx::terminal::tmux::new "${session_name:-}"
+elif ${attach:-false}; then
+  sx::terminal::tmux::attach "${session_name:-}"
+elif ${force_attach:-false}; then
+  sx::terminal::tmux::force_attach "${session_name:-}"
+elif ${kill_all:-false}; then
+  sx::terminal::tmux::kill_all
+elif ${kill:-false}; then
+  sx::terminal::tmux::kill "${session_name:-}"
+else
+  sx::error::illegal_arguments "${*}"
+fi

@@ -1,0 +1,17 @@
+## Folders
+
+.idea
+
+
+## Files
+
+*.iml
+*.pyc
+*.ab
+*.adb
+*.apk
+*.DS_Store
+*.retry
+
+nohup.out
+.uuid

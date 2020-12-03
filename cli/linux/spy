@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNXC_DIR}/.internal/all.sh"
+source "${SPHYNXN_DIR}/shared/shared.sh"
+source "${SPHYNXN_DIR}/core/spy.sh"
+
+##? Spy processes
+##?
+##? Usage:
+##?     spy (--namespaces | --syscalls)
+##?
+##? Options:
+##?     -n --namespaces  Run a shell instance with namespaces of other processes
+##?     -s --syscalls  See what system calls a process is running
+##?
+##? Examples:
+##?     spy --namespaces
+##?     spy --syscalls
+
+sx::parse_arguments "${@}"
+
+if ${namespaces:-false}; then
+  sx::spy::namespaces
+elif ${syscalls:-false}; then
+  sx::spy::syscalls
+else
+  sx::error::illegal_arguments "${*}"
+fi

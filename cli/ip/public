@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+set -o nounset
+set -o pipefail
+
+source "${SPHYNXC_DIR}/.internal/all.sh"
+source "${SPHYNXN_DIR}/shared/shared.sh"
+source "${SPHYNXN_DIR}/core/public.sh"
+
+##? Print public ip
+##?
+##? Usage:
+##?     public
+##?
+##? Examples:
+##?     public
+
+sx::parse_arguments "${@}"
+
+sx::ip::public

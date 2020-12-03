@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNXC_DIR}/.internal/all.sh"
+source "${SPHYNXN_DIR}/shared/shared.sh"
+source "${SPHYNXN_DIR}/core/get.sh"
+
+##? Print the most important information about the selected resource
+##?
+##? Usage:
+##?     get [<query>] [--namespace <name> | --all-namespaces] [--output <format> --no-color]
+##?
+##? Options:
+##?     -n --namespace <name>  The namespace scope for requests
+##?     -a --all-namespaces  All namespaces
+##?     -o --output=(json | yaml)  The output format [default: yaml]
+##?     --no-color  Do not print ANSI escape codes for colors [default: false]
+##?
+##? Examples:
+##?     get
+##?     get thanos
+##?     get --namespace kube-system --output json
+##?     get --all-namespaces
+
+sx::parse_arguments "${@}"
+
+sx::k8s::get \
+  "${query:-}" \
+  "${namespace:-}" \
+  "${all_namespaces:-false}" \
+  "${output:-yaml}" \
+  "${no_color:-false}"

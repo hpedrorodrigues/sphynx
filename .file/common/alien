@@ -1,0 +1,156 @@
+#!/usr/bin/env bash
+
+### External images
+
+export CONFLUENT_VERSION=${CONFLUENT_VERSION:-5.5.2}
+
+# i.e kcli kafka-topics --bootstrap-server <host>:<port> --list
+function kcli() {
+  local -r tool_name="${FUNCNAME[0]:-${funcstack[1]}}"
+  local -r random_port="$(shuf -i 2000-65000 -n 1)"
+
+  local -r state="$(docker inspect --format '{{.State.Running}}' "${tool_name}" 2>/dev/null)"
+  if [ "${state}" = 'true' ]; then
+    docker exec --interactive --tty "${tool_name}" "${@}"
+    return 0
+  fi
+
+  docker run \
+    --rm \
+    --name "${tool_name}" \
+    --interactive \
+    --publish "${random_port}:9092" \
+    "confluentinc/cp-kafka:${CONFLUENT_VERSION}" "${@}"
+}
+
+function zcli() {
+  local -r tool_name="${FUNCNAME[0]:-${funcstack[1]}}"
+  local -r random_port="$(shuf -i 2000-65000 -n 1)"
+
+  local -r state="$(docker inspect --format '{{.State.Running}}' "${tool_name}" 2>/dev/null)"
+  if [ "${state}" = 'true' ]; then
+    docker exec --interactive --tty "${tool_name}" zookeeper-shell "${@}"
+    return 0
+  fi
+
+  docker run \
+    --rm \
+    --name "${tool_name}" \
+    --interactive \
+    --publish "${random_port}:2181" \
+    --env "ZOOKEEPER_CLIENT_PORT=${random_port}" \
+    --env "ZOOKEEPER_TICK_TIME=2000" \
+    "confluentinc/cp-zookeeper:${CONFLUENT_VERSION}" zookeeper-shell "${@}"
+}
+
+### Internal images
+
+export ALIEN_REPOSITORY="${ALIEN_REPOSITORY:-hpedrorodrigues/alien}"
+
+function prettier() {
+  local -r tool_name="${FUNCNAME[0]:-${funcstack[1]}}"
+  local -r image="${ALIEN_REPOSITORY}:${tool_name}"
+
+  local -r state="$(docker inspect --format '{{.State.Running}}' "${tool_name}" 2>/dev/null)"
+  if [ "${state}" = 'true' ]; then
+    docker exec --interactive --tty "${tool_name}" "${@}"
+    return 0
+  fi
+
+  docker run \
+    --name "${tool_name}" \
+    --rm \
+    --interactive \
+    --volume "${PRETTIER_DIR:-${PWD}}:/mnt" \
+    "${image}" "${@}"
+}
+
+function eq() {
+  local -r tool_name="${FUNCNAME[0]:-${funcstack[1]}}"
+  local -r image="${ALIEN_REPOSITORY}:${tool_name}"
+
+  local -r state="$(docker inspect --format '{{.State.Running}}' "${tool_name}" 2>/dev/null)"
+  if [ "${state}" = 'true' ]; then
+    docker exec --interactive --tty "${tool_name}" "${@}"
+    return 0
+  fi
+
+  docker run \
+    --name "${tool_name}" \
+    --rm \
+    --interactive \
+    "${image}" "${@}"
+}
+
+function hadolint() {
+  local -r tool_name="${FUNCNAME[0]:-${funcstack[1]}}"
+  local -r image="${ALIEN_REPOSITORY}:${tool_name}"
+
+  local -r state="$(docker inspect --format '{{.State.Running}}' "${tool_name}" 2>/dev/null)"
+  if [ "${state}" = 'true' ]; then
+    docker exec --interactive --tty "${tool_name}" "${@}"
+    return 0
+  fi
+
+  docker run \
+    --name "${tool_name}" \
+    --rm \
+    --interactive \
+    --volume "${HADOLINT_DIR:-${PWD}}:/mnt" \
+    "${image}" "${@}"
+}
+
+function shellcheck() {
+  local -r tool_name="${FUNCNAME[0]:-${funcstack[1]}}"
+  local -r image="${ALIEN_REPOSITORY}:${tool_name}"
+
+  local -r state="$(docker inspect --format '{{.State.Running}}' "${tool_name}" 2>/dev/null)"
+  if [ "${state}" = 'true' ]; then
+    docker exec --interactive --tty "${tool_name}" "${@}"
+    return 0
+  fi
+
+  docker run \
+    --name "${tool_name}" \
+    --rm \
+    --interactive \
+    --env SHELLCHECK_OPTS \
+    --volume "${SHELLCHECK_DIR:-${PWD}}:/mnt" \
+    "${image}" "${@}"
+}
+
+function shfmt() {
+  local -r tool_name="${FUNCNAME[0]:-${funcstack[1]}}"
+  local -r image="${ALIEN_REPOSITORY}:${tool_name}"
+
+  local -r state="$(docker inspect --format '{{.State.Running}}' "${tool_name}" 2>/dev/null)"
+  if [ "${state}" = 'true' ]; then
+    docker exec --interactive --tty "${tool_name}" -i 2 -ci -bn "${@}"
+    return 0
+  fi
+
+  docker run \
+    --name "${tool_name}" \
+    --rm \
+    --interactive \
+    --volume "${SHFMT_DIR:-${PWD}}:/mnt" \
+    "${image}" -i 2 -ci -bn "${@}"
+}
+
+function p2i() {
+  local -r tool_name="${FUNCNAME[0]:-${funcstack[1]}}"
+  local -r image="${ALIEN_REPOSITORY}:${tool_name}"
+
+  local -r state="$(docker inspect --format '{{.State.Running}}' "${tool_name}" 2>/dev/null)"
+  if [ "${state}" = 'true' ]; then
+    docker exec --tty "${tool_name}" "${@}"
+    return 0
+  fi
+
+  docker run \
+    --name "${tool_name}" \
+    --rm \
+    --security-opt seccomp="${SPHYNX_DIR}/.alien/p2i/chrome.json" \
+    --volume "${P2I_DIR:-${PWD}}:/mnt" \
+    "${image}" "${@}"
+}

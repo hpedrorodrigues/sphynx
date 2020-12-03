@@ -1,0 +1,36 @@
+- name: Detecting - Leiningen is available
+  stat:
+    path: "{{ lein_binary }}"
+  register: lein
+
+- name: Creating Leiningen configuration directory
+  file:
+    path: "{{ lein_installation_dir }}"
+    state: directory
+  when:
+    - not lein.stat.exists
+
+- name: Installing Leiningen
+  get_url:
+    url: https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein
+    dest: "{{ lein_installation_path }}"
+    mode: 0755
+  register: new_lein
+  when:
+    - not lein.stat.exists
+
+- name: Creating symbolic link to Leiningen
+  become: true
+  file:
+    src: "{{ lein_installation_path }}"
+    dest: "{{ lein_binary }}"
+    state: link
+  when:
+    - not lein.stat.exists and new_lein is success
+
+- name: Updating Leiningen
+  command: "{{ lein_binary }} upgrade"
+  register: lein_update
+  changed_when: lein_update.rc != 0
+  when:
+    - lein.stat.exists or new_lein is success

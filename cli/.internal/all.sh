@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+# Loading internal files
+
+readonly library_path="${SPHYNXC_DIR}/.internal/library"
+
+source "${library_path}/error.sh"
+source "${library_path}/fs.sh"
+source "${library_path}/general.sh"
+source "${library_path}/git.sh"
+source "${library_path}/github.sh"
+source "${library_path}/logging.sh"
+source "${library_path}/network.sh"
+source "${library_path}/os.sh"
+source "${library_path}/osx.sh"
+source "${library_path}/repl.sh"
+source "${library_path}/requirements.sh"
+source "${library_path}/sphynx.sh"
+source "${library_path}/string.sh"
+source "${library_path}/formatter.sh"
+source "${library_path}/fuzzyfinder.sh"
+
+# Loading core functions for global commands
+
+readonly global_commands_path="${SPHYNXC_DIR}/.internal/global"
+
+source "${global_commands_path}/fmt.sh"
+source "${global_commands_path}/lint.sh"
+source "${global_commands_path}/prompt.sh"
+source "${global_commands_path}/test.sh"

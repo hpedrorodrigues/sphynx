@@ -1,0 +1,67 @@
+#!/usr/bin/env bash
+
+### Zsh customizations
+
+# http://zsh.sourceforge.net/Doc/Release/Options.html
+setopt HIST_IGNORE_SPACE
+setopt HIST_IGNORE_ALL_DUPS
+setopt HIST_NO_STORE
+# http://zsh.sourceforge.net/Doc/Release/Parameters.html#Parameters-Used-By-The-Shell
+export HISTSIZE=32768
+export SAVEHIST=${HISTSIZE}
+export HISTFILE="${HOME}/.zsh_history"
+export HISTORY_IGNORE='(ls|history|cd|cd -|* --help| *|pwd|exit)'
+
+### Zsh completions
+# Reference: https://github.com/ohmyzsh/ohmyzsh/blob/master/lib/completion.zsh
+
+zmodload -i zsh/complist
+
+export WORDCHARS=''
+
+# http://zsh.sourceforge.net/Doc/Release/Options.html
+unsetopt MENU_COMPLETE
+setopt AUTO_MENU
+setopt COMPLETE_IN_WORD
+setopt ALWAYS_TO_END
+
+# should this be in keybindings?
+bindkey -M menuselect '^o' accept-and-infer-next-history
+zstyle ':completion:*:*:*:*:*' menu select
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|=*' 'l:|=* r:|=*'
+zstyle ':completion:*' special-dirs true
+zstyle ':completion:*' list-colors ''
+zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#) ([0-9a-z-]#)*=01;34=0=01'
+
+### Loading external scripts
+
+#|> Fuzzy Finder
+export FZF_BIN="${HOME}/.fzf.zsh"
+
+[ -f "${FZF_BIN}" ] && source "${FZF_BIN}"
+
+#|> Go
+export GOPATH="${HOME}/.go"
+export GO_WORKSPACE="${GOPATH}/src"
+
+[ -d "${GOPATH}" ] && export PATH="${PATH}:${GOPATH}/bin"
+
+#|> Sphynx
+export SPHYNX_DIR="${HOME}/Code/Personal/sphynx"
+
+echo "${PATH}" | grep "${SPHYNX_DIR}" -v -q \
+  && export PATH="${PATH}:${SPHYNX_DIR}"
+
+# shellcheck disable=SC2206  # Quote to prevent word splitting/globbing
+fpath=("${SPHYNX_DIR}/cli/.internal/completion" ${fpath})
+
+#|> Startship
+hash starship 2>/dev/null && eval "$(starship init zsh)"
+
+### Directory shortcuts
+
+# i.e cd ~p/sphynx
+# Reference: http://zsh.sourceforge.net/Guide
+hash -d p="${HOME}/Code/Personal"
+hash -d o="${HOME}/Code/Others"
+hash -d k="${HOME}/Code/Kubernetes"

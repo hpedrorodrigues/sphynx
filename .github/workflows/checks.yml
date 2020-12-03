@@ -1,0 +1,35 @@
+name: Checks
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+jobs:
+  lint:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+    steps:
+      - name: Repository checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+      - name: Lint
+        run: ./sx lint
+        shell: bash
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+    steps:
+      - name: Repository checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+      - name: Test
+        run: ./sx test
+        shell: bash

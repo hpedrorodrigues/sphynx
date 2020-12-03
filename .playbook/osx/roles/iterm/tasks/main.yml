@@ -1,0 +1,36 @@
+- name: Detecting - iTerm is available
+  stat:
+    path: /Applications/iTerm.app
+  register: iterm
+
+- name: Installing iTerm application
+  homebrew_cask:
+    name: "iterm2"
+    state: present
+  register: new_iterm
+  when:
+    - not iterm.stat.exists
+
+- name: Configuring iTerm to use custom preferences
+  osx_defaults:
+    domain: com.googlecode.iterm2.plist
+    key: LoadPrefsFromCustomFolder
+    type: bool
+    value: true
+    state: present
+  notify:
+    - Restart iTerm
+  when:
+    - iterm.stat.exists or new_iterm.rc == 0
+
+- name: Configuring iTerm to load preferences from Sphynx directory
+  osx_defaults:
+    domain: com.googlecode.iterm2.plist
+    key: PrefsCustomFolder
+    type: string
+    value: "{{ applications_directory }}/osx/iterm"
+    state: present
+  notify:
+    - Restart iTerm
+  when:
+    - iterm.stat.exists or new_iterm.rc == 0

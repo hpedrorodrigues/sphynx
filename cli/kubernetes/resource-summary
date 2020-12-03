@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNXC_DIR}/.internal/all.sh"
+source "${SPHYNXN_DIR}/shared/shared.sh"
+source "${SPHYNXN_DIR}/core/resource-summary.sh"
+
+##? Print a resource summary for pods or nodes
+##?
+##? Usage:
+##?     resource-summary (pods [<query>] [--namespace <name> | --all-namespaces] | nodes [<query>])
+##?
+##? Options:
+##?     -n --namespace <name>  The namespace scope for requests
+##?     -a --all-namespaces  All namespaces
+##?
+##? Examples:
+##?     resource-summary
+
+sx::parse_arguments "${@}"
+
+if ${pods:-false}; then
+  sx::k8s::pods::resource_summary "${query:-}" "${namespace:-}" "${all_namespaces:-false}"
+elif ${nodes:-false}; then
+  sx::k8s::nodes::resource_summary "${query:-}"
+else
+  sx::error::illegal_arguments "${*}"
+fi

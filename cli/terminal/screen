@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNXC_DIR}/.internal/all.sh"
+source "${SPHYNXN_DIR}/shared/shared.sh"
+source "${SPHYNXN_DIR}/core/screen.sh"
+
+##? screen utility functions
+##?
+##? Usage:
+##?     screen (ls | new [<session_name>] | attach [<session_name>] | force-attach [<session_name>] | kill [<session_name>] | kill-all)
+##?
+##? Examples:
+##?     screen ls
+##?     screen new
+##?     screen new mynewsession
+##?     screen attach
+##?     screen attach myoldsession
+##?     screen force-attach
+##?     screen force-attach myoldsession
+##?     screen kill
+##?     screen kill mysession
+
+sx::parse_arguments "${@}"
+
+if ${ls:-false}; then
+  sx::terminal::screen::ls
+elif ${new:-false}; then
+  sx::terminal::screen::new "${session_name:-}"
+elif ${attach:-false}; then
+  sx::terminal::screen::attach "${session_name:-}"
+elif ${force_attach:-false}; then
+  sx::terminal::screen::force_attach "${session_name:-}"
+elif ${kill_all:-false}; then
+  sx::terminal::screen::kill_all
+elif ${kill:-false}; then
+  sx::terminal::screen::kill "${session_name:-}"
+else
+  sx::error::illegal_arguments "${*}"
+fi

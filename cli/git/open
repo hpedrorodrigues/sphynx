@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNXC_DIR}/.internal/all.sh"
+source "${SPHYNXN_DIR}/shared/shared.sh"
+source "${SPHYNXN_DIR}/core/open.sh"
+
+##? Open GIT repositories on browser
+##?
+##? Usage:
+##?     open [<file-path>]
+##?
+##? Examples:
+##?     open .
+##?     open "resources/test.txt"
+
+sx::parse_arguments "${@}"
+
+sx::git::open "${file_path:-.}"

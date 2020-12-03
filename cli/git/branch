@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNXC_DIR}/.internal/all.sh"
+source "${SPHYNXN_DIR}/shared/shared.sh"
+source "${SPHYNXN_DIR}/core/branch.sh"
+
+##? Manage branches
+##?
+##? Usage:
+##?     branch (--clear | --delete <name> | --switch)
+##?
+##? Options:
+##?     -c --clear  Delete all local branches, except the current and the master/main branches
+##?     -d --delete <name>  Deletes the given branch, both remote and local version
+##?     -s --switch  Switch to another branch interactively
+##?
+##? Examples:
+##?     branch -d test
+
+sx::parse_arguments "${@}"
+
+if ${clear:-false}; then
+  sx::git::branch::delete_all_local
+elif [ -n "${delete:-}" ]; then
+  sx::git::branch::delete "${delete}"
+elif ${switch:-false}; then
+  sx::git::branch::switch
+else
+  sx::error::illegal_arguments "${*}"
+fi

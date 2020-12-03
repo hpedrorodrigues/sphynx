@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+# Available keys: defaults read com.apple.appstore
+
+readonly domain='com.apple.SoftwareUpdate'
+readonly commerce_domain='com.apple.commerce'
+
+
+# Enable the automatic update check
+defaults write ${domain} AutomaticCheckEnabled -bool true
+
+# Check for software updates daily, not just once per week
+defaults write ${domain} ScheduleFrequency -int 1
+
+# Download newly available updates in background
+defaults write ${domain} AutomaticDownload -int 1
+
+# Install System data files & security updates
+defaults write ${domain} CriticalUpdateInstall -int 1
+
+# Automatically download apps purchased on other Macs
+defaults write ${domain} ConfigDataInstall -int 1
+
+# Turn on app auto-update
+defaults write ${commerce_domain} AutoUpdate -bool true
+
+# Allow the App Store to reboot machine on macOS updates
+defaults write ${commerce_domain} AutoUpdateRestartRequired -bool true

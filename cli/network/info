@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNXC_DIR}/.internal/all.sh"
+source "${SPHYNXN_DIR}/shared/shared.sh"
+source "${SPHYNXC_DIR}/ip/core/gateway.sh"
+source "${SPHYNXC_DIR}/ip/core/private.sh"
+source "${SPHYNXC_DIR}/ip/core/public.sh"
+source "${SPHYNXN_DIR}/core/info.sh"
+
+##? Print details about the current network
+##?
+##? Usage:
+##?     info
+##?
+##? Examples:
+##?     info
+
+sx::parse_arguments "${@}"
+
+sx::network::info

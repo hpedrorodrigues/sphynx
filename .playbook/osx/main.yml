@@ -1,0 +1,19 @@
+- hosts: all
+  connection: local
+
+  roles:
+    - homebrew
+    - mas
+    - pip
+    - npm
+    - iterm
+    - fuzzy-finder
+    - vscode
+    - karabiner-elements
+    - spectacle
+    - leiningen
+    - go
+    - git
+    - dock
+    - dotfiles
+    - defaults

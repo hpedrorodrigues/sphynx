@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNXC_DIR}/.internal/all.sh"
+source "${SPHYNXN_DIR}/shared/shared.sh"
+source "${SPHYNXN_DIR}/core/kill-tabs.sh"
+
+##? Kill browser's tabs
+##?
+##? Usage:
+##?     kill-tabs (--chrome | --firefox)
+##?
+##? Options:
+##?     -c --chrome  Kill chrome processes
+##?     -f --firefox  Kill firefox processes
+##?
+##? Examples:
+##?     kill-tabs --chrome
+##?     kill-tabs --firefox
+
+sx::parse_arguments "${@}"
+
+if ${chrome:-false}; then
+  sx::browser::kill_tabs::chrome
+elif ${firefox:-false}; then
+  sx::browser::kill_tabs::firefox
+else
+  sx::error::illegal_arguments "${*}"
+fi

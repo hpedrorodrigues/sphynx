@@ -1,0 +1,54 @@
+apt_repositories:
+  - ppa:mmstick76/alacritty
+
+apt_packages:
+  - apt-transport-https
+  - aptitude
+  - autoconf
+  - autoconf-archive
+  - automake
+  - alacritty
+  - build-essential
+  - ca-certificates
+  - cmake
+  - curl
+  - espeak
+  - gettext
+  - git
+  - gnome-screensaver
+  - gnome-tweak-tool
+  - gnupg
+  - gnupg-agent
+  - gtypist
+  - htop
+  - icdiff
+  - libbz2-dev
+  - libcurl4-openssl-dev
+  - { name: libexpat-dev, installed_name: libexpat1-dev }
+  - libncurses-dev
+  - libssl-dev
+  - libtool
+  - make
+  - meld
+  - net-tools
+  - ncdu
+  - nscd
+  - openjdk-8-jdk
+  - openjdk-8-dbg
+  - openjdk-13-jdk # Tip to set the default version: sudo update-alternatives --config java
+  - openjdk-13-dbg # Java runtime based on OpenJDK (debugging symbols)
+  - python-dev
+  - ruby
+  - screen
+  - sipcalc
+  - software-properties-common
+  - sshpass
+  - steam-installer
+  - subnetcalc
+  - tmux
+  - telegram-desktop
+  - translate-shell
+  - tree
+  - vim
+  - xcape
+  - xclip

@@ -1,0 +1,3 @@
+lein_installation_dir: "{{ ansible_env.HOME }}/.lein"
+lein_installation_path: "{{ lein_installation_dir }}/lein"
+lein_binary: "/usr/bin/lein"

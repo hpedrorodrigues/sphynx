@@ -1,0 +1,10 @@
+dock_apps:
+  - "/System/Applications/Mail.app"
+  - "/Applications/Google Chrome.app"
+  - "/Applications/Firefox Developer Edition.app"
+  - "/Applications/Slack.app"
+  - "/Applications/Telegram Lite.app"
+  - "/Applications/Spotify.app"
+  - "/Applications/WhatsApp.app"
+  - "/Applications/Alacritty.app"
+  - "/System/Applications/Calendar.app"
