@@ -52,8 +52,6 @@ export ANDROID_EMULATOR_TOOLS="${ANDROID_HOME}/emulator"
 #|> Gradle
 export GRADLE_USER_HOME="${HOME}/.gradle"
 
-[ -d "${GOPATH}" ] && export PATH="${PATH}:${GOPATH}/bin"
-
 #|> Bat
 export BAT_THEME='TwoDark'
 

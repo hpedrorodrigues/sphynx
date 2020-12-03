@@ -105,6 +105,11 @@ function download_meaning_batch() {
     return 1
   fi
 
+  if ! [ -s "${file_path}" ]; then
+    echo "!!! Empty file \"${file_path}\"" >&2
+    return 1
+  fi
+
   local -r file_content="$(tr '[:upper:]' '[:lower:]' <"${file_path}")"
   echo "${file_content}" | sort -u | tee "${file_path}"
 
