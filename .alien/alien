@@ -22,7 +22,8 @@ function alien::print_help() {
 }
 
 function alien::clean_up() {
-  rm -rf "${SPHYNX_DIR}/.alien/p2i/node_modules"
+  [ -d "${SPHYNX_DIR}/.alien/p2i/node_modules" ] \
+    && rm -rf "${SPHYNX_DIR}/.alien/p2i/node_modules"
 }
 
 function alien::run_over_all() {
