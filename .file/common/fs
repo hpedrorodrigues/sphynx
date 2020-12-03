@@ -6,10 +6,6 @@ function extract() {
   sx compression extract "${*}"
 }
 
-function targz() {
-  sx compression compress -f tar.gz "${*}"
-}
-
 function mkd() {
   mkdir -p "${*}" && cd "${_}" || exit
 }
