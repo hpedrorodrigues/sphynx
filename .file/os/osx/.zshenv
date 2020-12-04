@@ -28,9 +28,6 @@ export JAVA_HOME="${JAVA8_HOME}"
 #|> Maven
 export MAVEN_OPTS='-Xms512m -Xmx1G'
 
-#|> dx
-export DX_CONFIRMATION_REQUIRED=false
-
 #|> Android
 # References:
 # - https://developer.android.com/studio/command-line/variables

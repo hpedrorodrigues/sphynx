@@ -37,11 +37,11 @@ alias emu="${ANDROID_HOME}/tools/emulator"
 alias dc='docker-compose'
 
 # Docker
-alias dd='dx delete'
-alias ds='dx ls'
-alias dl='dx logs'
-alias di='dx inspect'
-alias dex='dx exec'
+alias dd='sx docker delete'
+alias ds='sx docker ls'
+alias dl='sx docker logs'
+alias di='sx docker inspect'
+alias dex='sx docker exec'
 
 # tmux
 alias ts='sx terminal tmux ls'

@@ -4,7 +4,6 @@
 linuxbrew_packages:
   - git-lfs
   - go
-  - hpedrorodrigues/tools/dx
   - kotlin
   - kustomize
   - maven

@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNXC_DIR}/.internal/all.sh"
+source "${SPHYNXN_DIR}/shared/shared.sh"
+source "${SPHYNXN_DIR}/core/exec.sh"
+
+##? Run a command in a running container
+##?
+##? Usage:
+##?     exec
+##?
+##? Examples:
+##?     exec
+
+sx::parse_arguments "${@}"
+
+sx::docker::exec
