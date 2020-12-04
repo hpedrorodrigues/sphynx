@@ -13,11 +13,13 @@ function sx::self::prompt::find_available_commands() {
 
 function sx::self::prompt() {
   if sx::os::is_command_available 'fzf'; then
-    local -r selected="$(sx::self::prompt::find_available_commands \
-      | fzf --preview-window=right:75% --preview "${SPHYNX_EXEC} \$(echo {}) --help")"
+    local -r selected="$(
+      sx::self::prompt::find_available_commands \
+        | fzf --preview-window=right:75% --preview "${SPHYNX_EXEC} \$(echo {}) --help"
+    )"
 
     if [ -n "${selected}" ]; then
-      sx::log::info ">>= ${SPHYNX_EXEC_NAME} ${selected}\n"
+      sx::log::info "> ${SPHYNX_EXEC_NAME} ${selected}\n"
 
       # shellcheck disable=SC2086  # quote this to prevent word splitting
       exec "${SPHYNX_EXEC}" ${selected}
@@ -29,7 +31,7 @@ function sx::self::prompt() {
     mapfile -t options < <(sx::self::prompt::find_available_commands)
 
     select selected in "${options[@]}"; do
-      sx::log::info ">>= ${SPHYNX_EXEC_NAME} ${selected}\n"
+      sx::log::info "> ${SPHYNX_EXEC_NAME} ${selected}\n"
 
       # shellcheck disable=SC2086  # quote this to prevent word splitting
       exec "${SPHYNX_EXEC}" ${selected}

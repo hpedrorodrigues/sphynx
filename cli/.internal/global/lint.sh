@@ -1,31 +1,18 @@
 #!/usr/bin/env bash
 
-function sx::self::lint::print_linter_name() {
-  sx::log::info "\n>>===|> ${*}\n"
-}
+function sx::self::lint() {
+  sx::log::info '\n\n>> Running linters\n\n'
 
-function sx::self::lint::run_hadolint() {
-  sx::self::lint::print_linter_name 'Hadolint (Haskell Dockerfile Linter)'
-
-  cd "${SPHYNX_DIR}" || exit 1
-
-  while IFS= read -r -d '' dockerfile; do
-    hadolint <"${dockerfile}"
-  done < <(find . -name 'Dockerfile' -print0)
-}
-
-function sx::self::lint::run_prettier() {
-  sx::self::lint::print_linter_name 'Prettier'
-
-  cd "${SPHYNX_DIR}" || exit 1
-
-  prettier --check '*/**/*.{yml,yaml}'
-  prettier --check '*/**/*.json'
-  prettier --single-quote --check '*/**/*.js'
+  sx::self::lint::run_shfmt
+  sx::self::lint::run_shellcheck
+  sx::self::lint::run_hadolint
+  sx::self::lint::run_prettier
 }
 
 function sx::self::lint::run_shfmt() {
-  sx::self::lint::print_linter_name 'Shfmt (Shell parser, formatter and interpreter)'
+  sx::require 'shfmt'
+
+  sx::log::info '> Shfmt (Shell parser, formatter and interpreter)\n'
 
   cd "${SPHYNX_DIR}" || exit 1
 
@@ -33,7 +20,9 @@ function sx::self::lint::run_shfmt() {
 }
 
 function sx::self::lint::run_shellcheck() {
-  sx::self::lint::print_linter_name 'ShellCheck (Static analysis tool for shell scripts)'
+  sx::require 'shellcheck'
+
+  sx::log::info '> ShellCheck (Static analysis tool for shell scripts)\n'
 
   cd "${SPHYNX_DIR}" || exit 1
 
@@ -47,9 +36,26 @@ function sx::self::lint::run_shellcheck() {
   )
 }
 
-function sx::self::lint() {
-  sx::self::lint::run_shfmt
-  sx::self::lint::run_shellcheck
-  sx::self::lint::run_hadolint
-  sx::self::lint::run_prettier
+function sx::self::lint::run_hadolint() {
+  sx::require 'hadolint'
+
+  sx::log::info '> Hadolint (Haskell Dockerfile Linter)\n'
+
+  cd "${SPHYNX_DIR}" || exit 1
+
+  while IFS= read -r -d '' dockerfile; do
+    hadolint <"${dockerfile}"
+  done < <(find . -name 'Dockerfile' -print0)
+}
+
+function sx::self::lint::run_prettier() {
+  sx::require 'prettier'
+
+  sx::log::info '> Prettier\n'
+
+  cd "${SPHYNX_DIR}" || exit 1
+
+  prettier --check '*/**/*.{yml,yaml}'
+  prettier --check '*/**/*.json'
+  prettier --single-quote --check '*/**/*.js'
 }
