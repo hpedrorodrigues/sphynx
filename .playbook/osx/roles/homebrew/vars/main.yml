@@ -36,7 +36,6 @@ homebrew_packages:
   - gradle
   - grep
   - gzip
-  - hpedrorodrigues/tools/dx
   - htop
   - hugo
   - hyperfine

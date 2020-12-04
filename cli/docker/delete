@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNXC_DIR}/.internal/all.sh"
+source "${SPHYNXN_DIR}/shared/shared.sh"
+source "${SPHYNXN_DIR}/core/delete.sh"
+
+##? Remove one or more objects
+##?
+##? Usage:
+##?     pid
+##?
+##? Examples:
+##?     pid
+
+sx::parse_arguments "${@}"
+
+sx::docker::delete

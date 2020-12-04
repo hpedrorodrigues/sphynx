@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNXC_DIR}/.internal/all.sh"
+source "${SPHYNXN_DIR}/shared/shared.sh"
+source "${SPHYNXN_DIR}/core/prune.sh"
+
+##? Remove Docker objects using filters
+##?
+##? Usage:
+##?     prune (containers | images | volumes | networks | dirt | all)
+##?
+##? Examples:
+##?     prune containers
+##?     prune images
+##?     prune volumes
+##?     prune networks
+##?     prune dirt
+##?     prune all
+
+sx::parse_arguments "${@}"
+
+if ${SX_CONFIRMATION_REQUIRED:-true}; then
+  sx::log::info 'Do you really want to delete the Docker objects with this filter? Be careful. [y/n]'
+  read -e -r confirmation
+fi
+
+if ! "${SX_CONFIRMATION_REQUIRED:-true}" \
+  || [ "${confirmation:-'n'}" = 'y' ] \
+  || [ "${confirmation:-'n'}" = 'yes' ]; then
+  if ${containers:-false}; then
+    sx::docker::remove_all_containers
+  elif ${images:-false}; then
+    sx::docker::remove_images
+  elif ${volumes:-false}; then
+    sx::docker::remove_volumes
+  elif ${networks:-false}; then
+    sx::docker::remove_networks
+  elif ${dirt:-false}; then
+    sx::docker::clean_up_dirt
+  elif ${all:-false}; then
+    sx::docker::remove_all
+  else
+    sx::error::illegal_arguments "${*}"
+  fi
+fi

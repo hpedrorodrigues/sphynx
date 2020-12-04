@@ -27,9 +27,6 @@ export JAVA_HOME="${JAVA8_HOME}"
 #|> Maven
 export MAVEN_OPTS='-Xms512m -Xmx1G'
 
-#|> dx
-export DX_CONFIRMATION_REQUIRED=false
-
 #|> x11
 # https://www.x.org/wiki
 export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-"${HOME}/.config"}"
