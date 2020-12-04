@@ -17,14 +17,21 @@ function sx::system::query_dns() {
 
   if sx::os::is_command_available 'ping'; then
     sx::log::info '==|> ping output\n'
-    ping -c 1 -t 1 "${domain}" | grep -E -o "([0-9]{1,3}[\.]){3}[0-9]{1,3}" | sort -u || true
+    ping -c 1 -t 1 "${domain}" \
+      | grep -E -o "([0-9]{1,3}[\.]){3}[0-9]{1,3}" \
+      | sort -u \
+      || true
   fi
 
   if sx::os::is_command_available 'dig'; then
     sx::log::info '\n==|> dig output'
 
     local dns_servers
-    mapfile -t dns_servers < <(grep -i '^nameserver' /etc/resolv.conf | awk '{ print $2 }' | xargs -I % echo 'Current,%')
+    mapfile -t dns_servers < <(
+      grep -i '^nameserver' /etc/resolv.conf \
+        | awk '{ print $2 }' \
+        | xargs -I % echo 'Current,%'
+    )
 
     dns_servers+=(
       "Google's,8.8.8.8"
@@ -39,7 +46,14 @@ function sx::system::query_dns() {
       server_ip="$(echo "${dns_server}" | cut -d ',' -f 2)"
 
       sx::log::info "\n======|> ${server_owner} DNS (${server_ip})\n"
-      dig "@${server_ip}" +noall +answer "${domain}"
+
+      if sx::network::is_ipv4 "${server_ip}"; then
+        dig -4 "@${server_ip}" +noall +answer "${domain}"
+      elif sx::network::is_ipv6 "${server_ip}"; then
+        dig -6 "@${server_ip}" +noall +answer "${domain}"
+      else
+        sx::log::fatal "Invalid nameserver address \"${server_ip}\""
+      fi
     done
   fi
 }
