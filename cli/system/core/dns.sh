@@ -48,9 +48,9 @@ function sx::system::query_dns() {
       sx::log::info "\n======|> ${server_owner} DNS (${server_ip})\n"
 
       if sx::network::is_ipv4 "${server_ip}"; then
-        dig -4 "@${server_ip}" +noall +answer "${domain}"
+        dig -4 "@${server_ip}" +noall +answer "${domain}" || true
       elif sx::network::is_ipv6 "${server_ip}"; then
-        dig -6 "@${server_ip}" +noall +answer "${domain}"
+        dig -6 "@${server_ip}" +noall +answer "${domain}" || true
       else
         sx::log::fatal "Invalid nameserver address \"${server_ip}\""
       fi
