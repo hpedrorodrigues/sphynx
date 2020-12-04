@@ -1,12 +1,28 @@
 #!/usr/bin/env bash
 
+# Core function
+
+function sx::self::test() {
+  sx::log::info '\n\n>> Running tests\n\n'
+
+  sx::for_all::run_test \
+    test::for_all::check_global_flags \
+    'Commands should return exit-code 0 when used with global flags'
+
+  sx::for_all::run_test \
+    test::for_all::check_unsupported_flag \
+    'Commands should not return exit-code 0 when used with an unsupported flag'
+
+  sx::log::info 'Done! :)'
+}
+
 # Helper functions
 
 function sx::for_all::run_test() {
   local -r test_function="${1}"
   local -r test_name="${2}"
 
-  sx::log::info "\n> ${test_name}\n"
+  sx::log::info "> ${test_name}\n"
   while IFS='' read -r commands; do
     local full_command="${SPHYNX_EXEC} ${commands}"
 
@@ -27,21 +43,6 @@ function sx::for_all::run_test() {
   )
 
   echo
-  echo
-}
-
-# Core function
-
-function sx::self::test() {
-  sx::for_all::run_test \
-    test::for_all::check_global_flags \
-    'Commands should return exit-code 0 when used with global flags'
-
-  sx::for_all::run_test \
-    test::for_all::check_unsupported_flag \
-    'Commands should not return exit-code 0 when used with an unsupported flag'
-
-  sx::log::info '\nDone! :)'
 }
 
 # tests

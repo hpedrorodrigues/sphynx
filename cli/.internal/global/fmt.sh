@@ -1,24 +1,17 @@
 #!/usr/bin/env bash
 
-function sx::self::fmt::print_formatter_name() {
-  sx::log::info "\n>>===|> ${*}\n"
-}
+function sx::self::fmt() {
+  sx::log::info '\n\n>> Running formatters\n\n'
 
-function sx::self::fmt::run_prettier() {
-  (
-    sx::self::fmt::print_formatter_name 'Prettier'
-
-    cd "${SPHYNX_DIR}" || exit 1
-
-    prettier --write '*/**/*.{yml,yaml}'
-    prettier --write '*/**/*.json'
-    prettier --single-quote --write '*/**/*.js'
-  )
+  sx::self::fmt::run_shfmt
+  sx::self::fmt::run_prettier
 }
 
 function sx::self::fmt::run_shfmt() {
+  sx::require 'shfmt'
+
   (
-    sx::self::fmt::print_formatter_name 'Shfmt (Shell parser, formatter and interpreter)'
+    sx::log::info '> Shfmt (Shell parser, formatter and interpreter)\n'
 
     cd "${SPHYNX_DIR}" || exit 1
 
@@ -26,7 +19,16 @@ function sx::self::fmt::run_shfmt() {
   )
 }
 
-function sx::self::fmt() {
-  sx::self::fmt::run_shfmt
-  sx::self::fmt::run_prettier
+function sx::self::fmt::run_prettier() {
+  sx::require 'prettier'
+
+  (
+    sx::log::info '> Prettier\n'
+
+    cd "${SPHYNX_DIR}" || exit 1
+
+    prettier --write '*/**/*.{yml,yaml}'
+    prettier --write '*/**/*.json'
+    prettier --single-quote --write '*/**/*.js'
+  )
 }
