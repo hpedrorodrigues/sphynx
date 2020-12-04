@@ -1,6 +1,6 @@
 ### ZSH Settings
 
-# It is not loading files and if not running interactively
+# It is not loading files if not running interactively
 case $- in
   *i*) ;;
   *) return ;;
@@ -36,11 +36,15 @@ if [ -f "${HOME}/.zgen/zgen.zsh" ]; then
 fi
 
 # Load the tmux "hack" session on zsh startup
-# Note: not loading tmux in sphynx benchmarks because it's not important for it
+# Notes:
+# - not loading tmux in sphynx benchmarks because it's not important for it
+# - not loading tmux if a screen session is currently active
+# - loading the tmux session only when using Alacritty
 if [[ $- == *i* ]] \
   && hash sx &>/dev/null \
   && [ -z "${SX_SHELL_BENCHMARK}" ] \
   && [ -z "${STY}" ] \
-  && [ -z "${TMUX}" ]; then
+  && [ -z "${TMUX}" ] \
+  && [ -n "${ALACRITTY_LOG}" ]; then
   sx terminal tmux force-attach hack
 fi
