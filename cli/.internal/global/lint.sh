@@ -40,9 +40,11 @@ function sx::self::lint::run_shellcheck() {
   export SHELLCHECK_OPTS='-e SC1090 -e SC2155'
 
   # shellcheck disable=SC2046  # Quote this to prevent word splitting
-  shellcheck $(find '.' -type f -not -path '*.git*' \
-    | sort -u \
-    | xargs -I % sh -c "file % | grep --quiet 'shell script' && echo %")
+  shellcheck $(
+    find '.' -type f -not -path '*.git*' \
+      | sort -u \
+      | xargs -I % sh -c "file % | grep --quiet 'shell script' && echo %"
+  )
 }
 
 function sx::self::lint() {
