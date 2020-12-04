@@ -56,11 +56,11 @@ function up() {
 }
 
 function fs() {
-  local -r args="$(if du -b /dev/null >/dev/null 2>&1; then
-    echo '-sbh'
+  if du -b /dev/null >/dev/null 2>&1; then
+    local -r args='-sbh'
   else
-    echo '-sh'
-  fi)"
+    local -r args='-sh'
+  fi
 
   if [[ -n ${*} ]]; then
     du "${args}" -- "${@}"

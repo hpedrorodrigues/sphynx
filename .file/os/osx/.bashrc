@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# It is not loading files and if not running interactively
+# It is not loading files if not running interactively
 case $- in
   *i*) ;;
   *) return ;;
