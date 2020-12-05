@@ -50,6 +50,12 @@ export KREW_BIN="${HOME}/.krew/bin"
 
 [ -d "${KREW_BIN}" ] && export PATH="${PATH}:${KREW_BIN}"
 
+#|> Go
+export GOPATH="${HOME}/.go"
+export GO_WORKSPACE="${GOPATH}/src"
+
+[ -d "${GOPATH}" ] && export PATH="${PATH}:${GOPATH}/bin"
+
 #|> AWS CLI
 export AWS_PROFILE='sphynx'
 

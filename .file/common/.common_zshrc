@@ -40,12 +40,6 @@ export FZF_BIN="${HOME}/.fzf.zsh"
 
 [ -f "${FZF_BIN}" ] && source "${FZF_BIN}"
 
-#|> Go
-export GOPATH="${HOME}/.go"
-export GO_WORKSPACE="${GOPATH}/src"
-
-[ -d "${GOPATH}" ] && export PATH="${PATH}:${GOPATH}/bin"
-
 #|> Sphynx
 export SPHYNX_DIR="${HOME}/Code/Personal/sphynx"
 
