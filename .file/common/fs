@@ -11,7 +11,10 @@ function mkd() {
 }
 
 function dag() {
-  tree -aC -I '.DS_Store|.git|.idea|build|node_modules|target|vendor|__pycache__' --dirsfirst "${*:-.}"
+  tree \
+    -aC \
+    -I '.DS_Store|.git|.idea|build|node_modules|target|vendor|__pycache__' \
+    --dirsfirst "${*:-.}"
 }
 
 # touch executable
