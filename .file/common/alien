@@ -2,14 +2,16 @@
 
 ### External images
 
-export CONFLUENT_VERSION=${CONFLUENT_VERSION:-5.5.2}
+export CONFLUENT_VERSION=${CONFLUENT_VERSION:-6.0.1}
 
 # i.e kcli kafka-topics --bootstrap-server <host>:<port> --list
 function kcli() {
   local -r tool_name="${FUNCNAME[0]:-${funcstack[1]}}"
   local -r random_port="$(shuf -i 2000-65000 -n 1)"
 
-  local -r state="$(docker inspect --format '{{.State.Running}}' "${tool_name}" 2>/dev/null)"
+  local -r state="$(
+    docker inspect --format '{{.State.Running}}' "${tool_name}" 2>/dev/null
+  )"
   if [ "${state}" = 'true' ]; then
     docker exec --interactive --tty "${tool_name}" "${@}"
     return 0
@@ -27,7 +29,9 @@ function zcli() {
   local -r tool_name="${FUNCNAME[0]:-${funcstack[1]}}"
   local -r random_port="$(shuf -i 2000-65000 -n 1)"
 
-  local -r state="$(docker inspect --format '{{.State.Running}}' "${tool_name}" 2>/dev/null)"
+  local -r state="$(
+    docker inspect --format '{{.State.Running}}' "${tool_name}" 2>/dev/null
+  )"
   if [ "${state}" = 'true' ]; then
     docker exec --interactive --tty "${tool_name}" zookeeper-shell "${@}"
     return 0
@@ -51,7 +55,9 @@ function prettier() {
   local -r tool_name="${FUNCNAME[0]:-${funcstack[1]}}"
   local -r image="${ALIEN_REPOSITORY}:${tool_name}"
 
-  local -r state="$(docker inspect --format '{{.State.Running}}' "${tool_name}" 2>/dev/null)"
+  local -r state="$(
+    docker inspect --format '{{.State.Running}}' "${tool_name}" 2>/dev/null
+  )"
   if [ "${state}" = 'true' ]; then
     docker exec --interactive --tty "${tool_name}" "${@}"
     return 0
@@ -69,7 +75,9 @@ function eq() {
   local -r tool_name="${FUNCNAME[0]:-${funcstack[1]}}"
   local -r image="${ALIEN_REPOSITORY}:${tool_name}"
 
-  local -r state="$(docker inspect --format '{{.State.Running}}' "${tool_name}" 2>/dev/null)"
+  local -r state="$(
+    docker inspect --format '{{.State.Running}}' "${tool_name}" 2>/dev/null
+  )"
   if [ "${state}" = 'true' ]; then
     docker exec --interactive --tty "${tool_name}" "${@}"
     return 0
@@ -86,7 +94,9 @@ function hadolint() {
   local -r tool_name="${FUNCNAME[0]:-${funcstack[1]}}"
   local -r image="${ALIEN_REPOSITORY}:${tool_name}"
 
-  local -r state="$(docker inspect --format '{{.State.Running}}' "${tool_name}" 2>/dev/null)"
+  local -r state="$(
+    docker inspect --format '{{.State.Running}}' "${tool_name}" 2>/dev/null
+  )"
   if [ "${state}" = 'true' ]; then
     docker exec --interactive --tty "${tool_name}" "${@}"
     return 0
@@ -104,7 +114,9 @@ function shellcheck() {
   local -r tool_name="${FUNCNAME[0]:-${funcstack[1]}}"
   local -r image="${ALIEN_REPOSITORY}:${tool_name}"
 
-  local -r state="$(docker inspect --format '{{.State.Running}}' "${tool_name}" 2>/dev/null)"
+  local -r state="$(
+    docker inspect --format '{{.State.Running}}' "${tool_name}" 2>/dev/null
+  )"
   if [ "${state}" = 'true' ]; then
     docker exec --interactive --tty "${tool_name}" "${@}"
     return 0
@@ -123,7 +135,9 @@ function shfmt() {
   local -r tool_name="${FUNCNAME[0]:-${funcstack[1]}}"
   local -r image="${ALIEN_REPOSITORY}:${tool_name}"
 
-  local -r state="$(docker inspect --format '{{.State.Running}}' "${tool_name}" 2>/dev/null)"
+  local -r state="$(
+    docker inspect --format '{{.State.Running}}' "${tool_name}" 2>/dev/null
+  )"
   if [ "${state}" = 'true' ]; then
     docker exec --interactive --tty "${tool_name}" -i 2 -ci -bn "${@}"
     return 0
@@ -141,7 +155,9 @@ function p2i() {
   local -r tool_name="${FUNCNAME[0]:-${funcstack[1]}}"
   local -r image="${ALIEN_REPOSITORY}:${tool_name}"
 
-  local -r state="$(docker inspect --format '{{.State.Running}}' "${tool_name}" 2>/dev/null)"
+  local -r state="$(
+    docker inspect --format '{{.State.Running}}' "${tool_name}" 2>/dev/null
+  )"
   if [ "${state}" = 'true' ]; then
     docker exec --tty "${tool_name}" "${@}"
     return 0
