@@ -59,6 +59,11 @@ function csv() {
     return 1
   fi
 
+  if ! [ -s "${file_name}" ]; then
+    echo "!!! Empty file \"${file_name}\"" >&2
+    return 1
+  fi
+
   sed <"${file_name}" 's/"//g' | column -t -s ','
 }
 
