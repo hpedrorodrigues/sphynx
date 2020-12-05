@@ -133,7 +133,7 @@ function print_namespaces() {
 
 function print_commands() {
   local -r n_arguments="${#}"
-  echo -e 'Available commands:'
+  echo 'Available commands:'
 
   if [ ${n_arguments} -eq 0 ]; then
     for namespace in $(all_namespaces); do

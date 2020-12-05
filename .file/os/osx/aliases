@@ -7,9 +7,6 @@
 alias afk='/System/Library/CoreServices/Menu\ Extras/User.menu/Contents/Resources/CGSession -suspend'
 alias ls='gls --color=tty --group-directories-first --human-readable'
 
-# Workaround to deal with the "no sound" issue that happens sometimes
-alias fixnosound='sudo killall coreaudiod'
-
 # Updates
 
 alias uposx='sudo softwareupdate --install --all'
