@@ -257,7 +257,12 @@ function loc() {
 # Load all CPU cores at once
 # https://github.com/paulmillr/dotfiles/blob/a26c445aea4097bb8b3c0ea95019544cd66ac9c8/home/.zshrc.sh
 function loadcores() {
-  local -r n_cores="$(sysctl -n hw.ncpu)"
+  if [ "$(uname)" = 'Darwin' ]; then
+    local -r n_cores="$(sysctl -n hw.ncpu)"
+  else
+    local -r n_cores="$(grep -c '^processor' /proc/cpuinfo | tr -d ' ')"
+  fi
+
   local -r file='/dev/null'
 
   # shellcheck disable=SC2051  # Bash doesn't support variables in brace range expansions
