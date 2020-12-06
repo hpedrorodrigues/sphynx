@@ -257,7 +257,12 @@ function loc() {
 # Load all CPU cores at once
 # https://github.com/paulmillr/dotfiles/blob/a26c445aea4097bb8b3c0ea95019544cd66ac9c8/home/.zshrc.sh
 function loadcores() {
-  local -r n_cores="$(sysctl -n hw.ncpu)"
+  if [ "$(uname)" = 'Darwin' ]; then
+    local -r n_cores="$(sysctl -n hw.ncpu)"
+  else
+    local -r n_cores="$(grep -c '^processor' /proc/cpuinfo | tr -d ' ')"
+  fi
+
   local -r file='/dev/null'
 
   # shellcheck disable=SC2051  # Bash doesn't support variables in brace range expansions
@@ -272,6 +277,7 @@ function loadcores() {
 # i.e ram chrome
 # https://github.com/paulmillr/dotfiles/blob/a26c445aea4097bb8b3c0ea95019544cd66ac9c8/home/.zshrc.sh
 function ram() {
+  local -r func_name="${FUNCNAME[0]:-${funcstack[1]}}"
   local -r application="${1}"
 
   if [ -z "${application}" ]; then
@@ -300,9 +306,18 @@ function ram() {
 function console() {
   local -r query="${1}"
 
-  if [ -z "${query}" ]; then
-    tail -f /var/log/system.log
-  else
-    tail -f /var/log/system.log | grep -i -E "${query}"
-  fi
+  local -r log_files=(
+    '/var/log/system.log'
+    '/var/log/syslog'
+  )
+
+  for log_file in "${log_files[@]}"; do
+    if [ -f "${log_file}" ]; then
+      if [ -z "${query}" ]; then
+        command tail -f "${log_file}"
+      else
+        command tail -f "${log_file}" | grep -i -E "${query}"
+      fi
+    fi
+  done
 }
