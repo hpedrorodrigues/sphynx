@@ -272,6 +272,7 @@ function loadcores() {
 # i.e ram chrome
 # https://github.com/paulmillr/dotfiles/blob/a26c445aea4097bb8b3c0ea95019544cd66ac9c8/home/.zshrc.sh
 function ram() {
+  local -r func_name="${FUNCNAME[0]:-${funcstack[1]}}"
   local -r application="${1}"
 
   if [ -z "${application}" ]; then
