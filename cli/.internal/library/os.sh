@@ -45,7 +45,8 @@ function sx::os::open() {
 
   for open_command in "${open_commands[@]}"; do
     if sx::os::is_command_available "${open_command}"; then
-      exec "${open_command}" "${*}" &>/dev/null
+      command "${open_command}" "${*}" &>/dev/null &
+      return 0
     fi
   done
 
@@ -73,7 +74,8 @@ function sx::os::browser::open() {
 
   for browser_command in "${browser_commands[@]}"; do
     if sx::os::is_command_available "${browser_command}"; then
-      exec "${browser_command}" "${*}" &>/dev/null
+      command "${browser_command}" "${*}" &>/dev/null &
+      return 0
     fi
   done
 
