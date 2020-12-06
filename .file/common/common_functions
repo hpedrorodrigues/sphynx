@@ -226,3 +226,83 @@ function fgpick() {
     fg "%${job_id}"
   fi
 }
+
+# Lines of code
+# i.e loc sh
+function loc() {
+  local -r func_name="${FUNCNAME[0]:-${funcstack[1]}}"
+  local -r user_extension="${1}"
+
+  if [ -z "${user_extension}" ]; then
+    echo '!!! This function needs an extension as first argument' >&2
+    echo "!!! i.e ${func_name} .sh" >&2
+    return 1
+  fi
+
+  if [ "$(echo "${user_extension}" | cut -c1-1)" = '.' ]; then
+    local -r extension="${user_extension}"
+  else
+    local -r extension=".${user_extension}"
+  fi
+
+  local -r lines_of_code="$(
+    find . -type f -iname "*${extension}" -exec cat '{}' \; \
+      | wc -l \
+      | tr -d ' '
+  )"
+
+  echo "LoC for \"${extension}\": ${lines_of_code}."
+}
+
+# Load all CPU cores at once
+# https://github.com/paulmillr/dotfiles/blob/a26c445aea4097bb8b3c0ea95019544cd66ac9c8/home/.zshrc.sh
+function loadcores() {
+  local -r n_cores="$(sysctl -n hw.ncpu)"
+  local -r file='/dev/null'
+
+  # shellcheck disable=SC2051  # Bash doesn't support variables in brace range expansions
+  for _ in {1..${n_cores}}; do
+    yes >"${file}" &
+  done
+
+  echo "${n_cores} cores loaded. To stop: 'killall yes'."
+}
+
+# Print how much RAM an application is currently using
+# i.e ram chrome
+# https://github.com/paulmillr/dotfiles/blob/a26c445aea4097bb8b3c0ea95019544cd66ac9c8/home/.zshrc.sh
+function ram() {
+  local -r application="${1}"
+
+  if [ -z "${application}" ]; then
+    echo '!!! This function needs an application name as first argument' >&2
+    echo "!!! i.e ${func_name} chrome" >&2
+    return 1
+  fi
+
+  # shellcheck disable=SC2009  # Consider using pgrep instead of grepping ps output
+  local -r processes="$(ps aux | grep -i "${application}" | grep -v 'grep')"
+  if [ -z "${processes}" ]; then
+    echo "!!! No active processes found for \"${application}\"" >&2
+    return 1
+  fi
+
+  local sum='0'
+  for i in $(echo -e "${processes}" | awk '{print $6}'); do
+    sum="$((i + sum))"
+  done
+  sum="$(echo "scale=2; ${sum} / 1024.0" | bc)"
+
+  echo "${application} uses ${sum}MBs of RAM"
+}
+
+# Print OS logs
+function console() {
+  local -r query="${1}"
+
+  if [ -z "${query}" ]; then
+    tail -f /var/log/system.log
+  else
+    tail -f /var/log/system.log | grep -i -E "${query}"
+  fi
+}
