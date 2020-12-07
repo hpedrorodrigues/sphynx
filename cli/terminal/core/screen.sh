@@ -9,6 +9,10 @@ export SX_SCREEN_SESSION_NAME_PREFIX="${SX_SCREEN_SESSION_NAME_PREFIX:-sphynx}"
 
 function sx::terminal::screen::check_requirements() {
   sx::require 'screen'
+
+  if [ -n "${TMUX:-}" ]; then
+    sx::log::fatal 'This command is not allowed to be run inside an active tmux session'
+  fi
 }
 
 function sx::terminal::screen::check_not_running_session() {
