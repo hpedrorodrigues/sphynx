@@ -51,7 +51,7 @@ export SPHYNXC_DIR="${SPHYNX_DIR}/cli"
 
 ## Helper functions
 
-readonly error_message='The most similar namespaces (or global commands) are'
+readonly error_message='The most similar namespaces (and global commands) are'
 
 function all_namespaces() {
   find "${SPHYNXC_DIR}" \
@@ -127,7 +127,7 @@ function print_help() {
 }
 
 function print_namespaces() {
-  echo -e 'Available namespaces:\n'
+  echo -e 'Available namespaces (and global commands):\n'
   all_namespaces | xargs -I % echo "> %"
 }
 
@@ -176,26 +176,14 @@ function check_arguments() {
     fi
   fi
 
-  if [[ ${*} == *'--commands'* ]]; then
-    if [ ${n_arguments} = 1 ]; then
-      print_commands
-      exit 0
-    else
-      echo '!!! The flag "--commands" can only be used with the base command' >&2
-      echo "!!! i.e ${SPHYNX_EXEC_NAME} --commands" >&2
-      exit 1
-    fi
+  if [[ ${*} == *'--commands'* ]] && [ ${n_arguments} = 1 ]; then
+    print_commands
+    exit 0
   fi
 
-  if [[ ${*} == *'--namespaces'* ]]; then
-    if [ ${n_arguments} = 1 ]; then
-      print_namespaces
-      exit 0
-    else
-      echo '!!! The flag "--namespaces" can only be used with the base command' >&2
-      echo "!!! i.e ${SPHYNX_EXEC_NAME} --namespaces" >&2
-      exit 1
-    fi
+  if [[ ${*} == *'--namespaces'* ]] && [ ${n_arguments} = 1 ]; then
+    print_namespaces
+    exit 0
   fi
 
   local -r filter="${1}"
