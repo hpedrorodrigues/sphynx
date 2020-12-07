@@ -20,8 +20,6 @@ if [ -f "${HOME}/.zgen/zgen.zsh" ]; then
   source "${HOME}/.zgen/zgen.zsh"
 
   if ! zgen saved; then
-    zgen oh-my-zsh kubectl
-    zgen oh-my-zsh gcloud
     zgen load zsh-users/zsh-autosuggestions
     zgen load agkozak/zsh-z
 
