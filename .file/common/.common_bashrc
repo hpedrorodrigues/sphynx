@@ -33,3 +33,21 @@ echo "${PATH}" | grep "${SPHYNX_DIR}" -v -q \
 
 #|> Startship
 hash starship 2>/dev/null && eval "$(starship init bash)"
+
+#|> Google Cloud SDK
+if [ -z "${CLOUDSDK_HOME:-}" ]; then
+  readonly gcloud_locations=(
+    '/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk'
+    '/snap/google-cloud-sdk/current'
+  )
+
+  # shellcheck disable=SC2068  # Double quote array expansions
+  for gcloud_location in ${gcloud_locations[@]}; do
+    [ -d "${gcloud_location}" ] || continue
+
+    export CLOUDSDK_HOME="${gcloud_location}"
+
+    [ -f "${CLOUDSDK_HOME}/path.bash.inc" ] \
+      && source "${CLOUDSDK_HOME}/path.bash.inc"
+  done
+fi
