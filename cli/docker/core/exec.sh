@@ -4,31 +4,32 @@ function sx::docker::exec() {
   sx::docker::check_requirements
 
   if sx::os::is_command_available 'fzf'; then
-    local -r containers="$(sx::docker::running_containers)"
+    local -r options="$(sx::docker::running_containers)"
 
-    if [ -z "${containers}" ]; then
+    if [ -z "${options}" ]; then
       sx::log::fatal 'No running containers found'
     fi
 
-    local -r row="$(echo -e "${containers}" | fzf)"
+    # shellcheck disable=SC2086  # quote this to prevent word splitting
+    local -r selected="$(echo -e "${options}" | fzf ${SX_FZF_ARGS})"
   else
     export PS3=$'\n''Type the respective container number: '$'\n'
 
-    local containers
-    readarray -t containers < <(sx::docker::running_containers)
+    local options
+    readarray -t options < <(sx::docker::running_containers)
 
-    if [ "${#containers[@]}" -eq 0 ]; then
+    if [ "${#options[@]}" -eq 0 ]; then
       sx::log::fatal 'No running containers found'
     fi
 
-    select option in "${containers[@]}"; do
-      local -r row="${option}"
+    select option in "${options[@]}"; do
+      local -r selected="${option}"
       break
     done
   fi
 
-  [ -n "${row}" ] \
-    && sx::docker_command::exec "$(echo "${row}" | awk '{ print $1 }')"
+  [ -n "${selected}" ] \
+    && sx::docker_command::exec "$(echo "${selected}" | awk '{ print $1 }')"
 }
 
 function sx::docker_command::exec() {
