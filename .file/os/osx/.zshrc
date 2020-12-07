@@ -25,24 +25,23 @@ if [ -f "${HOME}/.zgen/zgen.zsh" ]; then
 
     zgen save
   fi
-
-  # Force regenerate the .zcompdump file with the sphynx completions
-  # if they were not included before
-  if ! grep -q sx "${HOME}/.zcompdump"; then
-    autoload -U compinit && compinit
-  fi
 fi
 
-# Load the tmux "hack" session on zsh startup
-# Notes:
-# - not loading tmux in sphynx benchmarks because it's not important for it
-# - not loading tmux if a screen session is currently active
-# - loading the tmux session only when using Alacritty
-if [[ $- == *i* ]] \
-  && hash sx &>/dev/null \
-  && [ -z "${SX_SHELL_BENCHMARK}" ] \
-  && [ -z "${STY}" ] \
-  && [ -z "${TMUX}" ] \
-  && [ -n "${ALACRITTY_LOG}" ]; then
-  sx terminal tmux force-attach hack
+if hash sx &>/dev/null; then
+  # Regenerating .zcompdump file when sphynx completions were not loaded
+  if ! grep -q 'sx' "${HOME}/.zcompdump"; then
+    autoload -U compinit && compinit
+  fi
+
+  # Load the tmux "hack" session on zsh startup
+  # Notes:
+  # - not loading tmux in sphynx benchmarks because it's not important for it
+  # - not loading tmux if a screen session is currently active
+  # - loading the tmux session only when using Alacritty
+  if [ -z "${SX_SHELL_BENCHMARK}" ] \
+    && [ -z "${STY}" ] \
+    && [ -z "${TMUX}" ] \
+    && [ -n "${ALACRITTY_LOG}" ]; then
+    sx terminal tmux force-attach hack
+  fi
 fi
