@@ -4,42 +4,36 @@ function sx::docker::delete() {
   sx::docker::check_requirements
 
   if sx::os::is_command_available 'fzf'; then
-    local -r resources="$(sx::docker::list_resources)"
+    local -r options="$(sx::docker::list_resources)"
 
-    if [ -z "${resources}" ]; then
+    if [ -z "${options}" ]; then
       sx::log::fatal 'No objects found'
     fi
 
-    local -r row="$(echo -e "${resources}" | fzf)"
+    # shellcheck disable=SC2086  # quote this to prevent word splitting
+    local -r selected="$(echo -e "${options}" | fzf ${SX_FZF_ARGS})"
 
-    if [ -z "${row}" ]; then
-      # User does not select any option
-      exit 0
+    if [ -n "${selected}" ]; then
+      local -r type="$(echo "${selected}" | awk '{ print $1 }')"
+      local -r id="$(echo "${selected}" | awk '{ print $2 }')"
+      local -r description="$(echo "${selected}" | awk '{ print $3 }')"
+
+      sx::docker_command::delete "${type}" "${id}" "${description}"
     fi
-
-    local -r type="$(echo "${row}" | awk '{ print $1 }')"
-    local -r id="$(echo "${row}" | awk '{ print $2 }')"
-    local -r description="$(echo "${row}" | awk '{ print $3 }')"
-
-    sx::docker_command::delete "${type}" "${id}" "${description}"
   else
     export PS3=$'\n''Type the respective resource number: '$'\n'
 
-    local resources
-    readarray -t resources < <(sx::docker::list_resources)
+    local options
+    readarray -t options < <(sx::docker::list_resources)
 
-    if [ "${#resources[@]}" -eq 0 ]; then
+    if [ "${#options[@]}" -eq 0 ]; then
       sx::log::fatal 'No objects found'
     fi
 
-    local type=''
-    local id=''
-    local description=''
-
-    select resource in "${resources[@]}"; do
-      type="$(echo "${resource}" | awk '{ print $1 }')"
-      id="$(echo "${resource}" | awk '{ print $2 }')"
-      description="$(echo "${resource}" | awk '{ print $3 }')"
+    select selected in "${options[@]}"; do
+      local -r type="$(echo "${selected}" | awk '{ print $1 }')"
+      local -r id="$(echo "${selected}" | awk '{ print $2 }')"
+      local -r description="$(echo "${selected}" | awk '{ print $3 }')"
 
       sx::docker_command::delete "${type}" "${id}" "${description}"
       break
