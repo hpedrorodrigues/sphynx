@@ -35,5 +35,25 @@ function sx::docker::exec() {
 function sx::docker_command::exec() {
   local -r container_id="${1}"
 
-  docker exec -it "${container_id}" sh
+  local -r shells=(
+    '/bin/bash'
+    '/bin/sh'
+  )
+
+  for shell in "${shells[@]}"; do
+    if docker exec "${container_id}" "${shell}" -c 'exit' &>/dev/null; then
+      sx::log::info "Now you can execute commands in container \"${container_id}\" using \"${shell}\".\n"
+
+      local -r ps1='\u@\h:\w '
+
+      docker exec \
+        --interactive \
+        --tty \
+        "${container_id}" "${shell}" -c "export PS1='${SX_DOCKER_PS1:-${ps1}}'; exec ${shell}"
+
+      exit 0
+    fi
+  done
+
+  sx::log::fatal "No shell available to run in container \"${container_id}\""
 }
