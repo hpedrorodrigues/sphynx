@@ -58,15 +58,19 @@ function sx::k8s_command::exec() {
 
   for shell in "${shells[@]}"; do
     if sx::k8s::cli exec --namespace "${ns}" "${pod_id}" -- "${shell}" -c 'exit' &>/dev/null; then
-      sx::log::info "Now you can execute commands in pod \"${pod_id}\" using \"${shell}\"."
+      sx::log::info "Now you can execute commands in pod \"${pod_id}\" using \"${shell}\".\n"
+
+      local -r ps1='\u@\h:\w '
 
       sx::k8s::cli exec \
         --stdin \
         --tty \
         --namespace "${ns}" \
-        "${pod_id}" -- "${shell}" 2>/dev/null
+        "${pod_id}" -- "${shell}" -c "export PS1='${SX_KUBERNETES_PS1:-${ps1}}'; exec ${shell}"
 
       exit 0
     fi
   done
+
+  sx::log::fatal "No shell available to run in pod \"${pod_id}\""
 }
