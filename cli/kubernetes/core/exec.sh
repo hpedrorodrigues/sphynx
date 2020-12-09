@@ -51,5 +51,22 @@ function sx::k8s_command::exec() {
   local -r ns="${1}"
   local -r pod_id="${2}"
 
-  sx::k8s::cli exec -it --namespace "${ns}" "${pod_id}" -- sh
+  local -r shells=(
+    '/bin/bash'
+    '/bin/sh'
+  )
+
+  for shell in "${shells[@]}"; do
+    if sx::k8s::cli exec --namespace "${ns}" "${pod_id}" -- "${shell}" -c 'exit' &>/dev/null; then
+      sx::log::info "Now you can execute commands in pod \"${pod_id}\" using \"${shell}\"."
+
+      sx::k8s::cli exec \
+        --stdin \
+        --tty \
+        --namespace "${ns}" \
+        "${pod_id}" -- "${shell}" 2>/dev/null
+
+      exit 0
+    fi
+  done
 }
