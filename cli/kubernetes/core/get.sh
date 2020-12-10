@@ -68,6 +68,8 @@ function sx::k8s_command::get() {
     local -r colorizer='cat'
   fi
 
+  sx::log::info "Retrieving information from ${kind} \"${ns}/${name}\"\n"
+
   # shellcheck disable=SC2086  # quote this to prevent word splitting
   sx::k8s::cli get "${kind}" "${name}" \
     --namespace "${ns}" \
