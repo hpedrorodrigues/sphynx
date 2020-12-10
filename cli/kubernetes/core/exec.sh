@@ -22,8 +22,9 @@ function sx::k8s::exec() {
     if [ -n "${selected}" ]; then
       local -r ns="$(echo "${selected}" | awk '{ print $1 }')"
       local -r name="$(echo "${selected}" | awk '{ print $2 }')"
+      local -r container="$(echo "${selected}" | awk '{ print $3 }')"
 
-      sx::k8s_command::exec "${ns}" "${name}"
+      sx::k8s_command::exec "${ns}" "${name}" "${container}"
     fi
   else
     export PS3=$'\n''Please, choose the pod: '$'\n'
@@ -40,8 +41,9 @@ function sx::k8s::exec() {
     select selected in "${options[@]}"; do
       local -r ns="$(echo "${selected}" | awk '{ print $1 }')"
       local -r name="$(echo "${selected}" | awk '{ print $2 }')"
+      local -r container="$(echo "${selected}" | awk '{ print $3 }')"
 
-      sx::k8s_command::exec "${ns}" "${name}"
+      sx::k8s_command::exec "${ns}" "${name}" "${container}"
       break
     done
   fi
@@ -49,7 +51,8 @@ function sx::k8s::exec() {
 
 function sx::k8s_command::exec() {
   local -r ns="${1}"
-  local -r pod_id="${2}"
+  local -r name="${2}"
+  local -r container="${3}"
 
   local -r shells=(
     '/bin/bash'
@@ -57,20 +60,21 @@ function sx::k8s_command::exec() {
   )
 
   for shell in "${shells[@]}"; do
-    if sx::k8s::cli exec --namespace "${ns}" "${pod_id}" -- "${shell}" -c 'exit' &>/dev/null; then
-      sx::log::info "Now you can execute commands in pod \"${pod_id}\" using \"${shell}\".\n"
+    if sx::k8s::cli exec -n "${ns}" "${name}" -c "${container}" -- "${shell}" -c 'exit' &>/dev/null; then
+      sx::log::info "Now you can execute commands in pod \"${name}/${container}\" using \"${shell}\"\n"
 
       local -r ps1='\u@\h:\w '
 
-      sx::k8s::cli exec \
+      sx::k8s::cli exec "${name}" \
         --stdin \
         --tty \
         --namespace "${ns}" \
-        "${pod_id}" -- "${shell}" -c "export PS1='${SX_KUBERNETES_PS1:-${ps1}}'; exec ${shell}"
+        --container "${container}" \
+        -- "${shell}" -c "export PS1='${SX_KUBERNETES_PS1:-${ps1}}'; exec ${shell}"
 
       exit 0
     fi
   done
 
-  sx::log::fatal "No shell available to run in pod \"${pod_id}\""
+  sx::log::fatal "No shell available to run in pod \"${name}/${container}\""
 }

@@ -74,8 +74,8 @@ function sx::k8s::resources_and_ports() {
   # shellcheck disable=SC2016  # expressions don't expand in single quotes
   local -r pods_template='
   {{range .items}}
-    {{$name := .metadata.name}}
     {{$namespace := .metadata.namespace}}
+    {{$name := .metadata.name}}
     {{$kind := .kind}}
     {{range .spec.containers}}
       {{range .ports}}
@@ -86,8 +86,8 @@ function sx::k8s::resources_and_ports() {
   # shellcheck disable=SC2016  # expressions don't expand in single quotes
   local -r services_template='
   {{range .items}}
-    {{$name := .metadata.name}}
     {{$namespace := .metadata.namespace}}
+    {{$name := .metadata.name}}
     {{$kind := .kind}}
     {{range .spec.ports}}
       {{$namespace}}{{","}}{{$kind}}{{","}}{{$name}}{{","}}{{.port}}{{"\n"}}
@@ -96,8 +96,8 @@ function sx::k8s::resources_and_ports() {
   # shellcheck disable=SC2016  # expressions don't expand in single quotes
   local -r deployments_template='
   {{range .items}}
-    {{$name := .metadata.name}}
     {{$namespace := .metadata.namespace}}
+    {{$name := .metadata.name}}
     {{$kind := .kind}}
     {{range .spec.template.spec.containers}}
       {{range .ports}}

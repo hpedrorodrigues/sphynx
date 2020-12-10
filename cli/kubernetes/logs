@@ -8,28 +8,26 @@ source "${SPHYNXC_DIR}/.internal/all.sh"
 source "${SPHYNXN_DIR}/shared/shared.sh"
 source "${SPHYNXN_DIR}/core/logs.sh"
 
-##? Print the logs for a container in a pod or specified resource
+##? Print the logs for a container in a pod
 ##?
 ##? Usage:
-##?     logs [<query>] [--namespace <name> | --all-namespaces] [--previous --container <name>]
+##?     logs [<query>] [--namespace <name> | --all-namespaces] [--previous]
 ##?
 ##? Options:
 ##?     -n --namespace <name>  The namespace scope for requests
 ##?     -a --all-namespaces  All namespaces
-##?     -c --container <name>  The specific container to tail the logs from
 ##?     -p --previous  Print the logs for the previous instance of the container in a pod if it exists
 ##?
 ##? Examples:
 ##?     logs
 ##?     logs kafka
 ##?     logs --namespace kube-system
-##?     logs --all-namespaces --container nginx --previous
+##?     logs --all-namespaces --previous
 
 sx::parse_arguments "${@}"
 
 sx::k8s::logs \
   "${query:-}" \
   "${namespace:-}" \
-  "${container:-}" \
   "${all_namespaces:-false}" \
   "${previous:-false}"

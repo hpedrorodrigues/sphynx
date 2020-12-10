@@ -5,9 +5,8 @@ function sx::k8s::logs() {
 
   local -r query="${1:-}"
   local -r namespace="${2:-}"
-  local -r container="${3:-}"
-  local -r all_namespaces="${4:-false}"
-  local -r previous_log="${5:-false}"
+  local -r all_namespaces="${3:-false}"
+  local -r previous_log="${4:-false}"
 
   if sx::os::is_command_available 'fzf'; then
     local -r options="$(
@@ -24,6 +23,7 @@ function sx::k8s::logs() {
     if [ -n "${selected}" ]; then
       local -r ns="$(echo "${selected}" | awk '{ print $1 }')"
       local -r name="$(echo "${selected}" | awk '{ print $2 }')"
+      local -r container="$(echo "${selected}" | awk '{ print $3 }')"
 
       sx::k8s_command::logs "${ns}" "${name}" "${container}" "${previous_log}"
     fi
@@ -42,6 +42,7 @@ function sx::k8s::logs() {
     select selected in "${options[@]}"; do
       local -r ns="$(echo "${selected}" | awk '{ print $1 }')"
       local -r name="$(echo "${selected}" | awk '{ print $2 }')"
+      local -r container="$(echo "${selected}" | awk '{ print $3 }')"
 
       sx::k8s_command::logs "${ns}" "${name}" "${container}" "${previous_log}"
       break
@@ -51,7 +52,7 @@ function sx::k8s::logs() {
 
 function sx::k8s_command::logs() {
   local -r ns="${1}"
-  local -r pod_name="${2}"
+  local -r name="${2}"
   local -r container="${3}"
   local -r previous_log="${4}"
 
@@ -60,12 +61,12 @@ function sx::k8s_command::logs() {
     flags+=' --previous'
   fi
 
-  if [ -n "${container}" ]; then
-    flags+=" --container ${container}"
-  else
-    flags+=' --all-containers'
-  fi
+  sx::log::info "Tailing logs from pod \"${name}/${container}\"\n"
 
   # shellcheck disable=SC2086  # quote this to prevent word splitting
-  sx::k8s::cli logs ${flags} --namespace "${ns}" --follow "${pod_name}"
+  sx::k8s::cli logs "${name}" \
+    --namespace "${ns}" \
+    --container "${container}" \
+    --follow \
+    ${flags}
 }

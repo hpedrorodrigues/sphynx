@@ -55,9 +55,24 @@ function kdec() {
 }
 
 function kimg() {
+  # shellcheck disable=SC2016  # Expressions don't expand in single quotes, use double quotes for that
+  local -r template='
+  {{range .items}}
+    {{$name := .metadata.name}}
+    {{range .spec.containers}}
+      {{$name}}{{","}}{{.image}}{{"\\n"}}
+    {{end}}
+  {{end}}'
+  local -r cleared_template="$(
+    echo -n "${template}" \
+      | tr '\n' ' ' \
+      | sed 's/}} *{{/}}{{/g' \
+      | sed 's/^ *//g'
+  )"
+
   # shellcheck disable=SC2068  # Double quote array expansions
   kubectl get pods \
-    --output jsonpath='{range .items[*]}{"\n"}{.metadata.name}{","}{range .spec.containers[*]}{.image}{" "}{end}{end}' \
+    --template="${cleared_template}" \
     ${@} \
     | sort -u \
     | column -t -s ','
@@ -82,10 +97,31 @@ function kgp() {
 # Display all pods not running
 function knr() {
   # shellcheck disable=SC2016  # Expressions don't expand in single quotes, use double quotes for that
+  local -r template='
+  {{range .items}}
+    {{$namespace := .metadata.namespace}}
+    {{$name := .metadata.name}}
+    {{if ne .status.phase "Running"}}
+      {{$namespace}}{{","}}{{$name}}{{"\\n"}}
+    {{else}}
+      {{range .status.containerStatuses}}
+        {{if not .ready}}
+          {{$namespace}}{{","}}{{$name}}{{"\\n"}}
+        {{end}}
+      {{end}}
+    {{end}}
+  {{end}}'
+  local -r cleared_template="$(
+    echo -n "${template}" \
+      | tr '\n' ' ' \
+      | sed 's/}} *{{/}}{{/g' \
+      | sed 's/^ *//g'
+  )"
+
   # shellcheck disable=SC2068  # Double quote array expansions
   kubectl get pods \
     --output go-template \
-    --template='{{range .items}}{{$name := .metadata.name}}{{$namespace := .metadata.namespace}}{{if ne .status.phase "Running"}}{{$name}}{{"\n"}}{{else}}{{range .status.containerStatuses}}{{if not .ready}}{{$namespace}}{{","}}{{$name}}{{"\n"}}{{end}}{{end}}{{end}}{{end}}' \
+    --template="${cleared_template}" \
     ${@} \
     | sort -u \
     | column -t -s ','
