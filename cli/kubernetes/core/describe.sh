@@ -54,5 +54,7 @@ function sx::k8s_command::describe() {
   local -r kind="${2:-}"
   local -r name="${3:-}"
 
+  sx::log::info "Describing ${kind} \"${ns}/${name}\"\n"
+
   sx::k8s::cli describe "${kind}" "${name}" --namespace "${ns}"
 }
