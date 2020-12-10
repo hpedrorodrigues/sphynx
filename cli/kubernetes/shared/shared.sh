@@ -35,10 +35,16 @@ function sx::k8s::running_pods() {
     local -r selector='.*'
   fi
 
+  # shellcheck disable=SC2016  # Expressions don't expand in single quotes, use double quotes for that
   local -r template='
   {{range .items}}
     {{if eq .status.phase "Running"}}
-      {{.metadata.namespace}}{{","}}{{.metadata.name}}{{","}}{{.status.phase}}{{"\n"}}
+      {{$namespace := .metadata.namespace}}
+      {{$name := .metadata.name}}
+      {{$phase := .status.phase}}
+      {{range .spec.containers}}
+        {{$namespace}}{{","}}{{$name}}{{","}}{{.name}}{{","}}{{$phase}}{{"\n"}}
+      {{end}}
     {{end}}
   {{end}}'
 
