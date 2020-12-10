@@ -15,67 +15,11 @@ function dns() {
 }
 
 function cert() {
-  local -r func_name="${FUNCNAME[0]:-${funcstack[1]}}"
-  local -r domain="${1}"
-
-  if [ -z "${domain}" ]; then
-    echo '!!! This function needs a domain as first argument' >&2
-    echo "!!! i.e ${func_name} google.com" >&2
-    return 1
-  fi
-
-  echo -e "Testing ${domain}…\n"
-
-  local -r info="$(echo -e 'GET / HTTP/1.0\nEOT' \
-    | openssl s_client -connect "${domain}:443" -servername "${domain}" 2>&1)"
-
-  if ! [[ ${info} == *"-----BEGIN CERTIFICATE-----"* ]]; then
-    echo 'No certificate found' >&2
-    return 1
-  fi
-
-  echo "${info}" | openssl x509
+  sx security certificate --get --host "${*}"
 }
 
 function certsans() {
-  local -r func_name="${FUNCNAME[0]:-${funcstack[1]}}"
-  local -r domain="${1}"
-
-  if [ -z "${domain}" ]; then
-    echo '!!! This function needs a domain as first argument' >&2
-    echo "!!! i.e ${func_name} google.com" >&2
-    return 1
-  fi
-
-  echo -e "Testing ${domain}…\n"
-
-  local -r info="$(echo -e 'GET / HTTP/1.0\nEOT' \
-    | openssl s_client -connect "${domain}:443" -servername "${domain}" 2>&1)"
-
-  if ! [[ ${info} == *"-----BEGIN CERTIFICATE-----"* ]]; then
-    echo 'No certificate found' >&2
-    return 1
-  fi
-
-  local -r certificate_options="no_aux, no_header, no_issuer, \
-                                no_pubkey, no_serial, no_sigdump, \
-                                no_signame, no_validity, no_version"
-  local -r text=$(
-    echo "${info}" | openssl x509 -text -certopt "${certificate_options}"
-  )
-
-  echo -e 'Common Name:\n'
-  echo "${text}" \
-    | grep 'Subject:' \
-    | sed -e 's/^.*CN=//' \
-    | sed -e 's/\/emailAddress=.*//'
-
-  echo -e '\nSubject Alternative Name(s):\n'
-  echo "${text}" \
-    | grep -A 1 'Subject Alternative Name:' \
-    | sed -e '2s/DNS://g' -e 's/ //g' \
-    | tr ',' '\n' \
-    | tail -n +2
+  sx security certificate --sans --host "${*}"
 }
 
 function shinatra() {
