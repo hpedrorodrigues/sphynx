@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-function sx::compression::extract() {
+function sx::fs::extract() {
   local -r file_path="${1}"
 
   if ! [ -f "${file_path}" ]; then
