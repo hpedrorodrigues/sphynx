@@ -19,4 +19,4 @@ source "${SPHYNXN_DIR}/core/extract.sh"
 
 sx::parse_arguments "${@}"
 
-sx::compression::extract "${file_path:-}"
+sx::fs::extract "${file_path:-}"

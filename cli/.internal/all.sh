@@ -5,7 +5,6 @@
 readonly library_path="${SPHYNXC_DIR}/.internal/library"
 
 source "${library_path}/error.sh"
-source "${library_path}/fs.sh"
 source "${library_path}/general.sh"
 source "${library_path}/git.sh"
 source "${library_path}/github.sh"

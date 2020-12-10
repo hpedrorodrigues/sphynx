@@ -3,7 +3,7 @@
 ## Functions
 
 function extract() {
-  sx compression extract "${*}"
+  sx fs extract "${*}"
 }
 
 function mkd() {
