@@ -70,7 +70,7 @@ function sx::k8s_command::exec() {
         --tty \
         --namespace "${ns}" \
         --container "${container}" \
-        -- "${shell}" -c "export PS1='${SX_KUBERNETES_PS1:-${ps1}}'; exec ${shell}"
+        -- "${shell}" -c "PS1='${SX_KUBERNETES_PS1:-${ps1}}' exec ${shell}"
 
       exit 0
     fi
