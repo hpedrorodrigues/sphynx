@@ -49,7 +49,8 @@ function sx::docker_command::exec() {
       docker exec \
         --interactive \
         --tty \
-        "${container_id}" "${shell}" -c "export PS1='${SX_DOCKER_PS1:-${ps1}}'; exec ${shell}"
+        "${container_id}" \
+        "${shell}" -c "PS1='${SX_DOCKER_PS1:-${ps1}}' exec ${shell}"
 
       exit 0
     fi

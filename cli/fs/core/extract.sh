@@ -22,6 +22,8 @@ function sx::fs::extract() {
     '.zip,unzip,unzip'
     '.rar,unrar,unrar'
     '.gz,gunzip,gunzip'
+    '.bz2,bunzip2,bunzip2'
+    '.7z,7z,7z x'
   )
 
   for data in "${extraction_data[@]}"; do
