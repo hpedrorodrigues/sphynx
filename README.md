@@ -48,7 +48,7 @@ files! Beware!
 **How about shell startup performance?**
 
 **zsh**
-```bash
+```
 ♪ sx shell benchmark zsh
 > Hyperfine
 
@@ -76,7 +76,7 @@ variance introduced by outliers: 11% (moderately inflated)
 ```
 
 **bash**
-```bash
+```
 ♪ sx shell benchmark bash
 > Hyperfine
 
