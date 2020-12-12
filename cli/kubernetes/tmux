@@ -5,13 +5,14 @@ set -o nounset
 set -o pipefail
 
 source "${SPHYNXC_DIR}/.internal/all.sh"
+source "${SPHYNXC_DIR}/terminal/core/tmux.sh"
 source "${SPHYNXN_DIR}/shared/shared.sh"
-source "${SPHYNXN_DIR}/core/exec.sh"
+source "${SPHYNXN_DIR}/core/tmux.sh"
 
-##? Execute custom commands in a container
+##? Create a new TMUX window with the given pod details
 ##?
 ##? Usage:
-##?     exec [[<query>] [--namespace <name> | --all-namespaces] | --namespace <name> --pod <name> --container <name>]
+##?     tmux [[<query>] [--namespace <name> | --all-namespaces] | --namespace <name> --pod <name> --container <name>]
 ##?
 ##? Options:
 ##?     -n --namespace <name>  The namespace scope for requests
@@ -20,16 +21,16 @@ source "${SPHYNXN_DIR}/core/exec.sh"
 ##?     -c --container <name>  The container name
 ##?
 ##? Examples:
-##?     exec
-##?     exec echo-server
-##?     exec echo-server --all-namespaces
-##?     exec --namespace echo-server --pod echo-server --container echo-server
-##?     exec --namespace kube-system
-##?     exec --all-namespaces
+##?     tmux
+##?     tmux nginx
+##?     tmux nginx --all-namespaces
+##?     tmux --namespace nginx --pod nginx --container nginx
+##?     tmux --namespace kube-system
+##?     tmux --all-namespaces --previous
 
 sx::parse_arguments "${@}"
 
-sx::k8s::exec \
+sx::k8s::tmux \
   "${query:-}" \
   "${namespace:-}" \
   "${pod:-}" \

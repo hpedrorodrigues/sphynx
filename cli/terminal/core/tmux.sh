@@ -33,6 +33,23 @@ function sx::terminal::tmux_command::current_session() {
   fi
 }
 
+function sx::terminal::tmux_command::new_window() {
+  local -r session_name="${1}"
+  local -r window_name="${2}"
+  local -r cmd="${3}"
+
+  tmux new-window -t "${session_name}:" -n "${window_name}" "${cmd}"
+}
+
+function sx::terminal::tmux_command::new_vertical_pane() {
+  local -r session_name="${1}"
+  local -r cmd="${2}"
+
+  tmux selectp -t "${session_name}:"
+  tmux splitw -v "${cmd}"
+  tmux select-layout tiled
+}
+
 function sx::terminal::tmux_command::list_sessions() {
   local -r all_sessions="${1:-false}"
 
@@ -63,6 +80,16 @@ function sx::terminal::tmux_command::new_session() {
     tmux switch-client -t "${session_name}"
   else
     tmux new-session -s "${session_name}"
+  fi
+}
+
+function sx::terminal::tmux_command::new_detached_session() {
+  local -r session_name="${1}"
+
+  if sx::terminal::tmux_command::has_session "${session_name}"; then
+    sx::log::fatal "There is an existing session named \"${session_name}\""
+  else
+    tmux new-session -d -s "${session_name}"
   fi
 }
 
