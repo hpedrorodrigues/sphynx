@@ -11,12 +11,9 @@ function sx::terminal::screen::ls() {
   local -r sessions="$(sx::library::screen::list_sessions)"
 
   if [ -z "${sessions}" ]; then
-    sx::log::fatal 'No sessions available'
+    sx::log::fatal 'No sessions found'
   elif sx::library::screen::is_running_session; then
-    local -r current_session="$(
-      sx::library::screen::current_session \
-        | sed 's/[0-9]*\.//'
-    )"
+    local -r current_session="$(sx::library::screen::current_session)"
     # shellcheck disable=SC2068  # Double quote array expansions
     for session in ${sessions[@]}; do
       if [ "${current_session}" = "${session}" ]; then
@@ -32,7 +29,6 @@ function sx::terminal::screen::ls() {
 
 function sx::terminal::screen::new() {
   sx::library::screen::check_requirements
-  sx::library::screen::check_not_running_session
 
   local -r session_name="${1}"
 
@@ -50,7 +46,6 @@ function sx::terminal::screen::new() {
 
 function sx::terminal::screen::attach() {
   sx::library::screen::check_requirements
-  sx::library::screen::check_not_running_session
 
   local -r session_name="${1}"
 
@@ -87,7 +82,6 @@ function sx::terminal::screen::attach() {
 
 function sx::terminal::screen::force_attach() {
   sx::library::screen::check_requirements
-  sx::library::screen::check_not_running_session
 
   local -r session_name="${1}"
 
@@ -100,7 +94,6 @@ function sx::terminal::screen::force_attach() {
 
 function sx::terminal::screen::kill() {
   sx::library::screen::check_requirements
-  sx::library::screen::check_not_running_session
 
   local -r session_name="${1}"
 
@@ -137,16 +130,23 @@ function sx::terminal::screen::kill() {
 
 function sx::terminal::screen::kill_all() {
   sx::library::screen::check_requirements
-  sx::library::screen::check_not_running_session
 
   local -r sessions="$(sx::library::screen::list_sessions)"
 
   if [ -z "${sessions}" ]; then
-    sx::log::fatal 'No sessions available'
+    sx::log::fatal 'No sessions found'
   else
+    local -r current_session="$(sx::library::screen::current_session)"
     # shellcheck disable=SC2068  # Double quote array expansions
     for session_name in ${sessions[@]}; do
-      sx::library::screen::kill_session "${session_name}"
+      if [ "${current_session}" = "${session_name}" ]; then
+        continue
+      else
+        sx::library::screen::kill_session "${session_name}"
+      fi
     done
+
+    [ -n "${current_session}" ] \
+      && sx::library::screen::kill_session "${current_session}"
   fi
 }

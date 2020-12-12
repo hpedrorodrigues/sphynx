@@ -15,6 +15,10 @@ function sx::library::tmux::is_running_session() {
 function sx::library::tmux::has_session() {
   local -r session_name="${1}"
 
+  if [ -z "${session_name}" ]; then
+    sx::log::fatal 'A session name is required as first argument'
+  fi
+
   tmux has-session -t "${session_name}" 2>/dev/null
 }
 
@@ -29,6 +33,18 @@ function sx::library::tmux::new_window() {
   local -r window_name="${2}"
   local -r cmd="${3}"
 
+  if [ -z "${session_name}" ]; then
+    sx::log::fatal 'A session name is required as first argument'
+  fi
+
+  if [ -z "${window_name}" ]; then
+    sx::log::fatal 'A window name is required as second argument'
+  fi
+
+  if [ -z "${cmd}" ]; then
+    sx::log::fatal 'A command is required as third argument'
+  fi
+
   tmux new-window -t "${session_name}:" -n "${window_name}" "${cmd}"
 }
 
@@ -36,33 +52,29 @@ function sx::library::tmux::new_vertical_pane() {
   local -r session_name="${1}"
   local -r cmd="${2}"
 
+  if [ -z "${session_name}" ]; then
+    sx::log::fatal 'A session name is required as first argument'
+  fi
+
+  if [ -z "${cmd}" ]; then
+    sx::log::fatal 'A command is required as second argument'
+  fi
+
   tmux selectp -t "${session_name}:"
   tmux splitw -v "${cmd}"
-  tmux select-layout tiled
+  tmux select-layout 'tiled'
 }
 
 function sx::library::tmux::list_sessions() {
-  local -r all_sessions="${1:-false}"
-
-  if ${all_sessions} || ! sx::library::tmux::is_running_session; then
-    local -r sessions="$(tmux list-sessions -F '#{session_name}' 2>/dev/null)"
-    local -r current_session="$(sx::library::tmux::current_session)"
-    # shellcheck disable=SC2068  # Double quote array expansions
-    for session in ${sessions[@]}; do
-      if [ "${current_session}" = "${session}" ]; then
-        echo "${SX_FZF_CURRENT_BGCOLOR}${SX_FZF_CURRENT_FGCOLOR}${session}${SX_FZF_CURRENT_RESETCOLOR}"
-      else
-        echo "${session}"
-      fi
-    done
-  else
-    tmux list-sessions -F '#{session_name}' 2>/dev/null \
-      | grep -v -E "^$(sx::library::tmux::current_session)$"
-  fi
+  tmux list-sessions -F '#{session_name}' 2>/dev/null
 }
 
 function sx::library::tmux::new_session() {
   local -r session_name="${1}"
+
+  if [ -z "${session_name}" ]; then
+    sx::log::fatal 'A session name is required as first argument'
+  fi
 
   if sx::library::tmux::has_session "${session_name}"; then
     sx::log::fatal "There is an existing session named \"${session_name}\""
@@ -77,6 +89,10 @@ function sx::library::tmux::new_session() {
 function sx::library::tmux::new_detached_session() {
   local -r session_name="${1}"
 
+  if [ -z "${session_name}" ]; then
+    sx::log::fatal 'A session name is required as first argument'
+  fi
+
   if sx::library::tmux::has_session "${session_name}"; then
     sx::log::fatal "There is an existing session named \"${session_name}\""
   else
@@ -86,6 +102,10 @@ function sx::library::tmux::new_detached_session() {
 
 function sx::library::tmux::attach_session() {
   local -r session_name="${1}"
+
+  if [ -z "${session_name}" ]; then
+    sx::log::fatal 'A session name is required as first argument'
+  fi
 
   if ! sx::library::tmux::has_session "${session_name}"; then
     sx::log::fatal "There is no session named \"${session_name}\""
@@ -99,6 +119,10 @@ function sx::library::tmux::attach_session() {
 function sx::library::tmux::force_attach_session() {
   local -r session_name="${1}"
 
+  if [ -z "${session_name}" ]; then
+    sx::log::fatal 'A session name is required as first argument'
+  fi
+
   if sx::library::tmux::has_session "${session_name}"; then
     sx::library::tmux::attach_session "${session_name}"
   else
@@ -108,6 +132,10 @@ function sx::library::tmux::force_attach_session() {
 
 function sx::library::tmux::kill_session() {
   local -r session_name="${1}"
+
+  if [ -z "${session_name}" ]; then
+    sx::log::fatal 'A session name is required as first argument'
+  fi
 
   if ! sx::library::tmux::has_session "${session_name}"; then
     sx::log::fatal "There is no session named \"${session_name}\""

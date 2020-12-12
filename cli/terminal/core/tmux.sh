@@ -17,10 +17,10 @@ function sx::terminal::tmux::colors() {
 function sx::terminal::tmux::ls() {
   sx::library::tmux::check_requirements
 
-  local -r sessions="$(sx::library::tmux::list_sessions true)"
+  local -r sessions="$(sx::library::tmux::list_sessions)"
 
   if [ -z "${sessions}" ]; then
-    sx::log::fatal 'No sessions available'
+    sx::log::fatal 'No sessions found'
   elif sx::library::tmux::is_running_session; then
     local -r current_session="$(sx::library::tmux::current_session)"
     # shellcheck disable=SC2068  # Double quote array expansions
@@ -45,7 +45,7 @@ function sx::terminal::tmux::new() {
     sx::library::tmux::new_session "${session_name}"
   else
     local -r counter="$(
-      sx::library::tmux::list_sessions true \
+      sx::library::tmux::list_sessions \
         | grep -c -E "^${SX_TMUX_SESSION_NAME_PREFIX}"
     )"
 
@@ -61,7 +61,10 @@ function sx::terminal::tmux::attach() {
   if [ -n "${session_name}" ]; then
     sx::library::tmux::attach_session "${session_name}"
   elif sx::os::is_command_available 'fzf'; then
-    local -r options="$(sx::library::tmux::list_sessions)"
+    local -r options="$(
+      sx::library::tmux::list_sessions \
+        | grep -v -E "^$(sx::library::tmux::current_session)$"
+    )"
 
     if [ -z "${options}" ]; then
       sx::log::fatal 'No sessions found'
@@ -76,7 +79,10 @@ function sx::terminal::tmux::attach() {
     export PS3=$'\n''Please, choose the session: '$'\n'
 
     local options
-    mapfile -t options < <(sx::library::tmux::list_sessions)
+    mapfile -t options < <(
+      sx::library::tmux::list_sessions \
+        | grep -v -E "^$(sx::library::tmux::current_session)$"
+    )
 
     if [ "${#options[@]}" -eq 0 ]; then
       sx::log::fatal 'No sessions found'
@@ -109,7 +115,7 @@ function sx::terminal::tmux::kill() {
   if [ -n "${session_name}" ]; then
     sx::library::tmux::kill_session "${session_name}"
   elif sx::os::is_command_available 'fzf'; then
-    local -r options="$(sx::library::tmux::list_sessions true)"
+    local -r options="$(sx::terminal::tmux::ls 2>/dev/null)"
 
     if [ -z "${options}" ]; then
       sx::log::fatal 'No sessions found'
@@ -124,7 +130,7 @@ function sx::terminal::tmux::kill() {
     export PS3=$'\n''Please, choose the session: '$'\n'
 
     local options
-    mapfile -t options < <(sx::library::tmux::list_sessions true)
+    mapfile -t options < <(sx::terminal::tmux::ls 2>/dev/null)
 
     if [ "${#options[@]}" -eq 0 ]; then
       sx::log::fatal 'No sessions found'
@@ -142,15 +148,19 @@ function sx::terminal::tmux::kill_all() {
 
   local -r sessions="$(sx::library::tmux::list_sessions)"
 
-  if [ -z "${sessions}" ] && ! sx::library::tmux::is_running_session; then
-    sx::log::fatal 'No sessions available'
+  if [ -z "${sessions}" ]; then
+    sx::log::fatal 'No sessions found'
   else
+    local -r current_session="$(sx::library::tmux::current_session)"
+
     # shellcheck disable=SC2068  # Double quote array expansions
     for session_name in ${sessions[@]}; do
-      sx::library::tmux::kill_session "${session_name}"
+      if [ "${current_session}" = "${session_name}" ]; then
+        continue
+      else
+        sx::library::tmux::kill_session "${session_name}"
+      fi
     done
-
-    local -r current_session="$(sx::library::tmux::current_session)"
 
     [ -n "${current_session}" ] \
       && sx::library::tmux::kill_session "${current_session}"
