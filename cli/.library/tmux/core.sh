@@ -65,6 +65,16 @@ function sx::library::tmux::new_vertical_pane() {
   tmux select-layout 'tiled'
 }
 
+function sx::library::tmux::resize_current_pane_down() {
+  local -r cells="${1}"
+
+  if [ -z "${cells}" ]; then
+    sx::log::fatal 'A number of cells is required as first argument'
+  fi
+
+  tmux resize-pane -D "${cells}"
+}
+
 function sx::library::tmux::list_sessions() {
   tmux list-sessions -F '#{session_name}' 2>/dev/null
 }

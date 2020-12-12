@@ -83,5 +83,7 @@ function sx::k8s_command::tmux() {
     "${session_name}" \
     "${SPHYNX_EXEC} kubernetes exec --namespace '${ns}' --pod '${name}' --container '${container}'"
 
+  sx::library::tmux::resize_current_pane_down '10'
+
   sx::library::tmux::force_attach_session "${session_name}"
 }
