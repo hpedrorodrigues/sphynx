@@ -4,7 +4,7 @@ export SX_TMUX_SESSION_NAME='kmux'
 
 function sx::k8s::tmux::check_requirements() {
   sx::k8s::check_requirements
-  sx::terminal::tmux::check_requirements
+  sx::library::tmux::check_requirements
 }
 
 function sx::k8s::tmux() {
@@ -65,23 +65,23 @@ function sx::k8s_command::tmux() {
   local -r name="${2}"
   local -r container="${3}"
 
-  if sx::terminal::tmux::is_running_session; then
-    local -r session_name="$(sx::terminal::tmux_command::current_session)"
-  elif sx::terminal::tmux_command::has_session "${SX_TMUX_SESSION_NAME}"; then
+  if sx::library::tmux::is_running_session; then
+    local -r session_name="$(sx::library::tmux::current_session)"
+  elif sx::library::tmux::has_session "${SX_TMUX_SESSION_NAME}"; then
     local -r session_name="${SX_TMUX_SESSION_NAME}"
   else
     local -r session_name="${SX_TMUX_SESSION_NAME}"
-    sx::terminal::tmux_command::new_detached_session "${session_name}"
+    sx::library::tmux::new_detached_session "${session_name}"
   fi
 
-  sx::terminal::tmux_command::new_window \
+  sx::library::tmux::new_window \
     "${session_name}" \
     "${name}/${container}" \
     "${SPHYNX_EXEC} kubernetes logs --namespace '${ns}' --pod '${name}' --container '${container}'"
 
-  sx::terminal::tmux_command::new_vertical_pane \
+  sx::library::tmux::new_vertical_pane \
     "${session_name}" \
     "${SPHYNX_EXEC} kubernetes exec --namespace '${ns}' --pod '${name}' --container '${container}'"
 
-  sx::terminal::tmux_command::force_attach_session "${session_name}"
+  sx::library::tmux::force_attach_session "${session_name}"
 }
