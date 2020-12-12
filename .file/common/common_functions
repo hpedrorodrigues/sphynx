@@ -265,7 +265,7 @@ function loadcores() {
 
   local -r file='/dev/null'
 
-  # shellcheck disable=SC2051  # Bash doesn't support variables in brace range expansions
+  # shellcheck disable=SC2051  # bash doesn't support variables in brace range expansions
   for _ in {1..${n_cores}}; do
     yes >"${file}" &
   done

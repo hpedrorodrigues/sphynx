@@ -5,10 +5,14 @@ function sx::k8s::logs() {
 
   local -r query="${1:-}"
   local -r namespace="${2:-}"
-  local -r all_namespaces="${3:-false}"
-  local -r previous_log="${4:-false}"
+  local -r pod="${3:-}"
+  local -r container="${4:-}"
+  local -r all_namespaces="${5:-false}"
+  local -r previous_log="${6:-false}"
 
-  if sx::os::is_command_available 'fzf'; then
+  if [ -n "${namespace}" ] && [ -n "${pod}" ] && [ -n "${container}" ]; then
+    sx::k8s_command::logs "${namespace}" "${pod}" "${container}" "${previous_log}"
+  elif sx::os::is_command_available 'fzf'; then
     local -r options="$(
       sx::k8s::running_pods "${query}" "${namespace}" "${all_namespaces}"
     )"
@@ -23,9 +27,9 @@ function sx::k8s::logs() {
     if [ -n "${selected}" ]; then
       local -r ns="$(echo "${selected}" | awk '{ print $1 }')"
       local -r name="$(echo "${selected}" | awk '{ print $2 }')"
-      local -r container="$(echo "${selected}" | awk '{ print $3 }')"
+      local -r container_name="$(echo "${selected}" | awk '{ print $3 }')"
 
-      sx::k8s_command::logs "${ns}" "${name}" "${container}" "${previous_log}"
+      sx::k8s_command::logs "${ns}" "${name}" "${container_name}" "${previous_log}"
     fi
   else
     export PS3=$'\n''Please, choose the pod: '$'\n'
@@ -42,9 +46,9 @@ function sx::k8s::logs() {
     select selected in "${options[@]}"; do
       local -r ns="$(echo "${selected}" | awk '{ print $1 }')"
       local -r name="$(echo "${selected}" | awk '{ print $2 }')"
-      local -r container="$(echo "${selected}" | awk '{ print $3 }')"
+      local -r container_name="$(echo "${selected}" | awk '{ print $3 }')"
 
-      sx::k8s_command::logs "${ns}" "${name}" "${container}" "${previous_log}"
+      sx::k8s_command::logs "${ns}" "${name}" "${container_name}" "${previous_log}"
       break
     done
   fi

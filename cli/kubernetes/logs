@@ -11,16 +11,20 @@ source "${SPHYNXN_DIR}/core/logs.sh"
 ##? Print the logs for a container in a pod
 ##?
 ##? Usage:
-##?     logs [<query>] [--namespace <name> | --all-namespaces] [--previous]
+##?     logs [[<query>] [--namespace <name> | --all-namespaces] | --namespace <name> --pod <name> --container <name>] [--previous]
 ##?
 ##? Options:
 ##?     -n --namespace <name>  The namespace scope for requests
 ##?     -a --all-namespaces  All namespaces
-##?     -p --previous  Print the logs for the previous instance of the container in a pod if it exists
+##?     -p --pod <name>  The pod name
+##?     -c --container <name>  The container name
+##?     --previous  Print the logs for the previous instance of the container in a pod if it exists
 ##?
 ##? Examples:
 ##?     logs
 ##?     logs kafka
+##?     logs kafka --all-namespaces
+##?     logs --namespace kafka --pod kafka --container kafka
 ##?     logs --namespace kube-system
 ##?     logs --all-namespaces --previous
 
@@ -29,5 +33,7 @@ sx::parse_arguments "${@}"
 sx::k8s::logs \
   "${query:-}" \
   "${namespace:-}" \
+  "${pod:-}" \
+  "${container:-}" \
   "${all_namespaces:-false}" \
   "${previous:-false}"
