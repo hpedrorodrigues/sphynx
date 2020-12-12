@@ -45,17 +45,11 @@ function up() {
     echo '!!! You should pass a number to this function' >&2
     echo "!!! i.e ${func_name} 3 (to navigate up 3 directories)" >&2
     return 1
-  elif [[ ${n} -le 1 ]]; then
-    cd .. || return 1
-  else
-    local dirs
-    # shellcheck disable=SC2051  # Bash doesn't support variables in brace range expansions
-    for _ in {1..${n}}; do
-      dirs="../${dirs}"
-    done
-
-    cd "${dirs}" || return 1
   fi
+
+  # shellcheck disable=SC2086  # quote this to prevent word splitting
+  # shellcheck disable=SC2051  # bash doesn't support variables in brace range expansions
+  cd "$(printf '../'%.0s {1..${1:-1}})" || return 1
 }
 
 function fs() {
