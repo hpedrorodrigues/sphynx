@@ -20,7 +20,7 @@ function sx::terminal::tmux::ls() {
   local -r sessions="$(sx::library::tmux::list_sessions true)"
 
   if [ -z "${sessions}" ]; then
-    sx::log::info 'No sessions available'
+    sx::log::fatal 'No sessions available'
   elif sx::library::tmux::is_running_session; then
     local -r current_session="$(sx::library::tmux::current_session)"
     # shellcheck disable=SC2068  # Double quote array expansions
@@ -143,7 +143,7 @@ function sx::terminal::tmux::kill_all() {
   local -r sessions="$(sx::library::tmux::list_sessions)"
 
   if [ -z "${sessions}" ] && ! sx::library::tmux::is_running_session; then
-    sx::log::info 'No sessions available'
+    sx::log::fatal 'No sessions available'
   else
     # shellcheck disable=SC2068  # Double quote array expansions
     for session_name in ${sessions[@]}; do
