@@ -28,6 +28,7 @@ format = "@[$hostname]($style) "
 
 [kubernetes]
 disabled = false
+symbol = "☀ "
 style = "fg:#8be9fd"
 format = "[$symbol$context(\\($namespace\\))]($style) "
 
@@ -49,13 +50,13 @@ only_detached = false
 style = "fg:#50fa7b"
 
 [aws]
-symbol = "☁️ "
+symbol = "❄ "
 style = "fg:#bd93f9"
 format = "[$symbol$profile(\\($region\\))]($style) "
 
 [gcloud]
-symbol = "☁️ "
-style = "fg:#ff79c6"
+symbol = "☸ "
+style = "fg:#ffb86c"
 format = "[$symbol$project(\\($region\\))]($style) "
 
 [cmd_duration]
