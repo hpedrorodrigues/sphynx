@@ -30,6 +30,46 @@ function sx::library::tmux::current_session() {
   fi
 }
 
+function sx::library::tmux::new_splitted_window() {
+  local -r window_title="${1}"
+  local -r fst_pane_cmd="${2}"
+  local -r snd_pane_cmd="${3}"
+
+  if [ -z "${window_title}" ]; then
+    sx::log::fatal 'A window title is required as first argument'
+  fi
+
+  if [ -z "${fst_pane_cmd}" ]; then
+    sx::log::fatal 'A command to the first pane is required as second argument'
+  fi
+
+  if [ -z "${snd_pane_cmd}" ]; then
+    sx::log::fatal 'A command to the second pane is required as third argument'
+  fi
+
+  if sx::library::tmux::is_running_session; then
+    local -r session_name="$(sx::library::tmux::current_session)"
+  elif sx::library::tmux::has_session "${SX_TMUX_SESSION_NAME}"; then
+    local -r session_name="${SX_TMUX_SESSION_NAME}"
+  else
+    local -r session_name="${SX_TMUX_SESSION_NAME}"
+    sx::library::tmux::new_detached_session "${session_name}"
+  fi
+
+  sx::library::tmux::new_window \
+    "${session_name}" \
+    "${window_title}" \
+    "${fst_pane_cmd}"
+
+  sx::library::tmux::new_vertical_pane \
+    "${session_name}" \
+    "${snd_pane_cmd}"
+
+  sx::library::tmux::resize_current_pane_down '10'
+
+  sx::library::tmux::force_attach_session "${session_name}"
+}
+
 function sx::library::tmux::new_window() {
   local -r session_name="${1}"
   local -r window_name="${2}"
