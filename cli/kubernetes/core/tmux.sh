@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-export SX_TMUX_SESSION_NAME='kmux'
-
 function sx::k8s::tmux::check_requirements() {
   sx::k8s::check_requirements
   sx::library::tmux::check_requirements
@@ -65,25 +63,8 @@ function sx::k8s_command::tmux() {
   local -r name="${2}"
   local -r container="${3}"
 
-  if sx::library::tmux::is_running_session; then
-    local -r session_name="$(sx::library::tmux::current_session)"
-  elif sx::library::tmux::has_session "${SX_TMUX_SESSION_NAME}"; then
-    local -r session_name="${SX_TMUX_SESSION_NAME}"
-  else
-    local -r session_name="${SX_TMUX_SESSION_NAME}"
-    sx::library::tmux::new_detached_session "${session_name}"
-  fi
-
-  sx::library::tmux::new_window \
-    "${session_name}" \
+  sx::library::tmux::new_splitted_window \
     "${name}/${container}" \
-    "${SPHYNX_EXEC} kubernetes logs --namespace '${ns}' --pod '${name}' --container '${container}'"
-
-  sx::library::tmux::new_vertical_pane \
-    "${session_name}" \
+    "${SPHYNX_EXEC} kubernetes logs --namespace '${ns}' --pod '${name}' --container '${container}'" \
     "${SPHYNX_EXEC} kubernetes exec --namespace '${ns}' --pod '${name}' --container '${container}'"
-
-  sx::library::tmux::resize_current_pane_down '10'
-
-  sx::library::tmux::force_attach_session "${session_name}"
 }

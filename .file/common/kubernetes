@@ -46,14 +46,6 @@ function ka() {
   kubectl "${@}" --all-namespaces
 }
 
-function kenc() {
-  echo -n "${@}" | base64
-}
-
-function kdec() {
-  echo "${@}" | base64 --decode
-}
-
 function kimg() {
   # shellcheck disable=SC2016  # Expressions don't expand in single quotes, use double quotes for that
   local -r template='

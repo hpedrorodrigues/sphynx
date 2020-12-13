@@ -11,11 +11,14 @@ source "${SPHYNXN_DIR}/core/logs.sh"
 ##? Fetch logs of containers
 ##?
 ##? Usage:
-##?     logs
+##?     logs [--container <id>]
+##?
+##? Options:
+##?     -c --container <id>  The container id to tail logs from
 ##?
 ##? Examples:
 ##?     logs
 
 sx::parse_arguments "${@}"
 
-sx::docker::logs
+sx::docker::logs "${container:-}"

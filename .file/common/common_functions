@@ -44,6 +44,22 @@ function loop() {
   watch "${SHELL} -i -c '${*}'"
 }
 
+function e64() {
+  if [ "${#}" -gt 0 ]; then
+    base64 <<<"${@}"
+  else
+    base64
+  fi
+}
+
+function d64() {
+  if [ "${#}" -gt 0 ]; then
+    base64 --decode <<<"${@}"
+  else
+    base64 --decode
+  fi
+}
+
 function csv() {
   local -r func_name="${FUNCNAME[0]:-${funcstack[1]}}"
   local -r file_name="${1}"
@@ -300,6 +316,15 @@ function ram() {
   sum="$(echo "scale=2; ${sum} / 1024.0" | bc)"
 
   echo "${application} uses ${sum}MBs of RAM"
+}
+
+# Remove ANSI colour escapes
+# i.e ts | decolorize
+function decolorize() {
+  sed -E $'s|\x1b\\[[0-\\?]*[ -/]*[@-~]||g;
+         s|\x1b[PX^_][^\x1b]*\x1b\\\\||g;
+         s:\x1b\\][^\x07]*(\x07|\x1b\\\\)::g;
+         s|\x1b[@-_]||g'
 }
 
 # Print OS logs

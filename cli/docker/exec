@@ -11,11 +11,14 @@ source "${SPHYNXN_DIR}/core/exec.sh"
 ##? Run a command in a running container
 ##?
 ##? Usage:
-##?     exec
+##?     exec [--container <id>]
+##?
+##? Options:
+##?     -c --container <id>  The container id to execute commands in
 ##?
 ##? Examples:
 ##?     exec
 
 sx::parse_arguments "${@}"
 
-sx::docker::exec
+sx::docker::exec "${container:-}"
