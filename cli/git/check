@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNXC_DIR}/.internal/all.sh"
+source "${SPHYNXN_DIR}/shared/shared.sh"
+source "${SPHYNXN_DIR}/core/check.sh"
+
+##? Check whether the current branch is up to date with the default branch
+##?
+##? Usage:
+##?     check
+##?
+##? Examples:
+##?     check
+
+sx::parse_arguments "${@}"
+
+sx::git::check
