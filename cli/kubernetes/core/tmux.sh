@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-export SX_TMUX_SESSION_NAME='kmux'
-
 function sx::k8s::tmux::check_requirements() {
   sx::k8s::check_requirements
   sx::library::tmux::check_requirements

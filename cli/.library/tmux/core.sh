@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+export SX_TMUX_SESSION_NAME="${SX_TMUX_SESSION_NAME:-sphynx-tmux}"
+
 function sx::library::tmux::check_requirements() {
   sx::require 'tmux'
 

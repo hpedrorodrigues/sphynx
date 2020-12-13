@@ -21,6 +21,28 @@ function sx::docker::all_containers() {
   sx::docker::containers '--all'
 }
 
+function sx::docker::has_container() {
+  local -r container_id="${1}"
+
+  if [ -z "${container_id}" ]; then
+    sx::log::fatal 'A container id is required as first argument'
+  fi
+
+  sx::docker::all_containers | grep -q "${container_id}"
+}
+
+function sx::docker::container_name() {
+  local -r container_id="${1}"
+
+  if [ -z "${container_id}" ]; then
+    sx::log::fatal 'A container id is required as first argument'
+  fi
+
+  sx::docker::all_containers \
+    | grep "${container_id}" \
+    | awk '{ print $2 }'
+}
+
 function sx::docker::list_resources() {
   docker container ls \
     --all \
