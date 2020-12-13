@@ -18,5 +18,5 @@ function sx::git::remote::branch_exists() {
 function sx::git::local::branch_exists() {
   local -r branch_name="${1}"
 
-  git show-branch "${branch_name}" 2>/dev/null
+  git show-branch "${branch_name}" &>/dev/null
 }

@@ -5,7 +5,7 @@ function sx::git::open() {
 
   local -r file_path="${1:-.}"
 
-  if [ ! -e "${file_path}" ]; then
+  if ! [ -e "${file_path}" ]; then
     sx::log::fatal "No such file \"${file_path}\""
   fi
 
@@ -18,19 +18,24 @@ function sx::git::open() {
       | sed 's/ssh://g' \
       | sed 's/:/\//g'
   )"
-  local -r git_branch="$(sx::git::current_branch)"
+  local -r current_branch="$(sx::git::current_branch)"
+  local -r default_branch="$(sx::git::default_branch)"
   local -r base_url="http:${git_url}"
 
   if [ "${file_path}" = '.' ]; then
-    local -r full_url="$([ "${git_branch}" = 'master' ] || [ "${git_branch}" = 'main' ] \
-      && echo "${base_url}" \
-      || echo "${base_url}/tree/${git_branch}")"
+    local -r full_url="$(
+      if [ "${current_branch}" = "${default_branch}" ]; then
+        echo "${base_url}"
+      else
+        echo "${base_url}/tree/${current_branch}"
+      fi
+    )"
   else
     local -r root="$(git rev-parse --show-toplevel | sed 's/\//\\\//g')"
     local -r relative_file_path="$(
       echo "${PWD}/${file_path}" | sed "s/${root}\///g"
     )"
-    local -r full_url="${base_url}/blob/${git_branch}/${relative_file_path}"
+    local -r full_url="${base_url}/blob/${current_branch}/${relative_file_path}"
   fi
 
   if [[ ${full_url} == *'bitbucket'* ]]; then

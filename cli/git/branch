@@ -8,27 +8,26 @@ source "${SPHYNXC_DIR}/.internal/all.sh"
 source "${SPHYNXN_DIR}/shared/shared.sh"
 source "${SPHYNXN_DIR}/core/branch.sh"
 
-##? Manage branches
+##? Manage GIT branches
 ##?
 ##? Usage:
-##?     branch (--clear | --delete <name> | --switch)
+##?     branch (--clear | [<query>] --switch)
 ##?
 ##? Options:
-##?     -c --clear  Delete all local branches, except the current and the master/main branches
-##?     -d --delete <name>  Deletes the given branch, both remote and local version
+##?     -c --clear  Delete all local branches, except the current and the default branches
 ##?     -s --switch  Switch to another branch interactively
 ##?
 ##? Examples:
-##?     branch -d test
+##?     branch --switch master
+##?     branch --switch
+##?     branch --clear
 
 sx::parse_arguments "${@}"
 
 if ${clear:-false}; then
   sx::git::branch::delete_all_local
-elif [ -n "${delete:-}" ]; then
-  sx::git::branch::delete "${delete}"
 elif ${switch:-false}; then
-  sx::git::branch::switch
+  sx::git::branch::switch "${query:-}"
 else
   sx::error::illegal_arguments "${*}"
 fi
