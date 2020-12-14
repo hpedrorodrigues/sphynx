@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 function sx::system::flush_dns_cache() {
-  sx::os::ensure_supported_os
+  sx::require_supported_os
 
   if sx::os::is_osx; then
     sudo dscacheutil -flushcache

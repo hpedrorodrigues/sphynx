@@ -29,3 +29,21 @@ function sx::require_network() {
     sx::log::fatal 'No network connection found'
   fi
 }
+
+function sx::require_linux() {
+  if ! sx::os::is_linux; then
+    sx::log::fatal 'You are not running on a Linux machine'
+  fi
+}
+
+function sx::require_osx() {
+  if ! sx::os::is_osx; then
+    sx::log::fatal 'You are not running on a MacOS machine'
+  fi
+}
+
+function sx::require_supported_os() {
+  if ! sx::os::is_osx && ! sx::os::is_linux; then
+    sx::log::fatal 'You are not running on a supported OS'
+  fi
+}

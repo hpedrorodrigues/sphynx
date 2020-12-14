@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 function sx::uuid() {
-  sx::os::ensure_supported_os
+  sx::require_supported_os
 
   local -r id="$(uuidgen)"
 

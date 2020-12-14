@@ -13,13 +13,13 @@ function sx::osx::kill_finder() {
 }
 
 function sx::osx::restart_ui() {
-  sx::os::ensure_osx
+  sx::require_osx
 
   killall SystemUIServer
 }
 
 function sx::osx::show_hidden_files() {
-  sx::os::ensure_osx
+  sx::require_osx
 
   local -r state="${1}"
 
@@ -33,7 +33,7 @@ function sx::osx::show_hidden_files() {
 }
 
 function sx::osx::change_spotlight_indexing_state() {
-  sx::os::ensure_osx
+  sx::require_osx
 
   local -r state="${1}"
 
