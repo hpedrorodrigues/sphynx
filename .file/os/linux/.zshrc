@@ -36,12 +36,8 @@ if hash sx &>/dev/null; then
   # Load the tmux "hack" session on zsh startup
   # Notes:
   # - not loading tmux in sphynx benchmarks because it's not important for it
-  # - not loading tmux if a screen session is currently active
   # - loading the tmux session only when using Alacritty
-  if [ -z "${SX_SHELL_BENCHMARK}" ] \
-    && [ -z "${STY}" ] \
-    && [ -z "${TMUX}" ] \
-    && [ -n "${ALACRITTY_LOG}" ]; then
-    sx terminal tmux force-attach hack
+  if [ -z "${SX_SHELL_BENCHMARK}" ] && [ -n "${ALACRITTY_LOG}" ]; then
+    sx terminal tmux force-attach 'hack'
   fi
 fi
