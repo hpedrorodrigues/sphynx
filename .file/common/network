@@ -1,26 +1,12 @@
 #!/usr/bin/env bash
 
-function public_ip() {
-  # shellcheck disable=SC2068  # Double quote array expansions
-  sx ip public ${@}
-}
+alias dns='sx system dns --query'
 
-function private_ip() {
-  # shellcheck disable=SC2068  # Double quote array expansions
-  sx ip private ${@}
-}
+alias cert='sx security certificate --get --host'
+alias certsans='sx security certificate --sans --host'
 
-function dns() {
-  sx system dns --query "${*}"
-}
-
-function cert() {
-  sx security certificate --get --host "${*}"
-}
-
-function certsans() {
-  sx security certificate --sans --host "${*}"
-}
+alias public_ip='sx ip public'
+alias private_ip='sx ip private'
 
 function shinatra() {
   local -r func_name="${FUNCNAME[0]:-${funcstack[1]}}"
