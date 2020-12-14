@@ -19,7 +19,7 @@ function sx::network::can_reach() {
     sx::log::fatal 'This function needs a host as first argument'
   fi
 
-  ping -q -c1 -W1 "${host}" &>/dev/null
+  ping -q -c1 -W5 "${host}" &>/dev/null
 }
 
 function sx::network::is_ipv4() {
