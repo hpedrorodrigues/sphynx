@@ -1,23 +1,7 @@
 #!/usr/bin/env bash
 
 function sx::spy::check_requirements() {
-  sx::require_linux
-}
-
-function sx::spy::get_processes() {
-  ps --no-headers --format 'uname,pid,cmd' ax
-}
-
-function sx::spy::nsenter() {
-  local -r pid="${1}"
-
-  sudo nsenter --target "${pid}" --all -- sh
-}
-
-function sx::spy::strace() {
-  local -r pid="${1}"
-
-  sudo strace --attach "${pid}"
+  sx::linux::check_requirements
 }
 
 function sx::spy::namespaces() {
@@ -74,4 +58,20 @@ function sx::spy::syscalls() {
       break
     done
   fi
+}
+
+function sx::spy::get_processes() {
+  ps --no-headers --format 'uname,pid,cmd' ax
+}
+
+function sx::spy::nsenter() {
+  local -r pid="${1}"
+
+  sudo nsenter --target "${pid}" --all -- sh
+}
+
+function sx::spy::strace() {
+  local -r pid="${1}"
+
+  sudo strace --attach "${pid}"
 }

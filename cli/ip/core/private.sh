@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
 function sx::ip::private() {
+  sx::ip::check_requirements
+
   ifconfig \
     | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' \
     | grep -Eo '([0-9]*\.){3}[0-9]*' \

@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
 
 function sx::shell::run_tests() {
+  sx::shell::check_requirements
+
   local -r sh="${1}"
 
-  export SX_SHELL_BENCHMARK=1
+  export SX_SHELL_BENCHMARK='1'
 
   if sx::os::is_command_available 'hyperfine'; then
     sx::log::info '> Hyperfine\n'
@@ -23,10 +25,12 @@ function sx::shell::run_tests() {
 }
 
 function sx::shell::benchmark() {
-  local -r shell="${1}"
+  sx::shell::check_requirements
 
-  if [ "${shell}" = 'zsh' ] || [ "${shell}" = 'bash' ]; then
-    sx::shell::run_tests "${shell}"
+  local -r sh="${1}"
+
+  if [ "${sh}" = 'zsh' ] || [ "${sh}" = 'bash' ]; then
+    sx::shell::run_tests "${sh}"
   else
     sx::log::fatal 'Unsupported shell'
   fi

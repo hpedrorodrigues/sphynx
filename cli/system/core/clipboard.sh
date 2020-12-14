@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 function sx::system::clipboard::copy() {
-  sx::require_supported_os
+  sx::system::check_requirements
 
   if sx::os::is_command_available 'xclip'; then
     xclip -in -selection clipboard
@@ -15,7 +15,7 @@ function sx::system::clipboard::copy() {
 }
 
 function sx::system::clipboard::paste() {
-  sx::require_supported_os
+  sx::system::check_requirements
 
   if sx::os::is_command_available 'xclip'; then
     xclip -out -selection clipboard

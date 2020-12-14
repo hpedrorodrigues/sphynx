@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-function sx::osx::change_screenshots_path() {
-  sx::require_osx
+function sx::macos::change_screenshots_path() {
+  sx::macos::check_requirements
 
   local -r new_path="${1}"
 
@@ -9,17 +9,17 @@ function sx::osx::change_screenshots_path() {
 
   defaults write com.apple.screencapture location "${new_path}"
 
-  sx::osx::restart_ui
+  sx::macos::restart_ui
 }
 
-function sx::osx::delete_index_files() {
-  sx::require_osx
+function sx::macos::delete_index_files() {
+  sx::macos::check_requirements
 
   find . -name '*.DS_Store' -type f -ls -delete
 }
 
-function sx::osx::current_wifi_password() {
-  sx::require_osx
+function sx::macos::current_wifi_password() {
+  sx::macos::check_requirements
 
   local -r ssid="$(sx::network::current::ssid)"
 

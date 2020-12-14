@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 function sx::security::certificate::get() {
+  sx::security::check_requirements
   sx::require 'openssl'
   sx::require_network
 
@@ -23,6 +24,7 @@ function sx::security::certificate::get() {
 }
 
 function sx::security::certificate::sans() {
+  sx::security::check_requirements
   sx::require 'openssl'
   sx::require_network
 

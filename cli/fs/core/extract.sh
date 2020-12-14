@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
 function sx::fs::extract() {
+  sx::fs::check_requirements
+
   local -r file_path="${1}"
 
   if ! [ -f "${file_path}" ]; then

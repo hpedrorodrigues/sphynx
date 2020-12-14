@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 function sx::library::screen::check_requirements() {
+  sx::require_supported_os
   sx::require 'screen'
 
   if [ -n "${TMUX:-}" ]; then

@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 function sx::git::check_requirements() {
+  sx::require_supported_os
   sx::require 'git'
 
   local -r remote_url="$(sx::git::remote::url)"
