@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
-export DEFAULT_GITHUB_USER='hpedrorodrigues'
-export GITHUB_USER="${GITHUB_USER:-${DEFAULT_GITHUB_USER}}"
+export GITHUB_USER="${GITHUB_USER:-hpedrorodrigues}"
 
 export GITHUB_API_URL='https://api.github.com/'
 export GITHUB_BROWSER_API_URL='https://github.com/'
