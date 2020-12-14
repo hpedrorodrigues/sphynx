@@ -6,7 +6,6 @@ set -o pipefail
 
 source "${SPHYNXC_DIR}/.internal/all.sh"
 source "${SPHYNXN_DIR}/shared/shared.sh"
-source "${SPHYNXN_DIR}/core/ui.sh"
 source "${SPHYNXN_DIR}/core/system.sh"
 
 ##? Manage MacOS system state
@@ -27,11 +26,11 @@ source "${SPHYNXN_DIR}/core/system.sh"
 sx::parse_arguments "${@}"
 
 if [ -n "${screenshots_path:-}" ]; then
-  sx::osx::change_screenshots_path "${screenshots_path}"
+  sx::macos::change_screenshots_path "${screenshots_path}"
 elif ${cleanup_dsstore:-}; then
-  sx::osx::delete_index_files
+  sx::macos::delete_index_files
 elif ${wifi_password:-}; then
-  sx::osx::current_wifi_password
+  sx::macos::current_wifi_password
 else
   sx::error::illegal_arguments "${*}"
 fi

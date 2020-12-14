@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 function sx::system::clear_trash() {
-  sx::require_supported_os
+  sx::system::check_requirements
 
   if sx::os::is_osx; then
     sudo rm -rfv /Volumes/*/.Trashes /Volumes/*/.Trash ~/.Trash/* /private/var/log/asl/*.asl

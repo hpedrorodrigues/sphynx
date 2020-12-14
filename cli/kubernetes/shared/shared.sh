@@ -9,6 +9,7 @@ export SX_K8SCTL="${SX_K8SCTL:-kubectl}"
 export SX_K8S_REQUEST_TIMEOUT="${SX_K8S_REQUEST_TIMEOUT:-0}"
 
 function sx::k8s::check_requirements() {
+  sx::require_supported_os
   sx::require 'kubectl'
 }
 

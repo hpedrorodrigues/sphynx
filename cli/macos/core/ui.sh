@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-function sx::osx::ensure_valid_state() {
+function sx::macos::ensure_valid_state() {
   local -r state="${1}"
 
   if [ "${state}" != 'on' ] && [ "${state}" != 'off' ]; then
@@ -8,36 +8,30 @@ function sx::osx::ensure_valid_state() {
   fi
 }
 
-function sx::osx::kill_finder() {
+function sx::macos::kill_finder() {
   killall Finder '/System/Library/CoreServices/Finder.app'
 }
 
-function sx::osx::restart_ui() {
-  sx::require_osx
-
-  killall SystemUIServer
-}
-
-function sx::osx::show_hidden_files() {
-  sx::require_osx
+function sx::macos::show_hidden_files() {
+  sx::macos::check_requirements
 
   local -r state="${1}"
 
-  sx::osx::ensure_valid_state "${state}"
+  sx::macos::ensure_valid_state "${state}"
 
   local -r apple_state="$([ "${state}" = 'on' ] && echo 'YES' || echo 'NO')"
 
   defaults write com.apple.finder AppleShowAllFiles "${apple_state}"
 
-  sx::osx::kill_finder
+  sx::macos::kill_finder
 }
 
-function sx::osx::change_spotlight_indexing_state() {
-  sx::require_osx
+function sx::macos::change_spotlight_indexing_state() {
+  sx::macos::check_requirements
 
   local -r state="${1}"
 
-  sx::osx::ensure_valid_state "${state}"
+  sx::macos::ensure_valid_state "${state}"
 
   sudo mdutil -a -i "${state}"
 }

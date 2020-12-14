@@ -6,6 +6,7 @@ set -o pipefail
 
 source "${SPHYNXC_DIR}/.internal/all.sh"
 source "${SPHYNXN_DIR}/shared/shared.sh"
+source "${SPHYNXC_DIR}/ip/shared/shared.sh"
 source "${SPHYNXC_DIR}/ip/core/gateway.sh"
 source "${SPHYNXC_DIR}/ip/core/private.sh"
 source "${SPHYNXC_DIR}/ip/core/public.sh"

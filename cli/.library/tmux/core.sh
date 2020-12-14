@@ -3,6 +3,7 @@
 export SX_TMUX_SESSION_NAME="${SX_TMUX_SESSION_NAME:-sphynx-tmux}"
 
 function sx::library::tmux::check_requirements() {
+  sx::require_supported_os
   sx::require 'tmux'
 
   if [ -n "${STY:-}" ]; then

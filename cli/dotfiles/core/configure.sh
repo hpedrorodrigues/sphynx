@@ -3,6 +3,7 @@
 export DOTBOT_CONFIG_FILE='dotbot.conf.yaml'
 
 function sx::dotfiles::check_requirements() {
+  sx::require_supported_os
   sx::require 'dotbot'
 }
 

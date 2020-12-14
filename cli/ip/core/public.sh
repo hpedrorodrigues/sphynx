@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 function sx::ip::public() {
+  sx::ip::check_requirements
   sx::require_network
 
   local -r commands=(

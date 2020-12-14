@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 function sx::system::flush_dns_cache() {
-  sx::require_supported_os
+  sx::system::check_requirements
 
   if sx::os::is_osx; then
     sudo dscacheutil -flushcache
@@ -13,6 +13,7 @@ function sx::system::flush_dns_cache() {
 }
 
 function sx::system::query_dns() {
+  sx::system::check_requirements
   sx::require_network
 
   local domain="${*}"

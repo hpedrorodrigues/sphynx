@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
 function sx::security::hash::md5() {
+  sx::security::check_requirements
+
   local -r filename="${1:-}"
 
   if [ -n "${filename}" ] && ! [ -f "${filename}" ]; then
@@ -31,6 +33,8 @@ function sx::security::hash::md5() {
 }
 
 function sx::security::hash::sha1() {
+  sx::security::check_requirements
+
   local -r filename="${1:-}"
 
   if [ -n "${filename}" ] && ! [ -f "${filename}" ]; then
@@ -61,6 +65,8 @@ function sx::security::hash::sha1() {
 }
 
 function sx::security::hash::sha256() {
+  sx::security::check_requirements
+
   local -r filename="${1:-}"
 
   if [ -n "${filename}" ] && ! [ -f "${filename}" ]; then

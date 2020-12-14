@@ -1,38 +1,5 @@
 #!/usr/bin/env bash
 
-function sx::k8s::contexts() {
-  local -r query="${1:-}"
-
-  if [ -n "${query}" ]; then
-    local -r selector="$(echo "${query}" | sx::string::lowercase)"
-  else
-    local -r selector='.*'
-  fi
-
-  local -r contexts="$(
-    sx::k8s::cli config get-contexts \
-      --output name \
-      | sx::string::lowercase \
-      | grep -E "${selector}"
-  )"
-  local -r current_context="$(sx::k8s::current_context)"
-
-  # shellcheck disable=SC2068  # Double quote array expansions
-  for context in ${contexts[@]}; do
-    if [ "${current_context}" = "${context}" ]; then
-      echo "${SX_FZF_CURRENT_BGCOLOR}${SX_FZF_CURRENT_FGCOLOR}${context}${SX_FZF_CURRENT_RESETCOLOR}"
-    else
-      echo "${context}"
-    fi
-  done
-}
-
-function sx::k8s::change_context() {
-  local -r ctx_name="${1:-}"
-
-  sx::k8s::cli config use-context "${ctx_name}"
-}
-
 function sx::k8s::context() {
   sx::k8s::check_requirements
 
@@ -64,4 +31,37 @@ function sx::k8s::context() {
       break
     done
   fi
+}
+
+function sx::k8s::contexts() {
+  local -r query="${1:-}"
+
+  if [ -n "${query}" ]; then
+    local -r selector="$(echo "${query}" | sx::string::lowercase)"
+  else
+    local -r selector='.*'
+  fi
+
+  local -r contexts="$(
+    sx::k8s::cli config get-contexts \
+      --output name \
+      | sx::string::lowercase \
+      | grep -E "${selector}"
+  )"
+  local -r current_context="$(sx::k8s::current_context)"
+
+  # shellcheck disable=SC2068  # Double quote array expansions
+  for context in ${contexts[@]}; do
+    if [ "${current_context}" = "${context}" ]; then
+      echo "${SX_FZF_CURRENT_BGCOLOR}${SX_FZF_CURRENT_FGCOLOR}${context}${SX_FZF_CURRENT_RESETCOLOR}"
+    else
+      echo "${context}"
+    fi
+  done
+}
+
+function sx::k8s::change_context() {
+  local -r ctx_name="${1:-}"
+
+  sx::k8s::cli config use-context "${ctx_name}"
 }

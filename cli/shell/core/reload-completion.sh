@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 function sx::shell::reload_completion::zsh() {
+  sx::shell::check_requirements
   sx::require 'zsh'
 
   if [ -f "${HOME}/.zcompdump" ]; then
