@@ -16,11 +16,16 @@ function sx::osx::is_catalina_or_newer() {
 
 # Reference: http://blog.macromates.com/2006/keychain-access-from-shell/
 function sx::osx::keychain_pass() {
-  local -r account="${1}"
+  local -r account="${1:-}"
+
+  if [ -z "${account:-}" ]; then
+    sx::log::fatal 'This function needs an account as first argument'
+  fi
+
   local -r raw_password="$(security find-generic-password -ga "${account}" 2>&1 >/dev/null)"
 
-  if [[ ${raw_password} =~ "could" ]]; then
-    sx::log::fatal "Couldn't find account \"${account}\""
+  if [[ ${raw_password} =~ 'could' ]]; then
+    sx::log::fatal "Cannot find account \"${account}\""
   fi
 
   # shellcheck disable=SC2001  # See if you can use ${variable//search/replace} instead

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 function sx::spy::check_requirements() {
-  sx::os::ensure_linux
+  sx::require_linux
 }
 
 function sx::spy::get_processes() {

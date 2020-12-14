@@ -8,28 +8,10 @@ function sx::os::is_linux() {
   [ "$(uname)" = 'Linux' ]
 }
 
-function sx::os::ensure_supported_os() {
-  if ! sx::os::is_osx && ! sx::os::is_linux; then
-    sx::log::fatal 'You are not running on a supported OS'
-  fi
-}
-
-function sx::os::ensure_osx() {
-  if ! sx::os::is_osx; then
-    sx::log::fatal 'You are not running on a MacOS machine'
-  fi
-}
-
-function sx::os::ensure_linux() {
-  if ! sx::os::is_linux; then
-    sx::log::fatal 'You are not running on a Linux machine'
-  fi
-}
-
 function sx::os::is_command_available() {
   local -r command="${1:-}"
 
-  if [ -z "${command}" ]; then
+  if [ -z "${command:-}" ]; then
     sx::log::fatal 'You must provide a command to this function'
   fi
 
