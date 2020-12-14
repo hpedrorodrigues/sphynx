@@ -23,3 +23,9 @@ function sx::require_env() {
     sx::log::fatal "The environment variable \"${env_name}\" is not set"
   fi
 }
+
+function sx::require_network() {
+  if ! sx::network::has_connection; then
+    sx::log::fatal 'No network connection found'
+  fi
+}

@@ -2,6 +2,7 @@
 
 function sx::security::certificate::get() {
   sx::require 'openssl'
+  sx::require_network
 
   local -r host="${1:-}"
 
@@ -23,6 +24,7 @@ function sx::security::certificate::get() {
 
 function sx::security::certificate::sans() {
   sx::require 'openssl'
+  sx::require_network
 
   local -r host="${1:-}"
 

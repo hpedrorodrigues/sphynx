@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
 function sx::ip::public() {
+  sx::require_network
+
   local -r commands=(
     'dig @resolver1.opendns.com ANY myip.opendns.com +short -4'
     'curl https://ipinfo.io/ip --ipv4 --silent'

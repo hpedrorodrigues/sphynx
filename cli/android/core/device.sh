@@ -34,7 +34,7 @@ function sx::android::device::connect_via_tcp() {
 
   local -r device_ip="$(sx::android::device::ip)"
 
-  if ! sx::network::is_ip_reachable "${device_ip}"; then
+  if ! sx::network::can_reach "${device_ip}"; then
     local -r network_name="$(sx::network::current::ssid)"
 
     sx::log::fatal "The Android device ip \"${device_ip}\" is not accessible from your network (${network_name})"
