@@ -36,6 +36,7 @@ function sx::playbook::install_dependencies() {
 
 function sx::playbook::run() {
   sx::os::ensure_supported_os
+  sx::require_network
   sx::playbook::install_dependencies
 
   local -r playbooks_home="${SPHYNX_DIR}/.playbook"

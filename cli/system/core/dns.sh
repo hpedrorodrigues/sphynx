@@ -13,6 +13,8 @@ function sx::system::flush_dns_cache() {
 }
 
 function sx::system::query_dns() {
+  sx::require_network
+
   local domain="${*}"
 
   if sx::os::is_command_available 'ping'; then

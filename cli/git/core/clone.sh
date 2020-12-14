@@ -3,6 +3,7 @@
 function sx::git::clone::https() {
   sx::require 'git'
   sx::require_env 'GITHUB_TOKEN'
+  sx::require_network
 
   local -r username="${1:-}"
   if [ -z "${username}" ]; then
@@ -22,6 +23,7 @@ function sx::git::clone::https() {
 
 function sx::git::clone::ssh() {
   sx::require 'git'
+  sx::require_network
 
   local -r username="${1:-}"
   if [ -z "${username}" ]; then

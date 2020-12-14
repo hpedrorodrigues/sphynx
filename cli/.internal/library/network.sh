@@ -8,10 +8,18 @@ function sx::network::current::ssid() {
   fi
 }
 
-function sx::network::is_ip_reachable() {
-  local -r ip="${1}"
+function sx::network::has_connection() {
+  sx::network::can_reach 'google.com'
+}
 
-  ping -c1 -W3 "${ip}" &>/dev/null
+function sx::network::can_reach() {
+  local -r host="${1}"
+
+  if [ -z "${host}" ]; then
+    sx::log::fatal 'This function needs a host as first argument'
+  fi
+
+  ping -q -c1 -W1 "${host}" &>/dev/null
 }
 
 function sx::network::is_ipv4() {
