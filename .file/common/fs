@@ -81,7 +81,7 @@ function eachdir() {
     if [ -d "${directory}" ]; then
       (
         cd "${directory}" \
-          && echo -e "\n|---> \"${directory}\"\n" \
+          && echo -e "\n|-- \"${directory}\"\n" \
           && ${SHELL} -i -c "${command}; exit \$?"
       )
     else
