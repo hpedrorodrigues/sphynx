@@ -7,7 +7,7 @@ function extract() {
 }
 
 function mkd() {
-  mkdir -p "${*}" && cd "${_}" || exit
+  mkdir -p "${*}" && cd "${_}" || return 1
 }
 
 function dag() {
