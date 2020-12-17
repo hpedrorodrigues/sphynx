@@ -5,7 +5,7 @@ function sx::github::email() {
 
   local -r username="${1}"
   local repositories
-  mapfile -t repositories < <(sx::github::api \
+  readarray -t repositories < <(sx::github::api \
     "users/${username}/repos?type=owner&sort=updated" \
     | jq --raw-output '.[] | select(.fork==false) | .name')
 

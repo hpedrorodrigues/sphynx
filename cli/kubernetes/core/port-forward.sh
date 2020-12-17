@@ -26,13 +26,18 @@ function sx::k8s::port_forward() {
       local -r name="$(echo "${selected}" | awk '{ print $3 }')"
       local -r port="$(echo "${selected}" | awk '{ print $4 }')"
 
-      sx::k8s_command::port_forward "${ns}" "${kind}" "${name}" "${port}" "${random_port}"
+      sx::k8s_command::port_forward \
+        "${ns}" \
+        "${kind}" \
+        "${name}" \
+        "${port}" \
+        "${random_port}"
     fi
   else
     export PS3=$'\n''Please, choose the resource: '$'\n'
 
     local options
-    mapfile -t options < <(
+    readarray -t options < <(
       sx::k8s::resources_and_ports "${query}" "${namespace}" "${all_namespaces}"
     )
 
@@ -46,7 +51,12 @@ function sx::k8s::port_forward() {
       local -r name="$(echo "${selected}" | awk '{ print $3 }')"
       local -r port="$(echo "${selected}" | awk '{ print $4 }')"
 
-      sx::k8s_command::port_forward "${ns}" "${kind}" "${name}" "${port}" "${random_port}"
+      sx::k8s_command::port_forward \
+        "${ns}" \
+        "${kind}" \
+        "${name}" \
+        "${port}" \
+        "${random_port}"
       break
     done
   fi

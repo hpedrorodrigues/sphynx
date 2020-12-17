@@ -20,7 +20,7 @@ function sx::k8s::shell() {
     export PS3=$'\n''Please, choose the node: '$'\n'
 
     local options
-    mapfile -t options < <(sx::k8s::nodes "${query}")
+    readarray -t options < <(sx::k8s::nodes "${query}")
 
     if [ "${#options[@]}" -eq 0 ]; then
       sx::log::fatal 'No nodes found'

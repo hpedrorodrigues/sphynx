@@ -21,7 +21,7 @@ function sx::spy::namespaces() {
     export PS3=$'\n''Please, choose the process: '$'\n'
 
     local options
-    mapfile -t options < <(sx::spy::get_processes)
+    readarray -t options < <(sx::spy::get_processes)
 
     select selected in "${options[@]}"; do
       local -r pid="$(echo "${selected}" | awk '{ print $2 }')"
@@ -49,7 +49,7 @@ function sx::spy::syscalls() {
     export PS3=$'\n''Please, choose the process: '$'\n'
 
     local options
-    mapfile -t options < <(sx::spy::get_processes)
+    readarray -t options < <(sx::spy::get_processes)
 
     select selected in "${options[@]}"; do
       local -r pid="$(echo "${selected}" | awk '{ print $2 }')"

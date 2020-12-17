@@ -30,7 +30,7 @@ function sx::k8s::describe() {
     export PS3=$'\n''Please, choose the resource: '$'\n'
 
     local options
-    mapfile -t options < <(
+    readarray -t options < <(
       sx::k8s::resources "${query}" "${namespace}" "${all_namespaces}"
     )
 

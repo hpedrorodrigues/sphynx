@@ -35,7 +35,7 @@ function sx::k8s::logs() {
     export PS3=$'\n''Please, choose the pod: '$'\n'
 
     local options
-    mapfile -t options < <(
+    readarray -t options < <(
       sx::k8s::running_pods "${query}" "${namespace}" "${all_namespaces}"
     )
 

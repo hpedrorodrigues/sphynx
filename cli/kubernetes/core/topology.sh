@@ -23,7 +23,9 @@ function sx::k8s::topology() {
 
   local instance_ips
   # Reference: https://www.madboa.com/geek/sort-addr
-  mapfile -t instance_ips < <(echo "${assignments}" | cut -d ',' -f 1 | sort -u -V)
+  readarray -t instance_ips < <(
+    echo "${assignments}" | cut -d ',' -f 1 | sort -u -V
+  )
 
   if ${show_resource_usage}; then
     local -r top_nodes="$(sx::k8s::cli top nodes --no-headers)"
@@ -142,7 +144,9 @@ function sx::k8s::pods_info() {
   local -r all_ns="${5}"
 
   local pods
-  mapfile -t pods < <(echo "${assignments}" | grep "${ip}" | cut -d ',' -f 3 | sort -u)
+  readarray -t pods < <(
+    echo "${assignments}" | grep "${ip}" | cut -d ',' -f 3 | sort -u
+  )
 
   local resource_usage='|-- CPU,MEM,STATE,NAMESPACE,NAME\n'
   # shellcheck disable=SC2068  # Double quote array expansions

@@ -31,7 +31,7 @@ function sx::k8s::rollout() {
     export PS3=$'\n''Please, choose the resource: '$'\n'
 
     local options
-    mapfile -t options < <(
+    readarray -t options < <(
       sx::k8s::rollout::resources "${query}" "${namespace}" "${all_namespaces}"
     )
 

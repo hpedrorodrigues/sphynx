@@ -20,7 +20,7 @@ function sx::k8s::namespace() {
     export PS3=$'\n''Please, choose the resource: '$'\n'
 
     local options
-    mapfile -t options < <(sx::k8s::namespaces "${query}")
+    readarray -t options < <(sx::k8s::namespaces "${query}")
 
     if [ "${#options[@]}" -eq 0 ]; then
       sx::log::fatal 'No resources found'

@@ -20,7 +20,7 @@ function sx::k8s::context() {
     export PS3=$'\n''Please, choose the resource: '$'\n'
 
     local options
-    mapfile -t options < <(sx::k8s::contexts "${query}")
+    readarray -t options < <(sx::k8s::contexts "${query}")
 
     if [ "${#options[@]}" -eq 0 ]; then
       sx::log::fatal 'No resources found'

@@ -30,7 +30,7 @@ function sx::k8s::edit() {
     export PS3=$'\n''Please, choose the resource: '$'\n'
 
     local options
-    mapfile -t options < <(
+    readarray -t options < <(
       sx::k8s::editable_resources "${query}" "${namespace}" "${all_namespaces}"
     )
 

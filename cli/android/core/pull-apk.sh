@@ -9,7 +9,7 @@ function sx::android::pull_apk() {
   sx::android::ensure_package_exists "${filter}"
 
   local apk_paths
-  mapfile -t apk_paths < <(sx::android::shell pm path "${package}" | sed 's/package://g')
+  readarray -t apk_paths < <(sx::android::shell pm path "${package}" | sed 's/package://g')
 
   if [ "${#apk_paths[@]}" -eq 1 ]; then
     local -r apk_path="${apk_paths[0]}"

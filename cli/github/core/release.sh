@@ -57,7 +57,9 @@ function sx::github::release::download_assets() {
     export PS3=$'\n''Please, choose the file: '$'\n'
 
     local options
-    mapfile -t options < <(sx::github::release::list_assets "${username}" "${project_name}")
+    readarray -t options < <(
+      sx::github::release::list_assets "${username}" "${project_name}"
+    )
 
     select selected in "${options[@]}"; do
       local name="$(echo "${selected}" | awk '{ print $1 }')"
