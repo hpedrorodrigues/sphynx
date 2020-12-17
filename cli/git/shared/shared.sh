@@ -34,7 +34,8 @@ function sx::git::branches() {
 
 function sx::git::default_branch() {
   local -r branches=(
-    "$(git config init.defaultBranch)"
+    "$(git config 'init.defaultBranch')"
+    "$(git config --global --includes 'init.defaultBranch')"
     'main'
     'master'
   )
