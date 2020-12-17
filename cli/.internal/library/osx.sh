@@ -8,12 +8,6 @@ function sx::osx::airport() {
   fi
 }
 
-function sx::osx::is_catalina_or_newer() {
-  local -r major_version="$(sw_vers -productVersion | sed 's/\.[0-9]*\.[0-9]*//')"
-
-  [ "${major_version}" -gt 10 ] || [ "${major_version}" = 10 ]
-}
-
 # Reference: http://blog.macromates.com/2006/keychain-access-from-shell/
 function sx::osx::keychain_pass() {
   local -r account="${1:-}"
