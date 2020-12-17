@@ -9,6 +9,10 @@ export LESS='-iRFXMx4'
 export PAGER='less'
 export MANPAGER="${PAGER}"
 
+# Setting language environment
+export LANG='en_US.UTF-8'
+export LC_ALL='en_US.UTF-8'
+
 ### Loading personal scripts
 
 readonly DOTFILES_DIR="${HOME}/.sphynx"
@@ -61,4 +65,7 @@ export AWS_PROFILE='sphynx'
 
 #|> Homebrew/Linuxbrew
 # https://docs.brew.sh/Analytics
-export HOMEBREW_NO_ANALYTICS=1
+export HOMEBREW_NO_ANALYTICS='1'
+
+#|> Bat
+export BAT_THEME='TwoDark'

@@ -20,6 +20,7 @@ done
 #|> Java
 export JAVA8_HOME='/usr/lib/jvm/java-8-openjdk-amd64'
 export JAVA13_HOME='/usr/lib/jvm/java-13-openjdk-amd64'
+
 export JAVA_HOME="${JAVA8_HOME}"
 
 [ -d "${JAVA_HOME}" ] && export PATH="${PATH}:${JAVA_HOME}"
@@ -51,9 +52,6 @@ export ANDROID_EMULATOR_TOOLS="${ANDROID_HOME}/emulator"
 
 #|> Gradle
 export GRADLE_USER_HOME="${HOME}/.gradle"
-
-#|> Bat
-export BAT_THEME='TwoDark'
 
 #|> Starship
 export STARSHIP_CONFIG="${HOME}/.config/starship/starship.toml"

@@ -6,10 +6,6 @@ case $- in
   *) return ;;
 esac
 
-# Setting language environment
-export LANG='en_US.UTF-8'
-export LC_ALL='en_US.UTF-8'
-
 # Loading custom scripts
 source "${HOME}/.commonrc"
 source "${HOME}/.common_zshrc"

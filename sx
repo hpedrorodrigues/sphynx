@@ -118,12 +118,8 @@ function is_global_command() {
     | grep -E '.*' &>/dev/null
 }
 
-function print_file() {
-  cat "${SPHYNX_EXEC}"
-}
-
 function print_help() {
-  print_file | grep '[#]#?' | cut -c 5-
+  grep '[#]#?' "${SPHYNX_EXEC}" | cut -c 5-
 }
 
 function print_namespaces() {
@@ -168,7 +164,13 @@ function check_arguments() {
 
   if [[ ${*} == *'--raw'* ]]; then
     if [ ${n_arguments} = 1 ]; then
-      print_file
+      if hash 'bat' 2>/dev/null; then
+        local -r printer='bat --plain --paging never --language bash'
+      else
+        local -r printer='cat'
+      fi
+
+      command ${printer} "${SPHYNX_EXEC}"
       exit 0
     elif [ ${n_arguments} = 2 ] && ! is_global_command "${1}"; then
       echo '!!! The flag "--raw" cannot be used with namespaces' >&2

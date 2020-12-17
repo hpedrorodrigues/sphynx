@@ -13,25 +13,31 @@ function sx::parse_arguments() {
     local -r file_dir="$(dirname "${script_file}")"
     local -r file_name="$(basename "${script_file}")"
 
+    if sx::os::is_command_available 'bat'; then
+      local -r printer='bat --plain --paging never --language bash'
+    else
+      local -r printer='cat'
+    fi
+
     local -r cmd_definition="${script_file}"
     local -r cmd_implementation="${file_dir}/core/${file_name}.sh"
     if [ -f "${cmd_definition}" ] && [ -f "${cmd_implementation}" ]; then
-      sx::log::info '>>==> Definition\n'
-      cat "${cmd_definition}"
+      sx::log::info '\n> Definition\n'
+      command ${printer} "${cmd_definition}"
 
-      sx::log::info '\n\n\n>>==> Implementation\n'
-      cat "${cmd_implementation}"
+      sx::log::info '\n\n\n> Implementation\n'
+      command ${printer} "${cmd_implementation}"
       exit 0
     fi
 
     local -r global_cmd_definition="${script_file}"
     local -r global_cmd_implementation="${file_dir}/.internal/global/${file_name}.sh"
     if [ -f "${global_cmd_definition}" ] && [ -f "${global_cmd_implementation}" ]; then
-      sx::log::info '>>==> Definition\n'
-      cat "${global_cmd_definition}"
+      sx::log::info '\n> Definition\n'
+      command ${printer} "${global_cmd_definition}"
 
-      sx::log::info '\n\n\n>>==> Implementation\n'
-      cat "${global_cmd_implementation}"
+      sx::log::info '\n\n\n> Implementation\n'
+      command ${printer} "${global_cmd_implementation}"
       exit 0
     fi
 

@@ -21,6 +21,7 @@ done
 export JAVA8_HOME='/Library/Java/JavaVirtualMachines/adoptopenjdk-8-openj9.jdk/Contents/Home'
 export JAVA11_HOME='/Library/Java/JavaVirtualMachines/adoptopenjdk-11-openj9.jdk/Contents/Home'
 export JAVA13_HOME='/Library/Java/JavaVirtualMachines/adoptopenjdk-13-openj9.jdk/Contents/Home'
+
 export JAVA_HOME="${JAVA8_HOME}"
 
 [ -d "${JAVA_HOME}" ] && export PATH="${PATH}:${JAVA_HOME}"
@@ -48,9 +49,6 @@ export ANDROID_EMULATOR_TOOLS="${ANDROID_HOME}/emulator"
 
 #|> Gradle
 export GRADLE_USER_HOME="${HOME}/.gradle"
-
-#|> Bat
-export BAT_THEME='TwoDark'
 
 #|> Starship
 export STARSHIP_CONFIG="${HOME}/.config/starship/starship.toml"
