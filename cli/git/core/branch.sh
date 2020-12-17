@@ -33,7 +33,7 @@ function sx::git::branch::switch() {
     export PS3=$'\n''Please, choose the branch: '$'\n'
 
     local options
-    mapfile -t options < <(sx::git::branches "${query}")
+    readarray -t options < <(sx::git::branches "${query}")
 
     if [ "${#options[@]}" -eq 0 ]; then
       sx::log::fatal 'No branches found'

@@ -67,7 +67,7 @@ function sx::terminal::screen::attach() {
     export PS3=$'\n''Please, choose the session: '$'\n'
 
     local options
-    mapfile -t options < <(sx::library::screen::list_sessions)
+    readarray -t options < <(sx::library::screen::list_sessions)
 
     if [ "${#options[@]}" -eq 0 ]; then
       sx::log::fatal 'No sessions found'
@@ -115,7 +115,7 @@ function sx::terminal::screen::kill() {
     export PS3=$'\n''Please, choose the session: '$'\n'
 
     local options
-    mapfile -t options < <(sx::library::screen::list_sessions)
+    readarray -t options < <(sx::library::screen::list_sessions)
 
     if [ "${#options[@]}" -eq 0 ]; then
       sx::log::fatal 'No sessions found'

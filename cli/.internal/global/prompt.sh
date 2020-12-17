@@ -28,7 +28,7 @@ function sx::self::prompt() {
     export PS3=$'\n''Please, choose the command to be executed: '$'\n'
 
     local options
-    mapfile -t options < <(sx::self::prompt::find_available_commands)
+    readarray -t options < <(sx::self::prompt::find_available_commands)
 
     select selected in "${options[@]}"; do
       sx::log::info "> ${SPHYNX_EXEC_NAME} ${selected}\n"

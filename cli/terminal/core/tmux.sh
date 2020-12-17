@@ -79,7 +79,7 @@ function sx::terminal::tmux::attach() {
     export PS3=$'\n''Please, choose the session: '$'\n'
 
     local options
-    mapfile -t options < <(
+    readarray -t options < <(
       sx::library::tmux::list_sessions \
         | grep -v -E "^$(sx::library::tmux::current_session)$"
     )
@@ -130,7 +130,7 @@ function sx::terminal::tmux::kill() {
     export PS3=$'\n''Please, choose the session: '$'\n'
 
     local options
-    mapfile -t options < <(sx::terminal::tmux::ls 2>/dev/null)
+    readarray -t options < <(sx::terminal::tmux::ls 2>/dev/null)
 
     if [ "${#options[@]}" -eq 0 ]; then
       sx::log::fatal 'No sessions found'
