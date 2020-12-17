@@ -54,9 +54,6 @@ alias tk='sx terminal tmux kill'
 alias tka='sx terminal tmux kill-all'
 alias tfa='sx terminal tmux force-attach'
 
-# OpenShift
-alias op='sx openshift project'
-
 # Clipboard
 alias pbcopy='sx system clipboard copy'
 alias pbpaste='sx system clipboard paste'
