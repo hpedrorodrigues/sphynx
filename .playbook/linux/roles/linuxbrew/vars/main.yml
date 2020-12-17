@@ -4,6 +4,7 @@
 linuxbrew_packages:
   - git-lfs
   - go
+  - hexyl
   - kotlin
   - kustomize
   - maven

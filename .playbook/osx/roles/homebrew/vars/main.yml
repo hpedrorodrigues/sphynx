@@ -39,6 +39,7 @@ homebrew_packages:
   - htop
   - hugo
   - hyperfine
+  - hexyl
   - icdiff
   - imgcat
   - jq
