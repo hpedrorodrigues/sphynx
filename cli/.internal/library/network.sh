@@ -13,6 +13,8 @@ function sx::network::has_connection() {
 }
 
 function sx::network::can_reach() {
+  sx::require 'ping'
+
   local -r host="${1}"
 
   if [ -z "${host}" ]; then
