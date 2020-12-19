@@ -22,6 +22,10 @@
     source "{{ ansible_env.HOME }}/.nvm/nvm.sh"
     nvm install node
     nvm alias default node
+
+    nvm install "{{ npm_version }}"
+    nvm use "{{ npm_version }}"
+    nvm alias default "{{ npm_version }}"
   register: new_npm
   args:
     executable: /usr/bin/bash
