@@ -3,9 +3,19 @@
     path: /opt/jetbrains-toolbox
   register: toolbox_folder
 
+- name: Detecting latest Jetbrains Toolbox version
+  uri:
+    url: "{{ toolbox_version_url }}"
+    method: GET
+    return_content: yes
+    body_format: json
+  register: toolbox_version_response
+  when:
+    - not toolbox_folder.stat.exists
+
 - name: Downloading Jetbrains Toolbox
   get_url:
-    url: "{{ toolbox_url }}"
+    url: "https://download-cf.jetbrains.com/toolbox/jetbrains-toolbox-{{ toolbox_version_response.json.version }}.tar.gz"
     dest: "{{ toolbox_dest }}"
   when:
     - not toolbox_folder.stat.exists
@@ -20,7 +30,7 @@
 
 - name: Copying Jetbrains Toolbox folder
   become: true
-  command: mv /tmp/jetbrains-toolbox-{{ toolbox_version }} /opt/jetbrains-toolbox
+  command: mv /tmp/jetbrains-toolbox-{{ toolbox_version_response.json.version }} /opt/jetbrains-toolbox
   when:
     - not toolbox_folder.stat.exists
 

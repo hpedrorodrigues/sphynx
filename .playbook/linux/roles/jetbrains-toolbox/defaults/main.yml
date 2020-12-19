@@ -1,4 +1,2 @@
-# https://formulae.brew.sh/api/cask/jetbrains-toolbox.json
-toolbox_version: "1.18.7609"
-toolbox_url: https://download-cf.jetbrains.com/toolbox/jetbrains-toolbox-{{ toolbox_version }}.tar.gz
+toolbox_version_url: https://formulae.brew.sh/api/cask/jetbrains-toolbox.json
 toolbox_dest: /tmp/toolbox.tar.gz
