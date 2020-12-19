@@ -19,6 +19,7 @@ done
 
 #|> Java
 export JAVA8_HOME='/usr/lib/jvm/java-8-openjdk-amd64'
+export JAVA11_HOME='/usr/lib/jvm/java-11-openjdk-amd64'
 export JAVA13_HOME='/usr/lib/jvm/java-13-openjdk-amd64'
 
 export JAVA_HOME="${JAVA8_HOME}"
@@ -35,7 +36,7 @@ export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-"${HOME}/.config"}"
 #|> Android
 # References:
 # - https://developer.android.com/studio/command-line/variables
-export ANDROID_PLATFORM_VERSION='30.0.1'
+export ANDROID_PLATFORM_VERSION='30.0.3'
 
 export ANDROID_HOME="${HOME}/Android/Sdk"
 export ANDROID_SDK_ROOT="${ANDROID_HOME}"
