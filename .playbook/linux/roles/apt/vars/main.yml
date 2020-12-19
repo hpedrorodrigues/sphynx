@@ -34,15 +34,16 @@ apt_packages:
   - ncdu
   - nscd
   - openjdk-8-jdk
-  - openjdk-8-dbg
-  - openjdk-13-jdk # Tip to set the default version: sudo update-alternatives --config java
-  - openjdk-13-dbg # Java runtime based on OpenJDK (debugging symbols)
+  - openjdk-8-dbg # Debugging Symbols
+  - openjdk-11-jdk
+  - openjdk-11-dbg
+  - openjdk-13-jdk
+  - openjdk-13-dbg
   - python-dev
   - ruby
   - screen
   - sipcalc
   - software-properties-common
-  - sshpass
   - steam-installer
   - subnetcalc
   - tmux
