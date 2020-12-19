@@ -4,9 +4,8 @@
   "editor.cursorStyle": "line-thin",
   "editor.minimap.maxColumn": 100,
   "editor.minimap.renderCharacters": false,
-  "editor.minimap.showSlider": "always",
   "editor.renderWhitespace": "all",
-  "editor.rulers": [80, 100],
+  "editor.rulers": [75, 95],
   "editor.scrollBeyondLastLine": false,
   "editor.smoothScrolling": true,
   "editor.suggestSelection": "first",
@@ -36,8 +35,6 @@
     "**/vendor": true,
     "**/__pycache__": true
   },
-  "telemetry.enableCrashReporter": false,
-  "telemetry.enableTelemetry": false,
   "vsintellicode.modify.editor.suggestSelection": "choseToUpdateConfiguration",
   "workbench.colorCustomizations": {
     "[Material Theme Darker]": {
@@ -52,6 +49,8 @@
   "workbench.iconTheme": "eq-material-theme-icons-darker",
   "workbench.settings.enableNaturalLanguageSearch": false,
   "workbench.welcome.enabled": false,
-  "cSpell.language": "en,pt-BR",
-  "go.formatTool": "goimports"
+  "window.zoomLevel": 0,
+  "go.autocompleteUnimportedPackages": true,
+  "go.enableCodeLens": true,
+  "cSpell.language": "en,pt-BR"
 }
