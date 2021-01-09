@@ -35,7 +35,7 @@
     - (item.user_repo | default(item)) not in installed_repositories.stdout
 
 - name: Getting all installed Homebrew packages
-  command: brew list
+  command: brew list --formula
   register: installed_packages
   check_mode: no
   changed_when: false
@@ -62,7 +62,7 @@
     - homebrew.stat.exists or new_homebrew.rc == 0
 
 - name: Getting all installed Cask packages
-  command: brew cask list
+  command: brew list --cask
   register: installed_cask_packages
   check_mode: no
   changed_when: false
