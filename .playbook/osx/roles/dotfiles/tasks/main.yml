@@ -18,28 +18,9 @@
     - zsh.stat.exists or new_zsh.rc == 0
     - lookup('env','SHELL') != '/bin/zsh'
 
-- name: Detecting - Oh My Zsh is available
-  stat:
-    path: "{{ ansible_env.HOME }}/.oh-my-zsh"
-  register: ohmyzsh
-  when:
-    - zsh.stat.exists or new_zsh.rc == 0
-
-- name: Installing Oh My Zsh
-  command: 'sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"'
-  when:
-    - not ohmyzsh.stat.exists
-    - zsh.stat.exists or new_zsh.rc == 0
-
-- name: Detecting - Dotfiles are installed
-  stat:
-    path: "{{ ansible_env.HOME }}/.zshrc"
-  register: dotfiles
-
 - name: Installing Dotfiles
   command: "{{ sphynx_cli }} dotfiles configure"
   when:
-    - dotfiles.stat.islnk is not defined
     - zsh.stat.exists or new_zsh.rc == 0
 
 - name: Configuring Vundle
