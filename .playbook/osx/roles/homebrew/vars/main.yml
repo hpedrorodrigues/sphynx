@@ -1,10 +1,11 @@
 homebrew_repositories:
+  - AdoptOpenJDK/openjdk
+  - eddieantonio/eddieantonio
+  - hashicorp/tap
   - homebrew/cask
   - homebrew/cask-versions
   - homebrew/cask-fonts
   - homebrew/cask-drivers
-  - AdoptOpenJDK/openjdk
-  - eddieantonio/eddieantonio
 
 homebrew_packages:
   - apktool
@@ -36,6 +37,7 @@ homebrew_packages:
   - gradle
   - grep
   - gzip
+  - hashicorp/tap/terraform
   - htop
   - hugo
   - hyperfine
