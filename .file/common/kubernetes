@@ -94,12 +94,13 @@ function knr() {
   {{range .items}}
     {{$namespace := .metadata.namespace}}
     {{$name := .metadata.name}}
-    {{if ne .status.phase "Running"}}
-      {{$namespace}}{{","}}{{$name}}{{"\\n"}}
+    {{$phase := .status.phase}}
+    {{if and (ne $phase "Running") (ne $phase "Completed")}}
+      {{$namespace}}{{","}}{{$name}}{{","}}{{$phase}}{{"\\n"}}
     {{else}}
       {{range .status.containerStatuses}}
         {{if not .ready}}
-          {{$namespace}}{{","}}{{$name}}{{"\\n"}}
+          {{$namespace}}{{","}}{{$name}}{{","}}{{$phase}}{{"\\n"}}
         {{end}}
       {{end}}
     {{end}}
