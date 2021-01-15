@@ -83,40 +83,25 @@ function kgp() {
     | GREP_COLOR='01;31' grep --color=always -E 'ErrImagePull|$' \
     | GREP_COLOR='01;31' grep --color=always -E 'Error|$' \
     | GREP_COLOR='01;31' grep --color=always -E 'CrashLoopBackOff|$' \
-    | GREP_COLOR='01;31' grep --color=always -E 'ImagePullBackOff|$'
+    | GREP_COLOR='01;31' grep --color=always -E 'ImagePullBackOff|$' \
+    | GREP_COLOR='01;31' grep --color=always -E 'Evicted|$'
 }
 
-# Display all pods not running
+# Print all pods not running
 function knr() {
-  # shellcheck disable=SC2016  # Expressions don't expand in single quotes, use double quotes for that
-  local -r template='
-  {{range .items}}
-    {{$namespace := .metadata.namespace}}
-    {{$name := .metadata.name}}
-    {{if ne .status.phase "Running"}}
-      {{$namespace}}{{","}}{{$name}}{{"\\n"}}
-    {{else}}
-      {{range .status.containerStatuses}}
-        {{if not .ready}}
-          {{$namespace}}{{","}}{{$name}}{{"\\n"}}
-        {{end}}
-      {{end}}
-    {{end}}
-  {{end}}'
-  local -r cleared_template="$(
-    echo -n "${template}" \
-      | tr '\n' ' ' \
-      | sed 's/}} *{{/}}{{/g' \
-      | sed 's/^ *//g'
-  )"
-
   # shellcheck disable=SC2068  # Double quote array expansions
   kubectl get pods \
-    --output go-template \
-    --template="${cleared_template}" \
     ${@} \
-    | sort -u \
-    | column -t -s ','
+    --field-selector 'status.phase!=Running' \
+    | grep -v 'Complete'
+}
+
+# Print the number of pods running on each node
+function knp() {
+  kubectl get pods \
+    --output json \
+    --all-namespaces \
+    | jq '.items | group_by(.spec.nodeName) | map({"nodeName": .[0].spec.nodeName, "count": length}) | sort_by(.count)'
 }
 
 # Run an image to debug network issues
