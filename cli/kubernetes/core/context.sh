@@ -4,8 +4,19 @@ function sx::k8s::context() {
   sx::k8s::check_requirements
 
   local -r query="${1:-}"
+  local -r list_contexts="${2:-false}"
 
-  if sx::os::is_command_available 'fzf'; then
+  if ${list_contexts}; then
+    local -r current_context="$(sx::k8s::current_context)"
+
+    while IFS='' read -r context; do
+      if echo "${context}" | grep -q " ${current_context} " 2>/dev/null; then
+        sx::color::current_item::echo "${context}"
+      else
+        echo "${context}"
+      fi
+    done < <(sx::k8s::cli config get-contexts)
+  elif sx::os::is_command_available 'fzf'; then
     local -r options="$(sx::k8s::contexts "${query}")"
 
     if [ -z "${options}" ]; then
@@ -53,7 +64,7 @@ function sx::k8s::contexts() {
   # shellcheck disable=SC2068  # Double quote array expansions
   for context in ${contexts[@]}; do
     if [ "${current_context}" = "${context}" ]; then
-      echo "${SX_FZF_CURRENT_BGCOLOR}${SX_FZF_CURRENT_FGCOLOR}${context}${SX_FZF_CURRENT_RESETCOLOR}"
+      sx::color::current_item::echo "${context}"
     else
       echo "${context}"
     fi
