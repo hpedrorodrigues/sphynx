@@ -11,12 +11,16 @@ source "${SPHYNXN_DIR}/core/context.sh"
 ##? Change current context
 ##?
 ##? Usage:
-##?     context [<query>]
+##?     context ([<query>] | [--list])
+##?
+##? Options:
+##?     -l --list  Print all contexts
 ##?
 ##? Examples:
 ##?     context
 ##?     context prd
+##?     context --list
 
 sx::parse_arguments "${@}"
 
-sx::k8s::context "${query:-}"
+sx::k8s::context "${query:-}" "${list:-false}"

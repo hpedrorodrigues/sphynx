@@ -18,6 +18,7 @@ homebrew_packages:
   - dex2jar
   - diffutils
   - dockutil
+  - duf
   - ed
   - ffmpeg
   - file-formula

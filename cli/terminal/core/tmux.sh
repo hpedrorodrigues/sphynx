@@ -26,7 +26,7 @@ function sx::terminal::tmux::ls() {
     # shellcheck disable=SC2068  # Double quote array expansions
     for session in ${sessions[@]}; do
       if [ "${current_session}" = "${session}" ]; then
-        echo "${SX_FZF_CURRENT_BGCOLOR}${SX_FZF_CURRENT_FGCOLOR}${session}${SX_FZF_CURRENT_RESETCOLOR}"
+        sx::color::current_item::echo "${session}"
       else
         echo "${session}"
       fi
