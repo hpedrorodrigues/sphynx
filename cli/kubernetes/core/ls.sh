@@ -4,8 +4,9 @@ function sx::k8s::list::resources() {
   sx::k8s::check_requirements
 
   local -r namespace="${1:-$(sx::k8s::current_namespace)}"
-  local -r all_namespaces="${2:-false}"
-  local -r show_labels="${3:-false}"
+  local -r output="${2:-}"
+  local -r all_namespaces="${3:-false}"
+  local -r show_labels="${4:-false}"
 
   local flags=''
   if ${all_namespaces}; then
@@ -16,6 +17,10 @@ function sx::k8s::list::resources() {
 
   if ${show_labels}; then
     flags+=' --show-labels'
+  fi
+
+  if [ "${output}" != 'default' ]; then
+    flags+=" --output ${output}"
   fi
 
   # shellcheck disable=SC2086  # quote this to prevent word splitting
