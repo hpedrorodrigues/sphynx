@@ -51,6 +51,7 @@ function kimg() {
   local -r template='
   {{range .items}}
     {{$name := .metadata.name}}
+    {{"POD"}}{{","}}{{"IMAGE"}}{{"\\n"}}
     {{range .spec.containers}}
       {{$name}}{{","}}{{.image}}{{"\\n"}}
     {{end}}
