@@ -69,3 +69,6 @@ export HOMEBREW_NO_ANALYTICS='1'
 
 #|> Bat
 export BAT_THEME='Dracula'
+
+#|> Sphynx
+export SX_CONFIRMATION_REQUIRED='false'
