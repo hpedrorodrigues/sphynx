@@ -82,7 +82,9 @@ function kgp() {
     | GREP_COLOR='01;33' grep --color=always -E 'Terminating|$' \
     | GREP_COLOR='01;31' grep --color=always -E 'CreateContainerConfigError|$' \
     | GREP_COLOR='01;31' grep --color=always -E 'ErrImagePull|$' \
+    | GREP_COLOR='01;31' grep --color=always -E 'Init:Error|$' \
     | GREP_COLOR='01;31' grep --color=always -E 'Error|$' \
+    | GREP_COLOR='01;31' grep --color=always -E 'Init:CrashLoopBackOff|$' \
     | GREP_COLOR='01;31' grep --color=always -E 'CrashLoopBackOff|$' \
     | GREP_COLOR='01;31' grep --color=always -E 'ImagePullBackOff|$' \
     | GREP_COLOR='01;31' grep --color=always -E 'Evicted|$'
