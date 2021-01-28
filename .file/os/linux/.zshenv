@@ -22,7 +22,7 @@ export JAVA8_HOME='/usr/lib/jvm/java-8-openjdk-amd64'
 export JAVA11_HOME='/usr/lib/jvm/java-11-openjdk-amd64'
 export JAVA13_HOME='/usr/lib/jvm/java-13-openjdk-amd64'
 
-export JAVA_HOME="${JAVA8_HOME}"
+export JAVA_HOME="${JAVA11_HOME}"
 
 [ -d "${JAVA_HOME}" ] && export PATH="${PATH}:${JAVA_HOME}"
 

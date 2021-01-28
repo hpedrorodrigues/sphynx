@@ -22,7 +22,7 @@ export JAVA8_HOME='/Library/Java/JavaVirtualMachines/adoptopenjdk-8-openj9.jdk/C
 export JAVA11_HOME='/Library/Java/JavaVirtualMachines/adoptopenjdk-11-openj9.jdk/Contents/Home'
 export JAVA13_HOME='/Library/Java/JavaVirtualMachines/adoptopenjdk-13-openj9.jdk/Contents/Home'
 
-export JAVA_HOME="${JAVA8_HOME}"
+export JAVA_HOME="${JAVA11_HOME}"
 
 [ -d "${JAVA_HOME}" ] && export PATH="${PATH}:${JAVA_HOME}"
 
