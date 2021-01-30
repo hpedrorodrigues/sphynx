@@ -50,10 +50,11 @@ function kimg() {
   # shellcheck disable=SC2016  # Expressions don't expand in single quotes, use double quotes for that
   local -r template='
   {{range .items}}
+    {{$namespace := .metadata.namespace}}
     {{$name := .metadata.name}}
-    {{"POD"}}{{","}}{{"IMAGE"}}{{"\\n"}}
+    {{"NAMESPACE"}}{{","}}{{"POD"}}{{","}}{{"IMAGE"}}{{"\\n"}}
     {{range .spec.containers}}
-      {{$name}}{{","}}{{.image}}{{"\\n"}}
+      {{$namespace}}{{","}}{{$name}}{{","}}{{.image}}{{"\\n"}}
     {{end}}
   {{end}}'
   local -r cleared_template="$(
