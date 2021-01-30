@@ -43,8 +43,55 @@ function sx::k8s::running_pods() {
       {{$namespace := .metadata.namespace}}
       {{$name := .metadata.name}}
       {{$phase := .status.phase}}
+      {{$createdAt := .metadata.creationTimestamp}}
       {{range .spec.containers}}
-        {{$namespace}}{{","}}{{$name}}{{","}}{{.name}}{{","}}{{$phase}}{{"\n"}}
+        {{$namespace}}{{","}}{{$name}}{{","}}{{.name}}{{","}}{{$phase}}{{","}}{{$createdAt}}{{"\n"}}
+      {{end}}
+    {{end}}
+  {{end}}'
+
+  # shellcheck disable=SC2086  # quote this to prevent word splitting
+  sx::k8s::cli get pods \
+    ${flags} \
+    --output go-template \
+    --template="$(sx::k8s::clear_template "${template}")" \
+    | sort -u \
+    | column -t -s ',' \
+    | grep -E "${selector}" 2>/dev/null
+}
+
+function sx::k8s::not_pending_pods() {
+  local -r query="${1:-}"
+  local -r namespace="${2:-}"
+  local -r all_namespaces="${3:-false}"
+
+  if ${all_namespaces}; then
+    local -r flags='--all-namespaces'
+  elif [ -n "${namespace}" ]; then
+    local -r flags="--namespace ${namespace}"
+  else
+    local -r flags=''
+  fi
+
+  if [ -n "${query}" ]; then
+    local -r selector="${query}"
+  else
+    local -r selector='.*'
+  fi
+
+  # shellcheck disable=SC2016  # Expressions don't expand in single quotes, use double quotes for that
+  local -r template='
+  {{range .items}}
+    {{if ne .status.phase "Pending"}}
+      {{$namespace := .metadata.namespace}}
+      {{$name := .metadata.name}}
+      {{$createdAt := .metadata.creationTimestamp}}
+      {{$phase := .status.phase}}
+      {{range .spec.initContainers}}
+        {{$namespace}}{{","}}{{$name}}{{","}}{{.name}}{{","}}{{$phase}}{{","}}{{$createdAt}}{{", (Init Container)"}}{{"\n"}}
+      {{end}}
+      {{range .spec.containers}}
+        {{$namespace}}{{","}}{{$name}}{{","}}{{.name}}{{","}}{{$phase}}{{","}}{{$createdAt}}{{"\n"}}
       {{end}}
     {{end}}
   {{end}}'
