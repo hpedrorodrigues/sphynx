@@ -171,5 +171,6 @@ function sx::k8s::shared::resources() {
 }
 
 function sx::k8s::cli() {
-  "${SX_K8SCTL}" --request-timeout "${SX_K8S_REQUEST_TIMEOUT}" "${@}"
+  # shellcheck disable=SC2086  # quote this to prevent word splitting
+  command ${SX_K8SCTL} --request-timeout "${SX_K8S_REQUEST_TIMEOUT}" "${@}"
 }
