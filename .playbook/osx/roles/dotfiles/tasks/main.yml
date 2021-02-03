@@ -13,10 +13,10 @@
     - not zsh.stat.exists
 
 - name: Making Zsh the default shell
-  shell: "chsh -s /bin/zsh"
+  shell: "chsh -s /usr/local/bin/zsh"
   when:
     - zsh.stat.exists or new_zsh.rc == 0
-    - lookup('env','SHELL') != '/bin/zsh'
+    - lookup('env','SHELL') != '/usr/local/bin/zsh'
 
 - name: Installing Dotfiles
   command: "{{ sphynx_cli }} dotfiles configure"
