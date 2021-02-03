@@ -108,6 +108,14 @@ function knp() {
     | jq '.items | group_by(.spec.nodeName) | map({"nodeName": .[0].spec.nodeName, "count": length}) | sort_by(.count)'
 }
 
+# Print pod IPs
+function kpi() {
+  # shellcheck disable=SC2068  # Double quote array expansions
+  kubectl get pods \
+    ${@} \
+    --output 'custom-columns=POD:.metadata.name,IP:.status.podIPs[*].ip'
+}
+
 # Run an image to debug network issues
 function kdeb() {
   local -r pod_name='debug'
