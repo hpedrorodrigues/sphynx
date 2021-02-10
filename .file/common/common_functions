@@ -131,8 +131,9 @@ function download_meaning_batch() {
     return 1
   fi
 
-  local -r file_content="$(tr '[:upper:]' '[:lower:]' <"${file_path}")"
-  echo "${file_content}" | sort -u | tee "${file_path}"
+  local -r file_content="$(tr '[:upper:]' '[:lower:]' <"${file_path}" | sort -u)"
+  echo "${file_content}" | tee "${file_path}"
+  echo -e "\n> $(echo "${file_content}" | wc -l | tr -d ' ') words"
 
   echo
 
