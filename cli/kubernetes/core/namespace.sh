@@ -4,9 +4,12 @@ function sx::k8s::namespace() {
   sx::k8s::check_requirements
 
   local -r query="${1:-}"
-  local -r list_namespaces="${2:-false}"
+  local -r exact_namespace="${2:-}"
+  local -r list_namespaces="${3:-false}"
 
-  if ${list_namespaces}; then
+  if [ -n "${exact_namespace}" ]; then
+    sx::k8s::change_namespace "${exact_namespace}"
+  elif ${list_namespaces}; then
     local -r current_namespace="$(sx::k8s::current_namespace)"
 
     while IFS='' read -r namespace; do
@@ -73,7 +76,7 @@ function sx::k8s::namespaces() {
 }
 
 function sx::k8s::change_namespace() {
-  local -r ns_name="${1:-}"
+  local -r ns="${1:-}"
 
-  sx::k8s::cli config set-context --current --namespace "${ns_name}"
+  sx::k8s::cli config set-context --current --namespace "${ns}"
 }
