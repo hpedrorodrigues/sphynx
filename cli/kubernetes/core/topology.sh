@@ -43,6 +43,10 @@ function sx::k8s::topology() {
       local instance_name="$(echo "${assignments}" | grep "${ip}" | cut -d ',' -f 4 | head -n 1)"
       local instance_labels="$(echo "${instances}" | grep "${instance_name}" | awk '{ print $13 }')"
 
+      if [ -z "${instance_name}" ]; then
+        instance_name='Name not available'
+      fi
+
       if ${show_labels} && [ -n "${instance_labels}" ]; then
         echo "> ${ip} (${instance_name}) | ${instance_labels}"
       else
@@ -55,10 +59,13 @@ function sx::k8s::topology() {
     done
   fi
 
-  if [ -n "${instances}" ]; then
+  if [ -n "${n_instances}" ]; then
     echo
     local -r n_referenced_instances="${#instance_ips[@]}"
-    echo "${n_referenced_instances} out of ${n_instances} nodes"
+    local -r total_instances="$(
+      sx::math::max "${n_referenced_instances}" "${n_instances}"
+    )"
+    echo "${n_referenced_instances} out of ${total_instances} nodes"
   fi
 }
 
@@ -125,6 +132,10 @@ function sx::k8s::instance_info() {
 
   local -r memory_usage="$(echo "${instance_usage}" | awk '{ print $4 }')"
   local -r memory_percentage="$(echo "${instance_usage}" | awk '{ print $5 }')"
+
+  if [ -z "${instance_name}" ]; then
+    instance_name='Name not available'
+  fi
 
   if ${show_labels} && [ -n "${instance_labels}" ]; then
     echo "> ${ip} (${instance_name}) | ${instance_labels}"
