@@ -31,7 +31,7 @@ function sx::parse_arguments() {
     fi
 
     local -r global_cmd_definition="${script_file}"
-    local -r global_cmd_implementation="${file_dir}/.internal/global/${file_name}.sh"
+    local -r global_cmd_implementation="${file_dir}/.internal/global-commands/${file_name}.sh"
     if [ -f "${global_cmd_definition}" ] && [ -f "${global_cmd_implementation}" ]; then
       sx::log::info '\n> Definition\n'
       command ${printer} "${global_cmd_definition}"

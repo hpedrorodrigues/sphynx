@@ -23,7 +23,7 @@ source "${library_path}/colors.sh"
 
 # Loading core functions for global commands
 
-readonly global_commands_path="${SPHYNXC_DIR}/.internal/global"
+readonly global_commands_path="${SPHYNXC_DIR}/.internal/global-commands"
 
 source "${global_commands_path}/fmt.sh"
 source "${global_commands_path}/lint.sh"
