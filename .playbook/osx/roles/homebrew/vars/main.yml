@@ -33,12 +33,12 @@ homebrew_packages:
   - gnu-tar
   - gnu-which
   - gnutls
-  - { name: golang, installed_name: "go" }
+  - { name: "golang", installed_name: "go" }
   - gpatch
   - gradle
   - grep
   - gzip
-  - hashicorp/tap/terraform
+  - { name: "hashicorp/tap/terraform", installed_name: "terraform" }
   - htop
   - hugo
   - hyperfine
@@ -60,7 +60,7 @@ homebrew_packages:
   - node
   - openssh
   - pidcat
-  - python
+  - { name: "python", installed_name: "python@3.9" }
   - rbenv
   - rsync
   - screen
@@ -84,9 +84,10 @@ homebrew_packages:
   - yq
 
 homebrew_apps:
-  - adoptopenjdk8-openj9
-  - adoptopenjdk11-openj9
-  - adoptopenjdk13-openj9
+  - adoptopenjdk8
+  - adoptopenjdk11
+  - adoptopenjdk13
+  - adoptopenjdk15
   - anki
   - alacritty
   - appcleaner
