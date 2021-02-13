@@ -18,9 +18,10 @@ for basic_path in ${BASIC_PATHS[*]}; do
 done
 
 #|> Java
-export JAVA8_HOME='/Library/Java/JavaVirtualMachines/adoptopenjdk-8-openj9.jdk/Contents/Home'
-export JAVA11_HOME='/Library/Java/JavaVirtualMachines/adoptopenjdk-11-openj9.jdk/Contents/Home'
-export JAVA13_HOME='/Library/Java/JavaVirtualMachines/adoptopenjdk-13-openj9.jdk/Contents/Home'
+export JAVA8_HOME='/Library/Java/JavaVirtualMachines/adoptopenjdk-8.jdk/Contents/Home'
+export JAVA11_HOME='/Library/Java/JavaVirtualMachines/adoptopenjdk-11.jdk/Contents/Home'
+export JAVA13_HOME='/Library/Java/JavaVirtualMachines/adoptopenjdk-13.jdk/Contents/Home'
+export JAVA15_HOME='/Library/Java/JavaVirtualMachines/adoptopenjdk-15.jdk/Contents/Home'
 
 export JAVA_HOME="${JAVA11_HOME}"
 
