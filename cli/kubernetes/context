@@ -11,16 +11,18 @@ source "${SPHYNXN_DIR}/core/context.sh"
 ##? Change current context
 ##?
 ##? Usage:
-##?     context ([<query>] | [--list])
+##?     context [<query> | --list | --exact <name>]
 ##?
 ##? Options:
 ##?     -l --list  Print all contexts
+##?     -e --exact <name>  Name to be used without checking for it
 ##?
 ##? Examples:
 ##?     context
 ##?     context prd
+##?     context --exact staging
 ##?     context --list
 
 sx::parse_arguments "${@}"
 
-sx::k8s::context "${query:-}" "${list:-false}"
+sx::k8s::context "${query:-}" "${exact:-}" "${list:-false}"
