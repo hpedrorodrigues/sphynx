@@ -91,7 +91,7 @@ function kgp() {
     | GREP_COLOR='01;31' grep --color=always -E 'Evicted|$'
 }
 
-# Print all pods not running
+# Kubernetes not running pods: print all pods not running
 function knr() {
   # shellcheck disable=SC2068  # Double quote array expansions
   kubectl get pods \
@@ -100,15 +100,53 @@ function knr() {
     | grep -v 'Complete'
 }
 
-# Print the number of pods running on each node
+# Kubernetes node pods: print the number of pods running on each node
 function knp() {
   kubectl get pods \
     --output json \
     --all-namespaces \
-    | jq '.items | group_by(.spec.nodeName) | map({"nodeName": .[0].spec.nodeName, "count": length}) | sort_by(.count)'
+    | jq '.items
+    | group_by(.spec.nodeName)
+    | map({"nodeName": .[0].spec.nodeName, "count": length})
+    | sort_by(.count)'
 }
 
-# Print pod IPs
+# Kubernetes secret view: print secret's data decoded
+function ksv() {
+  # shellcheck disable=SC2016  # Expressions don't expand in single quotes, use double quotes for that
+  local -r template='
+  {{"NAMESPACE"}}{{","}}{{"SECRET"}}{{","}}{{"KEY"}}{{","}}{{"VALUE"}}{{"\\n"}}
+  {{range .items}}
+    {{if ne .type "kubernetes.io/service-account-token"}}
+      {{$namespace := .metadata.namespace}}
+      {{$name := .metadata.name}}
+      {{ range $k, $v := .data }}
+        {{$namespace}}{{","}}{{$name}}{{","}}{{$k}}{{","}}{{ $v | base64decode}}{{"\\n"}}
+      {{end}}
+    {{end}}
+  {{end}}'
+  local -r cleared_template="$(
+    echo -n "${template}" \
+      | tr '\n' ' ' \
+      | sed 's/}} *{{/}}{{/g' \
+      | sed 's/^ *//g'
+  )"
+
+  # shellcheck disable=SC2068  # Double quote array expansions
+  kubectl get secrets \
+    --template="${cleared_template}" \
+    ${@} \
+    | while read -r line; do
+      if [[ "${line}" == *','* ]]; then
+        echo "${line}"
+      else
+        echo "-,-,-,${line}"
+      fi
+    done \
+    | column -t -s ','
+}
+
+# Kubernetes pod ips: print pod IPs
 function kpi() {
   # shellcheck disable=SC2068  # Double quote array expansions
   kubectl get pods \
@@ -116,7 +154,7 @@ function kpi() {
     --output 'custom-columns=POD:.metadata.name,IP:.status.podIPs[*].ip'
 }
 
-# Run an image to debug network issues
+# Kubernetes debug: run an image to debug network issues
 function kdeb() {
   local -r pod_name='debug'
   local -r pod_hash="$(uuidgen | cut -d '-' -f 1 | tr '[:upper:]' '[:lower:]')"
@@ -133,13 +171,14 @@ function kdeb() {
     --image 'hpedrorodrigues/alien:debug'
 }
 
-# Print the current api server address
+# Kubernetes API server URL: print the current api server address
 function kurl() {
   kubectl config view \
     --minify \
     --output jsonpath="{.clusters[*].cluster.server}"
 }
 
+# Kubernetes delete replicasets: remove replicasets not being used
 # Based on https://github.com/kubernetes/kubernetes/issues/24330#issuecomment-265750353
 function kdrs() {
   # shellcheck disable=SC2068  # Double quote array expansions
