@@ -25,19 +25,25 @@ defaults write NSGlobalDomain AppleMetricUnits -bool true
 # sudo systemsetup -setwakeonnetworkaccess off
 
 # Disable guest account login
-sudo defaults write /Library/Preferences/com.apple.loginwindow GuestEnabled -bool false
+readonly login_prefs_file='/Library/Preferences/com.apple.loginwindow'
+if [ -f "${login_prefs_file}" ] \
+  && [ "$(defaults read "${login_prefs_file}" GuestEnabled)" = '0' ]; then
+  sudo defaults write "${login_prefs_file}" GuestEnabled -bool false
+fi
 
 # Disable the “Are you sure you want to open this application?” dialog
 defaults write com.apple.LaunchServices LSQuarantine -bool false
 
 # Disable the sound effects on boot
-sudo nvram SystemAudioVolume=' '
+if [ "$(nvram SystemAudioVolume | cut -f 2)" != ' ' ]; then
+  sudo nvram SystemAudioVolume=' '
+fi
 
 # Menu bar: enable transparency
 defaults write NSGlobalDomain AppleEnableMenuBarTransparency -bool true
 
 # Restart automatically if the computer freezes
-sudo systemsetup -setrestartfreeze on
+# sudo systemsetup -setrestartfreeze on
 
 # Make Dock more transparent
 defaults write com.apple.dock hide-mirror -bool true
@@ -45,8 +51,10 @@ defaults write com.apple.dock hide-mirror -bool true
 # Network
 readonly computer_name='sparrow'
 
-sudo scutil --set ComputerName "${computer_name}"
-sudo scutil --set HostName "${computer_name}"
-sudo scutil --set LocalHostName "${computer_name}"
+if [ "$(scutil --get ComputerName)" != "${computer_name}" ]; then
+  sudo scutil --set ComputerName "${computer_name}"
+  sudo scutil --set HostName "${computer_name}"
+  sudo scutil --set LocalHostName "${computer_name}"
 
-sudo defaults write /Library/Preferences/SystemConfiguration/com.apple.smb.server NetBIOSName -string "${computer_name}"
+  sudo defaults write /Library/Preferences/SystemConfiguration/com.apple.smb.server NetBIOSName -string "${computer_name}"
+fi
