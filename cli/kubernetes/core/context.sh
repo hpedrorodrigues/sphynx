@@ -4,9 +4,12 @@ function sx::k8s::context() {
   sx::k8s::check_requirements
 
   local -r query="${1:-}"
-  local -r list_contexts="${2:-false}"
+  local -r exact_context="${2:-}"
+  local -r list_contexts="${3:-false}"
 
-  if ${list_contexts}; then
+  if [ -n "${exact_context}" ]; then
+    sx::k8s::change_context "${exact_context}"
+  elif ${list_contexts}; then
     local -r current_context="$(sx::k8s::current_context)"
 
     while IFS='' read -r context; do
