@@ -67,16 +67,14 @@ function sx::k8s_command::exec() {
     if sx::k8s::cli exec -n "${ns}" "${name}" -c "${container}" -- "${shell}" -c 'exit' &>/dev/null; then
       sx::log::info "Now you can execute commands in pod \"${name}/${container}\" using \"${shell}\"\n"
 
-      local -r ps1='\u@\h:\w '
-
       sx::k8s::cli exec "${name}" \
         --stdin \
         --tty \
         --namespace "${ns}" \
         --container "${container}" \
-        -- "${shell}" -c "PS1='${SX_KUBERNETES_PS1:-${ps1}}' exec ${shell}"
+        -- "${shell}" -c "PS1='${SX_KUBERNETES_PS1}' exec ${shell}"
 
-      exit 0
+      exit "${?}"
     fi
   done
 
