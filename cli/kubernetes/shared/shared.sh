@@ -8,8 +8,6 @@ export SX_KUBERNETES_EDITABLE_RESOURCES="$(echo "${SX_KUBERNETES_RESOURCES}" | s
 export SX_K8SCTL="${SX_K8SCTL:-kubectl}"
 export SX_K8S_REQUEST_TIMEOUT="${SX_K8S_REQUEST_TIMEOUT:-0}"
 
-export SX_KUBERNETES_PS1="${SX_KUBERNETES_PS1:-\u@\h:\w }"
-
 function sx::k8s::check_requirements() {
   sx::require_supported_os
   sx::require 'kubectl'

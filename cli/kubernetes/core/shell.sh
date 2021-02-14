@@ -86,7 +86,7 @@ function sx::k8s_command::shell() {
           "--",
           "/bin/bash",
           "-c",
-          "PS1='${SX_KUBERNETES_PS1//\\/\\\\}' exec /bin/bash --login"
+          "PS1='${SX_PS1//\\/\\\\}' exec /bin/bash --login"
         ]
       }
     ]

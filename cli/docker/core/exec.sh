@@ -61,15 +61,13 @@ function sx::docker_command::exec() {
     if docker exec "${container_id}" "${shell}" -c 'exit' &>/dev/null; then
       sx::log::info "Now you can execute commands in container \"${container_title}\" using \"${shell}\"\n"
 
-      local -r ps1='\u@\h:\w '
-
       docker exec \
         --interactive \
         --tty \
         "${container_id}" \
-        "${shell}" -c "PS1='${SX_DOCKER_PS1:-${ps1}}' exec ${shell}"
+        "${shell}" -c "PS1='${SX_PS1}' exec ${shell}"
 
-      exit 0
+      exit "${?}"
     fi
   done
 
