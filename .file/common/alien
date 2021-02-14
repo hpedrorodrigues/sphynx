@@ -4,7 +4,7 @@
 
 export CONFLUENT_VERSION=${CONFLUENT_VERSION:-6.0.1}
 
-# i.e kcli kafka-topics --bootstrap-server <host>:<port> --list
+# e.g. kcli kafka-topics --bootstrap-server <host>:<port> --list
 function kcli() {
   local -r tool_name="${FUNCNAME[0]:-${funcstack[1]}}"
   local -r random_port="$(shuf -i 2000-65000 -n 1)"
