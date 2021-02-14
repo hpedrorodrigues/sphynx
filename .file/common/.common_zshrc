@@ -72,7 +72,7 @@ fi
 
 ### Directory shortcuts
 
-# i.e cd ~p/sphynx
+# e.g. cd ~p/sphynx
 # Reference: http://zsh.sourceforge.net/Guide
 hash -d p="${HOME}/Code/Personal"
 hash -d o="${HOME}/Code/Others"

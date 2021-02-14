@@ -15,7 +15,7 @@ function shinatra() {
 
   if [ -z "${port}" ] || [ -z "${response_body}" ]; then
     echo '!!! This function needs a port and a response body as arguments' >&2
-    echo "!!! i.e ${func_name} 8080 OK" >&2
+    echo "!!! e.g. ${func_name} 8080 OK" >&2
     return 1
   fi
 

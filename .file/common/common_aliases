@@ -3,7 +3,7 @@
 # Get week number
 alias week='date +%V'
 
-# Reload the shell (i.e. invoke as a login shell)
+# Reload the shell (e.g. invoke as a login shell)
 alias reload='exec ${SHELL} -l'
 
 # Rerun last command with sudo

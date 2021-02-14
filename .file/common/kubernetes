@@ -8,16 +8,16 @@ alias pk='kubectl --namespace kube-public'
 alias mk='kubectl --namespace monitoring'
 alias nlk='kubectl --namespace kube-node-lease'
 
-# i.e kx pods.spec
-# i.e kx deploy.spec.template.spec
+# e.g. kx pods.spec
+# e.g. kx deploy.spec.template.spec
 alias kx='kubectl explain'
 alias kxr='kubectl explain --recursive'
 
 # Kubernetes API Query
-# i.e kq /apis
-# i.e kq /healthz/etcd
-# i.e kq /logs/kube-apiserver.log
-# i.e kq /apis/metrics.k8s.io/v1beta1/nodes
+# e.g. kq /apis
+# e.g. kq /healthz/etcd
+# e.g. kq /logs/kube-apiserver.log
+# e.g. kq /apis/metrics.k8s.io/v1beta1/nodes
 alias kq='kubectl get --raw'
 
 alias kk='kubectl krew'
@@ -183,19 +183,19 @@ function kurl() {
 
   if [ -z "${namespace}" ]; then
     echo '!!! This function needs a namespace as first argument' >&2
-    echo "!!! i.e ${func_name} 'kube-system' 'metrics-server' '/apis'" >&2
+    echo "!!! e.g. ${func_name} 'kube-system' 'metrics-server' '/apis'" >&2
     return 1
   fi
 
   if [ -z "${service_account}" ]; then
     echo '!!! This function needs a service account as second argument' >&2
-    echo "!!! i.e ${func_name} 'kube-system' 'metrics-server' '/apis'" >&2
+    echo "!!! e.g. ${func_name} 'kube-system' 'metrics-server' '/apis'" >&2
     return 1
   fi
 
   if [ -z "${uri}" ]; then
     echo '!!! This function needs an URI as third argument' >&2
-    echo "!!! i.e ${func_name} 'kube-system' 'metrics-server' '/apis'" >&2
+    echo "!!! e.g. ${func_name} 'kube-system' 'metrics-server' '/apis'" >&2
     return 1
   fi
 

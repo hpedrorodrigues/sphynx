@@ -24,7 +24,7 @@ function te() {
 
   if [ -z "${file_name}" ]; then
     echo '!!! This function needs a file name as first argument' >&2
-    echo "!!! i.e ${func_name} new_executable_file" >&2
+    echo "!!! e.g. ${func_name} new_executable_file" >&2
     return 1
   fi
 
@@ -43,7 +43,7 @@ function up() {
 
   if [ -z "${n}" ] || ! [[ ${n} =~ ^[0-9]+$ ]]; then
     echo '!!! You should pass a number to this function' >&2
-    echo "!!! i.e ${func_name} 3 (to navigate up 3 directories)" >&2
+    echo "!!! e.g. ${func_name} 3 (to navigate up 3 directories)" >&2
     return 1
   fi
 
@@ -73,7 +73,7 @@ function eachdir() {
 
   if [ -z "${command}" ]; then
     echo '!!! This function needs a command as first argument' >&2
-    echo "!!! i.e ${func_name} 'ls -la'" >&2
+    echo "!!! e.g. ${func_name} 'ls -la'" >&2
     return 1
   fi
 

@@ -66,7 +66,7 @@ function csv() {
 
   if [ -z "${file_name}" ]; then
     echo '!!! This function needs a file as first argument' >&2
-    echo "!!! i.e ${func_name} test.csv" >&2
+    echo "!!! e.g. ${func_name} test.csv" >&2
     return 1
   fi
 
@@ -101,7 +101,7 @@ function download_meaning() {
 
   if [ -z "${word}" ]; then
     echo '!!! This function needs a word as first argument' >&2
-    echo "!!! i.e ${func_name} struggle" >&2
+    echo "!!! e.g. ${func_name} struggle" >&2
     return 1
   fi
 
@@ -117,7 +117,7 @@ function download_meaning_batch() {
 
   if [ -z "${file_path}" ]; then
     echo '!!! This function needs a file path as first argument' >&2
-    echo "!!! i.e ${func_name} words.txt" >&2
+    echo "!!! e.g. ${func_name} words.txt" >&2
     return 1
   fi
 
@@ -143,7 +143,7 @@ function download_meaning_batch() {
 }
 
 # New Go Workspace
-# i.e ngw my-project
+# e.g. ngw my-project
 function ngw() {
   local -r workspace_folder="${1:-$(mktemp -d)}"
 
@@ -168,7 +168,7 @@ function load_aws_profile() {
 
   if [ -z "${profile}" ]; then
     echo '!!! This function needs an aws profile as first argument' >&2
-    echo "!!! i.e ${func_name} your_profile" >&2
+    echo "!!! e.g. ${func_name} your_profile" >&2
     return 1
   fi
 
@@ -205,8 +205,8 @@ function j() {
 
   if [ -z "${version}" ]; then
     echo '!!! This function needs a java version as first argument' >&2
-    echo "!!! i.e ${func_name} 8" >&2
-    echo "!!! i.e ${func_name} 11" >&2
+    echo "!!! e.g. ${func_name} 8" >&2
+    echo "!!! e.g. ${func_name} 11" >&2
     return 1
   fi
 
@@ -245,14 +245,13 @@ function fgpick() {
 }
 
 # Lines of code
-# i.e loc sh
 function loc() {
   local -r func_name="${FUNCNAME[0]:-${funcstack[1]}}"
   local -r user_extension="${1}"
 
   if [ -z "${user_extension}" ]; then
     echo '!!! This function needs an extension as first argument' >&2
-    echo "!!! i.e ${func_name} .sh" >&2
+    echo "!!! e.g. ${func_name} .sh" >&2
     return 1
   fi
 
@@ -291,7 +290,7 @@ function loadcores() {
 }
 
 # Print how much RAM an application is currently using
-# i.e ram chrome
+# e.g. ram chrome
 # https://github.com/paulmillr/dotfiles/blob/a26c445aea4097bb8b3c0ea95019544cd66ac9c8/home/.zshrc.sh
 function ram() {
   local -r func_name="${FUNCNAME[0]:-${funcstack[1]}}"
@@ -299,7 +298,7 @@ function ram() {
 
   if [ -z "${application}" ]; then
     echo '!!! This function needs an application name as first argument' >&2
-    echo "!!! i.e ${func_name} chrome" >&2
+    echo "!!! e.g. ${func_name} chrome" >&2
     return 1
   fi
 
@@ -320,7 +319,7 @@ function ram() {
 }
 
 # Remove ANSI colour escapes
-# i.e ts | decolorize
+# e.g. ts | decolorize
 function decolorize() {
   sed -E $'s|\x1b\\[[0-\\?]*[ -/]*[@-~]||g;
          s|\x1b[PX^_][^\x1b]*\x1b\\\\||g;
