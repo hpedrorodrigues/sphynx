@@ -171,11 +171,79 @@ function kdeb() {
     --image 'hpedrorodrigues/alien:debug'
 }
 
-# Kubernetes API server URL: print the current api server address
+# Access Kubernetes API-server using cURL and some service account credentials
 function kurl() {
-  kubectl config view \
-    --minify \
-    --output jsonpath="{.clusters[*].cluster.server}"
+  local -r func_name="${FUNCNAME[0]:-${funcstack[1]}}"
+  local -r namespace="${1:-}"
+  local -r service_account="${2:-}"
+  local -r uri="${3:-}"
+
+  local -r env_file_path="/tmp/${namespace}-${service_account}-kurl.env"
+  local -r cert_file_path="/tmp/${namespace}-${service_account}-kurl-ca.crt"
+
+  if [ -z "${namespace}" ]; then
+    echo '!!! This function needs a namespace as first argument' >&2
+    echo "!!! i.e ${func_name} 'kube-system' 'metrics-server' '/apis'" >&2
+    return 1
+  fi
+
+  if [ -z "${service_account}" ]; then
+    echo '!!! This function needs a service account as second argument' >&2
+    echo "!!! i.e ${func_name} 'kube-system' 'metrics-server' '/apis'" >&2
+    return 1
+  fi
+
+  if [ -z "${uri}" ]; then
+    echo '!!! This function needs an URI as third argument' >&2
+    echo "!!! i.e ${func_name} 'kube-system' 'metrics-server' '/apis'" >&2
+    return 1
+  fi
+
+  if [ -s "${env_file_path}" ] && [ -s "${cert_file_path}" ]; then
+    echo 'Using pre-defined configuration...'
+    source "${env_file_path}"
+  else
+    echo 'Retrieving secret name...'
+    local -r SECRET_NAME="$(
+      kubectl get serviceaccounts "${service_account}" \
+        --namespace "${namespace}" \
+        --output 'json' \
+        | jq --raw-output '.secrets[].name | select(contains("token"))'
+    )"
+    echo 'Retrieving secret content...'
+    local -r SECRET_CONTENT="$(
+      kubectl get secrets "${SECRET_NAME}" \
+        --namespace "${namespace}" \
+        --output 'json'
+    )"
+    echo 'Loading secret token...'
+    local -r TOKEN="$(
+      echo -e "${SECRET_CONTENT}" \
+        | jq --raw-output '.data.token' \
+        | base64 -d
+    )"
+    echo 'Saving secret certificate...'
+    echo -e "${SECRET_CONTENT}" \
+      | jq --raw-output '.data["ca.crt"]' \
+      | base64 -d >"${cert_file_path}"
+    echo 'Loading API-server address...'
+    local -r API_SERVER="$(
+      kubectl config view \
+        --minify \
+        --output jsonpath="{.clusters[*].cluster.server}"
+    )"
+    echo 'Saving configuration...'
+    echo -e "SECRET_NAME='${SECRET_NAME}'\nAPI_SERVER='${API_SERVER}'\nTOKEN='${TOKEN}'" \
+      >"${env_file_path}"
+  fi
+
+  echo -e 'Requesting...\n'
+  curl "${API_SERVER}${uri}" \
+    --silent \
+    --header "Authorization: Bearer ${TOKEN}" \
+    --header "User-Agent: kurl/sphynx ($(uname))" \
+    --cacert "${cert_file_path}" \
+    | yq --prettyPrint --colors 'eval'
 }
 
 # Kubernetes delete replicasets: remove replicasets not being used
