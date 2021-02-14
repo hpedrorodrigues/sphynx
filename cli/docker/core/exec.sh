@@ -59,7 +59,7 @@ function sx::docker_command::exec() {
 
   for shell in "${shells[@]}"; do
     if docker exec "${container_id}" "${shell}" -c 'exit' &>/dev/null; then
-      sx::log::info "Now you can execute commands in container \"${container_title}\" using \"${shell}\".\n"
+      sx::log::info "Now you can execute commands in container \"${container_title}\" using \"${shell}\"\n"
 
       local -r ps1='\u@\h:\w '
 

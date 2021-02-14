@@ -74,7 +74,20 @@ function sx::k8s_command::shell() {
         "stdin": true,
         "stdinOnce": true,
         "tty": true,
-        "command": ["nsenter", "--target", "1", "--mount", "--uts", "--ipc", "--net", "--pid", "--", "bash", "--login"]
+        "command": [
+          "nsenter",
+          "--target",
+          "1",
+          "--mount",
+          "--uts",
+          "--ipc",
+          "--net",
+          "--pid",
+          "--",
+          "/bin/bash",
+          "-c",
+          "PS1='${SX_KUBERNETES_PS1//\\/\\\\}' exec /bin/bash --login"
+        ]
       }
     ]
   }
@@ -82,7 +95,9 @@ function sx::k8s_command::shell() {
 EOF
   )"
 
-  sx::k8s::cli run \
+  sx::log::info "Opening shell in node \"${node_name}\" using \"/bin/bash\"\n"
+
+  sx::k8s::cli run "${pod_name}" \
     --rm \
     --stdin \
     --tty \
@@ -93,12 +108,16 @@ EOF
     --restart 'Never' \
     --labels "app=${container_name}" \
     --env 'SOURCE=sphynx' \
-    --grace-period '1' \
-    "${pod_name}"
+    --quiet \
+    --requests 'cpu=25m,memory=25Mi' \
+    --limits 'cpu=25m,memory=25Mi' \
+    --grace-period '1'
 
-  local -r remaining_pod="$(sx::k8s::cli get pods \
-    --namespace "${namespace}" \
-    --selector "app=${container_name}" 2>/dev/null)"
+  local -r remaining_pod="$(
+    sx::k8s::cli get pods \
+      --namespace "${namespace}" \
+      --selector "app=${container_name}" 2>/dev/null
+  )"
 
   if [ -n "${remaining_pod}" ]; then
     sx::log::warn "Deleting remaining pod ${pod_name}"
