@@ -346,3 +346,21 @@ function console() {
     fi
   done
 }
+
+# Decode Json Web Token
+function jwtd() {
+  local -r func_name="${FUNCNAME[0]:-${funcstack[1]}}"
+  local -r token="${1:-}"
+
+  if [ -z "${token}" ]; then
+    echo '!!! This function needs a json web token as an argument' >&2
+    echo "!!! e.g. ${func_name} '<json-web-token>'" >&2
+    return 1
+  fi
+
+  jq --raw-input 'split(".") | {
+    "header": (.[0] | @base64d | fromjson),
+    "payload": (.[1] | @base64d | fromjson),
+    "signature": .[2]
+  }' <<<"${token}"
+}
