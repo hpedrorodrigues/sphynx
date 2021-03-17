@@ -75,3 +75,9 @@ export BAT_THEME='Dracula'
 
 #|> Sphynx
 export SX_CONFIRMATION_REQUIRED='false'
+
+#|> rbenv
+
+if hash 'rbenv' 2>/dev/null; then
+  eval "$(rbenv init -)"
+fi

@@ -29,3 +29,31 @@ function akamai() {
     -H 'Pragma: akamai-x-cache-on, akamai-x-cache-remote-on, akamai-x-check-cacheable, akamai-x-get-cache-key, akamai-x-get-extracted-values, akamai-x-get-nonces, akamai-x-get-ssl-client-session-id, akamai-x-get-true-cache-key, akamai-x-serial-no' \
     "${@}"
 }
+
+# Reference: https://stackoverflow.com/a/22625150/3691240
+function curltime() {
+  local -r template="$(
+    cat <<EOF
+\n
+           Name lookup time: %{time_namelookup}\n
+  Establish connection time: %{time_connect}\n
+ SSL/SSH/etc handshake time: %{time_appconnect}\n
+     Pre-file-transfer time: %{time_pretransfer}\n
+              Redirect time: %{time_redirect}\n
+         Time to first byte: %{time_starttransfer}\n
+              HTTP/FTP Code: %{http_code}\n
+                     -------\n
+                 Total time: %{time_total}\n\n\n
+
+Note: The times are displayed in seconds.\n
+EOF
+  )"
+
+  curl \
+    --silent \
+    --header "Authorization: Bearer ${TOKEN}" \
+    --header "User-Agent: curltime/sphynx ($(uname))" \
+    --write-out @- \
+    --output /dev/null \
+    "${@}" <<<"${template}"
+}

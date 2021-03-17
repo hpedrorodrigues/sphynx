@@ -39,16 +39,19 @@ function sx::k8s::running_pods() {
   # shellcheck disable=SC2016  # Expressions don't expand in single quotes, use double quotes for that
   local -r template='
   {{range .items}}
-    {{if eq .status.phase "Running"}}
-      {{$namespace := .metadata.namespace}}
-      {{$name := .metadata.name}}
-      {{$phase := .status.phase}}
-      {{$createdAt := .metadata.creationTimestamp}}
-      {{range .spec.containers}}
-        {{$namespace}}{{","}}{{$name}}{{","}}{{.name}}{{","}}{{$phase}}{{","}}{{$createdAt}}{{"\n"}}
-      {{end}}
+    {{$namespace := .metadata.namespace}}
+    {{$name := .metadata.name}}
+    {{range .spec.containers}}
+      {{$namespace}}{{","}}{{$name}}{{","}}{{.name}}{{"\n"}}
     {{end}}
   {{end}}'
+
+  # shellcheck disable=SC2086  # quote this to prevent word splitting
+  local -r simple_pods_output="$(
+    sx::k8s::cli get pods \
+      ${flags} \
+      | grep -E "${selector}" 2>/dev/null
+  )"
 
   # shellcheck disable=SC2086  # quote this to prevent word splitting
   sx::k8s::cli get pods \
@@ -57,7 +60,26 @@ function sx::k8s::running_pods() {
     --template="$(sx::k8s::clear_template "${template}")" \
     | sort -u \
     | column -t -s ',' \
-    | grep -E "${selector}" 2>/dev/null
+    | grep -E "${selector}" 2>/dev/null \
+    | while read -r templated_pod_line; do
+      local pod_name="$(echo "${templated_pod_line}" | awk '{ print $2 }')"
+
+      local simple_pod_line="$(echo -e "${simple_pods_output}" | grep "${pod_name}")"
+      local pod_status="$(echo -e "${simple_pod_line}" | awk '{ print $3 }')"
+
+      if echo "${pod_status}" | grep -v 'Running'; then
+        continue
+      fi
+
+      local pod_namespace="$(echo "${templated_pod_line}" | awk '{ print $1 }')"
+      local container_name="$(echo "${templated_pod_line}" | awk '{ print $3 }')"
+
+      local pod_restarts_count="$(echo -e "${simple_pod_line}" | awk '{ print $4 }')"
+      local pod_age="$(echo -e "${simple_pod_line}" | awk '{ print $5 }')"
+
+      echo "${pod_namespace},${pod_name},${container_name},${pod_status},${pod_restarts_count},${pod_age}"
+    done \
+    | column -t -s ','
 }
 
 function sx::k8s::not_pending_pods() {
@@ -82,19 +104,23 @@ function sx::k8s::not_pending_pods() {
   # shellcheck disable=SC2016  # Expressions don't expand in single quotes, use double quotes for that
   local -r template='
   {{range .items}}
-    {{if ne .status.phase "Pending"}}
-      {{$namespace := .metadata.namespace}}
-      {{$name := .metadata.name}}
-      {{$createdAt := .metadata.creationTimestamp}}
-      {{$phase := .status.phase}}
-      {{range .spec.initContainers}}
-        {{$namespace}}{{","}}{{$name}}{{","}}{{.name}}{{","}}{{$phase}}{{","}}{{$createdAt}}{{", (Init Container)"}}{{"\n"}}
-      {{end}}
-      {{range .spec.containers}}
-        {{$namespace}}{{","}}{{$name}}{{","}}{{.name}}{{","}}{{$phase}}{{","}}{{$createdAt}}{{"\n"}}
-      {{end}}
+    {{$namespace := .metadata.namespace}}
+    {{$name := .metadata.name}}
+    {{$createdAt := .metadata.creationTimestamp}}
+    {{range .spec.initContainers}}
+      {{$namespace}}{{","}}{{$name}}{{","}}{{.name}}{{", (Init Container)"}}{{"\n"}}
+    {{end}}
+    {{range .spec.containers}}
+      {{$namespace}}{{","}}{{$name}}{{","}}{{.name}}{{"\n"}}
     {{end}}
   {{end}}'
+
+  # shellcheck disable=SC2086  # quote this to prevent word splitting
+  local -r simple_pods_output="$(
+    sx::k8s::cli get pods \
+      ${flags} \
+      | grep -E "${selector}" 2>/dev/null
+  )"
 
   # shellcheck disable=SC2086  # quote this to prevent word splitting
   sx::k8s::cli get pods \
@@ -103,7 +129,27 @@ function sx::k8s::not_pending_pods() {
     --template="$(sx::k8s::clear_template "${template}")" \
     | sort -u \
     | column -t -s ',' \
-    | grep -E "${selector}" 2>/dev/null
+    | grep -E "${selector}" 2>/dev/null \
+    | while read -r templated_pod_line; do
+      local pod_name="$(echo "${templated_pod_line}" | awk '{ print $2 }')"
+
+      local simple_pod_line="$(echo -e "${simple_pods_output}" | grep "${pod_name}")"
+      local pod_status="$(echo -e "${simple_pod_line}" | awk '{ print $3 }')"
+
+      if echo "${pod_status}" | grep 'Pending\|ContainerCreating\|Terminating\|CreateContainerConfigError'; then
+        continue
+      fi
+
+      local pod_namespace="$(echo "${templated_pod_line}" | awk '{ print $1 }')"
+      local container_name="$(echo "${templated_pod_line}" | awk '{ print $3 }')"
+      local description="$(echo "${templated_pod_line}" | awk '{ print $4 " " $5 }')"
+
+      local pod_restarts_count="$(echo -e "${simple_pod_line}" | awk '{ print $4 }')"
+      local pod_age="$(echo -e "${simple_pod_line}" | awk '{ print $5 }')"
+
+      echo "${pod_namespace},${pod_name},${container_name},${pod_status},${pod_restarts_count},${pod_age},${description}"
+    done \
+    | column -t -s ','
 }
 
 function sx::k8s::current_context() {
