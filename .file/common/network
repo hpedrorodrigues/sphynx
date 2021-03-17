@@ -32,7 +32,8 @@ function akamai() {
 
 # Reference: https://stackoverflow.com/a/22625150/3691240
 function curltime() {
-  local -r template="$(cat << EOF
+  local -r template="$(
+    cat <<EOF
 \n
            Name lookup time: %{time_namelookup}\n
   Establish connection time: %{time_connect}\n
@@ -46,7 +47,7 @@ function curltime() {
 
 Note: The times are displayed in seconds.\n
 EOF
-)"
+  )"
 
   curl \
     --silent \
@@ -54,5 +55,5 @@ EOF
     --header "User-Agent: curltime/sphynx ($(uname))" \
     --write-out @- \
     --output /dev/null \
-    "${@}" <<< "${template}"
+    "${@}" <<<"${template}"
 }
