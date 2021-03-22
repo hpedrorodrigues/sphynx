@@ -3,7 +3,6 @@
 [alias]
   dsf = "!f() { [ -z \"${GIT_PREFIX}\" ] || cd \"${GIT_PREFIX}\" && git diff --color \"${@}\" | diff-so-fancy  | less --tabs=4 -RFX; }; f"
   l = log --pretty='format:%C(yellow)%h %C(blue)%ad %C(reset)%s%C(red)%d %C(green)%an%C(reset), %C(cyan)%ar' --date=short
-
   ## References: https://github.com/mathiasbynens/dotfiles/blob/main/.gitconfig
   # List aliases
   aliases = config --get-regexp alias
@@ -61,3 +60,5 @@
   keepBackup = false
 [init]
   defaultBranch = main
+[url "git@github.com:hpedrorodrigues/"]
+  insteadOf = "my:"
