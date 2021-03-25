@@ -112,8 +112,8 @@ function sx::k8s::pod_list() {
   # shellcheck disable=SC2086  # quote this to prevent word splitting
   local -r simple_pods_output="$(
     sx::k8s::cli get pods \
-      ${flags} \
-      | grep -E "${selector}" 2>/dev/null
+      ${flags} 2>/dev/null \
+      | grep -E "${selector}"
   )"
 
   local -r header='NAMESPACE,POD NAME,CONTAINER NAME,STATUS,RESTARTS,AGE,DESCRIPTION'
@@ -123,7 +123,7 @@ function sx::k8s::pod_list() {
     sx::k8s::cli get pods \
       ${flags} \
       --output go-template \
-      --template="$(sx::k8s::clear_template "${template}")" \
+      --template="$(sx::k8s::clear_template "${template}")" 2>/dev/null \
       | sort -u \
       | column -t -s ',' \
       | grep -E "${selector}" 2>/dev/null \
@@ -148,7 +148,9 @@ function sx::k8s::pod_list() {
       done
   )"
 
-  if ${print_header}; then
+  if [ -z "${result}" ]; then
+    echo
+  elif ${print_header}; then
     echo -e "${header}\n${result}" | column -t -s ','
   else
     echo -e "${result}" | column -t -s ','
