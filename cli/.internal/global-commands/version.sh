@@ -1,19 +1,21 @@
 #!/usr/bin/env bash
 
-readonly brew_directory_prefix='/usr/local/Cellar/sphynx/'
-readonly brew_directory_suffix="/bin/${SPHYNX_EXEC_NAME}"
-readonly brew_executable="/usr/local/bin/${SPHYNX_EXEC_NAME}"
-
 function sx::self::version() {
   sx::require_supported_os
 
-  if [ "${SPHYNX_EXEC}" == "${brew_executable}" ]; then
-    if sx::os::is_linux; then
-      local -r pm_description='Linuxbrew'
-    else
-      local -r pm_description='Homebrew'
-    fi
+  if sx::os::is_linux; then
+    local -r pm_description='Linuxbrew'
+    local -r brew_directory_prefix='/home/linuxbrew/.linuxbrew/Cellar/sphynx/'
+    local -r brew_directory_suffix="/bin/${SPHYNX_EXEC_NAME}"
+    local -r brew_executable="/home/linuxbrew/.linuxbrew/bin/${SPHYNX_EXEC_NAME}"
+  else
+    local -r pm_description='Homebrew'
+    local -r brew_directory_prefix='/usr/local/Cellar/sphynx/'
+    local -r brew_directory_suffix="/bin/${SPHYNX_EXEC_NAME}"
+    local -r brew_executable="/usr/local/bin/${SPHYNX_EXEC_NAME}"
+  fi
 
+  if [ "${SPHYNX_EXEC}" == "${brew_executable}" ]; then
     local -r version="$(
       sx::os::realpath "${SPHYNX_EXEC}" \
         | sed "s#${brew_directory_prefix}##" \
