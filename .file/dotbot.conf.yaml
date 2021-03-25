@@ -18,7 +18,6 @@
     ${HOME}/.gitconfig: ${SPHYNX_DIR}/.file/common/.gitconfig
     ${HOME}/.gitignore_global: ${SPHYNX_DIR}/.file/common/.gitignore_global
     ${HOME}/.htoprc: ${SPHYNX_DIR}/.file/common/.htoprc
-    ${HOME}/.mongorc.js: ${SPHYNX_DIR}/.file/common/.mongorc.js
     ${HOME}/.bash_logout: ${SPHYNX_DIR}/.file/common/.bash_logout
     ${HOME}/.profile: ${SPHYNX_DIR}/.file/common/.profile
     ${HOME}/.screenrc: ${SPHYNX_DIR}/.file/common/.screenrc
