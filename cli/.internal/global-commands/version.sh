@@ -1,37 +1,28 @@
 #!/usr/bin/env bash
 
-readonly brew_directory_prefix='/usr/local/Cellar/sphynx/'
-readonly brew_directory_suffix="/bin/${SPHYNX_EXEC_NAME}"
-readonly brew_executable="/usr/local/bin/${SPHYNX_EXEC_NAME}"
-
 function sx::self::version() {
   sx::require_supported_os
 
+  if sx::os::is_linux; then
+    local -r package_manager_name='Linuxbrew'
+    local -r brew_directory_prefix='/home/linuxbrew/.linuxbrew/Cellar/sphynx/'
+    local -r brew_directory_suffix="/bin/${SPHYNX_EXEC_NAME}"
+    local -r brew_executable="/home/linuxbrew/.linuxbrew/bin/${SPHYNX_EXEC_NAME}"
+  else
+    local -r package_manager_name='Homebrew'
+    local -r brew_directory_prefix='/usr/local/Cellar/sphynx/'
+    local -r brew_directory_suffix="/bin/${SPHYNX_EXEC_NAME}"
+    local -r brew_executable="/usr/local/bin/${SPHYNX_EXEC_NAME}"
+  fi
+
   if [ "${SPHYNX_EXEC}" == "${brew_executable}" ]; then
-    local -r symlink_target="$(
-      find "${SPHYNX_EXEC}" -type l -ls \
-        | awk -F '->' '{ print $2 }'
+    local -r version="$(
+      sx::os::realpath "${SPHYNX_EXEC}" \
+        | sed "s#${brew_directory_prefix}##" \
+        | sed "s#${brew_directory_suffix}##"
     )"
 
-    (
-      cd "$(dirname "${SPHYNX_EXEC}")" || return 1
-      cd "$(dirname "${symlink_target}")" || return 1
-
-      if sx::os::is_linux; then
-        local -r pm_description='Linuxbrew'
-      else
-        local -r pm_description='Homebrew'
-      fi
-
-      local -r real_sphynx_exec="${PWD}/${SPHYNX_EXEC_NAME}"
-      local -r version="$(
-        echo "${real_sphynx_exec}" \
-          | sed "s#${brew_directory_prefix}##" \
-          | sed "s#${brew_directory_suffix}##"
-      )"
-
-      echo "${pm_description}: ${version}"
-    )
+    echo "${package_manager_name}: ${version}"
 
     return 0
   fi
