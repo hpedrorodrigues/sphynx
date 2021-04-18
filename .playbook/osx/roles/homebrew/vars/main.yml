@@ -23,6 +23,7 @@ homebrew_packages:
   - ffmpeg
   - file-formula
   - findutils
+  - flux
   - gawk
   - gcc
   - git
@@ -104,6 +105,7 @@ homebrew_apps:
   - jetbrains-toolbox
   - meld
   - pdfelement
+  - rectangle
   - silverlight
   - skype
   - spotify
