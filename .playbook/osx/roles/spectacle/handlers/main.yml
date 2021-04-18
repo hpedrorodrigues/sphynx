@@ -1,2 +1,0 @@
-- name: Restart Spectacle
-  shell: killall Spectacle && open -a Spectacle || echo
