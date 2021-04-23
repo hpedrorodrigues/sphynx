@@ -2,7 +2,7 @@
 
 ### External images
 
-export CONFLUENT_VERSION=${CONFLUENT_VERSION:-6.1.0}
+export CONFLUENT_VERSION=${CONFLUENT_VERSION:-6.1.1}
 
 # e.g. kcli kafka-topics --bootstrap-server <host>:<port> --list
 function kcli() {
