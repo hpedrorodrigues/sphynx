@@ -1,5 +1,4 @@
 npm_packages:
-  - diff-so-fancy
   - eslint
   - npm-check-updates
   - tldr
