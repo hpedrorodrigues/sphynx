@@ -27,7 +27,7 @@ defaults write NSGlobalDomain AppleMetricUnits -bool true
 # Disable guest account login
 readonly login_prefs_file='/Library/Preferences/com.apple.loginwindow'
 if [ -f "${login_prefs_file}" ] \
-  && [ "$(defaults read "${login_prefs_file}" GuestEnabled)" = '0' ]; then
+  && [ "$(defaults read "${login_prefs_file}" GuestEnabled)" != '0' ]; then
   sudo defaults write "${login_prefs_file}" GuestEnabled -bool false
 fi
 
