@@ -9,7 +9,7 @@
 **Current**:
 
 ```txt
-#212121,#212121,#3F51B5,#FFFFFF,#3F51B5,#FFFFFF,#3F51B5,#3F51B5
+#282A36,#44475A,#44475A,#8BE9FD,#6272A4,#FFFFFF,#50FA7B,#FF5555
 ```
 
 [slack-themes]: https://slackthemes.net

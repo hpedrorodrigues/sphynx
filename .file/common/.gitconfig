@@ -1,8 +1,6 @@
 [include]
   path = ~/.gitsecrets
 [alias]
-  dsf = "!f() { [ -z \"${GIT_PREFIX}\" ] || cd \"${GIT_PREFIX}\" && git diff --color \"${@}\" | diff-so-fancy  | less --tabs=4 -RFX; }; f"
-  l = log --pretty='format:%C(yellow)%h %C(blue)%ad %C(reset)%s%C(red)%d %C(green)%an%C(reset), %C(cyan)%ar' --date=short
   ## References: https://github.com/mathiasbynens/dotfiles/blob/main/.gitconfig
   # List aliases
   aliases = config --get-regexp alias
@@ -42,6 +40,16 @@
   excludesfile = ~/.gitignore_global
   ignorecase = false
   whitespace = fix,trailing-space
+  pager = delta
+[interactive]
+  diffFilter = delta
+[delta]
+  features = line-numbers decorations
+  syntax-theme = Dracula
+  plus-style = syntax "#0f5323"
+  minus-style = syntax "#67060c"
+[delta "decorations"]
+  file-style = bold yellow ul
 [filter "lfs"]
   clean = git-lfs clean -- %f
   process = git-lfs filter-process
