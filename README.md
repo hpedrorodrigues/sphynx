@@ -114,9 +114,9 @@ Also, [Github ❤ ~/][dotfiles-website] and
 
 ### Alien scripts
 
-Alien commands are tools that you don't want to install on your machine and
-still use it. For instance, you want to use [p2i][p2i] but you don't want to
-configure a nodejs environment.
+Alien commands are tools that you don't want to install on your machine but
+you'd like to use them. For instance, you want to use [p2i][p2i] but you don't
+want to configure a nodejs environment.
 
 > Sphynx is using Docker to accomplish this goal.
 
