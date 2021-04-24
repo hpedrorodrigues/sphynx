@@ -21,7 +21,7 @@
   notify:
     - Restart iTerm
   when:
-    - iterm.stat.exists or new_iterm.rc == 0
+    - iterm.stat.exists or new_iterm is successful
 
 - name: Configuring iTerm to load preferences from Sphynx directory
   osx_defaults:
@@ -33,4 +33,4 @@
   notify:
     - Restart iTerm
   when:
-    - iterm.stat.exists or new_iterm.rc == 0
+    - iterm.stat.exists or new_iterm is successful
