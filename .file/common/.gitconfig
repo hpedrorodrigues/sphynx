@@ -42,7 +42,7 @@
   whitespace = fix,trailing-space
   pager = delta
 [interactive]
-  diffFilter = delta
+  diffFilter = delta --color-only
 [delta]
   features = line-numbers decorations
   syntax-theme = Dracula
