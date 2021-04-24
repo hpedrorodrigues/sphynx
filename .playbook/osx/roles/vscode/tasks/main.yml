@@ -40,4 +40,4 @@
   when:
     - vscode.stat.exists
     - vscode_extensions | count > 0
-    - item.name | default(item) not in installed_extensions.stdout
+    - item.name | default(item) not in installed_extensions.stdout.split('\n')

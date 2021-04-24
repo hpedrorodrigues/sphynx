@@ -15,8 +15,10 @@ function sx::playbook::install_dependencies() {
       sudo apt-get install -y python3-pip python3-apt
     fi
   elif sx::os::is_osx; then
-    if ! sx::os::is_command_available 'pip3'; then
-      sudo xcode-select --install
+    if ! [ -d "/Applications/Python ${PYTHON_VERSION_XY}" ]; then
+      if ! [ -d "$(xcode-select --print-path 2>/dev/null)" ]; then
+        sudo xcode-select --install
+      fi
 
       local -r binary_url="https://www.python.org/ftp/python/${PYTHON_VERSION_XYZ}/python-${PYTHON_VERSION_XYZ}-macosx10.9.pkg"
       local -r binary_path="/tmp/$(basename "${binary_url}")"

@@ -26,7 +26,7 @@
 - name: Tapping Homebrew repositories
   homebrew_tap:
     name: "{{ item.user_repo | default(item) }}"
-    url: "{{ item.url | default(None) }}"
+    url: "{{ item.url | default(omit) }}"
     state: present
   with_items: "{{ homebrew_repositories }}"
   when:
@@ -80,7 +80,7 @@
     - homebrew.stat.exists or new_homebrew.rc == 0
     - cask.rc == 0
     - homebrew_apps is defined and homebrew_apps | count > 0
-    - item.name | default(item) not in installed_cask_packages.stdout.split('\n')
+    - item.installed_name | default(item.name) | default(item) not in installed_cask_packages.stdout.split('\n')
 
 - name: Removing outdated package versions
   command: brew cleanup

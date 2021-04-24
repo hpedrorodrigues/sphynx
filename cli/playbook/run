@@ -16,6 +16,4 @@ source "${SPHYNXN_DIR}/core/run.sh"
 ##? Examples:
 ##?     run
 
-sx::parse_arguments "${@}"
-
 sx::playbook::run

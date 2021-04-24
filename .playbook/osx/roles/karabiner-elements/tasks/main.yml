@@ -25,4 +25,4 @@
   notify:
     - Restart Karabiner
   when:
-    - karabiner.stat.exists or new_karabiner.rc == 0
+    - karabiner.stat.exists or new_karabiner is successful

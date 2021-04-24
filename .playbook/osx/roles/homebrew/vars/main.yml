@@ -81,12 +81,12 @@ homebrew_packages:
   - vim
   - watch
   - wdiff
-  - weaveworks/tap/eksctl
+  - { name: "weaveworks/tap/eksctl", installed_name: "eksctl" }
   - wget
   - yq
 
 homebrew_apps:
-  - adoptopenjdk8
+  - { name: "adoptopenjdk/openjdk/adoptopenjdk8", installed_name: "adoptopenjdk8" }
   - adoptopenjdk11
   - adoptopenjdk13
   - adoptopenjdk15

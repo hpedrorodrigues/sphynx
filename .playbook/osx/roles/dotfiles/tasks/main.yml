@@ -13,15 +13,16 @@
     - not zsh.stat.exists
 
 - name: Making Zsh the default shell
-  shell: "chsh -s /usr/local/bin/zsh"
+  shell: "chsh -s /usr/local/bin/zsh {{ ansible_env.USER }}"
+  become: yes
   when:
-    - zsh.stat.exists or new_zsh.rc == 0
+    - zsh.stat.exists or new_zsh is successful
     - lookup('env','SHELL') != '/usr/local/bin/zsh'
 
 - name: Installing Dotfiles
   command: "{{ sphynx_cli }} dotfiles configure"
   when:
-    - zsh.stat.exists or new_zsh.rc == 0
+    - zsh.stat.exists or new_zsh is successful
 
 - name: Configuring Vundle
   include: vundle.yml
