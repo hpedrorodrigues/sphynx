@@ -86,7 +86,10 @@ homebrew_packages:
   - yq
 
 homebrew_apps:
-  - { name: "adoptopenjdk/openjdk/adoptopenjdk8", installed_name: "adoptopenjdk8" }
+  - {
+      name: "adoptopenjdk/openjdk/adoptopenjdk8",
+      installed_name: "adoptopenjdk8",
+    }
   - adoptopenjdk11
   - adoptopenjdk13
   - adoptopenjdk15
