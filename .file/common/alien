@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 
-### External images
+# External images
 
 export CONFLUENT_VERSION=${CONFLUENT_VERSION:-6.1.1}
 
 ## Kafka CLI (https://kafka.apache.org)
+##
 ## e.g. kcli kafka-topics --bootstrap-server <host>:<port> --list
 function kcli() {
   local -r tool_name="${FUNCNAME[0]:-${funcstack[1]}}"
@@ -26,11 +27,12 @@ function kcli() {
     "confluentinc/cp-kafka:${CONFLUENT_VERSION}" "${@}"
 }
 
-### Internal images
+# Sphynx images
 
 export ALIEN_REPOSITORY="${ALIEN_REPOSITORY:-hpedrorodrigues/alien}"
 
 ## Prettier (https://prettier.io)
+##
 ## e.g. prettier --check '*/**/*.{yml,yaml}'
 function prettier() {
   local -r tool_name="${FUNCNAME[0]:-${funcstack[1]}}"
@@ -53,6 +55,7 @@ function prettier() {
 }
 
 ## EDN Query (https://github.com/jonase/eq)
+##
 ## e.g. echo '{:a "a" :b "b" :c "c"}' | eq '[(get :b) (get :a)]'
 function eq() {
   local -r tool_name="${FUNCNAME[0]:-${funcstack[1]}}"
@@ -74,6 +77,7 @@ function eq() {
 }
 
 ## Hadolint (https://github.com/hadolint/hadolint)
+##
 ## e.g. hadolint <Dockerfile>
 function hadolint() {
   local -r tool_name="${FUNCNAME[0]:-${funcstack[1]}}"
@@ -96,6 +100,7 @@ function hadolint() {
 }
 
 ## ShellCheck (https://github.com/koalaman/shellcheck)
+##
 ## e.g. shellcheck <script-file>
 function shellcheck() {
   local -r tool_name="${FUNCNAME[0]:-${funcstack[1]}}"
@@ -119,6 +124,7 @@ function shellcheck() {
 }
 
 ## shfmt (https://github.com/mvdan/sh)
+##
 ## e.g. shfmt -l -w <script-file>
 function shfmt() {
   local -r tool_name="${FUNCNAME[0]:-${funcstack[1]}}"
