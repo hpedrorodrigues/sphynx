@@ -5,7 +5,7 @@ readonly domain='com.apple.finder'
 
 
 # Open new windows in home directory
-defaults write ${domain} NewWindowTargetPath -string "file://${HOME}"
+defaults write ${domain} NewWindowTargetPath -string "file://${HOME}/"
 
 # Show .files
 defaults write ${domain} AppleShowAllFiles -string 'YES'
