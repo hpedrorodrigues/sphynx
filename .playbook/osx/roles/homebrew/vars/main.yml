@@ -23,7 +23,6 @@ homebrew_packages:
   - ffmpeg
   - file-formula
   - findutils
-  - flux
   - gawk
   - gcc
   - git
@@ -102,6 +101,7 @@ homebrew_apps:
   - discord
   - docker
   - firefox-developer-edition
+  - flux
   - github
   - google-chrome
   - jetbrains-toolbox
