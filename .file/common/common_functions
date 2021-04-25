@@ -31,7 +31,7 @@ function sha256() {
 ## Translate from English to Portuguese (Brazil)
 ## https://github.com/soimort/translate-shell
 ##
-## e.g. tle car
+## e.g. tle 'abysmal'
 function tle() {
   # shellcheck disable=SC2068  # Double quote array expansions
   trans en:pt ${@}
@@ -40,7 +40,7 @@ function tle() {
 ## Translate from English to Portuguese (Brazil) and listen to the original text
 ## https://github.com/soimort/translate-shell
 ##
-## e.g. tles car
+## e.g. tles 'atrocious'
 function tles() {
   # shellcheck disable=SC2068  # Double quote array expansions
   trans en:pt ${@} --speak
@@ -186,11 +186,9 @@ function overload_cores() {
     local -r n_cores="$(grep -c '^processor' /proc/cpuinfo | tr -d ' ')"
   fi
 
-  local -r file='/dev/null'
-
   # shellcheck disable=SC2051  # bash doesn't support variables in brace range expansions
   for _ in {1..${n_cores}}; do
-    yes >"${file}" &
+    yes >/dev/null &
   done
 
   echo "${n_cores} cores loaded. To stop: 'killall yes'."
@@ -262,6 +260,16 @@ function loop() {
   watch "${SHELL} -i -c '${*}'"
 }
 
+## Remove ANSI color escape codes
+##
+## e.g. ts | decolorize
+function decolorize() {
+  sed -E $'s|\x1b\\[[0-\\?]*[ -/]*[@-~]||g;
+         s|\x1b[PX^_][^\x1b]*\x1b\\\\||g;
+         s:\x1b\\][^\x07]*(\x07|\x1b\\\\)::g;
+         s|\x1b[@-_]||g'
+}
+
 ## Format and display the on-line manual pages (but with colors)
 ##
 ## e.g. man 'ls'
@@ -277,8 +285,11 @@ function man() {
     /usr/bin/man "${*}"
 }
 
-# Utility functions
+# English learning functions
 
+## Create a PNG image file with the meaning of a single provided word
+##
+## e.g. download_meaning 'steep'
 function download_meaning() {
   local -r func_name="${FUNCNAME[0]:-${funcstack[1]}}"
   local -r word="${1}"
@@ -295,6 +306,9 @@ function download_meaning() {
     --filename "${word}.png"
 }
 
+## The same as {@download_meaning} but it reads the words from the provided file
+##
+## e.g. download_meaning_batch 'words.txt'
 function download_meaning_batch() {
   local -r func_name="${FUNCNAME[0]:-${funcstack[1]}}"
   local -r file_path="${1}"
@@ -326,8 +340,12 @@ function download_meaning_batch() {
   done <"${file_path}"
 }
 
-# New Go Workspace
-# e.g. ngw my-project
+# Utility functions
+
+## Create a new Go workspace using the provided directory or a temporary one
+##
+## e.g. ngw
+## e.g. ngw my-project
 function ngw() {
   local -r workspace_folder="${1:-$(mktemp -d)}"
 
@@ -346,7 +364,11 @@ function ngw() {
     && echo "${workspace_folder}"
 }
 
-function load_aws_profile() {
+## [AWS Load Profile] Set the env var AWS_PROFILE to the provided profile
+## checking it with the definitions in ~/.aws/config
+##
+## e.g. awslp <profile-name>
+function awslp() {
   local -r func_name="${FUNCNAME[0]:-${funcstack[1]}}"
   local -r profile="${1}"
 
@@ -383,6 +405,12 @@ function load_aws_profile() {
   export AWS_PROFILE="${profile}"
 }
 
+## Set the env var JAVA_HOME with the provided version using other
+## pre-configured env vars (e.g. JAVA11_HOME, JAVA13_HOME) or the script
+## /usr/libexec/java_home when available
+##
+## e.g. j 11
+## e.g. j 13
 function j() {
   local -r func_name="${FUNCNAME[0]:-${funcstack[1]}}"
   local -r version="${1:-}"
@@ -410,42 +438,9 @@ function j() {
   echo "JAVA_HOME=${JAVA_HOME}"
 }
 
-# Lines of code
-function loc() {
-  local -r func_name="${FUNCNAME[0]:-${funcstack[1]}}"
-  local -r user_extension="${1}"
-
-  if [ -z "${user_extension}" ]; then
-    echo '!!! This function needs an extension as first argument' >&2
-    echo "!!! e.g. ${func_name} .sh" >&2
-    return 1
-  fi
-
-  if [ "$(echo "${user_extension}" | cut -c1-1)" = '.' ]; then
-    local -r extension="${user_extension}"
-  else
-    local -r extension=".${user_extension}"
-  fi
-
-  local -r lines_of_code="$(
-    find . -type f -iname "*${extension}" -exec cat '{}' \; \
-      | wc -l \
-      | tr -d ' '
-  )"
-
-  echo "LoC for \"${extension}\": ${lines_of_code}."
-}
-
-# Remove ANSI colour escapes
-# e.g. ts | decolorize
-function decolorize() {
-  sed -E $'s|\x1b\\[[0-\\?]*[ -/]*[@-~]||g;
-         s|\x1b[PX^_][^\x1b]*\x1b\\\\||g;
-         s:\x1b\\][^\x07]*(\x07|\x1b\\\\)::g;
-         s|\x1b[@-_]||g'
-}
-
-# Decode Json Web Token
+## Decode a Json Web Token
+##
+## e.g. jwtd <json-web-token>
 function jwtd() {
   local -r func_name="${FUNCNAME[0]:-${funcstack[1]}}"
   local -r token="${1:-}"
