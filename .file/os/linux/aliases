@@ -4,7 +4,6 @@
 
 # System
 
-alias afk='gnome-screensaver-command --lock'
 alias ls='ls --color=tty'
 
 # Packaging Tool
