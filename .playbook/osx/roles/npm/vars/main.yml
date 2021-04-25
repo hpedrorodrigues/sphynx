@@ -3,3 +3,4 @@ npm_packages:
   - npm-check-updates
   - tldr
   - webpack
+  - yarn
