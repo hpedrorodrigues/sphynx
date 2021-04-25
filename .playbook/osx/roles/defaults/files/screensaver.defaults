@@ -33,7 +33,7 @@ defaults write ${domain} wvous-bl-modifier -int 0
 defaults write ${domain} wvous-br-corner -int 5
 defaults write ${domain} wvous-br-modifier -int 0
 
-# Ask for password immediately after screen sleep
+# Ask for password immediately after screen saver begins
 readonly screensaver_domain='com.apple.screensaver'
 defaults write "${screensaver_domain}" askForPassword -int 1
 defaults write "${screensaver_domain}" askForPasswordDelay -int 0
