@@ -4,7 +4,8 @@
 
 export CONFLUENT_VERSION=${CONFLUENT_VERSION:-6.1.1}
 
-# e.g. kcli kafka-topics --bootstrap-server <host>:<port> --list
+## Kafka CLI (https://kafka.apache.org)
+## e.g. kcli kafka-topics --bootstrap-server <host>:<port> --list
 function kcli() {
   local -r tool_name="${FUNCNAME[0]:-${funcstack[1]}}"
   local -r random_port="$(shuf -i 2000-65000 -n 1)"
@@ -25,32 +26,12 @@ function kcli() {
     "confluentinc/cp-kafka:${CONFLUENT_VERSION}" "${@}"
 }
 
-function zcli() {
-  local -r tool_name="${FUNCNAME[0]:-${funcstack[1]}}"
-  local -r random_port="$(shuf -i 2000-65000 -n 1)"
-
-  local -r state="$(
-    docker inspect --format '{{.State.Running}}' "${tool_name}" 2>/dev/null
-  )"
-  if [ "${state}" = 'true' ]; then
-    docker exec --interactive --tty "${tool_name}" zookeeper-shell "${@}"
-    return 0
-  fi
-
-  docker run \
-    --rm \
-    --name "${tool_name}" \
-    --interactive \
-    --publish "${random_port}:2181" \
-    --env "ZOOKEEPER_CLIENT_PORT=${random_port}" \
-    --env "ZOOKEEPER_TICK_TIME=2000" \
-    "confluentinc/cp-zookeeper:${CONFLUENT_VERSION}" zookeeper-shell "${@}"
-}
-
 ### Internal images
 
 export ALIEN_REPOSITORY="${ALIEN_REPOSITORY:-hpedrorodrigues/alien}"
 
+## Prettier (https://prettier.io)
+## e.g. prettier --check '*/**/*.{yml,yaml}'
 function prettier() {
   local -r tool_name="${FUNCNAME[0]:-${funcstack[1]}}"
   local -r image="${ALIEN_REPOSITORY}:${tool_name}"
@@ -71,6 +52,8 @@ function prettier() {
     "${image}" "${@}"
 }
 
+## EDN Query (https://github.com/jonase/eq)
+## e.g. echo '{:a "a" :b "b" :c "c"}' | eq '[(get :b) (get :a)]'
 function eq() {
   local -r tool_name="${FUNCNAME[0]:-${funcstack[1]}}"
   local -r image="${ALIEN_REPOSITORY}:${tool_name}"
@@ -90,6 +73,8 @@ function eq() {
     "${image}" "${@}"
 }
 
+## Hadolint (https://github.com/hadolint/hadolint)
+## e.g. hadolint <Dockerfile>
 function hadolint() {
   local -r tool_name="${FUNCNAME[0]:-${funcstack[1]}}"
   local -r image="${ALIEN_REPOSITORY}:${tool_name}"
@@ -110,6 +95,8 @@ function hadolint() {
     "${image}" "${@}"
 }
 
+## ShellCheck (https://github.com/koalaman/shellcheck)
+## e.g. shellcheck <script-file>
 function shellcheck() {
   local -r tool_name="${FUNCNAME[0]:-${funcstack[1]}}"
   local -r image="${ALIEN_REPOSITORY}:${tool_name}"
@@ -131,6 +118,8 @@ function shellcheck() {
     "${image}" "${@}"
 }
 
+## shfmt (https://github.com/mvdan/sh)
+## e.g. shfmt -l -w <script-file>
 function shfmt() {
   local -r tool_name="${FUNCNAME[0]:-${funcstack[1]}}"
   local -r image="${ALIEN_REPOSITORY}:${tool_name}"
@@ -151,6 +140,15 @@ function shfmt() {
     "${image}" -i 2 -ci -bn "${@}"
 }
 
+## Web page to image - P2I
+## https://github.com/hpedrorodrigues/sphynx/blob/main/.alien/p2i/README.md
+##
+## e.g.
+##
+## p2i \
+##   --url "https://www.google.com/search?q=car+meaning" \
+##   --selector '.lr_container' \
+##   --filename "car-meaning.png"
 function p2i() {
   local -r tool_name="${FUNCNAME[0]:-${funcstack[1]}}"
   local -r image="${ALIEN_REPOSITORY}:${tool_name}"
