@@ -364,3 +364,37 @@ function jwtd() {
     "signature": .[2]
   }' <<<"${token}"
 }
+
+# Send a desktop notification using the default OS structure
+function ntf() {
+  local -r func_name="${FUNCNAME[0]:-${funcstack[1]}}"
+  local -r title='Sphynx'
+  local -r message="${*}"
+
+  if [ -z "${message}" ]; then
+    echo '!!! This function needs a message as argument' >&2
+    echo "!!! e.g. ${func_name} You are awesome!" >&2
+    return 1
+  fi
+
+  if [ "$(uname)" = 'Darwin' ]; then
+    if hash 'osascript' 2>/dev/null; then
+      osascript -e "display notification \"${message}\" with title \"${title}\""
+    else
+      echo "!!! No OS utility found to send notifications" >&2
+      return 1
+    fi
+  elif [ "$(uname)" = 'Linux' ]; then
+    if hash 'sw-notify-send' 2>/dev/null; then
+      sw-notify-send "${title}" "${message}"
+    elif hash 'notify-send' 2>/dev/null; then
+      notify-send "${title}" "${message}"
+    else
+      echo "!!! No OS utility found to send notifications" >&2
+      return 1
+    fi
+  else
+    echo "!!! Unsupported OS" >&2
+    return 1
+  fi
+}

@@ -4,7 +4,6 @@
 
 # System
 
-alias afk='/System/Library/CoreServices/Menu\ Extras/User.menu/Contents/Resources/CGSession -suspend'
 alias ls='gls --color=tty --group-directories-first --human-readable'
 
 # Updates
