@@ -1,65 +1,70 @@
 #!/usr/bin/env bash
 
-# Functions
+# Hashing functions
 
-## Hashing
+## Run md5 algorithm against files or content in stdin
+##
+## e.g. echo 'test' | md5
+## e.g. md5 <filename>
 function md5() {
   sx security hash md5 "${*}"
 }
 
+## Run sha1 algorithm against files or content in stdin
+##
+## e.g. echo 'test' | sha1
+## e.g. sha1 <filename>
 function sha1() {
   sx security hash sha1 "${*}"
 }
 
+## Run sha256 algorithm against files or content in stdin
+##
+## e.g. echo 'test' | sha256
+## e.g. sha256 <filename>
 function sha256() {
   sx security hash sha256 "${*}"
 }
 
-## Translation
+# Translation functions
+
+## Translate from English to Portuguese (Brazil)
+## https://github.com/soimort/translate-shell
+##
+## e.g. tle car
 function tle() {
   # shellcheck disable=SC2068  # Double quote array expansions
   trans en:pt ${@}
 }
 
+## Translate from English to Portuguese (Brazil) and listen to the original text
+## https://github.com/soimort/translate-shell
+##
+## e.g. tles car
 function tles() {
   # shellcheck disable=SC2068  # Double quote array expansions
   trans en:pt ${@} --speak
 }
 
-function tlp() {
-  # shellcheck disable=SC2068  # Double quote array expansions
-  trans pt:en ${@}
-}
+# Filesystem functions
 
-## General
+## Open files or URLs using the default pre-configured OS application
+##
+## e.g. o <filename>
 function o() {
   sx system open "${*}"
 }
 
+## [Browser Open] Open files or URLs using the default browser
+##
+## e.g. bo <filename>
 function bo() {
   sx browser open "${*}"
 }
 
-function loop() {
-  watch "${SHELL} -i -c '${*}'"
-}
-
-function e64() {
-  if [ "${#}" -gt 0 ]; then
-    base64 <<<"${@}"
-  else
-    base64
-  fi
-}
-
-function d64() {
-  if [ "${#}" -gt 0 ]; then
-    base64 --decode <<<"${@}"
-  else
-    base64 --decode
-  fi
-}
-
+## Read .csv files and print its content in a tabular format
+##
+## e.g. csv <csv-file>
 function csv() {
   local -r func_name="${FUNCNAME[0]:-${funcstack[1]}}"
   local -r file_name="${1}"
@@ -83,6 +88,183 @@ function csv() {
   sed <"${file_name}" 's/"//g' | column -t -s ','
 }
 
+# Encoding/Decoding functions
+
+## [Base64 Encode] Encode arguments or content in stdin using Base64 encoding
+##
+## e.g. e64 'test'
+## e.g. cat <filename> | e64
+function e64() {
+  if [ "${#}" -gt 0 ]; then
+    base64 <<<"${@}"
+  else
+    base64
+  fi
+}
+
+## [Base64 Decode] Decode arguments or content in stdin using Base64 encoding
+##
+## e.g. d64 'dGVzdAo='
+## e.g. cat <filename> | d64
+function d64() {
+  if [ "${#}" -gt 0 ]; then
+    base64 --decode <<<"${@}"
+  else
+    base64 --decode
+  fi
+}
+
+# System Integration functions
+
+## Tail (and filter) System logs
+##
+## e.g. console
+## e.g. console 'error'
+function console() {
+  local -r query="${1}"
+
+  local -r log_files=(
+    '/var/log/system.log'
+    '/var/log/syslog'
+  )
+
+  for log_file in "${log_files[@]}"; do
+    if [ -f "${log_file}" ]; then
+      if [ -z "${query}" ]; then
+        command tail -f "${log_file}"
+      else
+        command tail -f "${log_file}" | grep -i -E "${query}"
+      fi
+    fi
+  done
+}
+
+## Send desktop notifications using the OS-provided API
+##
+## e.g. ntf 'See server logs when you come back'
+function ntf() {
+  local -r func_name="${FUNCNAME[0]:-${funcstack[1]}}"
+  local -r title='Sphynx'
+  local -r message="${*}"
+
+  if [ -z "${message}" ]; then
+    echo '!!! This function needs a message as argument' >&2
+    echo "!!! e.g. ${func_name} You are awesome!" >&2
+    return 1
+  fi
+
+  if [ "$(uname)" = 'Darwin' ]; then
+    if hash 'osascript' 2>/dev/null; then
+      osascript -e "display notification \"${message}\" with title \"${title}\""
+    else
+      echo "!!! No OS utility found to send notifications" >&2
+      return 1
+    fi
+  elif [ "$(uname)" = 'Linux' ]; then
+    if hash 'sw-notify-send' 2>/dev/null; then
+      sw-notify-send "${title}" "${message}"
+    elif hash 'notify-send' 2>/dev/null; then
+      notify-send "${title}" "${message}"
+    else
+      echo "!!! No OS utility found to send notifications" >&2
+      return 1
+    fi
+  else
+    echo "!!! Unsupported OS" >&2
+    return 1
+  fi
+}
+
+## Overload all CPU cores at once
+## https://github.com/paulmillr/dotfiles/blob/a26c445aea4097bb8b3c0ea95019544cd66ac9c8/home/.zshrc.sh#L293
+##
+## e.g. overload_cores
+function overload_cores() {
+  if [ "$(uname)" = 'Darwin' ]; then
+    local -r n_cores="$(sysctl -n hw.ncpu)"
+  else
+    local -r n_cores="$(grep -c '^processor' /proc/cpuinfo | tr -d ' ')"
+  fi
+
+  local -r file='/dev/null'
+
+  # shellcheck disable=SC2051  # bash doesn't support variables in brace range expansions
+  for _ in {1..${n_cores}}; do
+    yes >"${file}" &
+  done
+
+  echo "${n_cores} cores loaded. To stop: 'killall yes'."
+}
+
+## Print how much RAM an application is currently using
+## https://github.com/paulmillr/dotfiles/blob/a26c445aea4097bb8b3c0ea95019544cd66ac9c8/home/.zshrc.sh#L232
+##
+## e.g. ram chrome
+## e.g. ram alacritty
+function ram() {
+  local -r func_name="${FUNCNAME[0]:-${funcstack[1]}}"
+  local -r application="${1}"
+
+  if [ -z "${application}" ]; then
+    echo '!!! This function needs an application name as first argument' >&2
+    echo "!!! e.g. ${func_name} chrome" >&2
+    return 1
+  fi
+
+  # shellcheck disable=SC2009  # Consider using pgrep instead of grepping ps output
+  local -r processes="$(ps aux | grep -i "${application}" | grep -v 'grep')"
+  if [ -z "${processes}" ]; then
+    echo "!!! No active processes found for \"${application}\"" >&2
+    return 1
+  fi
+
+  local sum='0'
+  for i in $(echo -e "${processes}" | awk '{print $6}'); do
+    sum="$((i + sum))"
+  done
+  sum="$(echo "scale=2; ${sum} / 1024.0" | bc)"
+
+  echo "${application} uses ${sum}MBs of RAM"
+}
+
+# Terminal Integration functions
+
+## Run commands in background ignoring its output (stdout and stderr)
+## https://github.com/thiagokokada/dotfiles/blob/ef2da95a322c648a59138f3624caaa86654ad191/zsh/.zshrc#L76
+##
+## e.g. runbg 'gitk'
+function runbg() {
+  "${@}" </dev/null &>/dev/null &
+}
+
+## Switch the selected job running in background (when available) into the
+## foreground
+##
+## e.g. fgpick
+function fgpick() {
+  local -r n_jobs="$(jobs | wc -l | tr -d ' ')"
+
+  if [ "${n_jobs}" -eq 0 ]; then
+    echo '!!! No background jobs found' >&2
+    return 1
+  elif [ "${n_jobs}" -eq 1 ]; then
+    fg
+  else
+    local -r job_id="$(jobs | fzf | sed 's/\[\([0-9]*\)\].*/\1/')"
+    fg "%${job_id}"
+  fi
+}
+
+## Execute a program periodically running the current shell interactively
+##
+## e.g. loop 'ls -la'
+function loop() {
+  watch "${SHELL} -i -c '${*}'"
+}
+
+## Format and display the on-line manual pages (but with colors)
+##
+## e.g. man 'ls'
 function man() {
   env \
     LESS_TERMCAP_mb="$(printf "\e[1;31m")" \
@@ -94,6 +276,8 @@ function man() {
     LESS_TERMCAP_us="$(printf "\e[1;32m")" \
     /usr/bin/man "${*}"
 }
+
+# Utility functions
 
 function download_meaning() {
   local -r func_name="${FUNCNAME[0]:-${funcstack[1]}}"
@@ -226,24 +410,6 @@ function j() {
   echo "JAVA_HOME=${JAVA_HOME}"
 }
 
-function runbg() {
-  "${@}" </dev/null &>/dev/null &
-}
-
-function fgpick() {
-  local -r n_jobs="$(jobs | wc -l | tr -d ' ')"
-
-  if [ "${n_jobs}" -eq 0 ]; then
-    echo '!!! No background jobs found' >&2
-    return 1
-  elif [ "${n_jobs}" -eq 1 ]; then
-    fg
-  else
-    local -r job_id="$(jobs | fzf | sed 's/\[\([0-9]*\)\].*/\1/')"
-    fg "%${job_id}"
-  fi
-}
-
 # Lines of code
 function loc() {
   local -r func_name="${FUNCNAME[0]:-${funcstack[1]}}"
@@ -270,54 +436,6 @@ function loc() {
   echo "LoC for \"${extension}\": ${lines_of_code}."
 }
 
-# Load all CPU cores at once
-# https://github.com/paulmillr/dotfiles/blob/a26c445aea4097bb8b3c0ea95019544cd66ac9c8/home/.zshrc.sh
-function loadcores() {
-  if [ "$(uname)" = 'Darwin' ]; then
-    local -r n_cores="$(sysctl -n hw.ncpu)"
-  else
-    local -r n_cores="$(grep -c '^processor' /proc/cpuinfo | tr -d ' ')"
-  fi
-
-  local -r file='/dev/null'
-
-  # shellcheck disable=SC2051  # bash doesn't support variables in brace range expansions
-  for _ in {1..${n_cores}}; do
-    yes >"${file}" &
-  done
-
-  echo "${n_cores} cores loaded. To stop: 'killall yes'."
-}
-
-# Print how much RAM an application is currently using
-# e.g. ram chrome
-# https://github.com/paulmillr/dotfiles/blob/a26c445aea4097bb8b3c0ea95019544cd66ac9c8/home/.zshrc.sh
-function ram() {
-  local -r func_name="${FUNCNAME[0]:-${funcstack[1]}}"
-  local -r application="${1}"
-
-  if [ -z "${application}" ]; then
-    echo '!!! This function needs an application name as first argument' >&2
-    echo "!!! e.g. ${func_name} chrome" >&2
-    return 1
-  fi
-
-  # shellcheck disable=SC2009  # Consider using pgrep instead of grepping ps output
-  local -r processes="$(ps aux | grep -i "${application}" | grep -v 'grep')"
-  if [ -z "${processes}" ]; then
-    echo "!!! No active processes found for \"${application}\"" >&2
-    return 1
-  fi
-
-  local sum='0'
-  for i in $(echo -e "${processes}" | awk '{print $6}'); do
-    sum="$((i + sum))"
-  done
-  sum="$(echo "scale=2; ${sum} / 1024.0" | bc)"
-
-  echo "${application} uses ${sum}MBs of RAM"
-}
-
 # Remove ANSI colour escapes
 # e.g. ts | decolorize
 function decolorize() {
@@ -325,26 +443,6 @@ function decolorize() {
          s|\x1b[PX^_][^\x1b]*\x1b\\\\||g;
          s:\x1b\\][^\x07]*(\x07|\x1b\\\\)::g;
          s|\x1b[@-_]||g'
-}
-
-# Print OS logs
-function console() {
-  local -r query="${1}"
-
-  local -r log_files=(
-    '/var/log/system.log'
-    '/var/log/syslog'
-  )
-
-  for log_file in "${log_files[@]}"; do
-    if [ -f "${log_file}" ]; then
-      if [ -z "${query}" ]; then
-        command tail -f "${log_file}"
-      else
-        command tail -f "${log_file}" | grep -i -E "${query}"
-      fi
-    fi
-  done
 }
 
 # Decode Json Web Token
@@ -363,38 +461,4 @@ function jwtd() {
     "payload": (.[1] | @base64d | fromjson),
     "signature": .[2]
   }' <<<"${token}"
-}
-
-# Send a desktop notification using the default OS structure
-function ntf() {
-  local -r func_name="${FUNCNAME[0]:-${funcstack[1]}}"
-  local -r title='Sphynx'
-  local -r message="${*}"
-
-  if [ -z "${message}" ]; then
-    echo '!!! This function needs a message as argument' >&2
-    echo "!!! e.g. ${func_name} You are awesome!" >&2
-    return 1
-  fi
-
-  if [ "$(uname)" = 'Darwin' ]; then
-    if hash 'osascript' 2>/dev/null; then
-      osascript -e "display notification \"${message}\" with title \"${title}\""
-    else
-      echo "!!! No OS utility found to send notifications" >&2
-      return 1
-    fi
-  elif [ "$(uname)" = 'Linux' ]; then
-    if hash 'sw-notify-send' 2>/dev/null; then
-      sw-notify-send "${title}" "${message}"
-    elif hash 'notify-send' 2>/dev/null; then
-      notify-send "${title}" "${message}"
-    else
-      echo "!!! No OS utility found to send notifications" >&2
-      return 1
-    fi
-  else
-    echo "!!! Unsupported OS" >&2
-    return 1
-  fi
 }
