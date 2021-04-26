@@ -109,8 +109,6 @@ EOF
     --labels "app=${container_name}" \
     --env 'SOURCE=sphynx' \
     --quiet \
-    --requests 'cpu=25m,memory=25Mi' \
-    --limits 'cpu=25m,memory=25Mi' \
     --grace-period '1'
 
   local -r remaining_pod="$(
