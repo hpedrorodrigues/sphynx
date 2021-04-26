@@ -69,6 +69,7 @@ homebrew_packages:
   - sipcalc
   - sqlite
   - starship
+  - stern
   - subnetcalc
   - telnet
   - the_silver_searcher
