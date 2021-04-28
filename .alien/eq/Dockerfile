@@ -12,9 +12,8 @@ ENV ALIEN_HOME /home/${user}
 
 USER root
 
-RUN apk add --no-cache m4=1.4.18-r1 && rm -rf /var/cache/apk/*
-
-RUN echo http://dl-2.alpinelinux.org/alpine/edge/community/ >> /etc/apk/repositories \
+RUN apk add --no-cache m4=1.4.18-r1 && rm -rf /var/cache/apk/* \
+  && echo http://dl-2.alpinelinux.org/alpine/edge/community/ >> /etc/apk/repositories \
   && apk --no-cache add shadow=4.8.1-r0 \
   && groupmod -g $((gid + 1)) opam \
   && usermod -u $((uid + 1)) -g $((gid + 1)) opam
