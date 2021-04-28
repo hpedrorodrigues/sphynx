@@ -26,7 +26,7 @@ function sx::self::lint::run_shellcheck() {
 
   cd "${SPHYNX_DIR}" || exit 1
 
-  export SHELLCHECK_OPTS='-e SC1090 -e SC2155'
+  export SHELLCHECK_OPTS='-e SC1090 -e SC1091 -e SC2155'
 
   # shellcheck disable=SC2046  # Quote this to prevent word splitting
   shellcheck $(
@@ -44,6 +44,7 @@ function sx::self::lint::run_hadolint() {
   cd "${SPHYNX_DIR}" || exit 1
 
   while IFS= read -r -d '' dockerfile; do
+    sx::log::info "${dockerfile}"
     hadolint <"${dockerfile}"
   done < <(find . -name 'Dockerfile' -print0)
 }

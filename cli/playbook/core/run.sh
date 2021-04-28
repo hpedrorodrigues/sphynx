@@ -16,8 +16,14 @@ function sx::playbook::install_dependencies() {
     fi
   elif sx::os::is_osx; then
     if ! [ -d "/Applications/Python ${PYTHON_VERSION_XY}" ]; then
-      if ! [ -d "$(xcode-select --print-path 2>/dev/null)" ]; then
-        sudo xcode-select --install
+      if ! xcode-select --print-path &>/dev/null; then
+        sx::log::info 'Xcode Command Line Tools not installed. Installing it...'
+        xcode-select --install &>/dev/null
+
+        until xcode-select --print-path &>/dev/null; do
+          sx::log::info 'Waiting for Xcode Command Line Tools to be installed...'
+          sleep 5s
+        done
       fi
 
       local -r binary_url="https://www.python.org/ftp/python/${PYTHON_VERSION_XYZ}/python-${PYTHON_VERSION_XYZ}-macosx10.9.pkg"
