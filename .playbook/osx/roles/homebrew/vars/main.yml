@@ -105,9 +105,11 @@ homebrew_apps:
   - flux
   - github
   - google-chrome
+  - iina
   - jetbrains-toolbox
   - meld
   - pdfelement
+  - pomatez
   - rectangle
   - silverlight
   - skype
