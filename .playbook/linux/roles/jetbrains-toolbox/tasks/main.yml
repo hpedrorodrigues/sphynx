@@ -15,7 +15,7 @@
 
 - name: Downloading Jetbrains Toolbox
   get_url:
-    url: "https://download-cf.jetbrains.com/toolbox/jetbrains-toolbox-{{ toolbox_version_response.json.version }}.tar.gz"
+    url: "https://download-cf.jetbrains.com/toolbox/jetbrains-toolbox-{{ toolbox_version_response.json.version.split(',')[-1] }}.tar.gz"
     dest: "{{ toolbox_dest }}"
   when:
     - not toolbox_folder.stat.exists
@@ -30,7 +30,7 @@
 
 - name: Copying Jetbrains Toolbox folder
   become: true
-  command: mv /tmp/jetbrains-toolbox-{{ toolbox_version_response.json.version }} /opt/jetbrains-toolbox
+  command: mv /tmp/jetbrains-toolbox-{{ toolbox_version_response.json.version.split(',')[-1] }} /opt/jetbrains-toolbox
   when:
     - not toolbox_folder.stat.exists
 

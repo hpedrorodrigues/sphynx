@@ -9,6 +9,7 @@
     state: present
     update_cache: yes
   with_items: "{{ apt_repositories }}"
+  when: apt_repositories is defined and apt_repositories | count > 0
 
 - name: Updating repositories cache and installing required packages
   apt:

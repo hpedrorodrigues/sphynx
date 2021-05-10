@@ -1,5 +1,5 @@
-apt_repositories:
-  - ppa:mmstick76/alacritty
+# apt_repositories:
+#
 
 apt_packages:
   - apt-transport-https
@@ -7,7 +7,6 @@ apt_packages:
   - autoconf
   - autoconf-archive
   - automake
-  - alacritty
   - build-essential
   - ca-certificates
   - cmake
@@ -37,8 +36,8 @@ apt_packages:
   - openjdk-8-dbg # Debugging Symbols
   - openjdk-11-jdk
   - openjdk-11-dbg
-  - openjdk-13-jdk
-  - openjdk-13-dbg
+  - openjdk-17-jdk
+  - openjdk-17-dbg
   - python-dev
   - ruby
   - screen
