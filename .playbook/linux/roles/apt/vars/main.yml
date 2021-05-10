@@ -11,6 +11,7 @@ apt_packages:
   - ca-certificates
   - cmake
   - curl
+  - dkms
   - espeak
   - gettext
   - git
