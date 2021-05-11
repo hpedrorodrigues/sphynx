@@ -57,6 +57,3 @@
     ${HOME}/.sphynx/aliases:
       if: '[ "$(uname)" = "Linux" ]'
       path: ${SPHYNX_DIR}/.file/os/linux/aliases
-    ${HOME}/.xsessionrc:
-      if: '[ "$(uname)" = "Linux" ]'
-      path: ${SPHYNX_DIR}/.file/os/linux/.xsessionrc
