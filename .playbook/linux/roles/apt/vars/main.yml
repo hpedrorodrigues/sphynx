@@ -51,5 +51,4 @@ apt_packages:
   - translate-shell
   - tree
   - vim
-  - xcape
   - xclip
