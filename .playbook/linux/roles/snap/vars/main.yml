@@ -1,6 +1,9 @@
 snap_packages:
+  - { name: alacritty, options: "--classic" }
+  - discord
+  - { name: "google-cloud-sdk", options: "--classic" }
+  - mailspring
   - { name: skype, options: "--classic" }
   - { name: slack, options: "--classic" }
-  - { name: "google-cloud-sdk", options: "--classic" }
   - spotify
   - whatsdesk

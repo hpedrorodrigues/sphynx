@@ -2,6 +2,7 @@
 #   -
 
 linuxbrew_packages:
+  - git-delta
   - git-lfs
   - go
   - hexyl
