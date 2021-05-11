@@ -7,3 +7,4 @@ snap_packages:
   - { name: slack, options: "--classic" }
   - spotify
   - whatsdesk
+  - zoom-client
