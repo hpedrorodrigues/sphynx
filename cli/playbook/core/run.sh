@@ -24,6 +24,8 @@ function sx::playbook::install_dependencies() {
           sx::log::info 'Waiting for Xcode Command Line Tools to be installed...'
           sleep 5s
         done
+
+        sudo xcodebuild -license
       fi
 
       local -r binary_url="https://www.python.org/ftp/python/${PYTHON_VERSION_XYZ}/python-${PYTHON_VERSION_XYZ}-macosx10.9.pkg"

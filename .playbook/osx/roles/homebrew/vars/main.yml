@@ -13,7 +13,6 @@ homebrew_packages:
   - bat
   - bench
   - binutils
-  - brew-cask-completion
   - coreutils
   - dex2jar
   - diffutils
@@ -73,7 +72,6 @@ homebrew_packages:
   - subnetcalc
   - telnet
   - the_silver_searcher
-  - tor
   - tmux
   - translate-shell
   - tree
