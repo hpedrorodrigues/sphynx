@@ -34,7 +34,7 @@ fi
 
 if [ -z "${BASH_VERSINFO:-}" ] || [ "${BASH_VERSINFO:-}" -lt "${MIN_REQUIRED_BASH_VERSION}" ]; then
   cat >&2 <<EOF
-!!! It's recommended to use Sphynx with at least version 5.0.0(1)-release (current version is ${BASH_VERSION}).
+!!! It's recommended to use Sphynx with Bash in at least version 5.0.0(1)-release (current version is ${BASH_VERSION}).
 !!! Some commands may not work as expected!
 
 
