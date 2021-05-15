@@ -12,6 +12,5 @@ mas_applications:
   - { name: "Slack", id: 803453959 }
   - { name: "Telegram Lite", id: 946399090 }
   - { name: "The Unarchiver", id: 425424353 }
-  - { name: "Twitter", id: 1482454543 }
   - { name: "Xcode", id: 497799835 }
   - { name: "WhatsApp", id: 1147396723 }

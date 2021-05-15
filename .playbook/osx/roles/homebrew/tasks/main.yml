@@ -4,7 +4,7 @@
   register: homebrew
 
 - name: Installing Homebrew
-  shell: '/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"'
+  shell: '/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"'
   register: new_homebrew
   when:
     - not homebrew.stat.exists
