@@ -8,6 +8,7 @@ on:
       - main
 jobs:
   lint:
+    timeout-minutes: 1
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -21,6 +22,7 @@ jobs:
         run: ./sx lint
         shell: bash
   test:
+    timeout-minutes: 1
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
