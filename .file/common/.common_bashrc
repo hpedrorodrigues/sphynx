@@ -17,6 +17,10 @@ shopt -s cdspell
 
 ### Loading external scripts
 
+#|> Global definitions
+[ -f '/etc/bashrc' ] \
+  && source '/etc/bashrc'
+
 #|> Fuzzy Finder
 export FZF_BIN="${HOME}/.fzf.bash"
 
