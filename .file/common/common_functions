@@ -62,7 +62,7 @@ function bo() {
   sx browser open "${*}"
 }
 
-## Read .csv files and print its content in a tabular format
+## Read .csv files and print their content in a tabular format
 ##
 ## e.g. csv <csv-file>
 function csv() {

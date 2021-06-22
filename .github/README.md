@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./.github/assets/sphynx-landscape.png" align="center" height="50%" width="50%"/>
+  <img src="./assets/sphynx-landscape.png" align="center" height="50%" width="50%"/>
 </p>
 
 [![][github-action-badge]][github-action-sphynx]
@@ -8,7 +8,7 @@
 Sphynx is a personal project including CLI, dotfiles, workspace setup scripts
 among other things.
 
-<img align="right" src="./.github/assets/sphynx-demo.gif" width="60%" />
+<img align="right" src="./assets/sphynx-demo.gif" width="60%" />
 
 # Summary
 
@@ -151,11 +151,11 @@ this repository and adjust it to your needs! Be careful!
 
 
 
-[dotfiles-folder]: ./.file
-[playbooks-folder]: ./.playbook
-[alien-folder]: ./.alien
-[alien-functions]: ./.file/common/alien
-[p2i]: ./.alien/p2i
+[dotfiles-folder]: ./../.file
+[playbooks-folder]: ./../.playbook
+[alien-folder]: ./../.alien
+[alien-functions]: ./../.file/common/alien
+[p2i]: ./../.alien/p2i
 
 [ansible-website]: https://www.ansible.com
 [dotfiles-website]: http://dotfiles.github.io

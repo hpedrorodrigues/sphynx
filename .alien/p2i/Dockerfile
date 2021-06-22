@@ -18,7 +18,7 @@ ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
 RUN apk update \
     && apk add --no-cache \
          chromium=86.0.4240.111-r0 \
-         nss=3.63-r1 \
+         nss=3.66-r0 \
          freetype=2.10.4-r1 \
          freetype-dev=2.10.4-r1 \
          harfbuzz=2.7.4-r1 \
