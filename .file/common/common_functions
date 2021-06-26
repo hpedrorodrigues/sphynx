@@ -342,6 +342,14 @@ function download_meaning_batch() {
 
 # Utility functions
 
+## Simple Calculator
+##
+## e.g. = 2 + 1
+## e.g. = 10 / 3
+function = {
+  echo "${*}" | tr , \\012 | tr x '*' | bc -l
+}
+
 ## Create a new Go workspace using the provided directory or a temporary one
 ##
 ## e.g. ngw

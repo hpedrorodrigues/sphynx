@@ -65,3 +65,6 @@ alias load_nvm='NVM_ENABLED=true reload'
 # Forgit
 # https://github.com/wfxr/forgit
 alias load_forgit='source <(curl -sSL git.io/forgit)'
+
+# Go to the root folder of a git repository
+alias gohead='cd $(git rev-parse --show-toplevel)'
