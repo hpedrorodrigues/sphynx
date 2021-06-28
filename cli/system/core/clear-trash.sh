@@ -11,7 +11,7 @@ function sx::system::clear_trash() {
         break
       fi
 
-      rm -rf "${log_file}"
+      sudo rm -rf "${log_file}"
     done
 
     sqlite3 "${HOME}/Library/Preferences/com.apple.LaunchServices.QuarantineEventsV"* 'delete from LSQuarantineEvent'
