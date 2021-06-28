@@ -1,5 +1,4 @@
 mas_applications:
-  - { name: "1Password", id: 1333542190 }
   - { name: "Evernote", id: 406056744 }
   - { name: "Keynote", id: 409183694 }
   - { name: "Microsoft Excel", id: 462058435 }
