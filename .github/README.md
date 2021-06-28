@@ -172,4 +172,4 @@ this repository and adjust it to your needs! Be careful!
 [shell-code-sphynx]: https://github.com/hpedrorodrigues/sphynx/search?l=shell
 
 [homebrew]: https://brew.sh
-[linuxbrew]: https://linuxbrew.sh
+[linuxbrew]: https://docs.brew.sh/Homebrew-on-Linux
