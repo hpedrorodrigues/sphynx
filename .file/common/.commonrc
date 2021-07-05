@@ -21,6 +21,7 @@ readonly DOTFILES=(
   # Common
   "${DOTFILES_DIR}/kubernetes"
   "${DOTFILES_DIR}/alien"
+  "${DOTFILES_DIR}/aws"
   "${DOTFILES_DIR}/git"
   "${DOTFILES_DIR}/network"
   "${DOTFILES_DIR}/common_functions"
