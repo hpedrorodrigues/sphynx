@@ -256,3 +256,13 @@ function kdrs() {
     | jq -r '.items[] | select(.spec.replicas | contains(0)) | "kubectl delete rs -n \(.metadata.namespace) \(.metadata.name)"' \
     | xargs -I % sh -c '%'
 }
+
+# Kubernetes get provider ID (for AWS is Availability Zone + Instance ID)
+# e.g. aws:///<availability-zone>/<instance-id>
+function kpvid() {
+  # shellcheck disable=SC2068  # Double quote array expansions
+  kubectl get nodes \
+    ${@} \
+    --output json \
+    | jq -r '.items | map({"instanceName": .metadata.name, "instanceId": .spec.providerID})'
+}

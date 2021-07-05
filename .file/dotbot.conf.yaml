@@ -25,6 +25,7 @@
     ${HOME}/.vimrc: ${SPHYNX_DIR}/.file/common/.vimrc
     ${HOME}/.wgetrc: ${SPHYNX_DIR}/.file/common/.wgetrc
     ${HOME}/.sphynx/alien: ${SPHYNX_DIR}/.file/common/alien
+    ${HOME}/.sphynx/aws: ${SPHYNX_DIR}/.file/common/aws
     ${HOME}/.sphynx/common_aliases: ${SPHYNX_DIR}/.file/common/common_aliases
     ${HOME}/.sphynx/common_functions: ${SPHYNX_DIR}/.file/common/common_functions
     ${HOME}/.sphynx/fs: ${SPHYNX_DIR}/.file/common/fs
