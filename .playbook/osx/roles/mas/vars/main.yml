@@ -7,6 +7,7 @@ mas_applications:
   - { name: "Numbers", id: 409203825 }
   - { name: "Pages", id: 409201541 }
   - { name: "Pocket", id: 568494494 }
+  - { name: "ScreenBrush", id: 1233965871 }
   - { name: "Skitch", id: 425955336 }
   - { name: "Slack", id: 803453959 }
   - { name: "Telegram Lite", id: 946399090 }
