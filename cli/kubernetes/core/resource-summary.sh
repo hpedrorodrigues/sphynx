@@ -48,11 +48,12 @@ function sx::k8s::pods::resource_summary() {
       | grep -E "${selector}" 2>/dev/null
   )"
   # shellcheck disable=SC2086  # quote this to prevent word splitting
-  local -r top_output="$(sx::k8s::cli top pods \
-    ${flags} \
-    --containers \
-    --no-headers \
-    2>/dev/null)"
+  local -r top_output="$(
+    sx::k8s::cli top pods \
+      ${flags} \
+      --containers \
+      --no-headers 2>/dev/null
+  )"
 
   if [ -z "${raw_pod_output}" ] || [ -z "${top_output}" ]; then
     sx::log::fatal 'No pods found'
@@ -122,7 +123,7 @@ function sx::k8s::nodes::resource_summary() {
       | sx::string::lowercase \
       | grep -E "${selector}" 2>/dev/null
   )"
-  local -r top_output="$(sx::k8s::cli top nodes --no-headers)"
+  local -r top_output="$(sx::k8s::cli top nodes --no-headers 2>/dev/null)"
 
   local resources='NODE,CPU (USAGE),CPU (CAPACITY),MEMORY (USAGE),MEMORY (CAPACITY),RUNTIME,OS,IMAGE,ARCH,KERNEL\n\n'
   while IFS='' read -r node_output; do
