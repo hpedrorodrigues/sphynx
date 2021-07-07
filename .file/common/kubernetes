@@ -97,8 +97,8 @@ function kgn() {
   kubectl get nodes \
     ${@} \
     | GREP_COLOR='01;31' grep --color=always -E 'SchedulingDisabled|$' \
-    | GREP_COLOR='01;32' grep --color=always -E 'Ready|$' \
-    | GREP_COLOR='01;33' grep --color=always -E 'NotReady|$'
+    | GREP_COLOR='01;33' grep --color=always -E 'NotReady|$' \
+    | GREP_COLOR='01;32' grep --color=always -E ' Ready|$'
 }
 
 # Kubernetes not running pods: print all pods not running
