@@ -16,6 +16,9 @@ alias gbs='sx git branch --switch'
 
 alias email='sx github email'
 
+# Go to the root folder of a git repository
+alias goroot='cd $(git rev-parse --show-toplevel)'
+
 ## Functions
 
 function repo() {

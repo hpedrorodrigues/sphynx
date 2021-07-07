@@ -28,7 +28,7 @@ function sx::k8s::topology() {
   )
 
   if ${show_resource_usage}; then
-    local -r top_nodes="$(sx::k8s::cli top nodes --no-headers)"
+    local -r top_nodes="$(sx::k8s::cli top nodes --no-headers 2>/dev/null)"
     # shellcheck disable=SC2086  # Double quote to prevent globbing and word splitting
     local -r top_pods="$(sx::k8s::topology::top_pods "${all_namespaces}" "${selector}")"
 
@@ -113,7 +113,7 @@ function sx::k8s::topology::top_pods() {
   # shellcheck disable=SC2086  # quote this to prevent word splitting
   sx::k8s::cli top pods \
     ${flags} \
-    --no-headers
+    --no-headers 2>/dev/null
 }
 
 function sx::k8s::instance_info() {

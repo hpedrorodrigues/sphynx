@@ -8,21 +8,6 @@ alias certsans='sx security certificate --sans --host'
 alias public_ip='sx ip public'
 alias private_ip='sx ip private'
 
-function shinatra() {
-  local -r func_name="${FUNCNAME[0]:-${funcstack[1]}}"
-  local -r port="${1}"
-  local -r response_body="${2}"
-
-  if [ -z "${port}" ] || [ -z "${response_body}" ]; then
-    echo '!!! This function needs a port and a response body as arguments' >&2
-    echo "!!! e.g. ${func_name} 8080 OK" >&2
-    return 1
-  fi
-
-  curl 'https://raw.githubusercontent.com/benrady/shinatra/master/shinatra.sh' \
-    | bash -s -- "${1}" "${2}"
-}
-
 function akamai() {
   curl \
     -I \
