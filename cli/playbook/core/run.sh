@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 export PYTHON_VERSION_XY='3.9'
-export PYTHON_VERSION_XYZ="${PYTHON_VERSION_XY}.4"
+export PYTHON_VERSION_XYZ="${PYTHON_VERSION_XY}.6"
 
 if sx::os::is_osx; then
   export PATH="/Library/Frameworks/Python.framework/Versions/${PYTHON_VERSION_XY}/bin:${PATH}:${HOME}/Library/Python/${PYTHON_VERSION_XY}/bin"
