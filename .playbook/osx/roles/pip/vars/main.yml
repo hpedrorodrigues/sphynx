@@ -1,6 +1,6 @@
 pip_packages:
   - PyYAML
-  - awscli
+  - awscliv2
   - docopt
   - dotbot
   - pip-tools

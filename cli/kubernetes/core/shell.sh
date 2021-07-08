@@ -4,18 +4,25 @@ function sx::k8s::shell() {
   sx::k8s::check_requirements
 
   local -r query="${1:-}"
+  local -r use_ssm="${2:-false}"
 
   if sx::os::is_command_available 'fzf'; then
-    local -r options="$(sx::k8s::nodes "${query}")"
+    local -r options="$(sx::k8s::nodes "${query}" true)"
 
     if [ -z "${options}" ]; then
       sx::log::fatal 'No nodes found'
     fi
 
     # shellcheck disable=SC2086  # quote this to prevent word splitting
-    local -r selected="$(echo -e "${options}" | fzf ${SX_FZF_ARGS})"
+    local -r selected="$(echo -e "${options}" | fzf --header-lines 1 ${SX_FZF_ARGS})"
 
-    [ -n "${selected}" ] && sx::k8s_command::shell "${selected}"
+    if [ -n "${selected}" ]; then
+      if ${use_ssm}; then
+        sx::k8s_command::ssm "${selected}"
+      else
+        sx::k8s_command::shell "${selected}"
+      fi
+    fi
   else
     export PS3=$'\n''Please, choose the node: '$'\n'
 
@@ -27,30 +34,41 @@ function sx::k8s::shell() {
     fi
 
     select selected in "${options[@]}"; do
-      sx::k8s_command::shell "${selected}"
+      if ${use_ssm}; then
+        sx::k8s_command::ssm "${selected}"
+      else
+        sx::k8s_command::shell "${selected}"
+      fi
       break
     done
   fi
 }
 
-function sx::k8s::nodes() {
-  local -r query="${1:-}"
+function sx::k8s_command::ssm() {
+  sx::require 'aws'
 
-  if [ -n "${query}" ]; then
-    local -r selector="$(echo "${query}" | sx::string::lowercase)"
-  else
-    local -r selector='.*'
-  fi
+  local -r node_name="$(echo "${1}" | awk '{ print $1 }')"
 
-  sx::k8s::cli get nodes \
-    --output custom-columns=NAME:.metadata.name \
-    --no-headers \
-    | sx::string::lowercase \
-    | grep -E "${selector}" 2>/dev/null
+  local -r provider_id="$(
+    kubectl get nodes \
+      --no-headers \
+      --output 'custom-columns=NAME:.metadata.name,PROVIDER_ID:.spec.providerID' \
+      | grep "${node_name}" \
+      | awk '{ print $2 }'
+  )"
+
+  local -r instance_id="$(echo "${provider_id}" | cut -d '/' -f 5)"
+  local -r region="$(echo "${provider_id}" | cut -d '/' -f 4 | sed 's/.\{1\}$//')"
+
+  sx::log::info "Opening shell in node \"${node_name}\" (${instance_id} - ${region}) using AWS SSM Agent"
+
+  aws ssm start-session \
+    --target "${instance_id}" \
+    --region "${region}"
 }
 
 function sx::k8s_command::shell() {
-  local -r node_name="${1:-}"
+  local -r node_name="$(echo "${1}" | awk '{ print $1 }')"
 
   local -r image_name='alpine'
   local -r container_name='sphynx-shell'

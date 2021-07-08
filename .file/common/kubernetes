@@ -80,6 +80,7 @@ function kgp() {
     | GREP_COLOR='01;32' grep --color=always -E 'Running|$' \
     | GREP_COLOR='01;33' grep --color=always -E 'NotReady|$' \
     | GREP_COLOR='01;33' grep --color=always -E 'ContainerCreating|$' \
+    | GREP_COLOR='01;33' grep --color=always -E 'PodInitializing|$' \
     | GREP_COLOR='01;33' grep --color=always -E 'Pending|$' \
     | GREP_COLOR='01;33' grep --color=always -E 'Terminating|$' \
     | GREP_COLOR='01;31' grep --color=always -E 'CreateContainerConfigError|$' \
@@ -97,8 +98,8 @@ function kgn() {
   kubectl get nodes \
     ${@} \
     | GREP_COLOR='01;31' grep --color=always -E 'SchedulingDisabled|$' \
-    | GREP_COLOR='01;32' grep --color=always -E 'Ready|$' \
-    | GREP_COLOR='01;33' grep --color=always -E 'NotReady|$'
+    | GREP_COLOR='01;33' grep --color=always -E 'NotReady|$' \
+    | GREP_COLOR='01;32' grep --color=always -E ' Ready|$'
 }
 
 # Kubernetes not running pods: print all pods not running
@@ -267,12 +268,11 @@ function kdrs() {
     | xargs -I % sh -c '%'
 }
 
-# Kubernetes get provider ID (for AWS is Availability Zone + Instance ID)
+# Kubernetes get node provider ID (for AWS is Availability Zone + Instance ID)
 # e.g. aws:///<availability-zone>/<instance-id>
-function kpvid() {
+function kgnpid() {
   # shellcheck disable=SC2068  # Double quote array expansions
   kubectl get nodes \
     ${@} \
-    --output json \
-    | jq -r '.items | map({"instanceName": .metadata.name, "instanceId": .spec.providerID})'
+    --output 'custom-columns=NAME:.metadata.name,PROVIDER ID:.spec.providerID'
 }

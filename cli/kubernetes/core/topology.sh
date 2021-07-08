@@ -47,10 +47,14 @@ function sx::k8s::topology() {
         instance_name='Name not available'
       fi
 
+      echo "> ${ip} (${instance_name})"
+
       if ${show_labels} && [ -n "${instance_labels}" ]; then
-        echo "> ${ip} (${instance_name}) | ${instance_labels}"
-      else
-        echo "> ${ip} (${instance_name})"
+        echo
+        IFS=',' read -ra labels <<<"${instance_labels}"
+        for label in "${labels[@]}"; do
+          echo "* ${label}"
+        done
       fi
 
       echo
@@ -123,7 +127,7 @@ function sx::k8s::instance_info() {
   local -r instances="${4}"
   local -r show_labels="${5}"
 
-  local -r instance_name="$(echo -e "${instances}" | grep "${ip}" | awk '{ print $1 }')"
+  local instance_name="$(echo -e "${instances}" | grep "${ip}" | awk '{ print $1 }')"
   local -r instance_labels="$(echo "${instances}" | grep "${instance_name}" | awk '{ print $13 }')"
   local -r instance_usage="$(echo -e "${topn}" | grep "${instance_name}")"
 
@@ -137,13 +141,17 @@ function sx::k8s::instance_info() {
     instance_name='Name not available'
   fi
 
+  echo "> ${ip} (${instance_name})"
+  echo "> CPU (${cpu_usage} | ${cpu_percentage}) -|- MEM (${memory_usage} | ${memory_percentage})"
+
   if ${show_labels} && [ -n "${instance_labels}" ]; then
-    echo "> ${ip} (${instance_name}) | ${instance_labels}"
-  else
-    echo "> ${ip} (${instance_name})"
+    echo
+    IFS=',' read -ra labels <<<"${instance_labels}"
+    for label in "${labels[@]}"; do
+      echo "* ${label}"
+    done
   fi
 
-  echo "> CPU (${cpu_usage} | ${cpu_percentage}) -|- MEM (${memory_usage} | ${memory_percentage})"
   echo
 }
 

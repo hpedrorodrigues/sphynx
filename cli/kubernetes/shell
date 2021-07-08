@@ -14,11 +14,16 @@ source "${SPHYNXN_DIR}/core/shell.sh"
 ##?   Highly influenced by https://github.com/kvaps/kubectl-node-shell
 ##?
 ##? Usage:
-##?     shell [<query>]
+##?     shell [<query>] [--use-ssm]
+##?
+##? Options:
+##?     --use-ssm  Use AWS SSM Agent to connect to instance
 ##?
 ##? Examples:
 ##?     shell
+##?     shell ip-192-168-1-1.ec2.internal
+##?     shell --use-ssm
 
 sx::parse_arguments "${@}"
 
-sx::k8s::shell "${query:-}"
+sx::k8s::shell "${query:-}" "${use_ssm:-false}"
