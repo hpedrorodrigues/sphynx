@@ -80,6 +80,7 @@ function kgp() {
     | GREP_COLOR='01;32' grep --color=always -E 'Running|$' \
     | GREP_COLOR='01;33' grep --color=always -E 'NotReady|$' \
     | GREP_COLOR='01;33' grep --color=always -E 'ContainerCreating|$' \
+    | GREP_COLOR='01;33' grep --color=always -E 'PodInitializing|$' \
     | GREP_COLOR='01;33' grep --color=always -E 'Pending|$' \
     | GREP_COLOR='01;33' grep --color=always -E 'Terminating|$' \
     | GREP_COLOR='01;31' grep --color=always -E 'CreateContainerConfigError|$' \
