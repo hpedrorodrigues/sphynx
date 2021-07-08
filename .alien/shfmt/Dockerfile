@@ -1,5 +1,5 @@
 FROM mvdan/shfmt:v3.2.4-alpine as shfmt
-FROM alpine:3.13.5
+FROM alpine:3.14.0
 
 LABEL maintainer="Pedro Rodrigues <github.com/hpedrorodrigues>"
 
