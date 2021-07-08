@@ -158,6 +158,41 @@ function sx::k8s::shared::resources() {
     | grep -E "${selector}" 2>/dev/null
 }
 
+function sx::k8s::nodes() {
+  local -r query="${1:-}"
+  local -r print_header="${2:-false}"
+
+  if [ -n "${query}" ]; then
+    local -r selector="${query}"
+  else
+    local -r selector='.*'
+  fi
+
+  local -r header='NAME,STATUS,AGE'
+
+  local -r result="$(
+    sx::k8s::cli get nodes \
+      --no-headers \
+      | sort -u \
+      | grep -E "${selector}" 2>/dev/null \
+      | while read -r node_line; do
+        local node_name="$(echo "${node_line}" | awk '{ print $1 }')"
+        local node_status="$(echo "${node_line}" | awk '{ print $2 }')"
+        local node_age="$(echo "${node_line}" | awk '{ print $4 }')"
+
+        echo "${node_name},${node_status},${node_age}"
+      done
+  )"
+
+  if [ -z "${result}" ]; then
+    echo
+  elif ${print_header}; then
+    echo -e "${header}\n${result}" | column -t -s ','
+  else
+    echo -e "${result}" | column -t -s ','
+  fi
+}
+
 function sx::k8s::cli() {
   # shellcheck disable=SC2086  # quote this to prevent word splitting
   command ${SX_K8SCTL} --request-timeout "${SX_K8S_REQUEST_TIMEOUT}" "${@}"
