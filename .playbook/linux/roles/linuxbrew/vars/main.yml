@@ -2,6 +2,7 @@
 #   -
 
 linuxbrew_packages:
+  - awscli
   - git-delta
   - git-lfs
   - go
