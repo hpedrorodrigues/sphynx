@@ -54,28 +54,6 @@ function prettier() {
     "${image}" "${@}"
 }
 
-## EDN Query (https://github.com/jonase/eq)
-##
-## e.g. echo '{:a "a" :b "b" :c "c"}' | eq '[(get :b) (get :a)]'
-function eq() {
-  local -r tool_name="${FUNCNAME[0]:-${funcstack[1]}}"
-  local -r image="${ALIEN_REPOSITORY}:${tool_name}"
-
-  local -r state="$(
-    docker inspect --format '{{.State.Running}}' "${tool_name}" 2>/dev/null
-  )"
-  if [ "${state}" = 'true' ]; then
-    docker exec --interactive --tty "${tool_name}" "${@}"
-    return 0
-  fi
-
-  docker run \
-    --name "${tool_name}" \
-    --rm \
-    --interactive \
-    "${image}" "${@}"
-}
-
 ## Hadolint (https://github.com/hadolint/hadolint)
 ##
 ## e.g. hadolint <Dockerfile>
