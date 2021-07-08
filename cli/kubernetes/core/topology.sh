@@ -127,7 +127,13 @@ function sx::k8s::instance_info() {
   local -r instances="${4}"
   local -r show_labels="${5}"
 
-  local instance_name="$(echo -e "${instances}" | grep "${ip}" | awk '{ print $1 }')"
+  local -r current_instance_name="$(echo -e "${instances}" | grep "${ip}" | awk '{ print $1 }')"
+  if [ -z "${current_instance_name}" ]; then
+    local -r instance_name='Name not available'
+  else
+    local -r instance_name="${current_instance_name}"
+  fi
+
   local -r instance_labels="$(echo "${instances}" | grep "${instance_name}" | awk '{ print $13 }')"
   local -r instance_usage="$(echo -e "${topn}" | grep "${instance_name}")"
 
@@ -136,10 +142,6 @@ function sx::k8s::instance_info() {
 
   local -r memory_usage="$(echo "${instance_usage}" | awk '{ print $4 }')"
   local -r memory_percentage="$(echo "${instance_usage}" | awk '{ print $5 }')"
-
-  if [ -z "${instance_name}" ]; then
-    instance_name='Name not available'
-  fi
 
   echo "> ${ip} (${instance_name})"
   echo "> CPU (${cpu_usage} | ${cpu_percentage}) -|- MEM (${memory_usage} | ${memory_percentage})"
