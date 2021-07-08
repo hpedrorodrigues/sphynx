@@ -9,6 +9,7 @@ homebrew_repositories:
 
 homebrew_packages:
   - apktool
+  - awscli
   - bash
   - bat
   - bench
