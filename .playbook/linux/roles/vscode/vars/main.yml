@@ -17,8 +17,10 @@ vscode_extensions:
   - k--kato.intellij-idea-keybindings
   - ms-azuretools.vscode-docker
   - ms-kubernetes-tools.vscode-kubernetes-tools
+  - ms-vscode-remote.remote-containers
   - naumovs.color-highlight
   - redhat.vscode-yaml
   - streetsidesoftware.code-spell-checker
   - streetsidesoftware.code-spell-checker-portuguese-brazilian
   - WakaTime.vscode-wakatime
+  - wholroyd.HCL
