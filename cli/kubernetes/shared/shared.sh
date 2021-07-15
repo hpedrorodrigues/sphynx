@@ -71,7 +71,7 @@ function sx::k8s::running_pods() {
         local simple_pod_line="$(echo -e "${simple_pods_output}" | grep "${pod_name}")"
         local pod_status="$(echo -e "${simple_pod_line}" | awk '{ print $3 }')"
 
-        if echo "${pod_status}" | grep -v 'Running'; then
+        if echo "${pod_status}" | grep -q -v 'Running'; then
           continue
         fi
 

@@ -133,7 +133,7 @@ function sx::k8s::pod_list() {
         local simple_pod_line="$(echo -e "${simple_pods_output}" | grep "${pod_name}")"
         local pod_status="$(echo -e "${simple_pod_line}" | awk '{ print $3 }')"
 
-        if echo "${pod_status}" | grep 'Pending\|ContainerCreating\|Terminating\|CreateContainerConfigError'; then
+        if echo "${pod_status}" | grep -q 'Pending\|ContainerCreating\|Terminating\|CreateContainerConfigError'; then
           continue
         fi
 
