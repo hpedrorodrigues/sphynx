@@ -74,13 +74,13 @@ function sx::k8s::pods::resource_summary() {
     fi
 
     if [ -z "${cpu_usage}" ]; then
-      local cpu='<no value>'
+      local cpu='<unknown>'
     else
       local cpu="${cpu_usage}"
     fi
 
     if [ -z "${memory_usage}" ]; then
-      local memory='<no value>'
+      local memory='<unknown>'
     else
       local memory="${memory_usage}"
     fi
@@ -134,13 +134,13 @@ function sx::k8s::nodes::resource_summary() {
     local memory_usage="$(echo -e "${node_top_output}" | awk '{ print $4 }')"
 
     if [ -z "${cpu_usage}" ]; then
-      local cpu='<no value>'
+      local cpu='<unknown>'
     else
       local cpu="${cpu_usage}"
     fi
 
     if [ -z "${memory_usage}" ]; then
-      local memory='<no value>'
+      local memory='<unknown>'
     else
       local memory="${memory_usage}"
     fi
