@@ -54,5 +54,6 @@
   "window.zoomLevel": 0,
   "go.autocompleteUnimportedPackages": true,
   "go.enableCodeLens": true,
-  "cSpell.language": "en,pt-BR"
+  "cSpell.language": "en,pt-BR",
+  "redhat.telemetry.enabled": true
 }
