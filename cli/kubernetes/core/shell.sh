@@ -45,7 +45,7 @@ function sx::k8s::shell() {
 }
 
 function sx::k8s_command::ssm() {
-  sx::require 'aws'
+  sx::require 'aws' 'aws-cli'
 
   local -r node_name="$(echo "${1}" | awk '{ print $1 }')"
 
