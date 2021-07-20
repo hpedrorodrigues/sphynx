@@ -2,13 +2,14 @@
 
 function sx::require() {
   local -r cmd="${1:-}"
+  local -r real_cmd_name="${2:-${cmd}}"
 
   if [ -z "${cmd:-}" ]; then
     sx::log::fatal 'This function needs a command as first argument'
   fi
 
   if ! sx::os::is_command_available "${cmd}"; then
-    sx::log::fatal "The command-line \"${cmd}\" is not available in your path"
+    sx::log::fatal "The command-line \"${real_cmd_name}\" is not available in your path"
   fi
 }
 
