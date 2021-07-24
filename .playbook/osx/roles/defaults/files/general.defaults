@@ -35,9 +35,9 @@ fi
 defaults write com.apple.LaunchServices LSQuarantine -bool false
 
 # Disable the sound effects on boot
-if [ "$(nvram SystemAudioVolume | cut -f 2)" != ' ' ]; then
-  sudo nvram SystemAudioVolume=' '
-fi
+# if [ "$(nvram SystemAudioVolume | cut -f 2)" != ' ' ]; then
+  # sudo nvram SystemAudioVolume=' '
+# fi
 
 # Menu bar: enable transparency
 defaults write NSGlobalDomain AppleEnableMenuBarTransparency -bool true
