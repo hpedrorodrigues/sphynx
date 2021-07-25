@@ -3,7 +3,7 @@
 ### Bash customizations
 
 # https://www.gnu.org/software/bash/manual/html_node/Bash-Variables.html
-export HISTSIZE='32768'
+export HISTSIZE='1000000000'
 export HISTFILESIZE="${HISTSIZE}"
 export HISTIGNORE='ls:history:cd:cd -:* --help: *:pwd:exit'
 export HISTCONTROL='ignoreboth:erasedups'
