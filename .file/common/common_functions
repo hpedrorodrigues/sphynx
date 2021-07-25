@@ -424,10 +424,13 @@ function j() {
   local -r version="${1:-}"
 
   if [ -z "${version}" ]; then
-    echo '!!! This function needs a java version as first argument' >&2
-    echo "!!! e.g. ${func_name} 8" >&2
-    echo "!!! e.g. ${func_name} 11" >&2
-    return 1
+    if [ -z "${JAVA_HOME}" ]; then
+      echo 'JAVA_HOME is not set'
+    else
+      echo "JAVA_HOME=${JAVA_HOME}"
+    fi
+
+    return 0
   fi
 
   local -r env_value="$(eval echo "\${JAVA${version}_HOME}")"
