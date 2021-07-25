@@ -35,3 +35,6 @@
 
 - name: Configuring Starship
   include: starship.yml
+
+- name: Configuring Rectangle
+  include: rectangle.yml
