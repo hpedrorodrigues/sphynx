@@ -36,8 +36,8 @@ alias krh='sx kubernetes rollout history'
 alias kpf='sx kubernetes port-forward'
 alias kto='sx kubernetes topology'
 
-alias kc='kubectl top pods --sort-by=cpu --all-namespaces'
-alias km='kubectl top pods --sort-by=memory --all-namespaces'
+alias ktc='kubectl top pods --sort-by=cpu --all-namespaces --use-protocol-buffers'
+alias ktm='kubectl top pods --sort-by=memory --all-namespaces --use-protocol-buffers'
 
 ## Functions
 
