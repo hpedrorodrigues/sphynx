@@ -7,31 +7,29 @@ on:
     branches:
       - main
 jobs:
-  lint:
-    timeout-minutes: 1
+  lint-and-tests:
+    timeout-minutes: 10
+    defaults:
+      run:
+        shell: bash --noprofile --norc -exo pipefail {0}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest]
+        os:
+          - ubuntu-latest
+          - macos-latest
     steps:
       - name: Repository checkout
         uses: actions/checkout@v2
         with:
           fetch-depth: 1
+      - name: Install Docker (necessary for MacOS)
+        uses: docker-practice/actions-setup-docker@master
+        with:
+          docker_buildx: false
       - name: Lint
         run: ./sx lint
         shell: bash
-  test:
-    timeout-minutes: 1
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
-    steps:
-      - name: Repository checkout
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 1
       - name: Test
         run: ./sx test
         shell: bash
