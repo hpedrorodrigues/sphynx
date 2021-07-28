@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
-# Connect to an EC2 instance using AWS Systems Manager Agent
+## Connect to an EC2 instance using AWS Systems Manager Agent
+##
+## e.g. aws-ssm <instance-id> <region>
 function aws-ssm() {
   local -r func_name="${FUNCNAME[0]:-${funcstack[1]}}"
   local -r instance_id="${1}"
