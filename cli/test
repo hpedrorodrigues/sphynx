@@ -10,7 +10,12 @@ source "${SPHYNXC_DIR}/.internal/all.sh"
 ##?
 ##? Usage:
 ##?     test
+##?
+##? Examples:
+##?     test
 
-sx::parse_arguments "${@}"
+if [ "${#}" -ne '0' ]; then
+  sx::parse_arguments "${@}"
+fi
 
 sx::self::test
