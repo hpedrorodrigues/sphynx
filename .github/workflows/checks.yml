@@ -12,7 +12,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest]
+        os:
+          - ubuntu-latest
     steps:
       - name: Repository checkout
         uses: actions/checkout@v2
@@ -26,7 +27,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest]
+        os:
+          - ubuntu-latest
     steps:
       - name: Repository checkout
         uses: actions/checkout@v2

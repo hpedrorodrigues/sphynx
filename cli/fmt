@@ -11,7 +11,12 @@ source "${SPHYNX_DIR}/.file/common/alien"
 ##?
 ##? Usage:
 ##?     fmt
+##?
+##? Examples:
+##?     fmt
 
-sx::parse_arguments "${@}"
+if [ "${#}" -ne '0' ]; then
+  sx::parse_arguments "${@}"
+fi
 
 sx::self::fmt
