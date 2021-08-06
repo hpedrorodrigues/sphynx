@@ -81,6 +81,7 @@ function kgp() {
     | GREP_COLOR='01;33' grep --color=always -E 'NotReady|$' \
     | GREP_COLOR='01;33' grep --color=always -E 'ContainerCreating|$' \
     | GREP_COLOR='01;33' grep --color=always -E 'PodInitializing|$' \
+    | GREP_COLOR='01;33' grep --color=always -E 'Init:[0-9]/[0-9]|$' \
     | GREP_COLOR='01;33' grep --color=always -E 'Pending|$' \
     | GREP_COLOR='01;33' grep --color=always -E 'Terminating|$' \
     | GREP_COLOR='01;31' grep --color=always -E 'OOMKilled|$' \
