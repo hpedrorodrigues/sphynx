@@ -32,8 +32,8 @@ readonly DOTFILES=(
   # Secrets
   "${DOTFILES_DIR}/personal"
 
-  # Greenmile
-  "${HOME}/.greenmilerc"
+  # Descartes
+  "${HOME}/.descartesrc"
 )
 
 for dotfile in ${DOTFILES[*]}; do
