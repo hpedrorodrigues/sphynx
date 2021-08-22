@@ -1,4 +1,5 @@
 mas_applications:
+  - { name: "1Password 7", id: 1333542190 }
   - { name: "Evernote", id: 406056744 }
   - { name: "Keynote", id: 409183694 }
   - { name: "Microsoft Excel", id: 462058435 }
@@ -12,5 +13,6 @@ mas_applications:
   - { name: "Slack", id: 803453959 }
   - { name: "Telegram Lite", id: 946399090 }
   - { name: "The Unarchiver", id: 425424353 }
+  - { name: "Todoist", id: 585829637 }
   - { name: "Xcode", id: 497799835 }
   - { name: "WhatsApp", id: 1147396723 }
