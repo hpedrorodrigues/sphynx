@@ -1,6 +1,7 @@
 dock_apps:
   - "/System/Applications/Mail.app"
   - "/Applications/Todoist.app"
+  - "/Applications/Pocket.app"
   - "/Applications/Google Chrome.app"
   - "/Applications/Slack.app"
   - "/Applications/Telegram Lite.app"
