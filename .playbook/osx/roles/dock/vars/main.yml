@@ -5,7 +5,7 @@ dock_apps:
   - "/Applications/Slack.app"
   - "/Applications/Telegram Lite.app"
   - "/Applications/WhatsApp.app"
+  - "/Applications/Discord.app"
   - "/System/Applications/Calendar.app"
   - "/Applications/Spotify.app"
-  - "/Applications/Discord.app"
   - "/Applications/Alacritty.app"
