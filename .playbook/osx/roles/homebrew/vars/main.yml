@@ -39,7 +39,6 @@ homebrew_packages:
   - gradle
   - grep
   - gzip
-  - { name: "hashicorp/tap/terraform", installed_name: "terraform" }
   - htop
   - hugo
   - hyperfine
@@ -72,6 +71,7 @@ homebrew_packages:
   - stern
   - subnetcalc
   - telnet
+  - tfenv
   - the_silver_searcher
   - tmux
   - translate-shell
