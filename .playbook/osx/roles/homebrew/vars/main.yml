@@ -6,6 +6,7 @@ homebrew_repositories:
   - homebrew/cask-versions
   - homebrew/cask-fonts
   - homebrew/cask-drivers
+  - teamookla/speedtest
 
 homebrew_packages:
   - apktool
@@ -66,6 +67,7 @@ homebrew_packages:
   - screen
   - shpotify
   - sipcalc
+  - speedtest
   - sqlite
   - starship
   - stern
@@ -107,6 +109,7 @@ homebrew_apps:
   - iina
   - jetbrains-toolbox
   - meld
+  - monitorcontrol
   - pdfelement
   - pomatez
   - rectangle
