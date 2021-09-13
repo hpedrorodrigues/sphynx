@@ -18,6 +18,7 @@ among other things.
   - [Alien scripts](#alien-scripts)
   - [Workspace configuration](#workspace-configuration)
 - [Installation](#installation)
+- [Structure Overview](#structure-overview)
 
 ## About
 
@@ -149,6 +150,11 @@ brew install hpedrorodrigues/tools/sphynx
 But if you want to give this whole project a try, it's recommended you fork
 this repository and adjust it to your needs! Be careful!
 
+## Structure Overview
+
+<p align="center">
+  <img src="./assets/diagram.svg" align="center" height="75%" width="75%"/>
+</p>
 
 
 [dotfiles-folder]: ./../.file
