@@ -1,0 +1,21 @@
+name: Create diagram
+on:
+  workflow_dispatch: {}
+  push:
+    branches:
+      - main
+jobs:
+  create_diagram:
+    timeout-minutes: 1
+    runs-on: ubuntu-latest
+    steps:
+      - name: Repository checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+      - name: Update diagram
+        uses: githubocto/repo-visualizer@main
+        with:
+          excluded_paths: ".github"
+          output_file: ".github/assets"
+          max_depth: 10
