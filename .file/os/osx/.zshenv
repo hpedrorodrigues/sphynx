@@ -33,7 +33,7 @@ export MAVEN_OPTS='-Xms512m -Xmx1G'
 #|> Android
 # References:
 # - https://developer.android.com/studio/command-line/variables
-export ANDROID_PLATFORM_VERSION='30.0.3'
+export ANDROID_PLATFORM_VERSION='31.0.0'
 
 export ANDROID_HOME="${HOME}/Library/Android/sdk"
 export ANDROID_SDK_ROOT="${ANDROID_HOME}"

@@ -36,7 +36,7 @@ export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-"${HOME}/.config"}"
 #|> Android
 # References:
 # - https://developer.android.com/studio/command-line/variables
-export ANDROID_PLATFORM_VERSION='30.0.3'
+export ANDROID_PLATFORM_VERSION='31.0.0'
 
 export ANDROID_HOME="${HOME}/Android/Sdk"
 export ANDROID_SDK_ROOT="${ANDROID_HOME}"
