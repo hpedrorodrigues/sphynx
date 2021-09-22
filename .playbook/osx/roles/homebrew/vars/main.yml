@@ -1,5 +1,4 @@
 homebrew_repositories:
-  - AdoptOpenJDK/openjdk
   - eddieantonio/eddieantonio
   - hashicorp/tap
   - homebrew/cask
@@ -9,6 +8,7 @@ homebrew_repositories:
   - teamookla/speedtest
 
 homebrew_packages:
+  - openjdk@17
   - apktool
   - awscli
   - bash
@@ -88,14 +88,6 @@ homebrew_packages:
   - yq
 
 homebrew_apps:
-  - {
-      name: "adoptopenjdk/openjdk/adoptopenjdk8",
-      installed_name: "adoptopenjdk8",
-    }
-  - adoptopenjdk11
-  - adoptopenjdk13
-  - adoptopenjdk15
-  - anki
   - alacritty
   - appcleaner
   - caffeine
@@ -117,6 +109,8 @@ homebrew_apps:
   - skype
   - spotify
   - steam
+  - temurin
   - tunnelblick
   - virtualbox
+  - vivaldi
   - wireshark

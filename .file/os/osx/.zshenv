@@ -18,12 +18,9 @@ for basic_path in ${BASIC_PATHS[*]}; do
 done
 
 #|> Java
-export JAVA8_HOME='/Library/Java/JavaVirtualMachines/adoptopenjdk-8.jdk/Contents/Home'
-export JAVA11_HOME='/Library/Java/JavaVirtualMachines/adoptopenjdk-11.jdk/Contents/Home'
-export JAVA13_HOME='/Library/Java/JavaVirtualMachines/adoptopenjdk-13.jdk/Contents/Home'
-export JAVA15_HOME='/Library/Java/JavaVirtualMachines/adoptopenjdk-15.jdk/Contents/Home'
-
-export JAVA_HOME="${JAVA15_HOME}"
+export JAVA16_HOME='/Library/Java/JavaVirtualMachines/temurin-16.jdk/Contents/Home'
+export JAVA17_HOME='/usr/local/Cellar/openjdk/17/libexec/openjdk.jdk/Contents/Home'
+export JAVA_HOME="${JAVA17_HOME}"
 
 [ -d "${JAVA_HOME}" ] && export PATH="${PATH}:${JAVA_HOME}"
 
@@ -33,7 +30,7 @@ export MAVEN_OPTS='-Xms512m -Xmx1G'
 #|> Android
 # References:
 # - https://developer.android.com/studio/command-line/variables
-export ANDROID_PLATFORM_VERSION='30.0.3'
+export ANDROID_PLATFORM_VERSION='31.0.0'
 
 export ANDROID_HOME="${HOME}/Library/Android/sdk"
 export ANDROID_SDK_ROOT="${ANDROID_HOME}"

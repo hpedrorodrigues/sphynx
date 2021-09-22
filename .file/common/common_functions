@@ -425,9 +425,12 @@ function j() {
 
   if [ -z "${version}" ]; then
     if [ -z "${JAVA_HOME}" ]; then
-      echo 'JAVA_HOME is not set'
-    else
+      echo 'JAVA_HOME is not set' >&2
+    elif [ -d "${JAVA_HOME}" ]; then
       echo "JAVA_HOME=${JAVA_HOME}"
+    else
+      echo "JAVA_HOME=${JAVA_HOME}" >&2
+      echo 'JAVA_HOME is pointing to an invalid location' >&2
     fi
 
     return 0
