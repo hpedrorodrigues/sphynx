@@ -32,7 +32,7 @@ function sx::os::open() {
     fi
   done
 
-  sx::log::fatal "No command-line utility available to open: \"${*}\""
+  sx::log::fatal "No command-line utility available to use: \"${*}\""
 }
 
 function sx::os::browser::open() {
@@ -45,13 +45,6 @@ function sx::os::browser::open() {
     'www-browser'
     'gnome-www-browser'
     'sensible-browser'
-    'chrome'
-    'google-chrome'
-    'google-chrome-stable'
-    'firefox'
-    '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
-    '/Applications/Firefox Developer Edition.app/Contents/MacOS/firefox'
-    '/Applications/Firefox.app/Contents/MacOS/firefox'
   )
 
   for browser_command in "${browser_commands[@]}"; do
