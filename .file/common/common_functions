@@ -436,6 +436,7 @@ function j() {
 
       for jdk_path in "${jdk_paths[@]}"; do
         echo -e "\nInstalled JDKs on \"${jdk_path}\""
+        # shellcheck disable=SC2038  # Use -print0/-0 or find -exec + to allow for non-alphanumeric filenames
         find "${jdk_path}" \
           ! -path "${jdk_path}" \
           \( -type d -o -type l \) \
