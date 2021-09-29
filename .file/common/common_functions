@@ -428,6 +428,22 @@ function j() {
       echo 'JAVA_HOME is not set' >&2
     elif [ -d "${JAVA_HOME}" ]; then
       echo "JAVA_HOME=${JAVA_HOME}"
+
+      local -r jdk_paths=(
+        "${HOME}/Library/Java/JavaVirtualMachines"
+        '/Library/Java/JavaVirtualMachines'
+      )
+
+      for jdk_path in "${jdk_paths[@]}"; do
+        echo -e "\nInstalled JDKs on \"${jdk_path}\""
+        find "${jdk_path}" \
+          ! -path "${jdk_path}" \
+          \( -type d -o -type l \) \
+          -maxdepth 1 \
+          | xargs -I {} basename {} \
+          | xargs -I {} echo '- {}' \
+          | sort -V
+      done
     else
       echo "JAVA_HOME=${JAVA_HOME}" >&2
       echo 'JAVA_HOME is pointing to an invalid location' >&2

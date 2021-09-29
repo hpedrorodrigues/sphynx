@@ -8,7 +8,9 @@ homebrew_repositories:
   - teamookla/speedtest
 
 homebrew_packages:
-  - openjdk@17
+  - openjdk@8
+  - openjdk@11
+  - { name: "openjdk@17", installed_name: "openjdk" }
   - apktool
   - awscli
   - bash
@@ -109,7 +111,6 @@ homebrew_apps:
   - skype
   - spotify
   - steam
-  - temurin
   - tunnelblick
   - virtualbox
   - wireshark
