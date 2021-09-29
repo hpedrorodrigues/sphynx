@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNXC_DIR}/.internal/all.sh"
+source "${SPHYNXN_DIR}/shared/shared.sh"
+source "${SPHYNXN_DIR}/core/whatsapp.sh"
+
+##? Open whatsapp chats on browser
+##?
+##? Usage:
+##?     whatsapp open <phone>
+##?
+##? Examples:
+##?     whatsapp open "+5511999991111"
+##?     whatsapp open "+19991119999"
+
+sx::parse_arguments "${@}"
+
+sx::whatsapp::open "${phone:-}"
