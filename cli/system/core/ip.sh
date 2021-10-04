@@ -1,7 +1,16 @@
 #!/usr/bin/env bash
 
-function sx::ip::public() {
-  sx::ip::check_requirements
+function sx::system::ip::private() {
+  sx::system::check_requirements
+
+  ifconfig \
+    | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' \
+    | grep -Eo '([0-9]*\.){3}[0-9]*' \
+    | grep -v '127.0.0.1'
+}
+
+function sx::system::ip::public() {
+  sx::system::check_requirements
   sx::require_network
 
   local -r commands=(
@@ -23,5 +32,15 @@ function sx::ip::public() {
 
   if [ -z "${public_ip}" ]; then
     sx::log::fatal 'Cannot determine the public IP'
+  fi
+}
+
+function sx::system::ip::gateway() {
+  sx::system::check_requirements
+
+  if sx::os::is_osx; then
+    netstat -rn | grep 'default' | head -n 1 | awk '{ print $2 }'
+  else
+    ip route | grep 'default' | awk '{ print $3 }'
   fi
 }

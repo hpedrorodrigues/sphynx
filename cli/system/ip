@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+set -o nounset
+set -o pipefail
+
+source "${SPHYNXC_DIR}/.internal/all.sh"
+source "${SPHYNXN_DIR}/shared/shared.sh"
+source "${SPHYNXN_DIR}/core/ip.sh"
+
+##? Print gateway/public/private(s) IP(s)
+##?
+##? Usage:
+##?     ip (--private | --public | --gateway)
+##?
+##? Options:
+##?     --private  Print private(s) IP(s)
+##?     --public  Print public IP
+##?     --gateway  Print Gateway IP
+##?
+##? Examples:
+##?     ip --private
+##?     ip --public
+##?     ip --gateway
+
+sx::parse_arguments "${@}"
+
+if ${private:-false}; then
+  sx::system::ip::private
+elif ${public:-false}; then
+  sx::system::ip::public
+elif ${gateway:-false}; then
+  sx::system::ip::gateway
+else
+  sx::error::illegal_arguments "${*}"
+fi

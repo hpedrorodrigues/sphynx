@@ -5,8 +5,9 @@ alias dns='sx system dns --query'
 alias cert='sx security certificate --get --host'
 alias certsans='sx security certificate --sans --host'
 
-alias public_ip='sx ip public'
-alias private_ip='sx ip private'
+alias public_ip='sx system ip --public'
+alias private_ip='sx system ip --private'
+alias gateway_ip='sx system ip --gateway'
 
 function akamai() {
   curl \
