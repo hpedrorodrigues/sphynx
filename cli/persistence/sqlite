@@ -6,19 +6,19 @@ set -o pipefail
 
 source "${SPHYNXC_DIR}/.internal/all.sh"
 source "${SPHYNXN_DIR}/shared/shared.sh"
-source "${SPHYNXN_DIR}/core/query.sh"
+source "${SPHYNXN_DIR}/core/sqlite.sh"
 
 ##? Run queries in sqlite databases
 ##?
 ##? Usage:
-##?     query <query> --file <file>
+##?     sqlite <query> --file <file>
 ##?
 ##? Options:
 ##?     -f --file <file>  File to run the given query
 ##?
 ##? Examples:
-##?     query "SELECT * FROM db.sqlite_master;" -f database.db
-##?     query ".tables" -f database.db
+##?     sqlite "SELECT * FROM db.sqlite_master;" -f database.db
+##?     sqlite ".tables" -f database.db
 
 sx::parse_arguments "${@}"
 
