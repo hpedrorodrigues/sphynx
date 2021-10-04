@@ -6,7 +6,7 @@ function sx::parse_arguments() {
   local -r docopts="${SPHYNXC_DIR}/.internal/docopt/docopts"
   local -r sphynxd="$(basename "${SPHYNXC_DIR}")"
 
-  if [[ ${*} == *'--help'* ]]; then
+  if [[ ${*} == *'--help'* ]] || [ "${#}" == '0' ]; then
     eval "$(${docopts} -h "${help}" : '--help')"
     exit 0
   elif [[ ${*} == *'--raw'* ]]; then
