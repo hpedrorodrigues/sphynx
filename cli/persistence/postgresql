@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNXC_DIR}/.internal/all.sh"
+source "${SPHYNXN_DIR}/shared/shared.sh"
+source "${SPHYNXN_DIR}/core/postgresql.sh"
+
+##? Dumps/Restores a PostgreSQL database
+##?
+##? Usage:
+##?     postgresql (dump | restore) --dburi <uri> --file <filename>
+##?
+##? Options:
+##?     --dburi <uri>  Database URI to dump/restore
+##?                    Format: postgresql://<username>:<password>@<host>:<port>/<database-name>
+##?     -f --file <filename>  Input/Output file name
+##?
+##? Examples:
+##?     postgresql dump --dburi 'postgresql://qa:qa@localhost:5432/qa' --file qa.tar
+##?     postgresql restore --file test.tar --dburi 'postgresql://test:test@localhost:5432/test'
+
+sx::parse_arguments "${@}"
+
+if ${dump:-false}; then
+  sx::postgresql::dump "${dburi:-}" "${file:-}"
+elif ${restore:-false}; then
+  sx::postgresql::restore "${dburi:-}" "${file:-}"
+else
+  sx::error::illegal_arguments "${*}"
+fi

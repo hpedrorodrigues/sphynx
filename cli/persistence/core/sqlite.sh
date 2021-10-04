@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+function sx::sqlite::check_requirements() {
+  sx::persistence::check_requirements
+  sx::require 'sqlite3'
+}
+
 function sx::sqlite::run_query() {
   sx::sqlite::check_requirements
 
