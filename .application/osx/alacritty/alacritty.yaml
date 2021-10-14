@@ -11,7 +11,7 @@ window:
     x: 10
     y: 10
   dynamic_padding: false
-  decorations: none
+  decorations: transparent
   title: Alacritty
   class:
     instance: Alacritty

@@ -55,5 +55,6 @@
   "go.autocompleteUnimportedPackages": true,
   "go.enableCodeLens": true,
   "cSpell.language": "en,pt-BR",
-  "redhat.telemetry.enabled": true
+  "redhat.telemetry.enabled": true,
+  "go.toolsManagement.autoUpdate": true
 }
