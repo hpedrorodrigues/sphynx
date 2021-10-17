@@ -52,10 +52,6 @@ dependency it could be good installing it.
 All dotfiles are inside the [.file][dotfiles-folder] directory. It has common
 aliases, functions, and configuration files that I use daily.
 
-The command-line provides a command (`sx dotfiles configure`) to bootstrap
-dotfiles using [dotbot][dotbot-website], but remember it will overwrite your
-files! Beware!
-
 **Ok, but how about shell startup performance?**
 
 **zsh**
@@ -114,6 +110,9 @@ variance introduced by outliers: 10% (moderately inflated)
         0.11 real         0.07 user         0.06 sys
 ```
 
+In order to set up your dotfiles, I recommend using [dotly][dotly] which
+is a framework with this purpose.
+
 **Inspiration**:
 
 - [denisidoro/dotfiles](https://github.com/denisidoro/dotfiles)
@@ -125,18 +124,18 @@ Also, [Github ❤ ~/][dotfiles-website] and
 
 ### Alien scripts
 
-Alien commands are tools that you don't want to install on your machine but
-you'd like to use them. For instance, you want to use [p2i][p2i] but you don't
-want to configure a nodejs environment.
+[Alien commands][alien-functions] are tools that you don't want to install
+on your machine but you'd like to use them. For instance, you want to use 
+[p2i][p2i] but you don't want to configure a nodejs environment.
 
-[Alien commands][alien-functions] are basically shell functions calling Docker
-behind the scenes, but not all functions use the dockerfiles available in this
-project (e.g. Kafka and Zookeeper).
+They are basically shell functions calling Docker behind the scenes, but
+not all functions use the dockerfiles available in this project 
+(e.g. Kafka and Zookeeper).
 
 ### Workspace configuration
 
 [Ansible][ansible-website] playbooks are recipes that configures and install tools
-on the machine.
+on my machine.
 
 It automates tedious tasks installing packages and applications that I use
 almost daily.
@@ -168,6 +167,8 @@ this repository and adjust it to your needs! Be careful!
 [dotbot-website]: https://github.com/anishathalye/dotbot
 
 [fzf]: https://github.com/junegunn/fzf
+
+[dotly]: https://github.com/CodelyTV/dotly
 
 [github-action-badge]: https://github.com/hpedrorodrigues/sphynx/workflows/Checks/badge.svg
 [github-action-sphynx]: https://github.com/hpedrorodrigues/sphynx/actions
