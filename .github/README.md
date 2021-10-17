@@ -21,14 +21,25 @@ among other things.
 
 ## About
 
-This project has 4 main components that will be described below.
+Sphynx has aliases, functions, CLI, workspace setup configuration, 
+applications' settings, docker images. Everything I use on a daily
+basis and how I set up my machine.
+
+It's divided into four main components described below.
 
 ### CLI
 
-Sphynx provides a command-line interface to handle all stuff related with
-this project using [docopt][docopt-website].
+Sphynx provides a [command-line interface][cli-folder] to handle all stuff related to
+this project and to automate boring tasks using [docopt][docopt-website].
 
-The commands are configured using environment variables, and each command can
+e.g.
+```bash
+$ sx docker logs
+$ sx android device --connect
+$ sx system clear-trash
+```
+
+The commands are configured using environment variables, and each command may
 have its own settings. For instance, `sx kubernetes ls` uses the env var
 `SX_KUBERNETES_RESOURCES` to know what resources to list.
 
@@ -38,14 +49,14 @@ dependency it could be good installing it.
 
 ### Dotfiles
 
-All dotfiles are inside [.file][dotfiles-folder] directory. It has common
-aliases, functions, and configuration files that you may use day to day.
+All dotfiles are inside the [.file][dotfiles-folder] directory. It has common
+aliases, functions, and configuration files that I use daily.
 
 The command-line provides a command (`sx dotfiles configure`) to bootstrap
 dotfiles using [dotbot][dotbot-website], but remember it will overwrite your
 files! Beware!
 
-**How about shell startup performance?**
+**Ok, but how about shell startup performance?**
 
 **zsh**
 ```
@@ -118,24 +129,17 @@ Alien commands are tools that you don't want to install on your machine but
 you'd like to use them. For instance, you want to use [p2i][p2i] but you don't
 want to configure a nodejs environment.
 
-> Sphynx is using Docker to accomplish this goal.
-
-All alien commands are exposed as functions [here][alien-functions] but note
-that not all functions use the dockerfiles available in this project
-(e.g. Kafka and Zookeeper).
+[Alien commands][alien-functions] are basically shell functions calling Docker
+behind the scenes, but not all functions use the dockerfiles available in this
+project (e.g. Kafka and Zookeeper).
 
 ### Workspace configuration
 
-[Ansible][ansible-website] playbooks are recipes that install tools on your
-machine.
+[Ansible][ansible-website] playbooks are recipes that configures and install tools
+on the machine.
 
-It automates tedious tasks installing packages and applications that you use
-(maybe) almost daily.
-
-If you want to run the playbooks, type `sx playbook run` in your terminal.
-
-> Before running this command, take a look at the source code and adjust it to
-> your needs!
+It automates tedious tasks installing packages and applications that I use
+almost daily.
 
 ## Installation
 
@@ -150,6 +154,7 @@ But if you want to give this whole project a try, it's recommended you fork
 this repository and adjust it to your needs! Be careful!
 
 
+[cli-folder]: ./../cli
 [dotfiles-folder]: ./../.file
 [playbooks-folder]: ./../.playbook
 [alien-folder]: ./../.alien
