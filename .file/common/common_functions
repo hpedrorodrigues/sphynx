@@ -96,7 +96,7 @@ function csv() {
 ## e.g. cat <filename> | e64
 function e64() {
   if [ "${#}" -gt 0 ]; then
-    base64 <<<"${@}"
+    echo -n "${@}" | base64
   else
     base64
   fi
@@ -108,7 +108,7 @@ function e64() {
 ## e.g. cat <filename> | d64
 function d64() {
   if [ "${#}" -gt 0 ]; then
-    base64 --decode <<<"${@}"
+    echo -n "${@}" | base64 --decode
   else
     base64 --decode
   fi
