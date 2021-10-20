@@ -11,6 +11,18 @@ export SX_K8S_REQUEST_TIMEOUT="${SX_K8S_REQUEST_TIMEOUT:-0}"
 function sx::k8s::check_requirements() {
   sx::require_supported_os
   sx::require 'kubectl'
+  sx::k8s::ensure_api_access
+}
+
+function sx::k8s::can_access_api() {
+  sx::k8s::cli get service kubernetes \
+    --namespace default &>/dev/null
+}
+
+function sx::k8s::ensure_api_access() {
+  if ! sx::k8s::can_access_api; then
+    sx::log::fatal 'Cannot access API Server!'
+  fi
 }
 
 function sx::k8s::clear_template() {
