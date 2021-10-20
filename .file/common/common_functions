@@ -118,11 +118,11 @@ function d64() {
 
 ## Tail (and filter) System logs
 ##
-## e.g. console
-## e.g. console 'error'
-function console() {
-  local -r query="${1}"
-
+## e.g. syslog
+## e.g. syslog 'error'
+function syslog() {
+  local -r selector="${1:-.*}"
+  local -r n_lines='100'
   local -r log_files=(
     '/var/log/system.log'
     '/var/log/syslog'
@@ -130,11 +130,7 @@ function console() {
 
   for log_file in "${log_files[@]}"; do
     if [ -f "${log_file}" ]; then
-      if [ -z "${query}" ]; then
-        command tail -f "${log_file}"
-      else
-        command tail -f "${log_file}" | grep -i -E "${query}"
-      fi
+      command tail -"${n_lines}" -f "${log_file}" | grep -E "${selector}"
     fi
   done
 }
