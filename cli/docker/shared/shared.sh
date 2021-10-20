@@ -3,6 +3,18 @@
 function sx::docker::check_requirements() {
   sx::require_supported_os
   sx::require 'docker'
+  sx::docker::ensure_docker_daemon_running
+}
+
+# https://docs.docker.com/config/daemon/#check-whether-docker-is-running
+function sx::docker::is_docker_daemon_running() {
+  docker info &>/dev/null
+}
+
+function sx::docker::ensure_docker_daemon_running() {
+  if ! sx::docker::is_docker_daemon_running; then
+    sx::log::fatal 'Docker daemon is not running!'
+  fi
 }
 
 function sx::docker::containers() {
