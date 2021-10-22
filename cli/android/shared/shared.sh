@@ -17,10 +17,11 @@ function sx::android::bundletool() {
 }
 
 function sx::android::has_devices_attached() {
-  local -r output="$(sx::android::adb devices 2>&1)"
+  local -r n_devices="$(
+    sx::android::adb devices | wc -l | tr -d ' ' 2>/dev/null
+  )"
 
-  echo "${output}" | grep -qE '[0-9]{10}' \
-    || echo "${output}" | grep -qE '\b([0-9]{1,3}\.){3}[0-9]{1,3}\b'
+  [ "${n_devices}" -gt 2 ]
 }
 
 function sx::android::has_more_than_one_device_attached() {
