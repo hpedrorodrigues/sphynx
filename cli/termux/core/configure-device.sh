@@ -34,12 +34,14 @@ function sx::termux::configure-device() {
 
   if ! [ -s "${HOME}/.ssh/authorized_keys" ]; then
     sx::log::info 'Public key?'
-    local public_key=''
-    while [ -z "${public_key}" ]; do
-      public_key="$(cat)"
+
+    local public_key
+    IFS= read -d '' -n 1 public_key
+    while IFS= read -d '' -n 1 -t 2 char; do
+      public_key+="${char}"
     done
 
-    if [ -z "${public_key}" ]; then
+    if [ -n "${public_key}" ]; then
       mkdir -p "${HOME}/.ssh"
       echo "${public_key}" >>"${HOME}/.ssh/authorized_keys"
     fi
