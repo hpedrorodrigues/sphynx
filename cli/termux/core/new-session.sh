@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 function sx::termux::new-session() {
-  sx::require 'adb'
+  sx::termux::check_requirements
 
   adb root
   adb shell am start -n com.termux/.HomeActivity

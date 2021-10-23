@@ -9,6 +9,7 @@ function sx::termux::configure-device() {
     'termux-services'
     'jq'
     'vim'
+    'python'
   )
 
   for package_to_install in "${packages_to_install[@]}"; do
@@ -31,7 +32,18 @@ function sx::termux::configure-device() {
     echo "${start_sshd_cmd}" >>"${profile_path}"
   fi
 
-  # TODO: prompt asking the public key (e.g. ~/.ssh/id_rsa.pub)
+  if ! [ -s "${HOME}/.ssh/authorized_keys" ]; then
+    sx::log::info 'Public key?'
+    local public_key=''
+    while [ -z "${public_key}" -o "${public_key}" != 'exit' -o "${public_key}" != 'quit' ]; do
+      read public_key
+    done
+
+    if [ -z "${public_key}" -o "${public_key}" != 'exit' -o "${public_key}" != 'quit' ]; then
+      mkdir -p "${HOME}/.ssh"
+      echo "${public_key}" >>"${HOME}/.ssh/authorized_keys"
+    fi
+  fi
 
   sx::log::info 'Now you must restart Termux!'
 }
