@@ -35,11 +35,11 @@ function sx::termux::configure-device() {
   if ! [ -s "${HOME}/.ssh/authorized_keys" ]; then
     sx::log::info 'Public key?'
     local public_key=''
-    while [ -z "${public_key}" ] || [ "${public_key}" != 'exit' ] || [ "${public_key}" != 'quit' ]; do
+    while [ -z "${public_key}" ] || { [ "${public_key}" != 'exit' ] && [ "${public_key}" != 'quit' ]; }; do
       read -r public_key
     done
 
-    if [ -z "${public_key}" ] || [ "${public_key}" != 'exit' ] || [ "${public_key}" != 'quit' ]; then
+    if [ -z "${public_key}" ] || { [ "${public_key}" != 'exit' ] && [ "${public_key}" != 'quit' ]; }; then
       mkdir -p "${HOME}/.ssh"
       echo "${public_key}" >>"${HOME}/.ssh/authorized_keys"
     fi
