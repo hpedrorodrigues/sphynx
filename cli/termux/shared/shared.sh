@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+# References:
+# - https://wiki.termux.com/wiki/Termux-services
+# - http://smarden.org/runit
+
 function sx::termux::check_requirements() {
   sx::android::check_requirements
 
