@@ -36,8 +36,8 @@ function sx::termux::configure-device() {
     sx::log::info 'Public key?'
 
     local public_key
-    IFS= read -d '' -n 1 public_key
-    while IFS= read -d '' -n 1 -t 2 char; do
+    IFS= read -r -d '' -n 1 public_key
+    while IFS= read -r -d '' -n 1 -t 2 char; do
       public_key+="${char}"
     done
 
