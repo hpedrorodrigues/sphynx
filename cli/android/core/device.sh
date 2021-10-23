@@ -41,8 +41,9 @@ function sx::android::device::connect_via_tcp() {
   fi
 
   sx::android::adb tcpip "${ADB_TCP_PORT}" \
+    && sleep 2s \
     && sx::android::adb connect "${device_ip}" \
-    && sx::log::info 'Now you can remove usb cable'
+    && sx::log::info 'Now you can remove USB cable!'
 }
 
 function sx::android::device::disconnect_via_tcp() {
