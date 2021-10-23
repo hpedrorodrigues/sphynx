@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
 function sx::parse_arguments() {
+  sx::require 'python'
+
   local -r script_file="${0}"
   local -r help=$(grep '^##?' "${script_file}" | cut -c 5-)
   local -r docopts="${SPHYNXC_DIR}/.internal/docopt/docopts"
