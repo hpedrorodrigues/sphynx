@@ -44,7 +44,7 @@ function sx::android::check_requirements() {
   fi
 
   if ! sx::android::has_devices_attached; then
-    sx::log::fatal "No devices connected or they're (Unauthorized | Offline)"
+    sx::log::fatal "No devices connected or they're either unauthorized or offline"
   fi
 
   if sx::android::has_more_than_one_device_attached; then
@@ -75,6 +75,17 @@ function sx::android::find_apk_name_by_package() {
   local -r package="${1}"
 
   echo "${package}" | sed 's/\./_/g' | awk '{ print $1".apk" }'
+}
+
+function sx::android::is_package_available() {
+  local -r filter="${1}"
+  local -r package="$(sx::android::find_package "${filter}")"
+
+  if [ -z "${package}" ]; then
+    return 1
+  fi
+
+  return 0
 }
 
 function sx::android::ensure_package_exists() {
