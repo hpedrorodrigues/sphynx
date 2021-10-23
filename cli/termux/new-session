@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNXC_DIR}/.internal/all.sh"
+source "${SPHYNXN_DIR}/shared/shared.sh"
+source "${SPHYNXN_DIR}/core/new-session.sh"
+
+##? Starts a new SSH session using the available device
+##?
+##? Usage:
+##?     new-session
+##?
+##? Examples:
+##?     new-session
+
+sx::parse_arguments "${@}"
+
+sx::termux::new-session
