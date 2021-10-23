@@ -18,8 +18,8 @@ function sx::android::bundletool() {
 
 function sx::android::available_devices() {
   sx::android::adb devices \
-  | grep -i -v 'list of devices attached\|unauthorized\|offline' \
-  | grep -v -E '^[[:space:]]*$'
+    | grep -i -v 'list of devices attached\|unauthorized\|offline' \
+    | grep -v -E '^[[:space:]]*$'
 }
 
 function sx::android::has_devices_attached() {
