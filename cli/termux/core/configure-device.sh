@@ -36,7 +36,7 @@ function sx::termux::configure-device() {
     sx::log::info 'Public key?'
     local public_key=''
     while [ -z "${public_key}" ]; do
-      read -r public_key
+      public_key="$(cat)"
     done
 
     if [ -z "${public_key}" ]; then
