@@ -44,6 +44,7 @@ function sx::termux::configure-device() {
     if [ -n "${public_key}" ]; then
       mkdir -p "${HOME}/.ssh"
       echo "${public_key}" >>"${HOME}/.ssh/authorized_keys"
+      chmod 600 "${HOME}/.ssh/authorized_keys"
     fi
   fi
 

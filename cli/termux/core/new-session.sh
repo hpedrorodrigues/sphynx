@@ -3,7 +3,6 @@
 function sx::termux::new-session() {
   sx::termux::check_requirements
 
-  adb root
   adb shell am start -n com.termux/.HomeActivity
 
   adb forward tcp:8022 tcp:8022
