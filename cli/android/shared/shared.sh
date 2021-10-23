@@ -16,20 +16,26 @@ function sx::android::bundletool() {
   "${SX_BUNDLETOOL_CMD}" "${@}"
 }
 
+function sx::android::available_devices() {
+  sx::android::adb devices \
+  | grep -i -v 'list of devices attached\|unauthorized\|offline' \
+  | grep -v -E '^[[:space:]]*$'
+}
+
 function sx::android::has_devices_attached() {
   local -r n_devices="$(
-    sx::android::adb devices | wc -l | tr -d ' ' 2>/dev/null
+    sx::android::available_devices | wc -l | tr -d ' ' 2>/dev/null
   )"
 
-  [ "${n_devices}" -gt 2 ]
+  [ "${n_devices}" -gt 0 ]
 }
 
 function sx::android::has_more_than_one_device_attached() {
   local -r n_devices="$(
-    sx::android::adb devices | wc -l | tr -d ' ' 2>/dev/null
+    sx::android::available_devices | wc -l | tr -d ' ' 2>/dev/null
   )"
 
-  [ "${n_devices}" -gt 3 ]
+  [ "${n_devices}" -gt 1 ]
 }
 
 function sx::android::check_requirements() {
@@ -38,7 +44,7 @@ function sx::android::check_requirements() {
   fi
 
   if ! sx::android::has_devices_attached; then
-    sx::log::fatal 'No devices connected'
+    sx::log::fatal "No devices connected or they're (Unauthorized | Offline)"
   fi
 
   if sx::android::has_more_than_one_device_attached; then
