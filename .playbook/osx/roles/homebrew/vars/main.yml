@@ -33,6 +33,7 @@ homebrew_packages:
   - git-flow
   - git-lfs
   - gnu-indent
+  - gnupg
   - gnu-sed
   - gnu-tar
   - gnu-which
@@ -97,7 +98,6 @@ homebrew_apps:
   - clipy
   - deckset
   - discord
-  - firefox-developer-edition
   - flux
   - github
   - google-chrome
@@ -106,7 +106,7 @@ homebrew_apps:
   - meld
   - monitorcontrol
   - pdfelement
-  - pomatez
+  - postman
   - rectangle
   - silverlight
   - skype
@@ -114,4 +114,6 @@ homebrew_apps:
   - steam
   - tunnelblick
   - virtualbox
+  - virtualbox-extension-pack
   - wireshark
+  - zoom
