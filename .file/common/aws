@@ -59,14 +59,15 @@ function aws-ecs-list() {
             | while read -r task; do
               aws ecs describe-tasks --cluster "${cluster}" --tasks "${task}" --region "${region}" \
                 | jq --monochrome-output --raw-output '.tasks[].containerInstanceArn' \
-                | while read -r container_instances; do
-                  aws ecs describe-container-instances --cluster "${cluster}" --container-instances "${container_instances}" --region "${region}" \
+                | while read -r container_instance; do
+                  aws ecs describe-container-instances --cluster "${cluster}" --container-instances "${container_instance}" --region "${region}" \
                     | jq --monochrome-output --raw-output '.containerInstances[].ec2InstanceId' \
                     | while read -r instance_id; do
                       echo "> ${cluster}"
-                      echo "|-- (Service)       ${service}"
-                      echo "|-- (Task)          ${task}"
-                      echo "|-- (Instance ID)   ${instance_id}"
+                      echo "|-- (Service)             ${service}"
+                      echo "|-- (Task)                ${task}"
+                      echo "|-- (Container Instance)  ${container_instance}"
+                      echo "|-- (Instance ID)         ${instance_id}"
                       echo
                     done
                 done
