@@ -12,11 +12,15 @@ source "${SPHYNXN_DIR}/core/new-session.sh"
 ##? Starts a new SSH session using the available device
 ##?
 ##? Usage:
-##?     new-session
+##?     new-session [--ip <address>]
+##?
+##? Options:
+##?     --ip <address>  The IP to be used to connect to
 ##?
 ##? Examples:
 ##?     new-session
+##?     new-session --ip 192.168.0.2
 
 sx::parse_arguments "${@}"
 
-sx::termux::new-session
+sx::termux::new-session "${ip:-}"
