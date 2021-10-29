@@ -28,6 +28,8 @@ function aws-ssm() {
 ## List instances available for ECS services matched by the given query
 ##
 ## e.g. aws-ecs-list <my-service> <region>
+##
+## TODO: Refactor this function to remove chained-loops.
 function aws-ecs-list() {
   local -r func_name="${FUNCNAME[0]:-${funcstack[1]}}"
   local -r service_query="${1:-}"
@@ -52,7 +54,7 @@ function aws-ecs-list() {
       aws ecs list-services --cluster "${cluster}" --region "${region}" \
         | jq --monochrome-output --raw-output '.serviceArns | .[]' \
         | sort -u \
-        | grep "/${service_query}" \
+        | grep "${service_query}" \
         | while read -r service; do
           aws ecs list-tasks --cluster "${cluster}" --service-name "${service}" --region "${region}" \
             | jq --monochrome-output --raw-output '.taskArns | .[]' \
