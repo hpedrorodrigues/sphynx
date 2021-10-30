@@ -1,6 +1,6 @@
 # Reference:
 # - https://github.com/puppeteer/puppeteer/blob/master/docs/troubleshooting.md#running-puppeteer-in-docker
-FROM node:lts-alpine3.13
+FROM node:lts-alpine3.14
 
 LABEL maintainer="Pedro Rodrigues <github.com/hpedrorodrigues>"
 
@@ -17,11 +17,11 @@ ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
 
 RUN apk update \
     && apk add --no-cache \
-         chromium=86.0.4240.111-r0 \
+         chromium=93.0.4577.82-r0 \
          nss=3.66-r0 \
          freetype=2.10.4-r1 \
          freetype-dev=2.10.4-r1 \
-         harfbuzz=2.7.4-r1 \
+         harfbuzz=2.8.1-r0 \
          ca-certificates=20191127-r5 \
          ttf-freefont=20120503-r1 \
     && rm -rf /var/cache/apk/* \
