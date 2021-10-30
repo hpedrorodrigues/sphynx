@@ -56,13 +56,17 @@ fi
 #|> Krew
 export KREW_BIN="${HOME}/.krew/bin"
 
-[ -d "${KREW_BIN}" ] && export PATH="${PATH}:${KREW_BIN}"
+if [ -d "${KREW_BIN}" ] && echo "${PATH}" | grep "${KREW_BIN}" -v -q; then
+  export PATH="${PATH}:${KREW_BIN}"
+fi
 
 #|> Go
 export GOPATH="${HOME}/.go"
 export GO_WORKSPACE="${GOPATH}/src"
 
-[ -d "${GOPATH}" ] && export PATH="${PATH}:${GOPATH}/bin"
+if [ -d "${GOPATH}/bin" ] && echo "${PATH}" | grep "${GOPATH}/bin" -v -q; then
+  export PATH="${PATH}:${GOPATH}/bin"
+fi
 
 #|> AWS CLI
 export AWS_PROFILE='sphynx'

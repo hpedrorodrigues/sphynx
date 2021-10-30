@@ -23,8 +23,6 @@ export JAVA11_HOME='/usr/local/opt/openjdk@11/libexec/openjdk.jdk/Contents/Home'
 export JAVA17_HOME='/usr/local/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home'
 export JAVA_HOME="${JAVA17_HOME}"
 
-[ -d "${JAVA_HOME}" ] && export PATH="${PATH}:${JAVA_HOME}"
-
 #|> Maven
 export MAVEN_OPTS='-Xms512m -Xmx1G'
 
@@ -40,7 +38,6 @@ export ANDROID_BUILD_TOOLS="${ANDROID_HOME}/build-tools/${ANDROID_PLATFORM_VERSI
 export ANDROID_PLATFORM_TOOLS="${ANDROID_HOME}/platform-tools"
 export ANDROID_EMULATOR_TOOLS="${ANDROID_HOME}/emulator"
 
-[ -d "${ANDROID_HOME}" ] && export PATH="${PATH}:${ANDROID_HOME}"
 [ -d "${ANDROID_TOOLS}" ] && export PATH="${PATH}:${ANDROID_TOOLS}:${ANDROID_TOOLS}/bin"
 [ -d "${ANDROID_BUILD_TOOLS}" ] && export PATH="${PATH}:${ANDROID_BUILD_TOOLS}"
 [ -d "${ANDROID_PLATFORM_TOOLS}" ] && export PATH="${PATH}:${ANDROID_PLATFORM_TOOLS}"
