@@ -82,4 +82,3 @@ fi
 # Reference: http://zsh.sourceforge.net/Guide
 hash -d p="${HOME}/Code/Personal"
 hash -d o="${HOME}/Code/Others"
-hash -d k="${HOME}/Code/Kubernetes"
