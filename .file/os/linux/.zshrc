@@ -29,11 +29,11 @@ if hash sx &>/dev/null; then
     autoload -U compinit && compinit
   fi
 
-  # Load the tmux "hack" session on zsh startup
+  # Load the tmux "sphynx" session on zsh startup
   # Notes:
   # - not loading tmux in sphynx benchmarks because it's not important for it
   # - loading the tmux session only when using Alacritty
   if [ -z "${SX_SHELL_BENCHMARK}" ] && [ -n "${ALACRITTY_LOG}" ]; then
-    sx terminal tmux force-attach 'hack'
+    sx terminal tmux force-attach 'sphynx'
   fi
 fi
