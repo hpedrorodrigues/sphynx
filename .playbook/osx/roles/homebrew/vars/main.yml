@@ -67,7 +67,6 @@ homebrew_packages:
   - pidcat
   - postgresql
   - { name: "python", installed_name: "python@3.9" }
-  - rbenv
   - rsync
   - screen
   - shpotify
