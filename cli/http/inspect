@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNXC_DIR}/.internal/all.sh"
+source "${SPHYNXN_DIR}/shared/shared.sh"
+source "${SPHYNXN_DIR}/core/inspect.sh"
+
+##? Starts a server in order to inspect HTTP requests made to it
+##?
+##? Usage:
+##?     inspect [--port <port>]
+##?
+##? Options:
+##?     -p --port <port>  Port used to listen to
+##?
+##? Examples:
+##?     inspect
+##?     inspect --port 4000
+
+sx::parse_arguments "${@}"
+
+sx::http::inspect "${port:-3000}"
