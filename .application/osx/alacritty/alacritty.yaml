@@ -11,11 +11,8 @@ window:
     x: 10
     y: 10
   dynamic_padding: false
-  decorations: transparent
+  decorations: full
   title: Alacritty
-  class:
-    instance: Alacritty
-    general: Alacritty
   dynamic_title: true
 scrolling:
   history: 10000
