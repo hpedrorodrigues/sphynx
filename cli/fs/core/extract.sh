@@ -3,56 +3,42 @@
 function sx::fs::extract() {
   sx::fs::check_requirements
 
-  local -r file_path="${1}"
+  IFS="$(printf '\n\t')"
 
-  if ! [ -f "${file_path}" ]; then
-    sx::log::fatal "No such file \"${file_path}\""
+  local -r compressed_file="${1:-}"
+
+  if [ -z "${compressed_file}" ]; then
+    sx::log::fatal 'No file provided to extract its content'
   fi
 
-  local -r extraction_data=(
-    '.tar,tar,tar xf'
-    '.tar.bz2,tar,tar xjf'
-    '.tb2,tar,tar xjf'
-    '.tbz,tar,tar xjf'
-    '.tbz2,tar,tar xjf'
-    '.tar.gz,tar,tar xzf'
-    '.tar.Z,tar,tar xzf'
-    '.taz,tar,tar xzf'
-    '.tgz,tar,tar xzf'
-    '.tar.xz,tar,tar Jxvf'
-    '.txz,tar,tar Jxvf'
-    '.zip,unzip,unzip'
-    '.rar,unrar,unrar'
-    '.gz,gunzip,gunzip'
-    '.bz2,bunzip2,bunzip2'
-    '.7z,7z,7z x'
-  )
+  if ! [ -s "${compressed_file}" ]; then
+    sx::log::fatal 'No such file'
+  fi
 
-  for data in "${extraction_data[@]}"; do
-    local extension="$(echo "${data}" | cut -d ',' -f 1)"
+  local -r directory_name="${compressed_file%%.*}"
 
-    if echo "${file_path}" | grep -qE "${extension}\$"; then
-      local -r required_cli="$(echo "${data}" | cut -d ',' -f 2)"
-      sx::require "${required_cli}"
+  mkdir -p "${directory_name}" \
+    && cd "${directory_name}" \
+    || exit 1
 
-      local -r file_name="$(basename "${file_path}")"
-      local -r directory_name="${file_name//${extension}/}"
+  local -r relative_path="../${compressed_file}"
 
-      if [ -d "${directory_name}" ]; then
-        sx::log::fatal "The directory \"${directory_name}\" already exists"
-      fi
-
-      local -r command_prefix="$(echo "${data}" | cut -d ',' -f 3)"
-
-      mkdir -p "${directory_name}" \
-        && cd "${directory_name}" \
-        || exit 1
-
-      eval "${command_prefix} ../${file_path}"
-
-      exit "${?}"
-    fi
-  done
-
-  sx::log::fatal "Cannot extract file \"${file_path}\""
+  case "${relative_path%,}" in
+    *.cbt | *.tar.bz2 | *.tar.gz | *.tar.xz | *.tbz2 | *.tgz | *.txz | *.tar)
+      tar xvf "${relative_path}"
+      ;;
+    *.lzma) unlzma "${relative_path}" ;;
+    *.bz2) bunzip2 "${relative_path}" ;;
+    *.cbr | *.rar) unrar x -ad "${relative_path}" ;;
+    *.gz) gunzip "${relative_path}" ;;
+    *.cbz | *.epub | *.zip) unzip "${relative_path}" ;;
+    *.z) uncompress "${relative_path}" ;;
+    *.7z | *.apk | *.arj | *.cab | *.cb7 | *.chm | *.deb | *.dmg | *.iso | *.lzh | *.msi | *.pkg | *.rpm | *.udf | *.wim | *.xar)
+      7z x "${relative_path}"
+      ;;
+    *.xz) unxz "${relative_path}" ;;
+    *.cba | *.ace) unace x "${relative_path}" ;;
+    *.zpaq) zpaq x "${relative_path}" ;;
+    *) sx::log::fatal "Cannot extract file \"${compressed_file}\"" ;;
+  esac
 }
