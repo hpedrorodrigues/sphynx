@@ -48,9 +48,20 @@ done
 # I'm disabling nvm for now because it makes the shell startup really slow
 if ${NVM_ENABLED:-false}; then
   export NVM_DIR="${HOME}/.nvm"
+  export NVM_INSTALLATION_DIR='/usr/local/opt/nvm'
 
-  [ -s "${NVM_DIR}/nvm.sh" ] && source "${NVM_DIR}/nvm.sh"
-  [ -s "${NVM_DIR}/bash_completion" ] && source "${NVM_DIR}/bash_completion"
+  readonly NVM_FILES=(
+    "${NVM_DIR}/nvm.sh"
+    "${NVM_DIR}/bash_completion"
+    "${NVM_INSTALLATION_DIR}/nvm.sh"
+    "${NVM_INSTALLATION_DIR}/etc/bash_completion.d/nvm"
+  )
+
+  for nvm_file in "${NVM_FILES[@]}"; do
+    if [ -s "${nvm_file}" ]; then
+      source "${nvm_file}"
+    fi
+  done
 fi
 
 #|> Krew
