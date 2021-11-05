@@ -6,9 +6,9 @@ vscode_extensions:
   - christian-kohler.path-intellisense
   - CoenraadS.bracket-pair-colorizer-2
   - DavidAnson.vscode-markdownlint
+  - dracula-theme.theme-dracula
   - eamodio.gitlens
   - EditorConfig.EditorConfig
-  - enkia.tokyo-night
   - golang.go
   - hashicorp.terraform
   - ipedrazas.kubernetes-snippets

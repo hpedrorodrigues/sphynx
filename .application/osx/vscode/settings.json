@@ -1,7 +1,10 @@
 {
+  "breadcrumbs.enabled": true,
   "editor.cursorBlinking": "phase",
   "editor.cursorSmoothCaretAnimation": true,
   "editor.cursorStyle": "line-thin",
+  "editor.fontFamily": "Fira Code",
+  "editor.fontLigatures": true,
   "editor.minimap.maxColumn": 100,
   "editor.minimap.renderCharacters": false,
   "editor.renderWhitespace": "all",
@@ -10,6 +13,7 @@
   "editor.smoothScrolling": true,
   "editor.suggestSelection": "first",
   "editor.tabSize": 2,
+  "editor.wordWrap": "on",
   "explorer.confirmDragAndDrop": false,
   "explorer.openEditors.visible": 0,
   "files.associations": {
@@ -56,6 +60,7 @@
   "redhat.telemetry.enabled": true,
   "go.toolsManagement.autoUpdate": true,
   "workbench.iconTheme": "deepdark-material-icons",
-  "workbench.colorTheme": "Tokyo Night",
-  "workbench.preferredDarkColorTheme": "Tokyo Night"
+  "workbench.colorTheme": "Dracula",
+  "workbench.preferredDarkColorTheme": "Dracula",
+  "workbench.preferredLightColorTheme": "Dracula"
 }
