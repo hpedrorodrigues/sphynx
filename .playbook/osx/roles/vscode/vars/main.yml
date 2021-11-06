@@ -3,10 +3,11 @@ vscode_settings_files:
   - keybindings.json
 
 vscode_extensions:
+  - armandphilippot.coldark
+  - bungcip.better-toml
   - christian-kohler.path-intellisense
   - CoenraadS.bracket-pair-colorizer-2
   - DavidAnson.vscode-markdownlint
-  - dracula-theme.theme-dracula
   - eamodio.gitlens
   - EditorConfig.EditorConfig
   - golang.go
@@ -15,7 +16,6 @@ vscode_extensions:
   - k--kato.intellij-idea-keybindings
   - ms-azuretools.vscode-docker
   - ms-kubernetes-tools.vscode-kubernetes-tools
-  - ms-vscode-remote.remote-containers
   - naumovs.color-highlight
   - Nimda.deepdark-material
   - redhat.vscode-yaml
