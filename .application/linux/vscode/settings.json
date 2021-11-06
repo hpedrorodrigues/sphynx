@@ -1,7 +1,12 @@
 {
+  "breadcrumbs.enabled": true,
+  "cSpell.language": "en,pt-BR",
   "editor.cursorBlinking": "phase",
   "editor.cursorSmoothCaretAnimation": true,
   "editor.cursorStyle": "line-thin",
+  "editor.fontFamily": "Fira Code",
+  "editor.fontLigatures": true,
+  "editor.insertSpaces": true,
   "editor.minimap.maxColumn": 100,
   "editor.minimap.renderCharacters": false,
   "editor.renderWhitespace": "all",
@@ -10,6 +15,7 @@
   "editor.smoothScrolling": true,
   "editor.suggestSelection": "first",
   "editor.tabSize": 2,
+  "editor.wordWrap": "on",
   "explorer.confirmDragAndDrop": false,
   "explorer.openEditors.visible": 0,
   "files.associations": {
@@ -26,6 +32,10 @@
     "**/__pycache__": true
   },
   "files.trimTrailingWhitespace": true,
+  "go.autocompleteUnimportedPackages": true,
+  "go.enableCodeLens": true,
+  "go.toolsManagement.autoUpdate": true,
+  "redhat.telemetry.enabled": false,
   "search.exclude": {
     "**/.git": true,
     "**/.idea": true,
@@ -35,22 +45,20 @@
     "**/vendor": true,
     "**/__pycache__": true
   },
+  "terminal.integrated.cursorStyle": "line",
+  "terminal.integrated.shell.linux": "/usr/bin/zsh",
+  "terminal.integrated.shellArgs.linux": [
+    "--login",
+    "--interactive",
+    "-c",
+    "sx terminal tmux force-attach 'vscode'"
+  ],
   "vsintellicode.modify.editor.suggestSelection": "choseToUpdateConfiguration",
-  "workbench.colorCustomizations": {
-    "[Material Theme Darker]": {
-      "list.activeSelectionForeground": "#dfe2e2",
-      "list.inactiveSelectionForeground": "#dfe2e2",
-      "sideBar.foreground": "#738598"
-    }
-  },
-  "workbench.colorTheme": "Material Theme Darker",
+  "window.zoomLevel": 0,
+  "workbench.colorTheme": "Coldark - Dark",
   "workbench.editor.enablePreview": false,
   "workbench.editor.highlightModifiedTabs": true,
-  "workbench.iconTheme": "eq-material-theme-icons-darker",
+  "workbench.iconTheme": "deepdark-material-icons",
   "workbench.settings.enableNaturalLanguageSearch": false,
-  "workbench.welcome.enabled": false,
-  "window.zoomLevel": 0,
-  "go.autocompleteUnimportedPackages": true,
-  "go.enableCodeLens": true,
-  "cSpell.language": "en,pt-BR"
+  "workbench.welcome.enabled": false
 }

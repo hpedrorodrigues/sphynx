@@ -57,7 +57,7 @@ function prettier() {
 
 ## Hadolint (https://github.com/hadolint/hadolint)
 ##
-## e.g. hadolint <Dockerfile>
+## e.g. hadolint < <path-to-Dockerfile>
 function hadolint() {
   local -r tool_name="${FUNCNAME[0]:-${funcstack[1]}}"
   local -r image="${ALIEN_REPOSITORY}:${tool_name}"

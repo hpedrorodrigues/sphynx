@@ -39,7 +39,7 @@ alias dl='sx docker logs'
 alias di='sx docker inspect'
 alias dex='sx docker exec'
 
-# tmux
+# TMUX
 alias ts='sx terminal tmux ls'
 alias tn='sx terminal tmux new'
 alias ta='sx terminal tmux attach'

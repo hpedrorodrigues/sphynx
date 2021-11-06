@@ -16,7 +16,7 @@ setopt inc_append_history     # write commands immediately to the history
 export HISTSIZE='1000000000'
 export SAVEHIST="${HISTSIZE}"
 export HISTFILE="${HOME}/.zsh_history"
-export HISTORY_IGNORE='(ls|history|cd|cd -|* --help| *|pwd|exit)'
+export HISTORY_IGNORE='(ls|history|cd|cd -|* --help|* --version| *|pwd|exit)'
 
 ### Zsh completions
 # Reference: https://github.com/ohmyzsh/ohmyzsh/blob/master/lib/completion.zsh

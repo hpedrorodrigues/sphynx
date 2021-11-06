@@ -8,18 +8,14 @@ export HISTFILESIZE="${HISTSIZE}"
 export HISTIGNORE='ls:history:cd:cd -:* --help: *:pwd:exit'
 export HISTCONTROL='ignoreboth:erasedups'
 
-# Case-insensitive globbing (used in pathname expansion)
-shopt -s nocaseglob
-# Append to the Bash history file, rather than overwriting it
-shopt -s histappend
-# Autocorrect typos in path names when using `cd`
-shopt -s cdspell
+shopt -s nocaseglob # case-insensitive globbing (used in pathname expansion)
+shopt -s histappend # append to the Bash history file, rather than overwriting it
+shopt -s cdspell    # autocorrect typos in path names when using `cd`
 
 ### Loading external scripts
 
 #|> Global definitions
-[ -f '/etc/bashrc' ] \
-  && source '/etc/bashrc'
+[ -f '/etc/bashrc' ] && source '/etc/bashrc'
 
 #|> Fuzzy Finder
 export FZF_BIN="${HOME}/.fzf.bash"
