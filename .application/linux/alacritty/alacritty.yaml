@@ -114,6 +114,9 @@ shell:
   program: /usr/bin/zsh
   args:
     - --login
+    - --interactive
+    - -c
+    - sx terminal tmux force-attach sphynx
 enable_experimental_conpty_backend: false
 alt_send_esc: true
 key_bindings:

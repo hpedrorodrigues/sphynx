@@ -36,7 +36,6 @@ font:
     y: 0
   use_thin_strokes: true
 draw_bold_text_with_bright_colors: true
-# https://colorhunt.co
 colors:
   primary:
     background: "#0b0b0d"
@@ -90,6 +89,9 @@ shell:
   program: /usr/local/bin/zsh
   args:
     - --login
+    - --interactive
+    - -c
+    - sx terminal tmux force-attach sphynx
 enable_experimental_conpty_backend: false
 alt_send_esc: true
 key_bindings:

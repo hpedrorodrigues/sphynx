@@ -47,6 +47,14 @@
     "**/vendor": true,
     "**/__pycache__": true
   },
+  "terminal.integrated.cursorStyle": "line",
+  "terminal.integrated.shell.osx": "/usr/local/bin/zsh",
+  "terminal.integrated.shellArgs.osx": [
+    "--login",
+    "--interactive",
+    "-c",
+    "sx terminal tmux force-attach 'vscode'"
+  ],
   "vsintellicode.modify.editor.suggestSelection": "choseToUpdateConfiguration",
   "window.zoomLevel": 0,
   "workbench.colorTheme": "Coldark - Dark",
