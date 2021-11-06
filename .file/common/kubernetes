@@ -270,8 +270,8 @@ function kdrs() {
     | xargs -I % sh -c '%'
 }
 
-# Kubernetes get node provider ID (for AWS is Availability Zone + Instance ID)
-# e.g. aws:///<availability-zone>/<instance-id>
+# Kubernetes get node provider ID (e.g. AWS uses Availability Zone + Instance ID,
+# aws:///<availability-zone>/<instance-id>)
 function kgnpid() {
   # shellcheck disable=SC2068  # Double quote array expansions
   kubectl get nodes \
