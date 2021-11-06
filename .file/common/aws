@@ -25,12 +25,12 @@ function aws-ssm() {
     --region "${region}"
 }
 
-## List instances available for ECS services matched by the given query
+## Search ECS services using the provided query
 ##
-## e.g. aws-ecs-list <my-service> <region>
+## e.g. aws-ecs-search <my-service> <region>
 ##
-## TODO: Refactor this function to remove chained-loops.
-function aws-ecs-list() {
+## TODO: Refactor this function to remove chained-loops
+function aws-ecs-search() {
   local -r func_name="${FUNCNAME[0]:-${funcstack[1]}}"
   local -r service_query="${1:-}"
   local -r region="${2:-us-east-1}"
