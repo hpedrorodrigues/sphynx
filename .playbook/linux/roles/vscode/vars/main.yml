@@ -11,13 +11,17 @@ vscode_extensions:
   - eamodio.gitlens
   - EditorConfig.EditorConfig
   - golang.go
+  - Gruntfuggly.todo-tree
   - hashicorp.terraform
   - ipedrazas.kubernetes-snippets
   - k--kato.intellij-idea-keybindings
+  - mads-hartmann.bash-ide-vscode
+  - mechatroner.rainbow-csv
   - ms-azuretools.vscode-docker
   - ms-kubernetes-tools.vscode-kubernetes-tools
   - naumovs.color-highlight
   - Nimda.deepdark-material
+  - qezhu.gitlink
   - redhat.vscode-yaml
   - streetsidesoftware.code-spell-checker
   - streetsidesoftware.code-spell-checker-portuguese-brazilian

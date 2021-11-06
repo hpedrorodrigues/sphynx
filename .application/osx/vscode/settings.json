@@ -1,10 +1,12 @@
 {
   "breadcrumbs.enabled": true,
+  "cSpell.language": "en,pt-BR",
   "editor.cursorBlinking": "phase",
   "editor.cursorSmoothCaretAnimation": true,
   "editor.cursorStyle": "line-thin",
   "editor.fontFamily": "Fira Code",
   "editor.fontLigatures": true,
+  "editor.insertSpaces": true,
   "editor.minimap.maxColumn": 100,
   "editor.minimap.renderCharacters": false,
   "editor.renderWhitespace": "all",
@@ -31,6 +33,10 @@
     "**/__pycache__": true
   },
   "files.trimTrailingWhitespace": true,
+  "go.autocompleteUnimportedPackages": true,
+  "go.enableCodeLens": true,
+  "go.toolsManagement.autoUpdate": true,
+  "redhat.telemetry.enabled": false,
   "search.exclude": {
     "**/.DS_Store": true,
     "**/.git": true,
@@ -42,23 +48,11 @@
     "**/__pycache__": true
   },
   "vsintellicode.modify.editor.suggestSelection": "choseToUpdateConfiguration",
-  "workbench.colorCustomizations": {
-    "[Material Theme Darker]": {
-      "list.activeSelectionForeground": "#dfe2e2",
-      "list.inactiveSelectionForeground": "#dfe2e2",
-      "sideBar.foreground": "#738598"
-    }
-  },
+  "window.zoomLevel": 0,
+  "workbench.colorTheme": "Coldark - Dark",
   "workbench.editor.enablePreview": false,
   "workbench.editor.highlightModifiedTabs": true,
+  "workbench.iconTheme": "deepdark-material-icons",
   "workbench.settings.enableNaturalLanguageSearch": false,
-  "workbench.welcome.enabled": false,
-  "window.zoomLevel": 0,
-  "go.autocompleteUnimportedPackages": true,
-  "go.enableCodeLens": true,
-  "cSpell.language": "en,pt-BR",
-  "redhat.telemetry.enabled": true,
-  "go.toolsManagement.autoUpdate": true,
-  "workbench.colorTheme": "Coldark - Dark",
-  "workbench.iconTheme": "deepdark-material-icons"
+  "workbench.welcome.enabled": false
 }
