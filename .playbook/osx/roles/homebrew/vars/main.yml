@@ -63,6 +63,7 @@ homebrew_packages:
   - ncdu
   - nmap
   - node
+  - nvm
   - openssh
   - pidcat
   - postgresql
@@ -103,9 +104,9 @@ homebrew_apps:
   - google-chrome
   - iina
   - jetbrains-toolbox
+  - licecap
   - meld
   - monitorcontrol
-  - nvm
   - pdfelement
   - postman
   - rectangle

@@ -59,8 +59,6 @@
   "cSpell.language": "en,pt-BR",
   "redhat.telemetry.enabled": true,
   "go.toolsManagement.autoUpdate": true,
-  "workbench.iconTheme": "deepdark-material-icons",
-  "workbench.colorTheme": "Dracula",
-  "workbench.preferredDarkColorTheme": "Dracula",
-  "workbench.preferredLightColorTheme": "Dracula"
+  "workbench.colorTheme": "Coldark - Dark",
+  "workbench.iconTheme": "deepdark-material-icons"
 }
