@@ -1,3 +1,3 @@
-sphynx_dir: '{{ playbook_dir }}/../..'
-applications_directory: '{{ sphynx_dir }}/.application'
-fonts_directory: '{{ sphynx_dir }}/.font'
+sphynx_dir: '{{ playbook_dir | dirname | dirname }}'
+applications_settings_dir: '{{ sphynx_dir }}/.application'
+fonts_dir: '{{ sphynx_dir }}/.font'

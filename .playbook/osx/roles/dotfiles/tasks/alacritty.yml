@@ -8,7 +8,7 @@
 
 - name: Installing Alacritty settings
   file:
-    src: "{{ applications_directory }}/osx/alacritty/alacritty.yaml"
+    src: "{{ applications_settings_dir }}/osx/alacritty/alacritty.yaml"
     dest: "{{ ansible_env.HOME }}/.config/alacritty/alacritty.yml"
     state: link
   when:

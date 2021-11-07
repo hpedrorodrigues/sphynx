@@ -3,4 +3,4 @@
     src: "{{ item }}"
     dest: "{{ ansible_env.HOME }}/Library/Fonts/{{ item | basename }}"
   with_items:
-    - "{{ lookup('fileglob', '{{ fonts_directory }}/firacode/otf/*.otf').split(',') }}"
+    - "{{ lookup('fileglob', '{{ fonts_dir }}/firacode/otf/*.otf').split(',') }}"
