@@ -37,7 +37,7 @@
   attributesfile = ~/.gitattributes
   autocrlf = input
   editor = vim
-  excludesfile = ~/.gitignore_global
+  excludesfile = ~/.gitignore
   ignorecase = false
   whitespace = fix,trailing-space
   pager = delta
