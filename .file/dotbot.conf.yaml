@@ -20,7 +20,6 @@
     ${HOME}/.gitattributes: ${SPHYNX_DIR}/.file/common/.gitattributes
     ${HOME}/.gitconfig: ${SPHYNX_DIR}/.file/common/.gitconfig
     ${HOME}/.gitignore_global: ${SPHYNX_DIR}/.file/common/.gitignore_global
-    ${HOME}/.htoprc: ${SPHYNX_DIR}/.file/common/.htoprc
     ${HOME}/.screenrc: ${SPHYNX_DIR}/.file/common/.screenrc
     ${HOME}/.tmux.conf: ${SPHYNX_DIR}/.file/common/.tmux.conf
     ${HOME}/.vimrc: ${SPHYNX_DIR}/.file/common/.vimrc
