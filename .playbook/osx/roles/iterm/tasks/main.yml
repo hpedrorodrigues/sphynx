@@ -34,3 +34,12 @@
     - Restart iTerm
   when:
     - iterm.stat.exists or new_iterm is successful
+
+- name: Configuring iTerm settings file symlink
+  file:
+    src: "{{ applications_settings_dir }}/osx/iTerm/com.googlecode.iterm2.plist"
+    dest: "{{ ansible_env.HOME }}/Library/Preferences/com.googlecode.iterm2.plist"
+    state: link
+    force: yes
+  when:
+    - not iterm.stat.exists or new_iterm is successful or (iterm.stat.islnk is defined and not iterm.stat.islnk)

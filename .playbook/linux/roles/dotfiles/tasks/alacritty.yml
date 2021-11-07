@@ -11,5 +11,6 @@
     src: "{{ applications_settings_dir }}/linux/alacritty/alacritty.yaml"
     dest: "{{ ansible_env.HOME }}/.config/alacritty/alacritty.yml"
     state: link
+    force: yes
   when:
-    - not alacritty.stat.exists
+    - not alacritty.stat.exists or (alacritty.stat.islnk is defined and not alacritty.stat.islnk)

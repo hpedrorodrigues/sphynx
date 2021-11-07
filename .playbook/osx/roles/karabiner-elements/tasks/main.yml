@@ -25,4 +25,4 @@
   notify:
     - Restart Karabiner
   when:
-    - karabiner.stat.exists or new_karabiner is successful
+    - not karabiner.stat.exists or new_karabiner is successful or (karabiner.stat.islnk is defined and not karabiner.stat.islnk)
