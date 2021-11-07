@@ -8,8 +8,9 @@
 
 - name: Installing Alacritty settings
   file:
-    src: "{{ applications_directory }}/osx/alacritty/alacritty.yaml"
+    src: "{{ applications_settings_dir }}/osx/alacritty/alacritty.yaml"
     dest: "{{ ansible_env.HOME }}/.config/alacritty/alacritty.yml"
     state: link
+    force: yes
   when:
-    - not alacritty.stat.exists
+    - not alacritty.stat.exists or (alacritty.stat.islnk is defined and not alacritty.stat.islnk)

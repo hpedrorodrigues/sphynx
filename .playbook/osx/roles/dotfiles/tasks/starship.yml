@@ -8,8 +8,9 @@
 
 - name: Installing Starship settings
   file:
-    src: "{{ applications_directory }}/common/starship/starship.toml"
+    src: "{{ applications_settings_dir }}/common/starship/starship.toml"
     dest: "{{ ansible_env.HOME }}/.config/starship/starship.toml"
     state: link
+    force: yes
   when:
-    - not starship.stat.exists
+    - not starship.stat.exists or (starship.stat.islnk is defined and not starship.stat.islnk)

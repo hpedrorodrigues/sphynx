@@ -8,8 +8,9 @@
 
 - name: Installing Rectangle settings
   file:
-    src: "{{ applications_directory }}/osx/rectangle/com.knollsoft.Rectangle.plist"
+    src: "{{ applications_settings_dir }}/osx/rectangle/com.knollsoft.Rectangle.plist"
     dest: "{{ ansible_env.HOME }}/Library/Preferences/com.knollsoft.Rectangle.plist"
     state: link
+    force: yes
   when:
-    - not rectangle.stat.exists
+    - not rectangle.stat.exists or (rectangle.stat.islnk is defined and not rectangle.stat.islnk)
