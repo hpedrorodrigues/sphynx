@@ -19,7 +19,6 @@
   "explorer.confirmDragAndDrop": false,
   "explorer.openEditors.visible": 0,
   "files.associations": {
-    ".gitignore_global": "ignore",
     ".gitsecrets": "properties"
   },
   "files.exclude": {
