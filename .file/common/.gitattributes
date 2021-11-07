@@ -1,4 +1,5 @@
 # Defines attributes per path
 # https://git-scm.com/docs/gitattributes
 
-* text=auto
+*       text=auto
+*.plist diff=plist
