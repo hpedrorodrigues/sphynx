@@ -22,7 +22,8 @@ function sx::k8s::topology() {
   local -r n_instances="$(echo "${instances}" | wc -l | tr -d ' ')"
 
   local instance_ips
-  # Reference: https://www.madboa.com/geek/sort-addr
+  # References:
+  # - https://www.madboa.com/geek/sort-addr
   readarray -t instance_ips < <(
     echo "${assignments}" | cut -d ',' -f 1 | sort -u -V
   )

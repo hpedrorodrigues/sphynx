@@ -1,36 +1,37 @@
 #!/usr/bin/env bash
 
-# Get week number
-alias week='date +%V'
-
 # Reload the shell (e.g. invoke as a login shell)
 alias reload='exec ${SHELL} -l'
 
-# Rerun last command with sudo
+# Rerun the last command with sudo
 alias please='sudo $(fc -ln -1)'
 
-# Flush DNS
-alias flush='sx system dns --flush'
-
-# Clear trash
-alias clear-trash='sx system clear-trash'
-
-# Get current network interface or protocol statistics
-alias traffic='netstat -w1'
-
-# Enable simplealiases to be sudo'ed. ("sudone"?)
-# http://www.gnu.org/software/bash/manual/bashref.html#Aliases says: "If the
-# last character of the alias value is a space or tab character, then the next
-# command word following the alias is also checked for alias expansion."
+# Allow aliases to be "sudoed".
+# http://www.gnu.org/software/bash/manual/bashref.html#Aliases
 #
-# Reference:
-# https://github.com/janmoesen/tilde/commit/805e8117fd0fb429055d280509e14be8427c226b
+# If the last character of the alias value is a blank, then the next command
+# word following the alias is also checked for alias expansion.
 alias sudo='sudo '
-# Using the same approach to make watch work with aliases
 alias watch='watch '
 
-# Docker Compose
+# Shortcut to list files
+alias l='ls -lash'
+
+# Shortcut for Docker Compose
 alias dc='docker-compose'
+
+# NVM
+# https://github.com/nvm-sh/nvm/issues/1277
+alias load_nvm='NVM_ENABLED=true reload'
+
+# Flush the DNS cache
+alias flush='sx system dns --flush'
+
+# Extract archive files
+alias extract='sx fs extract'
+
+# Empty the trash
+alias clear-trash='sx system clear-trash'
 
 # Docker
 alias dd='sx docker delete'
@@ -51,6 +52,60 @@ alias tfa='sx terminal tmux force-attach'
 alias pbcopy='sx system clipboard copy'
 alias pbpaste='sx system clipboard paste'
 
-# NVM
-# https://github.com/nvm-sh/nvm/issues/1277
-alias load_nvm='NVM_ENABLED=true reload'
+# Git & Github
+alias g='git'
+alias gs='git status'
+alias gst='git status'
+alias gba='git branch --all'
+
+alias gch='sx git check'
+alias gbc='sx git branch --clear'
+alias gbs='sx git branch --switch'
+
+alias email='sx github email'
+
+# Kubernetes
+alias k='kubectl'
+alias sk='kubectl --namespace kube-system'
+alias pk='kubectl --namespace kube-public'
+
+# e.g. kx pods.spec
+# e.g. kx deploy.spec.template.spec
+alias kx='kubectl explain'
+alias kxr='kubectl explain --recursive'
+
+# Kubernetes API Query
+# e.g. kq /apis
+# e.g. kq /healthz/etcd
+# e.g. kq /logs/kube-apiserver.log
+# e.g. kq /apis/metrics.k8s.io/v1beta1/nodes
+alias kq='kubectl get --raw'
+
+alias kk='kubectl krew'
+
+alias ks='sx kubernetes ls'
+alias kd='sx kubernetes describe'
+alias ke='sx kubernetes edit'
+alias kex='sx kubernetes exec'
+alias kg='sx kubernetes get'
+alias kl='sx kubernetes logs'
+alias kns='sx kubernetes namespace'
+alias ktx='sx kubernetes context'
+alias krs='sx kubernetes rollout status'
+alias krr='sx kubernetes rollout restart'
+alias krh='sx kubernetes rollout history'
+alias kpf='sx kubernetes port-forward'
+alias kto='sx kubernetes topology'
+
+alias ktc='kubectl top pods --sort-by=cpu --all-namespaces --use-protocol-buffers'
+alias ktm='kubectl top pods --sort-by=memory --all-namespaces --use-protocol-buffers'
+
+# Network
+alias dns='sx system dns --query'
+
+alias cert='sx security certificate --get --host'
+alias certsans='sx security certificate --sans --host'
+
+alias public_ip='sx system ip --public'
+alias private_ip='sx system ip --private'
+alias gateway_ip='sx system ip --gateway'

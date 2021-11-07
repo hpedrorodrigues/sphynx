@@ -19,7 +19,9 @@
   "explorer.confirmDragAndDrop": false,
   "explorer.openEditors.visible": 0,
   "files.associations": {
-    ".gitsecrets": "properties"
+    ".gitsecrets": "properties",
+    "*_zshrc": "shellscript",
+    "*_bashrc": "shellscript"
   },
   "files.exclude": {
     "**/.DS_Store": true,

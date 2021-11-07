@@ -26,68 +26,6 @@ function sha256() {
   sx security hash sha256 "${*}"
 }
 
-# Translation functions
-
-## Translate from English to Portuguese (Brazil)
-## https://github.com/soimort/translate-shell
-##
-## e.g. tle 'abysmal'
-function tle() {
-  # shellcheck disable=SC2068  # Double quote array expansions
-  trans en:pt ${@}
-}
-
-## Translate from English to Portuguese (Brazil) and listen to the original text
-## https://github.com/soimort/translate-shell
-##
-## e.g. tles 'atrocious'
-function tles() {
-  # shellcheck disable=SC2068  # Double quote array expansions
-  trans en:pt ${@} --speak
-}
-
-# Filesystem functions
-
-## Open files or URLs using the default pre-configured OS application
-##
-## e.g. o <filename>
-function o() {
-  sx system open "${*}"
-}
-
-## [Browser Open] Open files or URLs using the default browser
-##
-## e.g. bo <filename>
-function bo() {
-  sx browser open "${*}"
-}
-
-## Read .csv files and print their content in a tabular format
-##
-## e.g. csv <csv-file>
-function csv() {
-  local -r func_name="${FUNCNAME[0]:-${funcstack[1]}}"
-  local -r file_name="${1}"
-
-  if [ -z "${file_name}" ]; then
-    echo '!!! This function needs a file as first argument' >&2
-    echo "!!! e.g. ${func_name} test.csv" >&2
-    return 1
-  fi
-
-  if ! [ -f "${file_name}" ]; then
-    echo "!!! No such file \"${file_name}\"" >&2
-    return 1
-  fi
-
-  if ! [ -s "${file_name}" ]; then
-    echo "!!! Empty file \"${file_name}\"" >&2
-    return 1
-  fi
-
-  sed <"${file_name}" 's/"//g' | column -t -s ','
-}
-
 # Encoding/Decoding functions
 
 ## [Base64 Encode] Encode arguments or content in stdin using Base64 encoding
@@ -112,6 +50,26 @@ function d64() {
   else
     base64 --decode
   fi
+}
+
+## Decode a Json Web Token
+##
+## e.g. jwtd <json-web-token>
+function jwtd() {
+  local -r func_name="${FUNCNAME[0]:-${funcstack[1]}}"
+  local -r token="${1:-}"
+
+  if [ -z "${token}" ]; then
+    echo '!!! This function needs a json web token as an argument' >&2
+    echo "!!! e.g. ${func_name} '<json-web-token>'" >&2
+    return 1
+  fi
+
+  jq --raw-input 'split(".") | {
+    "header": (.[0] | @base64d | fromjson),
+    "payload": (.[1] | @base64d | fromjson),
+    "signature": .[2]
+  }' <<<"${token}"
 }
 
 # System Integration functions
@@ -223,14 +181,6 @@ function ram() {
 
 # Terminal Integration functions
 
-## Run commands in background ignoring its output (stdout and stderr)
-## https://github.com/thiagokokada/dotfiles/blob/ef2da95a322c648a59138f3624caaa86654ad191/zsh/.zshrc#L76
-##
-## e.g. runbg 'gitk'
-function runbg() {
-  "${@}" </dev/null &>/dev/null &
-}
-
 ## Switch the selected job running in background (when available) into the
 ## foreground
 ##
@@ -256,16 +206,6 @@ function loop() {
   watch "${SHELL} -i -c '${*}'"
 }
 
-## Remove ANSI color escape codes
-##
-## e.g. ts | decolorize
-function decolorize() {
-  sed -E $'s|\x1b\\[[0-\\?]*[ -/]*[@-~]||g;
-         s|\x1b[PX^_][^\x1b]*\x1b\\\\||g;
-         s:\x1b\\][^\x07]*(\x07|\x1b\\\\)::g;
-         s|\x1b[@-_]||g'
-}
-
 ## Format and display the on-line manual pages (but with colors)
 ##
 ## e.g. man 'ls'
@@ -279,61 +219,6 @@ function man() {
     LESS_TERMCAP_ue="$(printf "\e[0m")" \
     LESS_TERMCAP_us="$(printf "\e[1;32m")" \
     /usr/bin/man "${*}"
-}
-
-# English learning functions
-
-## Create a PNG image file with the meaning of a single provided word
-##
-## e.g. download_meaning 'steep'
-function download_meaning() {
-  local -r func_name="${FUNCNAME[0]:-${funcstack[1]}}"
-  local -r word="${1}"
-
-  if [ -z "${word}" ]; then
-    echo '!!! This function needs a word as first argument' >&2
-    echo "!!! e.g. ${func_name} struggle" >&2
-    return 1
-  fi
-
-  p2i \
-    --url "https://www.google.com/search?q=${word}+meaning" \
-    --selector '.lr_container' \
-    --filename "${word}.png"
-}
-
-## The same as {@download_meaning} but it reads the words from the provided file
-##
-## e.g. download_meaning_batch 'words.txt'
-function download_meaning_batch() {
-  local -r func_name="${FUNCNAME[0]:-${funcstack[1]}}"
-  local -r file_path="${1}"
-
-  if [ -z "${file_path}" ]; then
-    echo '!!! This function needs a file path as first argument' >&2
-    echo "!!! e.g. ${func_name} words.txt" >&2
-    return 1
-  fi
-
-  if ! [ -f "${file_path}" ]; then
-    echo "!!! No such file \"${file_path}\"" >&2
-    return 1
-  fi
-
-  if ! [ -s "${file_path}" ]; then
-    echo "!!! Empty file \"${file_path}\"" >&2
-    return 1
-  fi
-
-  local -r file_content="$(tr '[:upper:]' '[:lower:]' <"${file_path}" | sort -u)"
-  echo "${file_content}" | tee "${file_path}"
-  echo -e "\n> $(echo "${file_content}" | wc -l | tr -d ' ') words"
-
-  echo
-
-  while IFS= read -r word; do
-    download_meaning "${word}"
-  done <"${file_path}"
 }
 
 # Utility functions
@@ -382,7 +267,7 @@ function awslp() {
     return 1
   fi
 
-  if ! [ -f "${HOME}/.aws/config" ]; then
+  if ! [ -s "${HOME}/.aws/config" ]; then
     echo '!!! No such file: ~/.aws/config' >&2
     return 1
   fi
@@ -463,24 +348,4 @@ function j() {
 
   export JAVA_HOME="${new_version}"
   echo "JAVA_HOME=${JAVA_HOME}"
-}
-
-## Decode a Json Web Token
-##
-## e.g. jwtd <json-web-token>
-function jwtd() {
-  local -r func_name="${FUNCNAME[0]:-${funcstack[1]}}"
-  local -r token="${1:-}"
-
-  if [ -z "${token}" ]; then
-    echo '!!! This function needs a json web token as an argument' >&2
-    echo "!!! e.g. ${func_name} '<json-web-token>'" >&2
-    return 1
-  fi
-
-  jq --raw-input 'split(".") | {
-    "header": (.[0] | @base64d | fromjson),
-    "payload": (.[1] | @base64d | fromjson),
-    "signature": .[2]
-  }' <<<"${token}"
 }

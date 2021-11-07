@@ -1,51 +1,9 @@
 #!/usr/bin/env bash
 
-## Aliases
-
-alias k='kubectl'
-alias sk='kubectl --namespace kube-system'
-alias pk='kubectl --namespace kube-public'
-alias mk='kubectl --namespace monitoring'
-alias nlk='kubectl --namespace kube-node-lease'
-
-# e.g. kx pods.spec
-# e.g. kx deploy.spec.template.spec
-alias kx='kubectl explain'
-alias kxr='kubectl explain --recursive'
-
-# Kubernetes API Query
-# e.g. kq /apis
-# e.g. kq /healthz/etcd
-# e.g. kq /logs/kube-apiserver.log
-# e.g. kq /apis/metrics.k8s.io/v1beta1/nodes
-alias kq='kubectl get --raw'
-
-alias kk='kubectl krew'
-
-alias ks='sx kubernetes ls'
-alias kd='sx kubernetes describe'
-alias ke='sx kubernetes edit'
-alias kex='sx kubernetes exec'
-alias kg='sx kubernetes get'
-alias kl='sx kubernetes logs'
-alias kns='sx kubernetes namespace'
-alias ktx='sx kubernetes context'
-alias krs='sx kubernetes rollout status'
-alias krr='sx kubernetes rollout restart'
-alias krh='sx kubernetes rollout history'
-alias kpf='sx kubernetes port-forward'
-alias kto='sx kubernetes topology'
-
-alias ktc='kubectl top pods --sort-by=cpu --all-namespaces --use-protocol-buffers'
-alias ktm='kubectl top pods --sort-by=memory --all-namespaces --use-protocol-buffers'
-
-## Functions
-
-# Run a command in all namespaces
-function ka() {
-  kubectl "${@}" --all-namespaces
-}
-
+## Print pods along with their container images
+##
+## e.g. kimg
+## e.g. kimg -A
 function kimg() {
   # shellcheck disable=SC2016  # Expressions don't expand in single quotes, use double quotes for that
   local -r template='
@@ -72,6 +30,10 @@ function kimg() {
     | column -t -s ','
 }
 
+## Print pods highlighting their status
+##
+## e.g. kgp
+## e.g. kgp -A
 function kgp() {
   # shellcheck disable=SC2068  # Double quote array expansions
   kubectl get pods \
@@ -95,6 +57,9 @@ function kgp() {
     | GREP_COLOR='01;31' grep --color=always -E 'Evicted|$'
 }
 
+## Print nodes highlighting their status
+##
+## e.g. kgn
 function kgn() {
   # shellcheck disable=SC2068  # Double quote array expansions
   kubectl get nodes \
@@ -104,7 +69,9 @@ function kgn() {
     | GREP_COLOR='01;32' grep --color=always -E ' Ready|$'
 }
 
-# Kubernetes not running pods: print all pods not running
+## Print pods that are not running
+##
+## e.g. knr
 function knr() {
   # shellcheck disable=SC2068  # Double quote array expansions
   kubectl get pods \
@@ -113,7 +80,9 @@ function knr() {
     | grep -v 'Complete'
 }
 
-# Kubernetes node pods: print the number of pods running on each node
+## Print the number of pods running on each node
+##
+## e.g. knp
 function knp() {
   kubectl get pods \
     --output json \
@@ -124,7 +93,10 @@ function knp() {
     | sort_by(.count)'
 }
 
-# Kubernetes secret view: print secret's data decoded
+## [Kubernetes Secrets View] Print secret's data decoded
+##
+## e.g. ksv
+## e.g. ksv -A
 function ksv() {
   # shellcheck disable=SC2016  # Expressions don't expand in single quotes, use double quotes for that
   local -r template='
@@ -159,7 +131,10 @@ function ksv() {
     | column -t -s ','
 }
 
-# Kubernetes pod ips: print pod IPs
+## Print pods along with their IPs
+##
+## e.g. kpi
+## e.g. kpi -A
 function kpi() {
   # shellcheck disable=SC2068  # Double quote array expansions
   kubectl get pods \
@@ -167,7 +142,9 @@ function kpi() {
     --output 'custom-columns=POD:.metadata.name,IP:.status.podIPs[*].ip'
 }
 
-# Kubernetes debug: run an image to debug network issues
+## Run a pod in the current namespace to help troubleshoot network issues
+##
+## e.g. kdeb
 function kdeb() {
   local -r pod_name='debug'
   local -r pod_hash="$(uuidgen | cut -d '-' -f 1 | tr '[:upper:]' '[:lower:]')"
@@ -182,99 +159,4 @@ function kdeb() {
     --env 'SOURCE=sphynx' \
     --grace-period '1' \
     --image 'hpedrorodrigues/alien:debug'
-}
-
-# Access Kubernetes API-server using cURL and some service account credentials
-function kurl() {
-  local -r func_name="${FUNCNAME[0]:-${funcstack[1]}}"
-  local -r namespace="${1:-}"
-  local -r service_account="${2:-}"
-  local -r uri="${3:-}"
-
-  local -r env_file_path="/tmp/${namespace}-${service_account}-kurl.env"
-  local -r cert_file_path="/tmp/${namespace}-${service_account}-kurl-ca.crt"
-
-  if [ -z "${namespace}" ]; then
-    echo '!!! This function needs a namespace as first argument' >&2
-    echo "!!! e.g. ${func_name} 'kube-system' 'metrics-server' '/apis'" >&2
-    return 1
-  fi
-
-  if [ -z "${service_account}" ]; then
-    echo '!!! This function needs a service account as second argument' >&2
-    echo "!!! e.g. ${func_name} 'kube-system' 'metrics-server' '/apis'" >&2
-    return 1
-  fi
-
-  if [ -z "${uri}" ]; then
-    echo '!!! This function needs an URI as third argument' >&2
-    echo "!!! e.g. ${func_name} 'kube-system' 'metrics-server' '/apis'" >&2
-    return 1
-  fi
-
-  if [ -s "${env_file_path}" ] && [ -s "${cert_file_path}" ]; then
-    echo 'Using pre-defined configuration...'
-    source "${env_file_path}"
-  else
-    echo 'Retrieving secret name...'
-    local -r SECRET_NAME="$(
-      kubectl get serviceaccounts "${service_account}" \
-        --namespace "${namespace}" \
-        --output 'json' \
-        | jq --raw-output '.secrets[].name | select(contains("token"))'
-    )"
-    echo 'Retrieving secret content...'
-    local -r SECRET_CONTENT="$(
-      kubectl get secrets "${SECRET_NAME}" \
-        --namespace "${namespace}" \
-        --output 'json'
-    )"
-    echo 'Loading secret token...'
-    local -r TOKEN="$(
-      echo -e "${SECRET_CONTENT}" \
-        | jq --raw-output '.data.token' \
-        | base64 -d
-    )"
-    echo 'Saving secret certificate...'
-    echo -e "${SECRET_CONTENT}" \
-      | jq --raw-output '.data["ca.crt"]' \
-      | base64 -d >"${cert_file_path}"
-    echo 'Loading API-server address...'
-    local -r API_SERVER="$(
-      kubectl config view \
-        --minify \
-        --output jsonpath="{.clusters[*].cluster.server}"
-    )"
-    echo 'Saving configuration...'
-    echo -e "SECRET_NAME='${SECRET_NAME}'\nAPI_SERVER='${API_SERVER}'\nTOKEN='${TOKEN}'" \
-      >"${env_file_path}"
-  fi
-
-  echo -e 'Requesting...\n'
-  curl "${API_SERVER}${uri}" \
-    --silent \
-    --header "Authorization: Bearer ${TOKEN}" \
-    --header "User-Agent: kurl/sphynx ($(uname))" \
-    --cacert "${cert_file_path}" \
-    | yq --prettyPrint --colors 'eval'
-}
-
-# Kubernetes delete replicasets: remove replicasets not being used
-# Based on https://github.com/kubernetes/kubernetes/issues/24330#issuecomment-265750353
-function kdrs() {
-  # shellcheck disable=SC2068  # Double quote array expansions
-  kubectl get replicasets \
-    ${@} \
-    --output json \
-    | jq -r '.items[] | select(.spec.replicas | contains(0)) | "kubectl delete rs -n \(.metadata.namespace) \(.metadata.name)"' \
-    | xargs -I % sh -c '%'
-}
-
-# Kubernetes get node provider ID (e.g. AWS uses Availability Zone + Instance ID,
-# aws:///<availability-zone>/<instance-id>)
-function kgnpid() {
-  # shellcheck disable=SC2068  # Double quote array expansions
-  kubectl get nodes \
-    ${@} \
-    --output 'custom-columns=NAME:.metadata.name,PROVIDER ID:.spec.providerID'
 }

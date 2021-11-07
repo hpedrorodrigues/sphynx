@@ -2,7 +2,7 @@
 
 # External images
 
-export CONFLUENT_VERSION=${CONFLUENT_VERSION:-6.2.0}
+export CONFLUENT_VERSION=${CONFLUENT_VERSION:-7.0.0}
 
 ## Kafka CLI (https://kafka.apache.org)
 ##
@@ -16,8 +16,8 @@ function kcli() {
     docker inspect --format '{{.State.Running}}' "${tool_name}" 2>/dev/null
   )"
   if [ "${state}" = 'true' ]; then
-    docker exec --interactive --tty "${tool_name}" "${@}"
-    return 0
+    echo >&2 "There's already an instance of \"${tool_name}\" running."
+    return 1
   fi
 
   docker run \
@@ -39,12 +39,18 @@ function prettier() {
   local -r tool_name="${FUNCNAME[0]:-${funcstack[1]}}"
   local -r image="${ALIEN_REPOSITORY}:${tool_name}"
 
+  if ! type "${tool_name}" | grep 'is a function\|is aliased to' -q 2>/dev/null; then
+    # shellcheck disable=SC2068  # Double quote array expansions
+    command ${tool_name} ${@}
+    return ${?}
+  fi
+
   local -r state="$(
     docker inspect --format '{{.State.Running}}' "${tool_name}" 2>/dev/null
   )"
   if [ "${state}" = 'true' ]; then
-    docker exec --interactive --tty "${tool_name}" "${@}"
-    return 0
+    echo >&2 "There's already an instance of \"${tool_name}\" running."
+    return 1
   fi
 
   docker run \
@@ -62,12 +68,18 @@ function hadolint() {
   local -r tool_name="${FUNCNAME[0]:-${funcstack[1]}}"
   local -r image="${ALIEN_REPOSITORY}:${tool_name}"
 
+  if ! type "${tool_name}" | grep 'is a function\|is aliased to' -q 2>/dev/null; then
+    # shellcheck disable=SC2068  # Double quote array expansions
+    command ${tool_name} ${@}
+    return ${?}
+  fi
+
   local -r state="$(
     docker inspect --format '{{.State.Running}}' "${tool_name}" 2>/dev/null
   )"
   if [ "${state}" = 'true' ]; then
-    docker exec --interactive --tty "${tool_name}" "${@}"
-    return 0
+    echo >&2 "There's already an instance of \"${tool_name}\" running."
+    return 1
   fi
 
   docker run \
@@ -85,12 +97,18 @@ function shellcheck() {
   local -r tool_name="${FUNCNAME[0]:-${funcstack[1]}}"
   local -r image="${ALIEN_REPOSITORY}:${tool_name}"
 
+  if ! type "${tool_name}" | grep 'is a function\|is aliased to' -q 2>/dev/null; then
+    # shellcheck disable=SC2068  # Double quote array expansions
+    command ${tool_name} ${@}
+    return ${?}
+  fi
+
   local -r state="$(
     docker inspect --format '{{.State.Running}}' "${tool_name}" 2>/dev/null
   )"
   if [ "${state}" = 'true' ]; then
-    docker exec --interactive --tty "${tool_name}" "${@}"
-    return 0
+    echo >&2 "There's already an instance of \"${tool_name}\" running."
+    return 1
   fi
 
   docker run \
@@ -109,12 +127,18 @@ function shfmt() {
   local -r tool_name="${FUNCNAME[0]:-${funcstack[1]}}"
   local -r image="${ALIEN_REPOSITORY}:${tool_name}"
 
+  if ! type "${tool_name}" | grep 'is a function\|is aliased to' -q 2>/dev/null; then
+    # shellcheck disable=SC2068  # Double quote array expansions
+    command ${tool_name} -i 2 -ci -bn ${@}
+    return ${?}
+  fi
+
   local -r state="$(
     docker inspect --format '{{.State.Running}}' "${tool_name}" 2>/dev/null
   )"
   if [ "${state}" = 'true' ]; then
-    docker exec --interactive --tty "${tool_name}" -i 2 -ci -bn "${@}"
-    return 0
+    echo >&2 "There's already an instance of \"${tool_name}\" running."
+    return 1
   fi
 
   docker run \
@@ -142,8 +166,8 @@ function p2i() {
     docker inspect --format '{{.State.Running}}' "${tool_name}" 2>/dev/null
   )"
   if [ "${state}" = 'true' ]; then
-    docker exec --tty "${tool_name}" "${@}"
-    return 0
+    echo >&2 "There's already an instance of \"${tool_name}\" running."
+    return 1
   fi
 
   docker run \

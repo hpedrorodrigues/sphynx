@@ -25,11 +25,11 @@ function aws-ssm() {
     --region "${region}"
 }
 
-## Search ECS services using the provided query
+## Search for ECS services using the provided query
 ##
 ## e.g. aws-ecs-search <my-service> <region>
 ##
-## TODO: Refactor this function to remove chained-loops
+## TODO: Refactor this function to remove the chained loops
 function aws-ecs-search() {
   local -r func_name="${FUNCNAME[0]:-${funcstack[1]}}"
   local -r service_query="${1:-}"
