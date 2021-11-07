@@ -62,5 +62,6 @@
   "workbench.editor.highlightModifiedTabs": true,
   "workbench.iconTheme": "deepdark-material-icons",
   "workbench.settings.enableNaturalLanguageSearch": false,
-  "workbench.welcome.enabled": false
+  "workbench.welcome.enabled": false,
+  "cSpell.userWords": ["kubernetes", "sphynx"]
 }
