@@ -19,18 +19,18 @@ readonly DOTFILES_DIR="${HOME}/.sphynx"
 
 readonly DOTFILES=(
   # Common
-  "${DOTFILES_DIR}/kubernetes"
-  "${DOTFILES_DIR}/alien"
-  "${DOTFILES_DIR}/aws"
-  "${DOTFILES_DIR}/git"
-  "${DOTFILES_DIR}/network"
-  "${DOTFILES_DIR}/common_functions"
-  "${DOTFILES_DIR}/common_aliases"
-  "${DOTFILES_DIR}/aliases"
-  "${DOTFILES_DIR}/fs"
+  "${DOTFILES_DIR}/aliases.sh"
+  "${DOTFILES_DIR}/os_aliases.sh"
+  "${DOTFILES_DIR}/alien.sh"
+  "${DOTFILES_DIR}/aws.sh"
+  "${DOTFILES_DIR}/common.sh"
+  "${DOTFILES_DIR}/filesystem.sh"
+  "${DOTFILES_DIR}/git.sh"
+  "${DOTFILES_DIR}/kubernetes.sh"
+  "${DOTFILES_DIR}/network.sh"
 
   # Secrets
-  "${DOTFILES_DIR}/personal"
+  "${DOTFILES_DIR}/secrets.sh"
 
   # Descartes
   "${HOME}/.descartesrc"

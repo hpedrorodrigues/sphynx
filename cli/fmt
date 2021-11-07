@@ -5,7 +5,7 @@ set -o nounset
 set -o pipefail
 
 source "${SPHYNXC_DIR}/.internal/all.sh"
-source "${SPHYNX_DIR}/.file/common/alien"
+source "${SPHYNX_DIR}/.file/common/scripts/alien.sh"
 
 ##? Run formatters
 ##?
