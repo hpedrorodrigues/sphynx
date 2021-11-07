@@ -12,7 +12,7 @@ function sx::library::tmux::check_requirements() {
 }
 
 function sx::library::tmux::is_running_session() {
-  [ -n "${TMUX:-}" ]
+  [ -n "${TMUX:-}" ] && [ "${TERM_PROGRAM:-}" = 'tmux' ]
 }
 
 function sx::library::tmux::has_session() {
