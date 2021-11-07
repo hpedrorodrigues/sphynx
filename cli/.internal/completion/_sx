@@ -1,7 +1,6 @@
 #compdef sx
 
 # References:
-#
 # - http://zsh.sourceforge.net/Doc/Release/Completion-System.html
 # - https://github.com/zsh-users/zsh/blob/master/Completion/bashcompinit
 

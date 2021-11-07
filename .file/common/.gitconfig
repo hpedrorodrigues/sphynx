@@ -1,7 +1,9 @@
+# References:
+# - https://github.com/mathiasbynens/dotfiles/blob/main/.gitconfig
+
 [include]
   path = ~/.gitsecrets
 [alias]
-  ## References: https://github.com/mathiasbynens/dotfiles/blob/main/.gitconfig
   # List aliases
   aliases = config --get-regexp alias
   # Interactive rebase with the given number of latest commits.

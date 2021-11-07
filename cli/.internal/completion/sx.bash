@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
 # References:
-#
 # - https://devmanual.gentoo.org/tasks-reference/completion/index.html
 # - https://debian-administration.org/article/316/An_introduction_to_bash_completion_part_1
 # - https://debian-administration.org/article/317/An_introduction_to_bash_completion_part_2

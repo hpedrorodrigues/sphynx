@@ -1,4 +1,4 @@
-# Reference:
+# References:
 # - https://github.com/puppeteer/puppeteer/blob/master/docs/troubleshooting.md#running-puppeteer-in-docker
 FROM node:lts-alpine3.14
 

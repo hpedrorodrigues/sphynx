@@ -8,7 +8,8 @@ function sx::osx::airport() {
   fi
 }
 
-# Reference: http://blog.macromates.com/2006/keychain-access-from-shell/
+# References:
+# - http://blog.macromates.com/2006/keychain-access-from-shell
 function sx::osx::keychain_pass() {
   local -r account="${1:-}"
 

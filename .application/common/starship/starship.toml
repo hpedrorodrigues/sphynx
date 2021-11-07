@@ -19,12 +19,12 @@ $character
 
 [username]
 show_always = true
-format = "[$user]($style)"
+format = "╭─[$user]($style)"
 style_user = "bold white"
 
 [hostname]
 ssh_only = false
-format = "@[$hostname]($style) "
+format = "@[$hostname]($style) ɸ "
 style = "white"
 
 [directory]

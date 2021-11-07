@@ -27,6 +27,7 @@ readonly DOTFILES=(
   "${DOTFILES_DIR}/filesystem.sh"
   "${DOTFILES_DIR}/git.sh"
   "${DOTFILES_DIR}/kubernetes.sh"
+  "${DOTFILES_DIR}/learning.sh"
   "${DOTFILES_DIR}/network.sh"
 
   # Secrets

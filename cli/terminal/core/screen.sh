@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC2128
 # shellcheck disable=SC2178
-# Reference: https://github.com/koalaman/shellcheck/wiki/SC2128#bugs
+# References:
+# - https://github.com/koalaman/shellcheck/wiki/SC2128#bugs
 
 export SX_SCREEN_SESSION_NAME_PREFIX="${SX_SCREEN_SESSION_NAME_PREFIX:-sphynx}"
 

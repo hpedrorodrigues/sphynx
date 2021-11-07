@@ -1,23 +1,15 @@
 #!/usr/bin/env bash
 
-alias dns='sx system dns --query'
-
-alias cert='sx security certificate --get --host'
-alias certsans='sx security certificate --sans --host'
-
-alias public_ip='sx system ip --public'
-alias private_ip='sx system ip --private'
-alias gateway_ip='sx system ip --gateway'
-
-function akamai() {
-  curl \
-    -I \
-    -H 'Pragma: akamai-x-cache-on, akamai-x-cache-remote-on, akamai-x-check-cacheable, akamai-x-get-cache-key, akamai-x-get-extracted-values, akamai-x-get-nonces, akamai-x-get-ssl-client-session-id, akamai-x-get-true-cache-key, akamai-x-serial-no' \
-    "${@}"
-}
-
-# Reference: https://stackoverflow.com/a/22625150/3691240
+## Like cURL but only prints timing details
+##
+## e.g. curltime google.com
+##
+## References:
+## - https://blog.josephscott.org/2011/10/14/timing-details-with-curl
+## - https://curl.se/docs/manpage.html
+## - https://stackoverflow.com/a/22625150/3691240
 function curltime() {
+  local -r tool_name="${FUNCNAME[0]:-${funcstack[1]}}"
   local -r template="$(
     cat <<EOF
 \n
@@ -27,7 +19,7 @@ function curltime() {
      Pre-file-transfer time: %{time_pretransfer}\n
               Redirect time: %{time_redirect}\n
          Time to first byte: %{time_starttransfer}\n
-              HTTP/FTP Code: %{http_code}\n
+                  HTTP Code: %{http_code}\n
                      -------\n
                  Total time: %{time_total}\n\n\n
 
@@ -38,14 +30,18 @@ EOF
   curl \
     --silent \
     --header "Authorization: Bearer ${TOKEN}" \
-    --header "User-Agent: curltime/sphynx ($(uname))" \
+    --header "User-Agent: sphynx/${tool_name}" \
     --write-out @- \
     --output /dev/null \
     "${@}" <<<"${template}"
 }
 
-# Reference:
-# - https://prometheus.io/docs/prometheus/latest/querying/api
+## Run a query against a Prometheus API address
+##
+## e.g. promql 'http://localhost:9090' 'avg(up) by (job)'
+##
+## References:
+## - https://prometheus.io/docs/prometheus/latest/querying/api
 function promql() {
   local -r func_name="${FUNCNAME[0]:-${funcstack[1]}}"
   local -r server="${1}"

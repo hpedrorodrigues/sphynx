@@ -19,7 +19,8 @@ export HISTFILE="${HOME}/.zsh_history"
 export HISTORY_IGNORE='(ls|history|cd|cd -|* --help|* --version| *|pwd|exit)'
 
 ### Zsh completions
-# Reference: https://github.com/ohmyzsh/ohmyzsh/blob/master/lib/completion.zsh
+# References:
+# - https://github.com/ohmyzsh/ohmyzsh/blob/master/lib/completion.zsh
 
 zmodload -i zsh/complist
 
@@ -79,6 +80,7 @@ fi
 ### Directory shortcuts
 
 # e.g. cd ~p/sphynx
-# Reference: http://zsh.sourceforge.net/Guide
+# References:
+# - http://zsh.sourceforge.net/Guide
 hash -d p="${HOME}/Code/Personal"
 hash -d o="${HOME}/Code/Others"

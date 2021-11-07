@@ -1,30 +1,18 @@
 #!/usr/bin/env bash
 
-## Aliases
-
-alias g='git'
-alias gi='git'
-
-alias gs='git status'
-alias gst='git status'
-alias gba='git branch --all'
-
-alias gch='sx git check'
-
-alias gbc='sx git branch --clear'
-alias gbs='sx git branch --switch'
-
-alias email='sx github email'
-
-# Go to the root folder of a git repository
-alias goroot='cd $(git rev-parse --show-toplevel)'
-
-## Functions
-
+## Open git repositories/files on browser
+##
+## e.g. repo
+## e.g. repo <path-to-file>
+##
+## Note: Use "sx git open --help" or "repo --help" for more details
 function repo() {
   sx git open "${*}"
 }
 
+## Incorporates changes from a remote repository using the current branch as reference
+##
+## e.g. ggpull
 function ggpull() {
   local -r current_branch="$(git rev-parse --abbrev-ref HEAD 2>/dev/null)"
 
@@ -36,6 +24,9 @@ function ggpull() {
   git pull origin "${current_branch}" "${@}"
 }
 
+## Updates remote refs using local refs
+##
+## e.g. ggpush
 function ggpush() {
   local -r current_branch="$(git rev-parse --abbrev-ref HEAD 2>/dev/null)"
 
@@ -47,6 +38,9 @@ function ggpush() {
   git push origin "${current_branch}" "${@}"
 }
 
+## [Git Update] Fetch for remote changes and apply them into the current branch
+##
+## e.g. gu
 function gu() {
   local -r current_branch="$(git rev-parse --abbrev-ref HEAD 2>/dev/null)"
 
