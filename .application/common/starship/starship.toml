@@ -19,52 +19,54 @@ $character
 
 [username]
 show_always = true
-style_user = "bold white"
 format = "[$user]($style)"
+style_user = "bold white"
 
 [hostname]
 ssh_only = false
-style = "white"
 format = "@[$hostname]($style) "
-
-[kubernetes]
-disabled = false
-symbol = "☀ "
-style = "fg:#8be9fd"
-format = "[$symbol$context(\\($namespace\\))]($style) "
+style = "white"
 
 [directory]
 truncation_length = 7
 truncate_to_repo = false
+truncation_symbol = "…/"
 style = "bold white"
 
 [git_branch]
-style = "fg:#50fa7b"
 format = "[$symbol$branch]($style) "
+style = "fg:#50fa7b"
 
 [git_commit]
 commit_hash_length = 5
-style = "fg:#50fa7b"
 only_detached = false
+style = "fg:#50fa7b"
 
 [git_status]
 style = "fg:#50fa7b"
 
+[kubernetes]
+disabled = false
+symbol = "☀ "
+format = "[$symbol$context(\\($namespace\\))]($style) "
+style = "fg:#8be9fd"
+
 [aws]
 symbol = "❄ "
-style = "fg:#bd93f9"
 format = "[$symbol$profile(\\($region\\))]($style) "
+style = "fg:#bd93f9"
 
 [gcloud]
 symbol = "☸ "
-style = "fg:#ffb86c"
 format = "[$symbol$project(\\($region\\))]($style) "
+style = "fg:#ffb86c"
 
 [cmd_duration]
 min_time = 5_000
-style = "bright-red"
 format = "[$duration]($style) "
+style = "bright-red"
 
 [character]
 success_symbol = "[♪](bold green)"
 error_symbol = "[✗](bold red)"
+vicmd_symbol = "[ⓥ](bold yellow)"
