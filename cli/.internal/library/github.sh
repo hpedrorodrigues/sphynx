@@ -49,7 +49,9 @@ function sx::github::detect_api() {
     sx::github::api "${@}"
   elif [[ "${full_url}" == "${GITHUB_BROWSER_API_URL}"* ]]; then
     sx::github::browser_api "${@}"
-  else
+  elif [[ "${full_url}" == "${GITHUB_CONTENT_API_URL}"* ]]; then
     sx::github::content_api "${@}"
+  else
+    sx::log::fatal 'Cannot determine the Github API'
   fi
 }
