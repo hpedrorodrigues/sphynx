@@ -126,6 +126,15 @@ function bo() {
   sx browser open "${*}"
 }
 
+## Extract content of compressed files
+##
+## e.g. extract <path-to-compressed-file>
+## e.g. extract test.tar.gz
+## e.g. extract test.zip
+function extract() {
+  sx fs extract "${*}"
+}
+
 ## Read .csv files and print their content in a tabular format
 ##
 ## e.g. csv <csv-file>

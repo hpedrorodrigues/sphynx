@@ -37,3 +37,19 @@ function sx::github::content_api() {
     --header "Authorization: token ${GITHUB_TOKEN}" \
     "${GITHUB_CONTENT_API_URL}${parameters}"
 }
+
+function sx::github::detect_api() {
+  local -r full_url="${1:-}"
+
+  if [ -z "${full_url}" ]; then
+    sx::log::fatal 'This function needs an URL as first argument'
+  fi
+
+  if [[ "${full_url}" == "${GITHUB_API_URL}"* ]]; then
+    sx::github::api "${@}"
+  elif [[ "${full_url}" == "${GITHUB_BROWSER_API_URL}"* ]]; then
+    sx::github::browser_api "${@}"
+  else
+    sx::github::content_api "${@}"
+  fi
+}

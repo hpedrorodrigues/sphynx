@@ -15,7 +15,7 @@ function sx::fs::extract() {
     sx::log::fatal 'No such file'
   fi
 
-  local -r directory_name="${compressed_file%%.*}"
+  local -r directory_name="${compressed_file}_extracted"
 
   mkdir -p "${directory_name}" \
     && cd "${directory_name}" \
