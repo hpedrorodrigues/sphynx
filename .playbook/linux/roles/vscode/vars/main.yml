@@ -11,7 +11,6 @@ vscode_extensions:
   - eamodio.gitlens
   - EditorConfig.EditorConfig
   - golang.go
-  - Gruntfuggly.todo-tree
   - hashicorp.terraform
   - ipedrazas.kubernetes-snippets
   - k--kato.intellij-idea-keybindings

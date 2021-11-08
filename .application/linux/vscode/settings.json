@@ -1,12 +1,14 @@
 {
   "breadcrumbs.enabled": true,
   "cSpell.language": "en,pt-BR",
+  "cSpell.userWords": ["kubernetes", "sphynx"],
   "editor.cursorBlinking": "phase",
   "editor.cursorSmoothCaretAnimation": true,
   "editor.cursorStyle": "line-thin",
   "editor.fontFamily": "Fira Code",
   "editor.fontLigatures": true,
   "editor.insertSpaces": true,
+  "editor.minimap.enabled": false,
   "editor.minimap.maxColumn": 100,
   "editor.minimap.renderCharacters": false,
   "editor.renderWhitespace": "all",
@@ -32,6 +34,7 @@
     "**/vendor": true,
     "**/__pycache__": true
   },
+  "files.restoreUndoStack": false,
   "files.trimTrailingWhitespace": true,
   "go.autocompleteUnimportedPackages": true,
   "go.enableCodeLens": true,
@@ -46,6 +49,7 @@
     "**/vendor": true,
     "**/__pycache__": true
   },
+  "telemetry.telemetryLevel": "off",
   "terminal.integrated.cursorStyle": "line",
   "terminal.integrated.shell.linux": "/usr/bin/zsh",
   "terminal.integrated.shellArgs.linux": [
@@ -59,7 +63,9 @@
   "workbench.colorTheme": "Coldark - Dark",
   "workbench.editor.enablePreview": false,
   "workbench.editor.highlightModifiedTabs": true,
+  "workbench.editor.restoreViewState": false,
   "workbench.iconTheme": "deepdark-material-icons",
   "workbench.settings.enableNaturalLanguageSearch": false,
+  "workbench.startupEditor": "none",
   "workbench.welcome.enabled": false
 }
