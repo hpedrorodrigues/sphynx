@@ -8,17 +8,18 @@ source "${SPHYNXC_DIR}/.internal/all.sh"
 source "${SPHYNXN_DIR}/shared/shared.sh"
 source "${SPHYNXN_DIR}/core/release.sh"
 
-##? Handle Github releases
+##? Manage Github releases
 ##?
 ##? Usage:
 ##?     release <username> <project-name> (--list | --download-latest-assets)
 ##?
 ##? Options:
 ##?     -l --list  List last 30 available releases
-##?     -d --download-latest-assets  Download assets from last release
+##?     -d --download-latest-assets  Download assets from the last release
 ##?
 ##? Examples:
-##?     release kubernetes kubernetes -l
+##?     release kubernetes kubernetes --list
+##?     release kubernetes kubernetes --download-latest-assets
 
 sx::parse_arguments "${@}"
 

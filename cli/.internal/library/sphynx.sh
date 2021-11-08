@@ -43,12 +43,10 @@ function sx::parse_arguments() {
 
     sx::log::fatal 'No such file'
   elif [[ ${*} == *'--github'* ]]; then
-    sx::require_env 'GITHUB_USER'
-
     local -r file_dir="$(dirname "${script_file}")"
     local -r file_name="$(basename "${script_file}")"
     local -r branch="$(cd "${SPHYNX_DIR}" && sx::git::current_branch)"
-    local -r base_url="${GITHUB_BROWSER_API_URL}${GITHUB_USER}/sphynx/blob/${branch:-main}/${sphynxd}"
+    local -r base_url="${GITHUB_BROWSER_API_URL}hpedrorodrigues/sphynx/blob/${branch:-main}/${sphynxd}"
 
     if [[ ${file_dir} == *"${sphynxd}" ]]; then
       local -r url="${base_url}/${file_name}"
