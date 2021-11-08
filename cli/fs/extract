@@ -8,7 +8,7 @@ source "${SPHYNXC_DIR}/.internal/all.sh"
 source "${SPHYNXN_DIR}/shared/shared.sh"
 source "${SPHYNXN_DIR}/core/extract.sh"
 
-##? Uncompress files
+##? Extract bundled or compressed files
 ##?
 ##? Usage:
 ##?     extract <file_path>

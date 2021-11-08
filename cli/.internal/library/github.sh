@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-export GITHUB_USER="${GITHUB_USER:-hpedrorodrigues}"
-
 export GITHUB_API_URL='https://api.github.com/'
 export GITHUB_BROWSER_API_URL='https://github.com/'
 export GITHUB_CONTENT_API_URL='https://raw.githubusercontent.com/'

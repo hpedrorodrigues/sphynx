@@ -14,7 +14,7 @@ source "${SPHYNXN_DIR}/core/email.sh"
 ##?     email <username>
 ##?
 ##? Examples:
-##?     email hpedrorodrigues
+##?     email octocat
 
 sx::parse_arguments "${@}"
 
