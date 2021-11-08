@@ -27,9 +27,6 @@ alias load_nvm='NVM_ENABLED=true reload'
 # Flush the DNS cache
 alias flush='sx system dns --flush'
 
-# Extract archive files
-alias extract='sx fs extract'
-
 # Empty the trash
 alias clear-trash='sx system clear-trash'
 

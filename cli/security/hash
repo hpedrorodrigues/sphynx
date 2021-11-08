@@ -11,7 +11,7 @@ source "${SPHYNXN_DIR}/core/hash.sh"
 ##? Run hashing algorithms against files
 ##?
 ##? Usage:
-##?     hash (md5 | sha1 | sha256) [<filename>]
+##?     hash (md5 | sha1 | sha256) [<filenames>...]
 ##?
 ##? Examples:
 ##?     hash md5 'example.tar.gz'
@@ -20,12 +20,13 @@ source "${SPHYNXN_DIR}/core/hash.sh"
 
 sx::parse_arguments "${@}"
 
+# shellcheck disable=SC2068  # Double quote array expansions
 if ${md5:-false}; then
-  sx::security::hash::md5 "${filename:-}"
+  sx::security::hash::md5 ${filenames[@]:-}
 elif ${sha1:-false}; then
-  sx::security::hash::sha1 "${filename:-}"
+  sx::security::hash::sha1 ${filenames[@]:-}
 elif ${sha256:-false}; then
-  sx::security::hash::sha256 "${filename:-}"
+  sx::security::hash::sha256 ${filenames[@]:-}
 else
   sx::error::illegal_arguments "${*}"
 fi
