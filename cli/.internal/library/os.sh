@@ -40,19 +40,27 @@ function sx::os::browser::open() {
     exec "${BROWSER}" "${*}" &>/dev/null
   fi
 
-  local -r browser_commands=(
-    'x-www-browser'
-    'www-browser'
-    'gnome-www-browser'
-    'sensible-browser'
-  )
+  if sx::os::is_linux; then
+    local -r browser_commands=(
+      'x-www-browser'
+      'www-browser'
+      'gnome-www-browser'
+      'sensible-browser'
+    )
 
-  for browser_command in "${browser_commands[@]}"; do
-    if sx::os::is_command_available "${browser_command}"; then
-      command "${browser_command}" "${*}" &>/dev/null &
+    for browser_command in "${browser_commands[@]}"; do
+      if sx::os::is_command_available "${browser_command}"; then
+        command "${browser_command}" "${*}" &>/dev/null &
+        return 0
+      fi
+    done
+  elif sx::os::is_osx; then
+    local -r browser_application="$(sx::osx::default_browser_application)"
+    if [ -n "${browser_application}" ]; then
+      open -a "${browser_application}" "${*}"
       return 0
     fi
-  done
+  fi
 
   sx::os::open "${*}"
 }

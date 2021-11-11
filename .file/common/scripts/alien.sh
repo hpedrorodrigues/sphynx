@@ -39,8 +39,10 @@ function prettier() {
   local -r tool_name="${FUNCNAME[0]:-${funcstack[1]}}"
   local -r image="${ALIEN_REPOSITORY}:${tool_name}"
 
-  if ! type "${tool_name}" | grep 'is a function\|is aliased to' -q 2>/dev/null; then
+  if { [ -n "${ZSH_VERSION:-}" ] && whence -cp "${tool_name}" &>/dev/null; } \
+    || { type -P "${tool_name}" &>/dev/null; }; then
     # shellcheck disable=SC2068  # Double quote array expansions
+    # shellcheck disable=SC2086  # quote this to prevent word splitting
     command ${tool_name} ${@}
     return ${?}
   fi
@@ -68,8 +70,10 @@ function hadolint() {
   local -r tool_name="${FUNCNAME[0]:-${funcstack[1]}}"
   local -r image="${ALIEN_REPOSITORY}:${tool_name}"
 
-  if ! type "${tool_name}" | grep 'is a function\|is aliased to' -q 2>/dev/null; then
+  if { [ -n "${ZSH_VERSION:-}" ] && whence -cp "${tool_name}" &>/dev/null; } \
+    || { type -P "${tool_name}" &>/dev/null; }; then
     # shellcheck disable=SC2068  # Double quote array expansions
+    # shellcheck disable=SC2086  # quote this to prevent word splitting
     command ${tool_name} ${@}
     return ${?}
   fi
@@ -97,8 +101,10 @@ function shellcheck() {
   local -r tool_name="${FUNCNAME[0]:-${funcstack[1]}}"
   local -r image="${ALIEN_REPOSITORY}:${tool_name}"
 
-  if ! type "${tool_name}" | grep 'is a function\|is aliased to' -q 2>/dev/null; then
+  if { [ -n "${ZSH_VERSION:-}" ] && whence -cp "${tool_name}" &>/dev/null; } \
+    || { type -P "${tool_name}" &>/dev/null; }; then
     # shellcheck disable=SC2068  # Double quote array expansions
+    # shellcheck disable=SC2086  # quote this to prevent word splitting
     command ${tool_name} ${@}
     return ${?}
   fi
@@ -127,8 +133,10 @@ function shfmt() {
   local -r tool_name="${FUNCNAME[0]:-${funcstack[1]}}"
   local -r image="${ALIEN_REPOSITORY}:${tool_name}"
 
-  if ! type "${tool_name}" | grep 'is a function\|is aliased to' -q 2>/dev/null; then
+  if { [ -n "${ZSH_VERSION:-}" ] && whence -cp "${tool_name}" &>/dev/null; } \
+    || { type -P "${tool_name}" &>/dev/null; }; then
     # shellcheck disable=SC2068  # Double quote array expansions
+    # shellcheck disable=SC2086  # quote this to prevent word splitting
     command ${tool_name} -i 2 -ci -bn ${@}
     return ${?}
   fi

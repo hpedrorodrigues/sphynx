@@ -6,8 +6,14 @@ function sx::github::release::list() {
   local -r username="${1}"
   local -r project_name="${2}"
 
+  local -r releases_output="$(sx::github::api "repos/${username}/${project_name}/releases")"
+
+  if [ -z "${releases_output}" ] || [ "$(echo "${releases_output}" | jq -r '.message' 2>/dev/null)" = 'Not Found' ]; then
+    sx::log::fatal 'No releases found'
+  fi
+
   local -r output="$(
-    sx::github::api "repos/${username}/${project_name}/releases" \
+    echo "${releases_output}" \
       | jq -r 'map([ .tag_name, .draft, .prerelease, .created_at, .html_url ] | join(", ")) | join("\n")'
   )"
 
@@ -19,10 +25,10 @@ function sx::github::release::list_assets() {
   local -r project_name="${2}"
 
   local -r latest_release_output="$(sx::github::api "repos/${username}/${project_name}/releases/latest")"
-  local -r assets_url="$(echo "${latest_release_output}" | jq -r '.assets_url')"
+  local -r assets_url="$(echo "${latest_release_output}" | jq -r '.assets_url' 2>/dev/null)"
 
   if [ -z "${assets_url}" ] || [ "${assets_url}" = 'null' ]; then
-    sx::log::fatal 'No releases found'
+    return 1
   fi
 
   local -r tag_name="$(echo "${latest_release_output}" | jq -r '.tag_name')"
@@ -49,7 +55,7 @@ function sx::github::release::download_assets() {
     local -r options="$(sx::github::release::list_assets "${username}" "${project_name}")"
 
     if [ -z "${options}" ]; then
-      sx::log::fatal 'No assets found'
+      sx::log::fatal 'No release or assets found'
     fi
 
     # shellcheck disable=SC2086  # quote this to prevent word splitting
@@ -73,6 +79,10 @@ function sx::github::release::download_assets() {
     readarray -t options < <(
       sx::github::release::list_assets "${username}" "${project_name}"
     )
+
+    if [ "${#options[@]}" -eq 0 ]; then
+      sx::log::fatal 'No release or assets found'
+    fi
 
     select selected in "${options[@]}"; do
       local name="$(echo "${selected}" | awk '{ print $1 }')"
