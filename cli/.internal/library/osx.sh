@@ -32,3 +32,30 @@ function sx::osx::keychain_pass() {
 
   echo "${password}"
 }
+
+function sx::osx::default_browser_application() {
+  if sx::os::is_osx; then
+    local -r browser_id="$(
+      defaults read com.apple.LaunchServices/com.apple.launchservices.secure LSHandlers \
+        | grep 'LSHandlerURLScheme = https;' -B1 \
+        | grep 'LSHandlerRoleAll' \
+        | cut -d '=' -f '2' \
+        | sed 's/["|;]//g' \
+        | tr -d ' ' 2>/dev/null
+    )"
+
+    if [ -n "${browser_id}" ]; then
+      if [ "${browser_id}" == 'com.google.chrome' ]; then
+        echo 'Google Chrome'
+      elif [ "${browser_id}" == 'com.apple.safari' ]; then
+        echo 'Safari'
+      elif [ "${browser_id}" == 'org.mozilla.firefox' ]; then
+        echo 'Firefox'
+      elif [ "${browser_id}" == 'org.mozilla.firefoxdeveloperedition' ]; then
+        echo 'Firefox Developer Edition'
+      elif [ "${browser_id}" == 'com.vivaldi.vivaldi' ]; then
+        echo 'Vivaldi'
+      fi
+    fi
+  fi
+}
