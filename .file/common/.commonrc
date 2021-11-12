@@ -16,7 +16,6 @@ export LC_ALL='en_US.UTF-8'
 ### Loading personal scripts
 
 readonly DOTFILES_DIR="${HOME}/.sphynx"
-
 readonly DOTFILES=(
   # Common
   "${DOTFILES_DIR}/aliases.sh"
