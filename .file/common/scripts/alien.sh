@@ -12,11 +12,16 @@ function kcli() {
   local -r tool_name="${FUNCNAME[0]:-${funcstack[1]}}"
   local -r random_port="$(shuf -i 2000-65000 -n 1)"
 
+  if ! hash 'docker' 2>/dev/null; then
+    echo 'The command-line \"docker\" is not available in your path' >&2
+    return 1
+  fi
+
   local -r state="$(
     docker inspect --format '{{.State.Running}}' "${tool_name}" 2>/dev/null
   )"
   if [ "${state}" = 'true' ]; then
-    echo >&2 "There's already an instance of \"${tool_name}\" running."
+    echo "There's already an instance of \"${tool_name}\" running." >&2
     return 1
   fi
 
@@ -45,22 +50,25 @@ function prettier() {
     # shellcheck disable=SC2086  # quote this to prevent word splitting
     command ${tool_name} ${@}
     return ${?}
-  fi
-
-  local -r state="$(
-    docker inspect --format '{{.State.Running}}' "${tool_name}" 2>/dev/null
-  )"
-  if [ "${state}" = 'true' ]; then
-    echo >&2 "There's already an instance of \"${tool_name}\" running."
+  elif ! hash 'docker' 2>/dev/null; then
+    echo 'The command-line \"docker\" is not available in your path' >&2
     return 1
-  fi
+  else
+    local -r state="$(
+      docker inspect --format '{{.State.Running}}' "${tool_name}" 2>/dev/null
+    )"
+    if [ "${state}" = 'true' ]; then
+      echo "There's already an instance of \"${tool_name}\" running." >&2
+      return 1
+    fi
 
-  docker run \
-    --name "${tool_name}" \
-    --rm \
-    --interactive \
-    --volume "${PRETTIER_DIR:-${PWD}}:/mnt" \
-    "${image}" "${@}"
+    docker run \
+      --name "${tool_name}" \
+      --rm \
+      --interactive \
+      --volume "${PRETTIER_DIR:-${PWD}}:/mnt" \
+      "${image}" "${@}"
+  fi
 }
 
 ## Hadolint (https://github.com/hadolint/hadolint)
@@ -76,22 +84,25 @@ function hadolint() {
     # shellcheck disable=SC2086  # quote this to prevent word splitting
     command ${tool_name} ${@}
     return ${?}
-  fi
-
-  local -r state="$(
-    docker inspect --format '{{.State.Running}}' "${tool_name}" 2>/dev/null
-  )"
-  if [ "${state}" = 'true' ]; then
-    echo >&2 "There's already an instance of \"${tool_name}\" running."
+  elif ! hash 'docker' 2>/dev/null; then
+    echo 'The command-line \"docker\" is not available in your path' >&2
     return 1
-  fi
+  else
+    local -r state="$(
+      docker inspect --format '{{.State.Running}}' "${tool_name}" 2>/dev/null
+    )"
+    if [ "${state}" = 'true' ]; then
+      echo "There's already an instance of \"${tool_name}\" running." >&2
+      return 1
+    fi
 
-  docker run \
-    --name "${tool_name}" \
-    --rm \
-    --interactive \
-    --volume "${HADOLINT_DIR:-${PWD}}:/mnt" \
-    "${image}" "${@}"
+    docker run \
+      --name "${tool_name}" \
+      --rm \
+      --interactive \
+      --volume "${HADOLINT_DIR:-${PWD}}:/mnt" \
+      "${image}" "${@}"
+  fi
 }
 
 ## ShellCheck (https://github.com/koalaman/shellcheck)
@@ -107,23 +118,26 @@ function shellcheck() {
     # shellcheck disable=SC2086  # quote this to prevent word splitting
     command ${tool_name} ${@}
     return ${?}
-  fi
-
-  local -r state="$(
-    docker inspect --format '{{.State.Running}}' "${tool_name}" 2>/dev/null
-  )"
-  if [ "${state}" = 'true' ]; then
-    echo >&2 "There's already an instance of \"${tool_name}\" running."
+  elif ! hash 'docker' 2>/dev/null; then
+    echo 'The command-line \"docker\" is not available in your path' >&2
     return 1
-  fi
+  else
+    local -r state="$(
+      docker inspect --format '{{.State.Running}}' "${tool_name}" 2>/dev/null
+    )"
+    if [ "${state}" = 'true' ]; then
+      echo "There's already an instance of \"${tool_name}\" running." >&2
+      return 1
+    fi
 
-  docker run \
-    --name "${tool_name}" \
-    --rm \
-    --interactive \
-    --env SHELLCHECK_OPTS \
-    --volume "${SHELLCHECK_DIR:-${PWD}}:/mnt" \
-    "${image}" "${@}"
+    docker run \
+      --name "${tool_name}" \
+      --rm \
+      --interactive \
+      --env SHELLCHECK_OPTS \
+      --volume "${SHELLCHECK_DIR:-${PWD}}:/mnt" \
+      "${image}" "${@}"
+  fi
 }
 
 ## shfmt (https://github.com/mvdan/sh)
@@ -139,22 +153,25 @@ function shfmt() {
     # shellcheck disable=SC2086  # quote this to prevent word splitting
     command ${tool_name} -i 2 -ci -bn ${@}
     return ${?}
-  fi
-
-  local -r state="$(
-    docker inspect --format '{{.State.Running}}' "${tool_name}" 2>/dev/null
-  )"
-  if [ "${state}" = 'true' ]; then
-    echo >&2 "There's already an instance of \"${tool_name}\" running."
+  elif ! hash 'docker' 2>/dev/null; then
+    echo 'The command-line \"docker\" is not available in your path' >&2
     return 1
-  fi
+  else
+    local -r state="$(
+      docker inspect --format '{{.State.Running}}' "${tool_name}" 2>/dev/null
+    )"
+    if [ "${state}" = 'true' ]; then
+      echo "There's already an instance of \"${tool_name}\" running." >&2
+      return 1
+    fi
 
-  docker run \
-    --name "${tool_name}" \
-    --rm \
-    --interactive \
-    --volume "${SHFMT_DIR:-${PWD}}:/mnt" \
-    "${image}" -i 2 -ci -bn "${@}"
+    docker run \
+      --name "${tool_name}" \
+      --rm \
+      --interactive \
+      --volume "${SHFMT_DIR:-${PWD}}:/mnt" \
+      "${image}" -i 2 -ci -bn "${@}"
+  fi
 }
 
 ## Web page to image - P2I
@@ -163,18 +180,23 @@ function shfmt() {
 ## e.g.
 ##
 ## p2i \
-##   --url "https://www.google.com/search?q=car+meaning" \
+##   --url 'https://www.google.com/search?q=car+meaning' \
 ##   --selector '.lr_container' \
 ##   --filename "car-meaning.png"
 function p2i() {
   local -r tool_name="${FUNCNAME[0]:-${funcstack[1]}}"
   local -r image="${ALIEN_REPOSITORY}:${tool_name}"
 
+  if ! hash 'docker' 2>/dev/null; then
+    echo 'The command-line \"docker\" is not available in your path' >&2
+    return 1
+  fi
+
   local -r state="$(
     docker inspect --format '{{.State.Running}}' "${tool_name}" 2>/dev/null
   )"
   if [ "${state}" = 'true' ]; then
-    echo >&2 "There's already an instance of \"${tool_name}\" running."
+    echo "There's already an instance of \"${tool_name}\" running." >&2
     return 1
   fi
 

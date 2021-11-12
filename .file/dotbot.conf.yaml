@@ -1,4 +1,3 @@
-# This file should not be called directly but using the sphynx cli
 - defaults:
     link:
       relink: true

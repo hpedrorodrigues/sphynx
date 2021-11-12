@@ -20,6 +20,11 @@ function aws-ssm() {
     return 1
   fi
 
+  if ! hash 'aws' 2>/dev/null; then
+    echo 'The command-line \"aws\" is not available in your path' >&2
+    return 1
+  fi
+
   aws ssm start-session \
     --target "${instance_id}" \
     --region "${region}"
@@ -44,6 +49,16 @@ function aws-ecs-search() {
   if [ -z "${region}" ]; then
     echo '!!! This function needs a region as second argument' >&2
     echo "!!! e.g. ${func_name} <my-service> <region> # default is us-east-1" >&2
+    return 1
+  fi
+
+  if ! hash 'aws' 2>/dev/null; then
+    echo 'The command-line \"aws\" is not available in your path' >&2
+    return 1
+  fi
+
+  if ! hash 'jq' 2>/dev/null; then
+    echo 'The command-line \"jq\" is not available in your path' >&2
     return 1
   fi
 

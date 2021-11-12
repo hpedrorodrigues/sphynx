@@ -27,6 +27,11 @@ Note: The times are displayed in seconds.\n
 EOF
   )"
 
+  if ! hash 'curl' 2>/dev/null; then
+    echo 'The command-line \"curl\" is not available in your path' >&2
+    return 1
+  fi
+
   curl \
     --silent \
     --header "Authorization: Bearer ${TOKEN}" \
@@ -50,6 +55,11 @@ function promql() {
   if [ -z "${server}" ] || [ -z "${query}" ]; then
     echo '!!! This function needs a Prometheus server address and a query as arguments' >&2
     echo "!!! e.g. ${func_name} 'http://localhost:9090' 'avg(up) by (job)'" >&2
+    return 1
+  fi
+
+  if ! hash 'curl' 2>/dev/null; then
+    echo 'The command-line \"curl\" is not available in your path' >&2
     return 1
   fi
 
