@@ -4,6 +4,8 @@ export SX_ADB_CMD="${SX_ADB_CMD:-adb}"
 export SX_AAPT_CMD="${SX_AAPT_CMD:-aapt}"
 export SX_BUNDLETOOL_CMD="${SX_BUNDLETOOL_CMD:-bundletool}"
 
+export ANDROID_Q_VERSION='10'
+
 function sx::android::adb() {
   "${SX_ADB_CMD}" "${@}"
 }
@@ -106,4 +108,12 @@ function sx::android::shell() {
 
 function sx::android::pidof() {
   sx::android::shell pidof "${*}"
+}
+
+function sx::android:os_version() {
+  sx::android::shell getprop ro.build.version.release
+}
+
+function sx::android::sdk_version() {
+  sx::android::shell getprop ro.build.version.sdk
 }
