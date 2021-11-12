@@ -5,6 +5,11 @@
 ## e.g. kimg
 ## e.g. kimg -A
 function kimg() {
+  if ! hash 'kubectl' 2>/dev/null; then
+    echo 'The command-line \"kubectl\" is not available in your path' >&2
+    return 1
+  fi
+
   # shellcheck disable=SC2016  # Expressions don't expand in single quotes, use double quotes for that
   local -r template='
   {{range .items}}
@@ -35,6 +40,11 @@ function kimg() {
 ## e.g. kgp
 ## e.g. kgp -A
 function kgp() {
+  if ! hash 'kubectl' 2>/dev/null; then
+    echo 'The command-line \"kubectl\" is not available in your path' >&2
+    return 1
+  fi
+
   # shellcheck disable=SC2068  # Double quote array expansions
   kubectl get pods \
     ${@} \
@@ -61,6 +71,11 @@ function kgp() {
 ##
 ## e.g. kgn
 function kgn() {
+  if ! hash 'kubectl' 2>/dev/null; then
+    echo 'The command-line \"kubectl\" is not available in your path' >&2
+    return 1
+  fi
+
   # shellcheck disable=SC2068  # Double quote array expansions
   kubectl get nodes \
     ${@} \
@@ -73,6 +88,11 @@ function kgn() {
 ##
 ## e.g. knr
 function knr() {
+  if ! hash 'kubectl' 2>/dev/null; then
+    echo 'The command-line \"kubectl\" is not available in your path' >&2
+    return 1
+  fi
+
   # shellcheck disable=SC2068  # Double quote array expansions
   kubectl get pods \
     ${@} \
@@ -84,6 +104,11 @@ function knr() {
 ##
 ## e.g. knp
 function knp() {
+  if ! hash 'kubectl' 2>/dev/null; then
+    echo 'The command-line \"kubectl\" is not available in your path' >&2
+    return 1
+  fi
+
   kubectl get pods \
     --output json \
     --all-namespaces \
@@ -98,6 +123,11 @@ function knp() {
 ## e.g. ksv
 ## e.g. ksv -A
 function ksv() {
+  if ! hash 'kubectl' 2>/dev/null; then
+    echo 'The command-line \"kubectl\" is not available in your path' >&2
+    return 1
+  fi
+
   # shellcheck disable=SC2016  # Expressions don't expand in single quotes, use double quotes for that
   local -r template='
   {{"NAMESPACE"}}{{","}}{{"SECRET"}}{{","}}{{"KEY"}}{{","}}{{"VALUE"}}{{"\\n"}}
@@ -136,6 +166,11 @@ function ksv() {
 ## e.g. kpi
 ## e.g. kpi -A
 function kpi() {
+  if ! hash 'kubectl' 2>/dev/null; then
+    echo 'The command-line \"kubectl\" is not available in your path' >&2
+    return 1
+  fi
+
   # shellcheck disable=SC2068  # Double quote array expansions
   kubectl get pods \
     ${@} \
@@ -146,6 +181,11 @@ function kpi() {
 ##
 ## e.g. kdeb
 function kdeb() {
+  if ! hash 'kubectl' 2>/dev/null; then
+    echo 'The command-line \"kubectl\" is not available in your path' >&2
+    return 1
+  fi
+
   local -r pod_name='debug'
   local -r pod_hash="$(uuidgen | cut -d '-' -f 1 | tr '[:upper:]' '[:lower:]')"
 

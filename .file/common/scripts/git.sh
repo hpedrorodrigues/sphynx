@@ -7,6 +7,11 @@
 ##
 ## Note: Use "sx git open --help" or "repo --help" for more details
 function repo() {
+  if ! hash 'sx' 2>/dev/null; then
+    echo 'The command-line \"sx\" is not available in your path' >&2
+    return 1
+  fi
+
   sx git open "${*}"
 }
 
@@ -14,6 +19,11 @@ function repo() {
 ##
 ## e.g. ggpull
 function ggpull() {
+  if ! hash 'git' 2>/dev/null; then
+    echo 'The command-line \"git\" is not available in your path' >&2
+    return 1
+  fi
+
   local -r current_branch="$(git rev-parse --abbrev-ref HEAD 2>/dev/null)"
 
   if [ -z "${current_branch}" ]; then
@@ -28,6 +38,11 @@ function ggpull() {
 ##
 ## e.g. ggpush
 function ggpush() {
+  if ! hash 'git' 2>/dev/null; then
+    echo 'The command-line \"git\" is not available in your path' >&2
+    return 1
+  fi
+
   local -r current_branch="$(git rev-parse --abbrev-ref HEAD 2>/dev/null)"
 
   if [ -z "${current_branch}" ]; then
@@ -42,6 +57,11 @@ function ggpush() {
 ##
 ## e.g. gu
 function gu() {
+  if ! hash 'git' 2>/dev/null; then
+    echo 'The command-line \"git\" is not available in your path' >&2
+    return 1
+  fi
+
   local -r current_branch="$(git rev-parse --abbrev-ref HEAD 2>/dev/null)"
 
   if [ -z "${current_branch}" ]; then

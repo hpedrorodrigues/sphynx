@@ -18,6 +18,11 @@ function tmpd() {
 ##
 ## e.g. dag .
 function dag() {
+  if ! hash 'tree' 2>/dev/null; then
+    echo 'The command-line \"tree\" is not available in your path' >&2
+    return 1
+  fi
+
   tree \
     -aC \
     -I '.DS_Store|.git|.idea|build|node_modules|target|vendor|__pycache__' \
@@ -116,6 +121,11 @@ function eachdir() {
 ##
 ## e.g. o <filename>
 function o() {
+  if ! hash 'sx' 2>/dev/null; then
+    echo 'The command-line \"sx\" is not available in your path' >&2
+    return 1
+  fi
+
   sx system open "${*}"
 }
 
@@ -123,6 +133,11 @@ function o() {
 ##
 ## e.g. bo <filename>
 function bo() {
+  if ! hash 'sx' 2>/dev/null; then
+    echo 'The command-line \"sx\" is not available in your path' >&2
+    return 1
+  fi
+
   sx browser open "${*}"
 }
 
@@ -132,6 +147,11 @@ function bo() {
 ## e.g. extract test.tar.gz
 ## e.g. extract test.zip
 function extract() {
+  if ! hash 'sx' 2>/dev/null; then
+    echo 'The command-line \"sx\" is not available in your path' >&2
+    return 1
+  fi
+
   sx fs extract "${*}"
 }
 

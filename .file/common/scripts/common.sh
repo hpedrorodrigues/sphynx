@@ -7,6 +7,11 @@
 ## e.g. echo 'test' | md5
 ## e.g. md5 <filename>
 function md5() {
+  if ! hash 'sx' 2>/dev/null; then
+    echo 'The command-line \"sx\" is not available in your path' >&2
+    return 1
+  fi
+
   sx security hash md5 "${*}"
 }
 
@@ -15,6 +20,11 @@ function md5() {
 ## e.g. echo 'test' | sha1
 ## e.g. sha1 <filename>
 function sha1() {
+  if ! hash 'sx' 2>/dev/null; then
+    echo 'The command-line \"sx\" is not available in your path' >&2
+    return 1
+  fi
+
   sx security hash sha1 "${*}"
 }
 
@@ -23,6 +33,11 @@ function sha1() {
 ## e.g. echo 'test' | sha256
 ## e.g. sha256 <filename>
 function sha256() {
+  if ! hash 'sx' 2>/dev/null; then
+    echo 'The command-line \"sx\" is not available in your path' >&2
+    return 1
+  fi
+
   sx security hash sha256 "${*}"
 }
 
@@ -33,6 +48,11 @@ function sha256() {
 ## e.g. e64 'test'
 ## e.g. cat <filename> | e64
 function e64() {
+  if ! hash 'base64' 2>/dev/null; then
+    echo 'The command-line \"base64\" is not available in your path' >&2
+    return 1
+  fi
+
   if [ "${#}" -gt 0 ]; then
     echo -n "${@}" | base64
   else
@@ -45,6 +65,11 @@ function e64() {
 ## e.g. d64 'dGVzdAo='
 ## e.g. cat <filename> | d64
 function d64() {
+  if ! hash 'base64' 2>/dev/null; then
+    echo 'The command-line \"base64\" is not available in your path' >&2
+    return 1
+  fi
+
   if [ "${#}" -gt 0 ]; then
     echo -n "${@}" | base64 --decode
   else
@@ -62,6 +87,11 @@ function jwtd() {
   if [ -z "${token}" ]; then
     echo '!!! This function needs a json web token as an argument' >&2
     echo "!!! e.g. ${func_name} '<json-web-token>'" >&2
+    return 1
+  fi
+
+  if ! hash 'jq' 2>/dev/null; then
+    echo 'The command-line \"jq\" is not available in your path' >&2
     return 1
   fi
 
@@ -242,6 +272,16 @@ function ngw() {
     mkdir -p "${workspace_folder}"
   fi
 
+  if ! hash 'go' 2>/dev/null; then
+    echo 'The command-line \"go\" is not available in your path' >&2
+    return 1
+  fi
+
+  if ! hash 'code' 2>/dev/null; then
+    echo 'The command-line \"code\" is not available in your path' >&2
+    return 1
+  fi
+
   echo -e 'package main\n\nfunc main() {\n\n}\n' \
     >"${workspace_folder}/main.go"
   echo -e 'package main\n\nimport "testing"\n\nfunc Test(t *testing.T) {\n\n}\n\n' \
@@ -282,8 +322,7 @@ function awslp() {
     if [ -z "${available_profiles}" ]; then
       echo '!!! No profiles declared in ~/.aws/config' >&2
     else
-      echo '!!! This profile is not declared in file ~/.aws/config' >&2
-      echo >&2
+      echo -e '!!! This profile is not declared in file ~/.aws/config\n' >&2
       echo '    Available profiles:' >&2
       echo -e "${available_profiles}" | xargs -I % echo '    - %' >&2
     fi
