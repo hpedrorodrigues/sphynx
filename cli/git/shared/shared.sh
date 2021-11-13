@@ -47,3 +47,17 @@ function sx::git::default_branch() {
     fi
   done
 }
+
+function sx::git::base_url() {
+  local -r git_url="$(
+    sx::git::remote::url \
+      | sed 's/git@/\/\//g' \
+      | sed 's/.git$//' \
+      | sed 's/http://g' \
+      | sed 's/https://g' \
+      | sed 's/ssh://g' \
+      | sed 's/:/\//g'
+  )"
+
+  echo "https:${git_url}"
+}
