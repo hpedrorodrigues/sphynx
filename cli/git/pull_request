@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNXC_DIR}/.internal/all.sh"
+source "${SPHYNXN_DIR}/shared/shared.sh"
+source "${SPHYNXN_DIR}/core/pull_request.sh"
+
+##? Preview the Pull Request changes on the available browser
+##?
+##? Usage:
+##?     pull_request preview
+##?
+##? Examples:
+##?     pull_request preview
+
+sx::parse_arguments "${@}"
+
+sx::git::pull_request::preview

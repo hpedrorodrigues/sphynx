@@ -7,5 +7,5 @@ function sx::http::inspect() {
   local -r port="${1:-}"
 
   sx::log::info 'Now you can make requests in order to inspect their content.\n'
-  PORT="${port}" node "${SPHYNXN_DIR}/code/server.js"
+  PORT="${port}" exec node "${SPHYNXN_DIR}/code/server.js"
 }

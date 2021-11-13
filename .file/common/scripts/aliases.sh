@@ -59,6 +59,8 @@ alias gch='sx git check'
 alias gbc='sx git branch --clear'
 alias gbs='sx git branch --switch'
 
+alias gpr='sx git pull_request preview'
+
 alias email='sx github email'
 
 # Kubernetes

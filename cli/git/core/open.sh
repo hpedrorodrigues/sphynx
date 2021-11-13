@@ -9,18 +9,9 @@ function sx::git::open() {
     sx::log::fatal "No such file \"${file_path}\""
   fi
 
-  local -r git_url="$(
-    sx::git::remote::url \
-      | sed 's/git@/\/\//g' \
-      | sed 's/.git$//' \
-      | sed 's/http://g' \
-      | sed 's/https://g' \
-      | sed 's/ssh://g' \
-      | sed 's/:/\//g'
-  )"
   local -r current_branch="$(sx::git::current_branch)"
   local -r default_branch="$(sx::git::default_branch)"
-  local -r base_url="http:${git_url}"
+  local -r base_url="$(sx::git::base_url)"
 
   if [ "${file_path}" = '.' ]; then
     local -r full_url="$(
