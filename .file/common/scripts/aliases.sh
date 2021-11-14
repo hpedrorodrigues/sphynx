@@ -61,6 +61,8 @@ alias gbs='sx git branch --switch'
 
 alias gpr='sx git pull_request preview'
 
+alias gd='sx git diff'
+
 alias email='sx github email'
 
 # Kubernetes

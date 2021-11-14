@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNXC_DIR}/.internal/all.sh"
+source "${SPHYNXN_DIR}/shared/shared.sh"
+source "${SPHYNXN_DIR}/core/diff.sh"
+
+##? Preview the Pull Request changes on the available browser
+##?
+##? Usage:
+##?     diff [--staged | --head]
+##?
+##? Options:
+##?     -s --staged  View the staged changes for the next commit
+##?     -h --head  View all changes to tracked files
+##?
+##? Examples:
+##?     diff
+##?     diff --staged
+##?     diff --head
+
+sx::parse_arguments "${@}"
+
+if ${staged:-false}; then
+  readonly diff_options='--staged'
+elif ${head:-false}; then
+  readonly diff_options='HEAD'
+else
+  readonly diff_options=''
+fi
+
+sx::git::diff "${diff_options:-}"
