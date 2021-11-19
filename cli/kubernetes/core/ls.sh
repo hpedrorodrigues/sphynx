@@ -2,6 +2,7 @@
 
 function sx::k8s::list::resources() {
   sx::k8s::check_requirements
+  sx::k8s::ensure_api_access
 
   local -r namespace="${1:-$(sx::k8s::current_namespace)}"
   local -r output="${2:-}"

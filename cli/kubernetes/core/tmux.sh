@@ -2,6 +2,7 @@
 
 function sx::k8s::tmux::check_requirements() {
   sx::k8s::check_requirements
+  sx::k8s::ensure_api_access
   sx::library::tmux::check_requirements
 }
 

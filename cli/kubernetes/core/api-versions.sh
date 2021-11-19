@@ -2,6 +2,7 @@
 
 function sx::k8s::api_versions() {
   sx::k8s::check_requirements
+  sx::k8s::ensure_api_access
   sx::require 'jq'
 
   sx::log::info 'API versions:\n'

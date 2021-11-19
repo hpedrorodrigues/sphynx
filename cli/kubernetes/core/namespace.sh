@@ -10,6 +10,8 @@ function sx::k8s::namespace() {
   if [ -n "${exact_namespace}" ]; then
     sx::k8s::change_namespace "${exact_namespace}"
   elif ${list_namespaces}; then
+    sx::k8s::ensure_api_access
+
     local -r current_namespace="$(sx::k8s::current_namespace)"
 
     while IFS='' read -r namespace; do
@@ -20,6 +22,8 @@ function sx::k8s::namespace() {
       fi
     done < <(sx::k8s::cli get namespaces)
   elif sx::os::is_command_available 'fzf'; then
+    sx::k8s::ensure_api_access
+
     local -r options="$(sx::k8s::namespaces "${query}")"
 
     if [ -z "${options}" ]; then
@@ -31,6 +35,8 @@ function sx::k8s::namespace() {
 
     [ -n "${selected}" ] && sx::k8s::change_namespace "${selected}"
   else
+    sx::k8s::ensure_api_access
+
     export PS3=$'\n''Please, choose the resource: '$'\n'
 
     local options
