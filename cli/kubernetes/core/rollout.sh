@@ -2,6 +2,7 @@
 
 function sx::k8s::rollout() {
   sx::k8s::check_requirements
+  sx::k8s::ensure_api_access
 
   local -r action="${1}"
   local -r query="${2:-}"

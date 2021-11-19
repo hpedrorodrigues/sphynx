@@ -2,6 +2,7 @@
 
 function sx::k8s::pods::resource_summary() {
   sx::k8s::check_requirements
+  sx::k8s::ensure_api_access
 
   local -r query="${1:-}"
   local -r namespace="${2:-}"
@@ -93,6 +94,7 @@ function sx::k8s::pods::resource_summary() {
 
 function sx::k8s::nodes::resource_summary() {
   sx::k8s::check_requirements
+  sx::k8s::ensure_api_access
 
   local -r query="${1:-}"
 

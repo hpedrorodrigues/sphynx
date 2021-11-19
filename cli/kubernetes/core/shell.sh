@@ -2,6 +2,7 @@
 
 function sx::k8s::shell() {
   sx::k8s::check_requirements
+  sx::k8s::ensure_api_access
 
   local -r query="${1:-}"
   local -r use_ssm="${2:-false}"

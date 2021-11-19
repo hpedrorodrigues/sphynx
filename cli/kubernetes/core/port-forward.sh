@@ -2,6 +2,7 @@
 
 function sx::k8s::port_forward() {
   sx::k8s::check_requirements
+  sx::k8s::ensure_api_access
 
   local -r query="${1:-}"
   local -r namespace="${2:-}"
