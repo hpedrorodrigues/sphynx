@@ -1,5 +1,6 @@
 mas_applications:
   - { name: "1Password 7", id: 1333542190 }
+  - { name: "Clocker", id: 1056643111 }
   - { name: "Evernote", id: 406056744 }
   - { name: "Keynote", id: 409183694 }
   - { name: "Microsoft Excel", id: 462058435 }
