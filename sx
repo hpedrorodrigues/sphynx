@@ -57,7 +57,8 @@ function all_namespaces() {
   find "${SPHYNXC_DIR}" \
     -maxdepth 1 \
     ! -path "${SPHYNXC_DIR}" \
-    ! -path '*?/.*?' \
+    ! -path '*/.library*' \
+    ! -path '*/.internal*' \
     -a -type d \
     -o -type f -a \( -perm -u=x -o -perm -g=x -o -perm -o=x \) \
     | sort \
@@ -74,7 +75,8 @@ function find_namespace() {
       find "${SPHYNXC_DIR}" \
         -maxdepth 1 \
         ! -path "${SPHYNXC_DIR}" \
-        ! -path '*?/.*?' \
+        ! -path '*/.library*' \
+        ! -path '*/.internal*' \
         -a -type d -a -name "${filter}*" \
         -o -type f -a -name "${filter}*" -a \( -perm -u=x -o -perm -g=x -o -perm -o=x \)
     )"
@@ -113,7 +115,8 @@ function is_global_command() {
   find "${SPHYNXC_DIR}" \
     -maxdepth 1 \
     ! -path "${SPHYNXC_DIR}" \
-    ! -path '*?/.*?' \
+    ! -path '*/.library*' \
+    ! -path '*/.internal*' \
     -a -type f -a -name "${filter}*" -a \( -perm -u=x -o -perm -g=x -o -perm -o=x \) \
     | grep -E '.*' &>/dev/null
 }

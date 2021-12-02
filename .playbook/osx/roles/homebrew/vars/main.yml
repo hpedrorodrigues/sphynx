@@ -119,5 +119,6 @@ homebrew_apps:
   - tunnelblick
   - virtualbox
   - virtualbox-extension-pack
+  - wickrme
   - wireshark
   - zoom

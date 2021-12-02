@@ -35,7 +35,8 @@ function sx::for_all::run_test() {
     find "${SPHYNXC_DIR}" \
       -maxdepth 2 \
       ! -path "${SPHYNXC_DIR}" \
-      ! -path '*?/.*?' \
+      ! -path '*/.library*' \
+      ! -path '*/.internal*' \
       -a -type f -a \( -perm -u=x -o -perm -g=x -o -perm -o=x \) \
       | sed "s#${SPHYNXC_DIR}/##g" \
       | sed 's#/# #g' \
