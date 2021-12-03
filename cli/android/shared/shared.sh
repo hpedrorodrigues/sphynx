@@ -41,7 +41,8 @@ function sx::android::has_more_than_one_device_attached() {
 }
 
 function sx::android::check_requirements() {
-  if ! sx::os::is_command_available 'adb' && [ -z "${SX_ADB_CMD:-}" ]; then
+  if ! sx::os::is_command_available 'adb' \
+    && { [ -z "${SX_ADB_CMD:-}" ] || [ "${SX_ADB_CMD:-}" = 'adb' ]; }; then
     sx::log::fatal 'ADB command not found in PATH'
   fi
 
