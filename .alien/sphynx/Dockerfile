@@ -20,6 +20,7 @@ RUN groupadd -g "${gid}" "${group}" \
   && usermod -a -G 'linuxbrew' "${user}" \
   && apt-get update \
   && apt-get install --no-install-recommends -y python3=3.8.2-0ubuntu2 \
+  && ln -s /usr/bin/python3 /usr/bin/python \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/*
 

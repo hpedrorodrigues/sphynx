@@ -5,7 +5,7 @@
 # https://www.gnu.org/software/bash/manual/html_node/Bash-Variables.html
 export HISTSIZE='1000000000'
 export HISTFILESIZE="${HISTSIZE}"
-export HISTIGNORE='ls:history:cd:cd -:* --help:* --version: *:pwd:exit'
+export HISTIGNORE='ls:history:cd:cd -:* --help: *:pwd:exit'
 export HISTCONTROL='ignoreboth:erasedups'
 
 shopt -s nocaseglob # case-insensitive globbing (used in pathname expansion)

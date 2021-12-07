@@ -11,16 +11,20 @@ source "${SPHYNXN_DIR}/core/ecr.sh"
 ##? Amazon Elastic Container Registry utilities
 ##?
 ##? Usage:
-##?     ecr --delete-untagged
+##?     ecr (--clear-untagged | --delete-untagged <repository-name>)
 ##?
 ##? Options:
-##?     -d --delete-untagged  Delete all untagged images from all repositories
+##?     -c --clear-untagged  Delete all untagged images from all repositories
+##?     -d --delete-untagged <repository-name>  Delete all untagged images from the repository
 ##?
 ##? Examples:
-##?     ecr --delete-untagged
+##?     ecr --clear-untagged
+##?     ecr --delete-untagged my-repo
 
 sx::parse_arguments "${@}"
 
-if ${delete_untagged:-false}; then
-  sx::aws::ecr::delete_untagged
+if ${clear_untagged:-false}; then
+  sx::aws::ecr::clear_untagged
+elif [ -n "${delete_untagged:-}" ]; then
+  sx::aws::ecr::delete_untagged_from_repository "${delete_untagged}"
 fi
