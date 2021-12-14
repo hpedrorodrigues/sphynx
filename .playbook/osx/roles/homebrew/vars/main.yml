@@ -103,6 +103,8 @@ homebrew_apps:
   - flux
   - github
   - google-chrome
+  - grammarly
+  - grammarly-desktop
   - iina
   - jetbrains-toolbox
   - licecap

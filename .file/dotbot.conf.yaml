@@ -32,6 +32,7 @@
     ${HOME}/.sphynx/kubernetes.sh: ${SPHYNX_DIR}/.file/common/scripts/kubernetes.sh
     ${HOME}/.sphynx/learning.sh: ${SPHYNX_DIR}/.file/common/scripts/learning.sh
     ${HOME}/.sphynx/network.sh: ${SPHYNX_DIR}/.file/common/scripts/network.sh
+    ${HOME}/.sphynx/management.sh: ${SPHYNX_DIR}/.file/common/scripts/management.sh
 - link:
     ${HOME}/.bashrc:
       if: '[ "$(uname)" = "Darwin" ]'
