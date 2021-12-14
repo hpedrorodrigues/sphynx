@@ -15,7 +15,11 @@ function sphynx() {
   elif [ "${action}" = 'status' ]; then
     (cd "${sphynx_repository}" && git status)
   else
-    echo "!!! No supported action: \"${action}\"" >&2
+    if [ -z "${action}" ]; then
+      echo "!!! No action provided." >&2
+    else
+      echo "!!! No supported action: \"${action}\"" >&2
+    fi
     echo '!!!' >&2
     echo '!!! Available actions' >&2
     echo '!!!   - open' >&2
@@ -55,7 +59,11 @@ function secrets() {
         && ggpush
     )
   else
-    echo "!!! No supported action: \"${action}\"" >&2
+    if [ -z "${action}" ]; then
+      echo "!!! No action provided." >&2
+    else
+      echo "!!! No supported action: \"${action}\"" >&2
+    fi
     echo '!!!' >&2
     echo '!!! Available actions' >&2
     echo '!!!   - open' >&2
