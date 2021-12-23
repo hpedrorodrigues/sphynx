@@ -33,8 +33,8 @@ readonly DOTFILES=(
   # Secrets
   "${DOTFILES_DIR}/secrets.sh"
 
-  # Descartes
-  "${HOME}/.descartesrc"
+  # Jetbridge
+  "${HOME}/.jetbridgerc"
 )
 
 for dotfile in ${DOTFILES[*]}; do
