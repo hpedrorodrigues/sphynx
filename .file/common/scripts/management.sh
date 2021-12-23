@@ -14,13 +14,20 @@ function sphynx() {
     cd "${sphynx_repository}" || return 1
   elif [ "${action}" = 'status' ]; then
     (cd "${sphynx_repository}" && git status)
+  elif [ "${action}" = 'repo' ]; then
+    (cd "${sphynx_repository}" && sx git open)
   else
-    echo "!!! No supported action: \"${action}\"" >&2
+    if [ -z "${action}" ]; then
+      echo "!!! No action provided." >&2
+    else
+      echo "!!! No supported action: \"${action}\"" >&2
+    fi
     echo '!!!' >&2
     echo '!!! Available actions' >&2
     echo '!!!   - open' >&2
     echo '!!!   - go' >&2
     echo '!!!   - status' >&2
+    echo '!!!   - repo' >&2
     return 1
   fi
 }
@@ -54,8 +61,14 @@ function secrets() {
         && git commit -m '[CLI] Updating Secrets' \
         && ggpush
     )
+  elif [ "${action}" = 'repo' ]; then
+    (cd "${secrets_repository}" && sx git open)
   else
-    echo "!!! No supported action: \"${action}\"" >&2
+    if [ -z "${action}" ]; then
+      echo "!!! No action provided." >&2
+    else
+      echo "!!! No supported action: \"${action}\"" >&2
+    fi
     echo '!!!' >&2
     echo '!!! Available actions' >&2
     echo '!!!   - open' >&2
@@ -63,6 +76,7 @@ function secrets() {
     echo '!!!   - status' >&2
     echo '!!!   - pull' >&2
     echo '!!!   - push' >&2
+    echo '!!!   - repo' >&2
     return 1
   fi
 }

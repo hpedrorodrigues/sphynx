@@ -28,7 +28,7 @@ alias load_nvm='NVM_ENABLED=true reload'
 alias flush='sx system dns --flush'
 
 # Empty the trash
-alias clear-trash='sx system clear-trash'
+alias empty-trash='sx system clear-trash'
 
 # Docker
 alias dd='sx docker delete'
