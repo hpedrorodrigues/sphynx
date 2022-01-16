@@ -44,7 +44,6 @@ apt_packages:
   - screen
   - sipcalc
   - software-properties-common
-  - steam-installer
   - subnetcalc
   - tmux
   - telegram-desktop

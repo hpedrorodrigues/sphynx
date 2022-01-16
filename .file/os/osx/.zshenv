@@ -18,10 +18,11 @@ for basic_path in ${BASIC_PATHS[*]}; do
 done
 
 #|> Java
-export JAVA8_HOME='/usr/local/opt/openjdk@8/libexec/openjdk.jdk/Contents/Home'
-export JAVA11_HOME='/usr/local/opt/openjdk@11/libexec/openjdk.jdk/Contents/Home'
-export JAVA17_HOME='/usr/local/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home'
-export JAVA_HOME="${JAVA17_HOME}"
+export JAVA8_HOME='/Library/Java/JavaVirtualMachines/temurin-8.jdk/Contents/Home'
+export JAVA11_HOME='/Library/Java/JavaVirtualMachines/temurin-11.jdk/Contents/Home'
+export JAVA17_HOME='/Library/Java/JavaVirtualMachines/temurin-17.jdk/Contents/Home'
+
+export JAVA_HOME="${JAVA11_HOME}"
 
 #|> Maven
 export MAVEN_OPTS='-Xms512m -Xmx1G'

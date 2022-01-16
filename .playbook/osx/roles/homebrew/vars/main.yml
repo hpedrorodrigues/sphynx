@@ -8,9 +8,6 @@ homebrew_repositories:
   - teamookla/speedtest
 
 homebrew_packages:
-  - openjdk@8
-  - openjdk@11
-  - { name: "openjdk@17", installed_name: "openjdk" }
   - apktool
   - awscli
   - bash
@@ -66,6 +63,7 @@ homebrew_packages:
   - nvm
   - openssh
   - pidcat
+  - poetry
   - postgresql
   - { name: "python", installed_name: "python@3.9" }
   - rsync
@@ -106,6 +104,7 @@ homebrew_apps:
   - grammarly
   - grammarly-desktop
   - iina
+  - istat-menus
   - jetbrains-toolbox
   - licecap
   - meld
@@ -116,10 +115,11 @@ homebrew_apps:
   - session-manager-plugin
   - skype
   - spotify
-  - steam
+  - temurin8 # JDK 8
+  - temurin11 # JDK 11
+  - temurin # JDK 17
   - tunnelblick
   - virtualbox
   - virtualbox-extension-pack
-  - wickrme
   - wireshark
   - zoom

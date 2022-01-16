@@ -49,7 +49,12 @@ defaults write NSGlobalDomain AppleEnableMenuBarTransparency -bool true
 defaults write com.apple.dock hide-mirror -bool true
 
 # Network
-readonly computer_name='sparrow'
+
+if [ "$(sysctl -n machdep.cpu.brand_string)" = 'Apple M1' ]; then
+  readonly computer_name='sparrow'
+else
+  readonly computer_name='parrot'
+fi
 
 if [ "$(scutil --get ComputerName)" != "${computer_name}" ]; then
   sudo scutil --set ComputerName "${computer_name}"
