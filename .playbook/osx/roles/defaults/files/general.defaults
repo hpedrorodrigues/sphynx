@@ -50,6 +50,7 @@ defaults write com.apple.dock hide-mirror -bool true
 
 # Network
 
+# TODO: look for a better way to check personal computer
 if [ "$(sysctl -n machdep.cpu.brand_string)" = 'Apple M1' ]; then
   readonly computer_name='sparrow'
 else
