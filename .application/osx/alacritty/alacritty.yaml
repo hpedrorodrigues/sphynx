@@ -14,6 +14,7 @@ window:
   decorations: full
   title: Alacritty
   dynamic_title: true
+  opacity: 0.9
 scrolling:
   history: 10000
   multiplier: 5
@@ -71,7 +72,6 @@ colors:
 bell:
   animation: EaseOutExpo
   duration: 0
-background_opacity: 0.92
 mouse_bindings:
   - { mouse: Middle, action: PasteSelection }
 mouse:
