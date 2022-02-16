@@ -180,3 +180,75 @@ function csv() {
 
   sed <"${file_name}" 's/"//g' | column -t -s ','
 }
+
+## Creates a REPL for the given command running it against stdin and displaying
+## the result in the preview window
+##
+## e.g. replfy <command> <start-query>
+## e.g. echo 'Hello world!' | replfy 'awk {q}' '{print}'
+## e.g. echo '{"field":"value"}' | replfy 'jq -r'
+##
+## Credits: https://github.com/DanielFGray/fzf-scripts/blob/master/fzrepl
+function replfy() {
+  local -r func_name="${FUNCNAME[0]:-${funcstack[1]}}"
+  local -r user_cmd="${1}"
+  local -r user_query="${2}"
+
+  if [ -z "${user_cmd}" ]; then
+    echo '!!! This function needs a command as first argument' >&2
+    echo '!!!' >&2
+    echo "!!! ${func_name} <command> <start-query>" >&2
+    echo '!!!' >&2
+    echo "!!! e.g. echo '{\"field\":\"value\"}' | ${func_name} 'jq -r' '.field'" >&2
+    return 1
+  fi
+
+  if [ -t 0 ]; then
+    echo '!!! This function can only be used with a pipe' >&2
+    echo '!!!' >&2
+    echo "!!! ${func_name} <command> <start-query>" >&2
+    echo '!!!' >&2
+    echo "!!! e.g. echo '{\"field\":\"value\"}' | ${func_name} 'jq -r' '.field'" >&2
+    return 1
+  fi
+
+  if [ -z "${user_query}" ]; then
+    local -r query=''
+  else
+    local -r query="${user_query}"
+  fi
+
+  if [[ "${user_cmd}" == *'{q}'* ]]; then
+    local -r cmd="${user_cmd}"
+  else
+    local -r cmd="${user_cmd} {q}"
+  fi
+
+  local -r temp_file="$(mktemp)"
+
+  tee "${temp_file}" </dev/stdin | fzf \
+    --sync \
+    --ansi \
+    --disabled \
+    --height=100% \
+    --print-query \
+    --query="${query}" \
+    --preview="${cmd} < '${temp_file}'"
+}
+
+## Creates a REPL for jq
+##
+## e.g. jqrepl <start-query>
+## e.g. echo '{"field":"value"}' | jqrepl
+## e.g. echo '{"field":"value"}' | jqrepl '.field'
+function jqrepl() {
+  local -r user_query="${1}"
+
+  if [ -z "${user_query}" ]; then
+    local -r query='.'
+  else
+    local -r query="${user_query}"
+  fi
+
+  replfy "jq --color-output ${JQ_REPL_ARGS:-}" "${query}"
+}
