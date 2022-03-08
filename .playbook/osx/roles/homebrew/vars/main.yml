@@ -50,6 +50,7 @@ homebrew_packages:
   - kotlin
   - kubernetes-cli
   - krew
+  - kubespy
   - less
   - m4
   - make
