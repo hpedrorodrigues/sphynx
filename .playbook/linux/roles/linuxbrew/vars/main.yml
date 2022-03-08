@@ -10,6 +10,7 @@ linuxbrew_packages:
   - jq
   - kotlin
   - kustomize
+  - kubespy
   - maven
   - shpotify
   - starship
