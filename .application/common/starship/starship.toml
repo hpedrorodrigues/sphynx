@@ -1,6 +1,3 @@
-scan_timeout = 15
-command_timeout = 250
-
 format = """
 $username\
 $hostname\
