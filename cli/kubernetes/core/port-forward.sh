@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+readonly min_port_number='2000'
+readonly max_port_number='65535'
+
 function sx::k8s::port_forward() {
   sx::k8s::check_requirements
   sx::k8s::ensure_api_access
@@ -8,6 +11,12 @@ function sx::k8s::port_forward() {
   local -r namespace="${2:-}"
   local -r all_namespaces="${3:-false}"
   local -r random_port="${4:-false}"
+  local -r user_port="${5:-}"
+
+  if [ -n "${user_port}" ] \
+    && { [ "${user_port}" -lt "${min_port_number}" ] || [ "${user_port}" -gt "${max_port_number}" ]; }; then
+    sx::log::fatal "Invalid port provided: \"${user_port}\". Valid range \"${min_port_number}..${max_port_number}\"."
+  fi
 
   if sx::os::is_command_available 'fzf'; then
     local -r options="$(
@@ -32,7 +41,8 @@ function sx::k8s::port_forward() {
         "${kind}" \
         "${name}" \
         "${port}" \
-        "${random_port}"
+        "${random_port}" \
+        "${user_port}"
     fi
   else
     export PS3=$'\n''Please, choose the resource: '$'\n'
@@ -57,7 +67,8 @@ function sx::k8s::port_forward() {
         "${kind}" \
         "${name}" \
         "${port}" \
-        "${random_port}"
+        "${random_port}" \
+        "${user_port}"
       break
     done
   fi
@@ -146,9 +157,12 @@ function sx::k8s_command::port_forward() {
   local -r name="${3:-}"
   local -r port="${4:-}"
   local -r random_port="${5:-false}"
+  local -r user_port="${6:-}"
 
-  if ${random_port}; then
-    local -r local_port="$(shuf -i 10000-32767 -n 1)"
+  if [ -n "${user_port}" ]; then
+    local -r local_port="${user_port}"
+  elif ${random_port}; then
+    local -r local_port="$(shuf -i ${min_port_number}-${max_port_number} -n 1)"
   else
     local -r local_port="${port}"
   fi
