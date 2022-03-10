@@ -15,7 +15,7 @@ function sx::k8s::logs() {
     sx::k8s_command::logs "${namespace}" "${pod}" "${container}" "${previous_log}"
   elif sx::os::is_command_available 'fzf'; then
     local -r options="$(
-      sx::k8s::pod_list "${query}" "${namespace}" "${all_namespaces}" true
+      sx::k8s_command::pod::list "${query}" "${namespace}" "${all_namespaces}" true
     )"
 
     if [ -z "${options}" ]; then
@@ -37,7 +37,7 @@ function sx::k8s::logs() {
 
     local options
     readarray -t options < <(
-      sx::k8s::pod_list "${query}" "${namespace}" "${all_namespaces}"
+      sx::k8s_command::pod::list "${query}" "${namespace}" "${all_namespaces}"
     )
 
     if [ "${#options[@]}" -eq 0 ]; then
@@ -76,7 +76,7 @@ function sx::k8s_command::logs() {
     ${flags}
 }
 
-function sx::k8s::pod_list() {
+function sx::k8s_command::pod::list() {
   local -r query="${1:-}"
   local -r namespace="${2:-}"
   local -r all_namespaces="${3:-false}"

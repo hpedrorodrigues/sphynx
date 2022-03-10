@@ -2,6 +2,7 @@
 
 function sx::aws::ecr::clear_untagged() {
   sx::aws::check_requirements
+  sx::require_network
 
   aws ecr describe-repositories \
     | jq -r '.repositories[].repositoryName' \
@@ -27,6 +28,7 @@ function sx::aws::ecr::clear_untagged() {
 
 function sx::aws::ecr::delete_untagged_from_repository() {
   sx::aws::check_requirements
+  sx::require_network
 
   local -r repository_name="${1:-}"
   if [ -z "${repository_name}" ]; then
