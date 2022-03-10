@@ -293,44 +293,12 @@ function ngw() {
     && echo "${workspace_folder}"
 }
 
-## [AWS Load Profile] Set the env var AWS_PROFILE to the provided profile
-## checking it with the definitions in ~/.aws/config
+## [AWS Profile Switch] Change the current AWS profile
 ##
-## e.g. awslp <profile-name>
-function awslp() {
-  local -r func_name="${FUNCNAME[0]:-${funcstack[1]}}"
-  local -r profile="${1}"
-
-  if [ -z "${profile}" ]; then
-    echo '!!! This function needs an aws profile as first argument' >&2
-    echo "!!! e.g. ${func_name} your_profile" >&2
-    return 1
-  fi
-
-  if ! [ -s "${HOME}/.aws/config" ]; then
-    echo '!!! No such file: ~/.aws/config' >&2
-    return 1
-  fi
-
-  if ! grep -q "\[profile ${profile}\]" "${HOME}/.aws/config" 2>/dev/null; then
-    local -r available_profiles="$(
-      grep -E '[profile [a-z]]' "${HOME}/.aws/config" \
-        | sed 's/\[profile //g' \
-        | sed 's/\]//g'
-    )"
-
-    if [ -z "${available_profiles}" ]; then
-      echo '!!! No profiles declared in ~/.aws/config' >&2
-    else
-      echo -e '!!! This profile is not declared in file ~/.aws/config\n' >&2
-      echo '    Available profiles:' >&2
-      echo -e "${available_profiles}" | xargs -I % echo '    - %' >&2
-    fi
-
-    return 1
-  fi
-
-  export AWS_PROFILE="${profile}"
+## e.g. aps <query>
+function aps() {
+  # shellcheck disable=SC2046  # Quote this to prevent word splitting
+  eval $(sx aws profile --switch "${@}")
 }
 
 ## Set the env var JAVA_HOME with the provided version using other

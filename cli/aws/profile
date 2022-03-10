@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNXC_DIR}/.internal/all.sh"
+source "${SPHYNXN_DIR}/shared/shared.sh"
+source "${SPHYNXN_DIR}/core/profile.sh"
+
+##? Manage AWS CLI profiles
+##?
+##? Usage:
+##?     profile (--list | [<query>] --switch)
+##?
+##? Options:
+##?     -l --list  List all available profiles
+##?     -s --switch  Prints the definition of the env var AWS_PROFILE with the selected profile
+##?                  This command is intended to be used along with "eval"
+##?
+##? Examples:
+##?     profile --list
+##?     eval $(sx aws profile --switch)
+
+sx::parse_arguments "${@}"
+
+if ${list:-false}; then
+  sx::aws::list_profiles
+elif ${switch:-false}; then
+  sx::aws::switch_profile "${query:-}"
+else
+  sx::error::illegal_arguments "${*}"
+fi
