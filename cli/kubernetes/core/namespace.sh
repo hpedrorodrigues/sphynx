@@ -8,7 +8,7 @@ function sx::k8s::namespace() {
   local -r list_namespaces="${3:-false}"
 
   if [ -n "${exact_namespace}" ]; then
-    sx::k8s::change_namespace "${exact_namespace}"
+    sx::k8s_command::namespace::change "${exact_namespace}"
   elif ${list_namespaces}; then
     sx::k8s::ensure_api_access
 
@@ -24,7 +24,7 @@ function sx::k8s::namespace() {
   elif sx::os::is_command_available 'fzf'; then
     sx::k8s::ensure_api_access
 
-    local -r options="$(sx::k8s::namespaces "${query}")"
+    local -r options="$(sx::k8s_command::namespace::names "${query}")"
 
     if [ -z "${options}" ]; then
       sx::log::fatal 'No resources found'
@@ -33,27 +33,27 @@ function sx::k8s::namespace() {
     # shellcheck disable=SC2086  # quote this to prevent word splitting
     local -r selected="$(echo -e "${options}" | fzf ${SX_FZF_ARGS})"
 
-    [ -n "${selected}" ] && sx::k8s::change_namespace "${selected}"
+    [ -n "${selected}" ] && sx::k8s_command::namespace::change "${selected}"
   else
     sx::k8s::ensure_api_access
 
     export PS3=$'\n''Please, choose the resource: '$'\n'
 
     local options
-    readarray -t options < <(sx::k8s::namespaces "${query}")
+    readarray -t options < <(sx::k8s_command::namespace::names "${query}")
 
     if [ "${#options[@]}" -eq 0 ]; then
       sx::log::fatal 'No resources found'
     fi
 
     select selected in "${options[@]}"; do
-      sx::k8s::change_namespace "${selected}"
+      sx::k8s_command::namespace::change "${selected}"
       break
     done
   fi
 }
 
-function sx::k8s::namespaces() {
+function sx::k8s_command::namespace::names() {
   local -r query="${1:-}"
 
   if [ -n "${query}" ]; then
@@ -81,7 +81,7 @@ function sx::k8s::namespaces() {
   done
 }
 
-function sx::k8s::change_namespace() {
+function sx::k8s_command::namespace::change() {
   local -r ns="${1:-}"
 
   sx::k8s::cli config set-context --current --namespace "${ns}"
