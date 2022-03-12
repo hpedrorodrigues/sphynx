@@ -61,6 +61,8 @@
   default = simple
 [pull]
   rebase = true
+[rebase]
+  autoStash = true
 [rerere]
   enabled = 1
 [merge]
