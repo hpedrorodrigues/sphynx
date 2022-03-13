@@ -4,6 +4,11 @@
 ##
 ## e.g. aws-ssm <instance-id> <region>
 function aws-ssm() {
+  if ! hash 'aws' 2>/dev/null; then
+    echo 'The command-line \"aws\" is not available in your path' >&2
+    return 1
+  fi
+
   local -r func_name="${FUNCNAME[0]:-${funcstack[1]}}"
   local -r instance_id="${1}"
   local -r region="${2:-us-east-1}"
@@ -28,67 +33,4 @@ function aws-ssm() {
   aws ssm start-session \
     --target "${instance_id}" \
     --region "${region}"
-}
-
-## Search for ECS services using the provided query
-##
-## e.g. aws-ecs-search <my-service> <region>
-##
-## TODO: Refactor this function to remove the chained loops
-function aws-ecs-search() {
-  local -r func_name="${FUNCNAME[0]:-${funcstack[1]}}"
-  local -r service_query="${1:-}"
-  local -r region="${2:-us-east-1}"
-
-  if [ -z "${service_query}" ]; then
-    echo '!!! This function needs a service query as first argument' >&2
-    echo "!!! e.g. ${func_name} <my-service>" >&2
-    return 1
-  fi
-
-  if [ -z "${region}" ]; then
-    echo '!!! This function needs a region as second argument' >&2
-    echo "!!! e.g. ${func_name} <my-service> <region> # default is us-east-1" >&2
-    return 1
-  fi
-
-  if ! hash 'aws' 2>/dev/null; then
-    echo 'The command-line \"aws\" is not available in your path' >&2
-    return 1
-  fi
-
-  if ! hash 'jq' 2>/dev/null; then
-    echo 'The command-line \"jq\" is not available in your path' >&2
-    return 1
-  fi
-
-  aws ecs list-clusters --region "${region}" \
-    | jq --monochrome-output --raw-output '.clusterArns | .[]' \
-    | sort -u \
-    | while read -r cluster; do
-      aws ecs list-services --cluster "${cluster}" --region "${region}" \
-        | jq --monochrome-output --raw-output '.serviceArns | .[]' \
-        | sort -u \
-        | grep "${service_query}" \
-        | while read -r service; do
-          aws ecs list-tasks --cluster "${cluster}" --service-name "${service}" --region "${region}" \
-            | jq --monochrome-output --raw-output '.taskArns | .[]' \
-            | while read -r task; do
-              aws ecs describe-tasks --cluster "${cluster}" --tasks "${task}" --region "${region}" \
-                | jq --monochrome-output --raw-output '.tasks[].containerInstanceArn' \
-                | while read -r container_instance; do
-                  aws ecs describe-container-instances --cluster "${cluster}" --container-instances "${container_instance}" --region "${region}" \
-                    | jq --monochrome-output --raw-output '.containerInstances[].ec2InstanceId' \
-                    | while read -r instance_id; do
-                      echo "> ${cluster}"
-                      echo "|-- (Service)             ${service}"
-                      echo "|-- (Task)                ${task}"
-                      echo "|-- (Container Instance)  ${container_instance}"
-                      echo "|-- (Instance ID)         ${instance_id}"
-                      echo
-                    done
-                done
-            done
-        done
-    done
 }

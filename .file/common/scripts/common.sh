@@ -216,6 +216,11 @@ function ram() {
 ##
 ## e.g. fgpick
 function fgpick() {
+  if ! hash 'fzf' 2>/dev/null; then
+    echo 'The command-line \"fzf\" is not available in your path' >&2
+    return 1
+  fi
+
   local -r n_jobs="$(jobs | wc -l | tr -d ' ')"
 
   if [ "${n_jobs}" -eq 0 ]; then
@@ -266,6 +271,16 @@ function = {
 ## e.g. ngw
 ## e.g. ngw my-project
 function ngw() {
+  if ! hash 'code' 2>/dev/null; then
+    echo 'The command-line \"code\" is not available in your path' >&2
+    return 1
+  fi
+
+  if ! hash 'go' 2>/dev/null; then
+    echo 'The command-line \"go\" is not available in your path' >&2
+    return 1
+  fi
+
   local -r workspace_folder="${1:-$(mktemp -d)}"
 
   if ! [ -d "${workspace_folder}" ]; then
@@ -298,7 +313,7 @@ function ngw() {
 ## e.g. aps <query>
 function aps() {
   # shellcheck disable=SC2046  # Quote this to prevent word splitting
-  eval $(sx aws profile --switch "${@}")
+  eval $(sx aws profile --switch)
 }
 
 ## Set the env var JAVA_HOME with the provided version using other

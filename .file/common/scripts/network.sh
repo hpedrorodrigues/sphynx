@@ -9,6 +9,11 @@
 ## - https://curl.se/docs/manpage.html
 ## - https://stackoverflow.com/a/22625150/3691240
 function curltime() {
+  if ! hash 'curl' 2>/dev/null; then
+    echo 'The command-line \"curl\" is not available in your path' >&2
+    return 1
+  fi
+
   local -r tool_name="${FUNCNAME[0]:-${funcstack[1]}}"
   local -r template="$(
     cat <<EOF
@@ -27,11 +32,6 @@ Note: The times are displayed in seconds.\n
 EOF
   )"
 
-  if ! hash 'curl' 2>/dev/null; then
-    echo 'The command-line \"curl\" is not available in your path' >&2
-    return 1
-  fi
-
   curl \
     --silent \
     --header "Authorization: Bearer ${TOKEN}" \
@@ -48,6 +48,11 @@ EOF
 ## References:
 ## - https://prometheus.io/docs/prometheus/latest/querying/api
 function promql() {
+  if ! hash 'curl' 2>/dev/null; then
+    echo 'The command-line \"curl\" is not available in your path' >&2
+    return 1
+  fi
+
   local -r func_name="${FUNCNAME[0]:-${funcstack[1]}}"
   local -r server="${1}"
   local -r query="${2}"
@@ -55,11 +60,6 @@ function promql() {
   if [ -z "${server}" ] || [ -z "${query}" ]; then
     echo '!!! This function needs a Prometheus server address and a query as arguments' >&2
     echo "!!! e.g. ${func_name} 'http://localhost:9090' 'avg(up) by (job)'" >&2
-    return 1
-  fi
-
-  if ! hash 'curl' 2>/dev/null; then
-    echo 'The command-line \"curl\" is not available in your path' >&2
     return 1
   fi
 

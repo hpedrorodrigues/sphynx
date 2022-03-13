@@ -190,6 +190,11 @@ function csv() {
 ##
 ## Credits: https://github.com/DanielFGray/fzf-scripts/blob/master/fzrepl
 function replfy() {
+  if ! hash 'fzf' 2>/dev/null; then
+    echo 'The command-line \"fzf\" is not available in your path' >&2
+    return 1
+  fi
+
   local -r func_name="${FUNCNAME[0]:-${funcstack[1]}}"
   local -r user_cmd="${1}"
   local -r user_query="${2}"
