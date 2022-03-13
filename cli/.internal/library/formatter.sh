@@ -6,7 +6,7 @@ function sx::yaml() {
   elif sx::os::is_command_available 'yh'; then
     cat | yh
   elif sx::os::is_command_available 'bat'; then
-    cat | bat --language 'yaml'
+    cat | bat --language 'yaml' --paging 'never' --plain
   elif sx::os::is_command_available 'pygmentize'; then
     cat | pygmentize -l 'yaml'
   else
@@ -18,7 +18,7 @@ function sx::json() {
   if sx::os::is_command_available 'jq'; then
     cat | jq
   elif sx::os::is_command_available 'bat'; then
-    cat | bat --language 'json'
+    cat | bat --language 'json' --paging 'never' --plain
   elif sx::os::is_command_available 'pygmentize'; then
     cat | pygmentize -l 'json'
   else

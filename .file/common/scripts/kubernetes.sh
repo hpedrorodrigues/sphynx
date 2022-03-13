@@ -200,3 +200,29 @@ function kdeb() {
     --grace-period '1' \
     --image 'hpedrorodrigues/alien:debug'
 }
+
+## Diff configurations specified by file name or stdin between the current
+## online configuration, and the configuration as it would be if applied.
+##
+## e.g. kdiff -f pod.yaml
+## e.g. cat service.yaml | kdiff
+function kdiff() {
+  if [ ${#} -gt '0' ]; then
+    # shellcheck disable=SC2068  # Double quote array expansions
+    kubectl diff ${@} | delta --side-by-side
+  else
+    kubectl diff -f - | delta --side-by-side
+  fi
+}
+
+## Prints the instance leader for the selected component.
+##
+## e.g. kleader
+function kleader() {
+  kubectl get endpoints --namespace 'kube-system' --output 'name' \
+    | fzf \
+    | xargs -I % kubectl get % --namespace 'kube-system' --output 'json' \
+    | jq -r '.metadata.annotations."control-plane.alpha.kubernetes.io/leader"' \
+    | jq -r '.holderIdentity' \
+    | awk -F '_' '{ print $1 }'
+}

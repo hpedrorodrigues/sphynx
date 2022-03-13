@@ -53,7 +53,7 @@ function e64() {
     return 1
   fi
 
-  if [ "${#}" -gt 0 ]; then
+  if [ "${#}" -gt '0' ]; then
     echo -n "${@}" | base64
   else
     base64
@@ -70,7 +70,7 @@ function d64() {
     return 1
   fi
 
-  if [ "${#}" -gt 0 ]; then
+  if [ "${#}" -gt '0' ]; then
     echo -n "${@}" | base64 --decode
   else
     base64 --decode
