@@ -109,8 +109,13 @@ function knp() {
     return 1
   fi
 
+  if ! hash 'jq' 2>/dev/null; then
+    echo 'The command-line \"jq\" is not available in your path' >&2
+    return 1
+  fi
+
   kubectl get pods \
-    --output json \
+    --output 'json' \
     --all-namespaces \
     | jq '.items
     | group_by(.spec.nodeName)
@@ -207,6 +212,16 @@ function kdeb() {
 ## e.g. kdiff -f pod.yaml
 ## e.g. cat service.yaml | kdiff
 function kdiff() {
+  if ! hash 'kubectl' 2>/dev/null; then
+    echo 'The command-line \"kubectl\" is not available in your path' >&2
+    return 1
+  fi
+
+  if ! hash 'delta' 2>/dev/null; then
+    echo 'The command-line \"delta\" is not available in your path' >&2
+    return 1
+  fi
+
   if [ ${#} -gt '0' ]; then
     # shellcheck disable=SC2068  # Double quote array expansions
     kubectl diff ${@} | delta --side-by-side
@@ -219,6 +234,16 @@ function kdiff() {
 ##
 ## e.g. kleader
 function kleader() {
+  if ! hash 'kubectl' 2>/dev/null; then
+    echo 'The command-line \"kubectl\" is not available in your path' >&2
+    return 1
+  fi
+
+  if ! hash 'jq' 2>/dev/null; then
+    echo 'The command-line \"jq\" is not available in your path' >&2
+    return 1
+  fi
+
   kubectl get endpoints --namespace 'kube-system' --output 'name' \
     | fzf \
     | xargs -I % kubectl get % --namespace 'kube-system' --output 'json' \
