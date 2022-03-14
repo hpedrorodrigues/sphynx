@@ -27,7 +27,7 @@ function download_meaning() {
     return 1
   fi
 
-  if ! hash 'p2i' 2>/dev/null; then
+  if ! type 'p2i' 2>/dev/null | grep -q 'is a function\|is a shell function'; then
     echo 'The command-line \"p2i\" is not available in your path' >&2
     return 1
   fi

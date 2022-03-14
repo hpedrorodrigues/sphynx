@@ -37,6 +37,7 @@ readonly DOTFILES=(
   "${HOME}/.jetbridgerc"
 )
 
+# shellcheck disable=SC2048  # Use "$@" (with quotes) to prevent whitespace problems
 for dotfile in ${DOTFILES[*]}; do
   if [ -f "${dotfile}" ]; then
     source "${dotfile}"

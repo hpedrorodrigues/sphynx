@@ -44,6 +44,7 @@ function sx::system::query_dns() {
 
     local server_ip
     local server_owner
+    # shellcheck disable=SC2048  # Use "$@" (with quotes) to prevent whitespace problems
     for name_server in ${name_servers[*]}; do
       server_owner="$(echo "${name_server}" | cut -d ',' -f 1)"
       server_ip="$(echo "${name_server}" | cut -d ',' -f 2)"

@@ -6,7 +6,6 @@ vscode_extensions:
   - armandphilippot.coldark
   - bungcip.better-toml
   - christian-kohler.path-intellisense
-  - CoenraadS.bracket-pair-colorizer-2
   - DavidAnson.vscode-markdownlint
   - eamodio.gitlens
   - EditorConfig.EditorConfig
