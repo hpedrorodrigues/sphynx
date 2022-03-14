@@ -11,6 +11,7 @@ readonly BASIC_PATHS=(
   "${HOME}/.local/bin"
 )
 
+# shellcheck disable=SC2048  # Use "$@" (with quotes) to prevent whitespace problems
 for basic_path in ${BASIC_PATHS[*]}; do
   if [ -d "${basic_path}" ] && echo "${PATH}" | grep "${basic_path}" -v -q; then
     export PATH="${PATH}:${basic_path}"

@@ -1,4 +1,4 @@
-FROM node:lts-alpine3.14
+FROM node:lts-alpine3.15
 
 LABEL maintainer="Pedro Rodrigues <github.com/hpedrorodrigues>"
 
@@ -10,9 +10,9 @@ ARG group=alien
 
 ENV ALIEN_HOME /home/${user}
 
-RUN npm install --global prettier@2.4.1 \
+RUN npm install --global prettier@2.5.1 \
   && echo http://dl-2.alpinelinux.org/alpine/edge/community/ >> /etc/apk/repositories \
-  && apk --no-cache add shadow=4.8.1-r0 \
+  && apk --no-cache add shadow=4.10-r3 \
   && groupmod -g $((gid + 1)) node \
   && usermod -u $((uid + 1)) -g $((gid + 1)) node \
   && addgroup -g "${gid}" "${group}" \
