@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNXC_DIR}/.internal/all.sh"
+source "${SPHYNXC_DIR}/system/core/clipboard.sh"
+source "${SPHYNXN_DIR}/shared/shared.sh"
+source "${SPHYNXN_DIR}/core/file.sh"
+
+##? Share files via "transfer.sh"
+##?
+##? Usage:
+##?     file <path>
+##?
+##? Examples:
+##?     file ./test.txt
+
+sx::parse_arguments "${@}"
+
+sx::share::file "${path:-}"
