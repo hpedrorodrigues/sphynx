@@ -4,6 +4,7 @@ export TRANSFER_URL='https://transfer.sh'
 
 function sx::share::file() {
   sx::require_supported_os
+  sx::require_network
 
   local -r file_path="${1:-}"
 
