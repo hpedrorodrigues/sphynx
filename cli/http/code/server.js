@@ -39,4 +39,4 @@ const server = http.createServer(listener);
 
 server.listen(port, hostname);
 
-console.info(`Server listening at http://${hostname}:${port}`);
+console.info(`Server listening at http://${hostname}:${port}\n`);

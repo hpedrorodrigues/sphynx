@@ -5,6 +5,7 @@ set -o nounset
 set -o pipefail
 
 source "${SPHYNXC_DIR}/.internal/all.sh"
+source "${SPHYNXC_DIR}/system/core/clipboard.sh"
 source "${SPHYNXN_DIR}/shared/shared.sh"
 source "${SPHYNXN_DIR}/core/inspect.sh"
 
