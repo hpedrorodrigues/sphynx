@@ -18,6 +18,7 @@ source "${library_path}/sphynx.sh"
 source "${library_path}/string.sh"
 source "${library_path}/formatter.sh"
 source "${library_path}/math.sh"
+source "${library_path}/url.sh"
 source "${library_path}/variables.sh"
 
 # Loading core functions for global commands

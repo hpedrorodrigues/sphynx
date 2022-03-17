@@ -11,12 +11,15 @@ source "${SPHYNXN_DIR}/core/whatsapp.sh"
 ##? Open whatsapp chats on browser
 ##?
 ##? Usage:
-##?     whatsapp open <phone>
+##?     whatsapp <phone> [--text <message>]
+##?
+##? Options:
+##?     -t --text <message>  Open the chat with the provided text
 ##?
 ##? Examples:
-##?     whatsapp open "+5511999991111"
-##?     whatsapp open "+19991119999"
+##?     whatsapp "+5511999991111"
+##?     whatsapp "+19991119999" --text "Hey, how's it going?"
 
 sx::parse_arguments "${@}"
 
-sx::whatsapp::open "${phone:-}"
+sx::share::whatsapp "${phone:-}" "${text:-}"

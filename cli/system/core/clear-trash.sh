@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 function sx::system::clear_trash() {
-  sx::system::check_requirements
+  sx::require_supported_os
 
   if sx::os::is_osx; then
     sx::require 'sqlite3'
