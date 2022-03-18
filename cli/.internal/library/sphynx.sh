@@ -3,13 +3,10 @@
 function sx::parse_arguments() {
   local -r script_file="${0}"
   local -r help=$(grep '^##?' "${script_file}" | cut -c 5-)
-  local -r docopts="${SPHYNXC_DIR}/.internal/docopt/docopts"
   local -r sphynxd="$(basename "${SPHYNXC_DIR}")"
 
   if [[ ${*} == *'--help'* ]]; then
-    sx::require 'python'
-
-    eval "$(${docopts} -h "${help}" : '--help')"
+    eval "$(sx::docopts -h "${help}" : '--help')"
     exit 0
   elif [[ ${*} == *'--raw'* ]]; then
     local -r file_dir="$(dirname "${script_file}")"
@@ -45,8 +42,6 @@ function sx::parse_arguments() {
 
     sx::log::fatal 'No such file'
   elif [[ ${*} == *'--github'* ]]; then
-    sx::require 'python'
-
     local -r file_dir="$(dirname "${script_file}")"
     local -r file_name="$(basename "${script_file}")"
     local -r branch="$(cd "${SPHYNX_DIR}" && sx::git::current_branch)"
@@ -61,8 +56,6 @@ function sx::parse_arguments() {
     sx::os::browser::open "${url}"
     exit 0
   else
-    sx::require 'python'
-
-    eval "$(${docopts} -h "${help}" : "${@:1}")"
+    eval "$(sx::docopts -h "${help}" : "${@:1}")"
   fi
 }
