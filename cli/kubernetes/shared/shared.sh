@@ -6,7 +6,7 @@ export SX_KUBERNETES_RESOURCES="${SX_KUBERNETES_RESOURCES:-${SX_KUBERNETES_DEFAU
 export SX_KUBERNETES_EDITABLE_RESOURCES="$(echo "${SX_KUBERNETES_RESOURCES}" | sed -E 's/,(nodes|leases|endpoints|endpointslices)//g')"
 
 export SX_K8SCTL="${SX_K8SCTL:-kubectl}"
-export SX_K8S_REQUEST_TIMEOUT="${SX_K8S_REQUEST_TIMEOUT:-0}"
+export SX_K8S_REQUEST_TIMEOUT="${SX_K8S_REQUEST_TIMEOUT:-5s}"
 
 function sx::k8s::check_requirements() {
   sx::require_supported_os
@@ -14,8 +14,9 @@ function sx::k8s::check_requirements() {
 }
 
 function sx::k8s::can_access_api() {
-  sx::k8s::cli get service kubernetes \
-    --namespace default &>/dev/null
+  sx::k8s::cli get \
+    --raw='/readyz' \
+    --request-timeout "${SX_K8S_REQUEST_TIMEOUT}" &>/dev/null
 }
 
 function sx::k8s::ensure_api_access() {
@@ -206,5 +207,5 @@ function sx::k8s::nodes() {
 
 function sx::k8s::cli() {
   # shellcheck disable=SC2086  # quote this to prevent word splitting
-  command ${SX_K8SCTL} --request-timeout "${SX_K8S_REQUEST_TIMEOUT}" "${@}"
+  command ${SX_K8SCTL} "${@}"
 }
