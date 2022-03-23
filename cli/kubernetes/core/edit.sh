@@ -57,5 +57,5 @@ function sx::k8s_command::edit() {
 
   sx::log::info "Editing ${kind} \"${ns}/${name}\"\n"
 
-  sx::k8s::cli --record=true --namespace "${ns}" edit "${kind}" "${name}"
+  sx::k8s::cli --namespace "${ns}" edit "${kind}" "${name}"
 }
