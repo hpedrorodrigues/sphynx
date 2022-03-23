@@ -210,7 +210,7 @@ function kdeb() {
 ## online configuration, and the configuration as it would be if applied.
 ##
 ## e.g. kdiff -f pod.yaml
-## e.g. cat service.yaml | kdiff
+## e.g. cat service.yaml | kdiff -f -
 function kdiff() {
   if ! hash 'kubectl' 2>/dev/null; then
     echo 'The command-line \"kubectl\" is not available in your path' >&2
@@ -222,12 +222,8 @@ function kdiff() {
     return 1
   fi
 
-  if [ ${#} -gt '0' ]; then
-    # shellcheck disable=SC2068  # Double quote array expansions
-    kubectl diff ${@} | delta --side-by-side
-  else
-    kubectl diff -f - | delta --side-by-side
-  fi
+  # shellcheck disable=SC2068  # Double quote array expansions
+  kubectl diff ${@} | delta --side-by-side
 }
 
 ## Prints the instance leader for the selected component.
