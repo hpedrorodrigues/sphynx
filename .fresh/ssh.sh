@@ -10,13 +10,12 @@ set -o pipefail
 
 readonly key_type='ed25519'
 readonly authentication_key_file="${HOME}/.ssh/id_ed25519"
-readonly config_file="${HOME}/.ssh/config"
 readonly known_hosts_file="${HOME}/.ssh/known_hosts"
 readonly user_email="${1:-}"
 
 function log_info() {
   echo
-  echo "> ${@}"
+  echo "> ${*}"
   echo
 }
 
@@ -35,9 +34,11 @@ ssh-keygen \
   -f "${authentication_key_file}"
 
 log_info 'Adding Github fingerprints to known hosts...'
-ssh-keyscan -t 'rsa' 'github.com' >> "${known_hosts_file}"
-ssh-keyscan -t 'ecdsa' 'github.com' >> "${known_hosts_file}"
-ssh-keyscan -t 'ed25519' 'github.com' >> "${known_hosts_file}"
+{
+  ssh-keyscan -t 'rsa' 'github.com'
+  ssh-keyscan -t 'ecdsa' 'github.com'
+  ssh-keyscan -t 'ed25519' 'github.com'
+} >>"${known_hosts_file}"
 
-cat "${authentication_key_file}.pub" | sx system clipboard copy
+sx system clipboard copy <"${authentication_key_file}.pub"
 log_info 'Public key copied to clipboard!'

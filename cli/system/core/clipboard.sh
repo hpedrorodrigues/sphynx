@@ -8,8 +8,7 @@ function sx::system::clipboard::copy() {
   elif sx::os::is_command_available 'xsel'; then
     xsel --input --clipboard
   elif sx::os::is_command_available 'pbcopy'; then
-    # this xargs is necessary to strip the last linefeed character from input
-    xargs echo -n | pbcopy
+    pbcopy
   else
     sx::log::fatal 'No clipboard copy command-line utility available'
   fi
