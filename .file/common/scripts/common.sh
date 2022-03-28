@@ -218,7 +218,22 @@ function cpu() {
     return 1
   fi
 
-  top -l 1 | head -n 4 | tail -n 1
+  if ! hash 'sysctl' 2>/dev/null; then
+    echo 'The command-line \"sysctl\" is not available in your path' >&2
+    return 1
+  fi
+
+  echo '> CPU Usage'
+  echo
+  top -l 1 | head -n 4 | tail -n 1 | cut -d ':' -f 2
+
+  echo
+  echo '> Load Average'
+  echo
+  sysctl -n vm.loadavg \
+    | tr -d '{}' \
+    | awk -F ' ' '{ print " 1 min,5 min,15 min"; print " " $1 "," $2 "," $3 }' \
+    | column -t -s ','
 }
 
 ## Prints the current battery usage
