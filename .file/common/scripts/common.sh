@@ -209,6 +209,32 @@ function ram() {
   echo "${application} uses ${sum}MBs of RAM"
 }
 
+## Prints the current CPU usage
+##
+## e.g. cpu
+function cpu() {
+  if ! hash 'top' 2>/dev/null; then
+    echo 'The command-line \"top\" is not available in your path' >&2
+    return 1
+  fi
+
+  top -l 1 | head -n 4 | tail -n 1
+}
+
+## Prints the current battery usage
+##
+## e.g. battery
+function battery() {
+  if ! hash 'pmset' 2>/dev/null; then
+    echo 'The command-line \"pmset\" is not available in your path' >&2
+    return 1
+  fi
+
+  pmset -g ps \
+    | sed -n 's/.*[[:blank:]]+*\(.*%\).*/\1/p' \
+    | awk '{printf "%2d%%\n", $1}'
+}
+
 # Terminal Integration functions
 
 ## Switch the selected job running in background (when available) into the
@@ -312,8 +338,7 @@ function ngw() {
 ##
 ## e.g. aps <query>
 function aps() {
-  # shellcheck disable=SC2046  # Quote this to prevent word splitting
-  eval $(sx aws profile --switch)
+  eval "$(sx aws profile --switch)"
 }
 
 ## Set the env var JAVA_HOME with the provided version using other
