@@ -328,16 +328,6 @@ function ngw() {
     mkdir -p "${workspace_folder}"
   fi
 
-  if ! hash 'go' 2>/dev/null; then
-    echo 'The command-line \"go\" is not available in your path' >&2
-    return 1
-  fi
-
-  if ! hash 'code' 2>/dev/null; then
-    echo 'The command-line \"code\" is not available in your path' >&2
-    return 1
-  fi
-
   echo -e 'package main\n\nfunc main() {\n\n}\n' \
     >"${workspace_folder}/main.go"
   echo -e 'package main\n\nimport "testing"\n\nfunc Test(t *testing.T) {\n\n}\n\n' \
