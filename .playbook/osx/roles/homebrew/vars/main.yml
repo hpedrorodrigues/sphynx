@@ -46,6 +46,7 @@ homebrew_packages:
   - icdiff
   - imgcat
   - jq
+  - kind
   - kotlin
   - kubernetes-cli
   - krew
