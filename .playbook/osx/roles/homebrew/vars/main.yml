@@ -117,9 +117,9 @@ homebrew_apps:
   - session-manager-plugin
   - skype
   - spotify
-  - temurin8 # JDK 8
+  - temurin8  # JDK 8
   - temurin11 # JDK 11
-  - temurin # JDK 17
+  - temurin   # JDK 17
   - tunnelblick
   - virtualbox
   - virtualbox-extension-pack
