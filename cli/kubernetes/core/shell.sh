@@ -114,7 +114,8 @@ function sx::k8s_command::shell() {
 EOF
   )"
 
-  sx::log::info "Opening shell in node \"${node_name}\" using \"/bin/bash\"\n"
+  sx::log::info "Opening shell in node \"${node_name}\" using \"/bin/bash\".\n"
+  sx::log::info "If you don't see a command prompt, try pressing enter."
 
   sx::k8s::cli run "${pod_name}" \
     --rm \
