@@ -9,10 +9,10 @@
     state: directory
 
 - name: Installing Go packages
-  shell: "GOPATH={{ go_workspace }} {{ go_bin }} get -u {{ item.repository }}"
+  shell: "GOPATH={{ go_workspace }} {{ go_bin }} install {{ item.repository }}"
   with_items: "{{ go_packages }}"
   register: go_packages
   changed_when: go_packages.rc != 0
   when:
     - go.stat.exists
-    - go_packages | count > 0
+    - go_packages is defined and go_packages | count > 0
