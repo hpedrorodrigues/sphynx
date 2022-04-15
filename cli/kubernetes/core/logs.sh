@@ -141,9 +141,13 @@ function sx::k8s_command::pod::list() {
         local pod_namespace="$(echo "${templated_pod_line}" | awk '{ print $1 }')"
         local container_name="$(echo "${templated_pod_line}" | awk '{ print $3 }')"
         local description="$(echo "${templated_pod_line}" | awk '{ print $4 " " $5 }')"
-
         local pod_restarts_count="$(echo -e "${simple_pod_line}" | awk '{ print $4 }')"
-        local pod_age="$(echo -e "${simple_pod_line}" | awk '{ print $5 }')"
+
+        if echo "${simple_pod_line}" | grep -q '(\|)'; then
+          local pod_age="$(echo -e "${simple_pod_line}" | awk '{ print $7 }')"
+        else
+          local pod_age="$(echo -e "${simple_pod_line}" | awk '{ print $5 }')"
+        fi
 
         echo "${pod_namespace},${pod_name},${container_name},${pod_status},${pod_restarts_count},${pod_age},${description}"
       done
