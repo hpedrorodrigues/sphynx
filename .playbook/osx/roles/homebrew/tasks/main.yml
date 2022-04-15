@@ -71,10 +71,7 @@
     - cask.rc == 0
 
 - name: Installing Cask packages
-  homebrew_cask:
-    name: "{{ item.name | default(item) }}"
-    state: present
-    install_options: "{{ item.install_options | default(omit) }}"
+  command: brew install --cask {{ item.name | default(item) }}
   with_items: "{{ homebrew_apps }}"
   when:
     - homebrew.stat.exists or new_homebrew.rc == 0
