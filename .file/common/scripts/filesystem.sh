@@ -113,7 +113,7 @@ function eachdir() {
       echo "!!! No such directory \"${directory}\"" >&2
     fi
   done < <(
-    find "${directory_path}" -maxdepth 1 -type d ! -path "${directory_path}"
+    find "${directory_path}" -maxdepth 1 -type d ! -path "${directory_path}" | sort -u
   )
 }
 
