@@ -10,6 +10,7 @@ vscode_extensions:
   - eamodio.gitlens
   - EditorConfig.EditorConfig
   - golang.go
+  - hashicorp.hcl
   - hashicorp.terraform
   - ipedrazas.kubernetes-snippets
   - k--kato.intellij-idea-keybindings
@@ -24,4 +25,3 @@ vscode_extensions:
   - streetsidesoftware.code-spell-checker
   - streetsidesoftware.code-spell-checker-portuguese-brazilian
   - WakaTime.vscode-wakatime
-  - wholroyd.HCL
