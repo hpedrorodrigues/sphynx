@@ -55,3 +55,7 @@ Desktop.ini
 .swo
 .*.swp
 .*.swo
+
+# IntelliJ
+.idea
+*.iml
