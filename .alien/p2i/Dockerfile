@@ -19,8 +19,8 @@ RUN apk update \
     && apk add --no-cache \
          chromium=99.0.4844.84-r0 \
          nss=3.76.1-r0 \
-         freetype=2.11.1-r0 \
-         freetype-dev=2.11.1-r0 \
+         freetype=2.11.1-r1 \
+         freetype-dev=2.11.1-r1 \
          harfbuzz=3.0.0-r2 \
          ca-certificates=20211220-r0 \
          ttf-freefont=20120503-r2 \

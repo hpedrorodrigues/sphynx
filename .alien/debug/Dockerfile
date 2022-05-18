@@ -1,4 +1,4 @@
-FROM alpine:3.15.0
+FROM alpine:3.15.4
 
 LABEL maintainer="Pedro Rodrigues <github.com/hpedrorodrigues>"
 
@@ -10,7 +10,7 @@ RUN apk update \
       bridge-utils=1.7.1-r0 \
       busybox-extras=1.34.1-r5 \
       conntrack-tools=1.4.6-r1 \
-      curl=7.80.0-r0 \
+      curl=7.80.0-r1 \
       ethtool=5.15-r0 \
       iperf=2.1.4-r0 \
       iproute2=5.15.0-r0 \
@@ -23,12 +23,12 @@ RUN apk update \
       netcat-openbsd=1.130-r3 \
       nftables=1.0.1-r0 \
       nmap=7.92-r2 \
-      openssl=1.1.1n-r0 \
+      openssl=1.1.1o-r0 \
       socat=1.7.4.2-r0 \
       strace=5.14-r0 \
       tcpdump=4.99.1-r3 \
       tcptraceroute=1.5b7-r3 \
       util-linux=2.37.4-r0 \
-      vim=8.2.4708-r0 \
+      vim=8.2.4836-r0 \
       wget=1.21.2-r2 \
     && rm -rf /var/cache/apk/*
