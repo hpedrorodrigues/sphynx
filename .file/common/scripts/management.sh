@@ -2,13 +2,13 @@
 
 ## Function to help me handle the Sphynx repository
 ##
-## e.g. sphynx open
+## e.g. sphynx code
 ## e.g. sphynx status
 function sphynx() {
   local -r action="${1}"
   local -r sphynx_repository="${HOME}/Code/Personal/sphynx"
 
-  if [ "${action}" = 'open' ]; then
+  if [ "${action}" = 'code' ]; then
     code "${sphynx_repository}"
   elif [ "${action}" = 'go' ]; then
     cd "${sphynx_repository}" || return 1
@@ -24,7 +24,7 @@ function sphynx() {
     fi
     echo '!!!' >&2
     echo '!!! Available actions' >&2
-    echo '!!!   - open' >&2
+    echo '!!!   - code' >&2
     echo '!!!   - go' >&2
     echo '!!!   - status' >&2
     echo '!!!   - repo' >&2
@@ -34,13 +34,13 @@ function sphynx() {
 
 ## Function to help me handle the secrets repository
 ##
-## e.g. secrets open
+## e.g. secrets code
 ## e.g. secrets push
 function secrets() {
   local -r action="${1}"
   local -r secrets_repository="${HOME}/Code/Personal/secrets"
 
-  if [ "${action}" = 'open' ]; then
+  if [ "${action}" = 'code' ]; then
     code "${secrets_repository}"
   elif [ "${action}" = 'go' ]; then
     cd "${secrets_repository}" || return 1
@@ -71,7 +71,7 @@ function secrets() {
     fi
     echo '!!!' >&2
     echo '!!! Available actions' >&2
-    echo '!!!   - open' >&2
+    echo '!!!   - code' >&2
     echo '!!!   - go' >&2
     echo '!!!   - status' >&2
     echo '!!!   - pull' >&2

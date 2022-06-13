@@ -13,6 +13,7 @@ alias uposx='sudo softwareupdate --install --all'
 # shellcheck disable=SC1004  # This backslash+linefeed is literal
 alias upbrew='brew update \
                 && brew upgrade \
+                && brew autoremove \
                 && brew cleanup -s --prune 30'
 
 alias upbrewcask='brew update && brew upgrade --cask --greedy --force'

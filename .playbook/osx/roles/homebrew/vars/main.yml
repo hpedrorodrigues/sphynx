@@ -80,6 +80,7 @@ homebrew_packages:
   - tfenv
   - the_silver_searcher
   - tmux
+  - topgrade
   - translate-shell
   - tree
   - unzip
