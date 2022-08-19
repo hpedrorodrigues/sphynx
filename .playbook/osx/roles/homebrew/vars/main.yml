@@ -43,8 +43,10 @@ homebrew_packages:
   - hugo
   - hyperfine
   - hexyl
+  - htmlq
   - icdiff
   - imgcat
+  - jadx
   - jq
   - kind
   - kotlin

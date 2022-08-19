@@ -1,6 +1,7 @@
 npm_packages:
   - eslint
   - npm-check-updates
+  - react-native-decompiler
   - tldr
   - webpack
   - yarn
