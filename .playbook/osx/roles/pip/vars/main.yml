@@ -2,6 +2,7 @@ pip_packages:
   - PyYAML
   - docopt
   - dotbot
+  - hbctool
   - pip-tools
   - powerline-status
   - pylint

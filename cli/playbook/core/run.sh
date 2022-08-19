@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 export PYTHON_VERSION_XY='3.10'
-export PYTHON_VERSION_XYZ="${PYTHON_VERSION_XY}.4"
+export PYTHON_VERSION_XYZ="${PYTHON_VERSION_XY}.6"
 
 if sx::os::is_osx; then
   export PATH="/Library/Frameworks/Python.framework/Versions/${PYTHON_VERSION_XY}/bin:${PATH}:${HOME}/Library/Python/${PYTHON_VERSION_XY}/bin"
@@ -28,7 +28,7 @@ function sx::playbook::install_dependencies() {
         sudo xcodebuild -license
       fi
 
-      local -r binary_url="https://www.python.org/ftp/python/${PYTHON_VERSION_XYZ}/python-${PYTHON_VERSION_XYZ}post2-macos11.pkg"
+      local -r binary_url="https://www.python.org/ftp/python/${PYTHON_VERSION_XYZ}/python-${PYTHON_VERSION_XYZ}-macos11.pkg"
       local -r binary_path="/tmp/$(basename "${binary_url}")"
 
       curl "${binary_url}" -o "${binary_path}"
