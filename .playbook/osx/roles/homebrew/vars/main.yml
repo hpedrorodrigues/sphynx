@@ -22,6 +22,7 @@ homebrew_packages:
   - ffmpeg
   - file-formula
   - findutils
+  - { name: "fluxcd/tap/flux", installed_name: "flux" }
   - gawk
   - gcc
   - git
@@ -103,7 +104,6 @@ homebrew_apps:
   - clipy
   - deckset
   - discord
-  - flux
   - github
   - google-chrome
   - grammarly
