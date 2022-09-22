@@ -81,6 +81,9 @@ if [ -d "${GOPATH}/bin" ] && echo "${PATH}" | grep "${GOPATH}/bin" -v -q; then
   export PATH="${PATH}:${GOPATH}/bin"
 fi
 
+#|> pyenv
+hash pyenv 2>/dev/null && eval "$(pyenv init -)"
+
 #|> AWS CLI
 export AWS_PROFILE='sphynx'
 
