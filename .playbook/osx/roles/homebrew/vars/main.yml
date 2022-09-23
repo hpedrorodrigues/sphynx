@@ -69,6 +69,7 @@ homebrew_packages:
   - pidcat
   - poetry
   - postgresql
+  - pyenv
   - { name: "python", installed_name: "python@3.9" }
   - rsync
   - screen
