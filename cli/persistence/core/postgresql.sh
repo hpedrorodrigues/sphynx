@@ -43,3 +43,15 @@ function sx::postgresql::restore() {
     --verbose \
     "${file_name}"
 }
+
+function sx::postgresql::connect() {
+  sx::persistence::check_requirements
+  sx::require 'psql'
+
+  local -r db_uri="${1}"
+  if [ -z "${db_uri}" ]; then
+    sx::log::fatal 'A database URI is necessary to connect to the database'
+  fi
+
+  psql "${db_uri}"
+}

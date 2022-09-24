@@ -19,6 +19,7 @@
     ${HOME}/.gitattributes: ${SPHYNX_DIR}/.file/common/.gitattributes
     ${HOME}/.gitconfig: ${SPHYNX_DIR}/.file/common/.gitconfig
     ${HOME}/.gitignore: ${SPHYNX_DIR}/.file/common/.gitignore
+    ${HOME}/.psqlrc: ${SPHYNX_DIR}/.file/common/.psqlrc
     ${HOME}/.screenrc: ${SPHYNX_DIR}/.file/common/.screenrc
     ${HOME}/.tmux.conf: ${SPHYNX_DIR}/.file/common/.tmux.conf
     ${HOME}/.vimrc: ${SPHYNX_DIR}/.file/common/.vimrc
