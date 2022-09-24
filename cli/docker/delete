@@ -11,10 +11,10 @@ source "${SPHYNXN_DIR}/core/delete.sh"
 ##? Remove one or more objects
 ##?
 ##? Usage:
-##?     pid
+##?     delete
 ##?
 ##? Examples:
-##?     pid
+##?     delete
 
 sx::parse_arguments "${@}"
 

@@ -27,9 +27,9 @@ source "${SPHYNXN_DIR}/core/analyze.sh"
 sx::parse_arguments "${@}"
 
 if [ -n "${apk:-}" ]; then
-  sx::android::analyze_apk "${apk}"
+  sx::android::analyze::apk "${apk}"
 elif [ -n "${app:-}" ]; then
-  sx::android::analyze_app "${app}"
+  sx::android::analyze::app "${app}"
 else
   sx::error::illegal_arguments "${*}"
 fi
