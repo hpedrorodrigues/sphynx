@@ -11,20 +11,24 @@ source "${SPHYNXN_DIR}/core/postgresql.sh"
 ##? Dumps/Restores a PostgreSQL database
 ##?
 ##? Usage:
+##?     postgresql connect --dburi <uri>
 ##?     postgresql (dump | restore) --dburi <uri> --file <filename>
 ##?
 ##? Options:
-##?     --dburi <uri>  Database URI to dump/restore
+##?     --dburi <uri>  Database URI to connect/dump/restore
 ##?                    Format: postgresql://<username>:<password>@<host>:<port>/<database-name>
-##?     -f --file <filename>  Input/Output file name
+##?     -f --file <filename>  Input/output file name
 ##?
 ##? Examples:
+##?     postgresql connect --dburi 'postgresql://postgres:postgres@localhost:5432/postgres'
 ##?     postgresql dump --dburi 'postgresql://qa:qa@localhost:5432/qa' --file qa.tar
 ##?     postgresql restore --file test.tar --dburi 'postgresql://test:test@localhost:5432/test'
 
 sx::parse_arguments "${@}"
 
-if ${dump:-false}; then
+if ${connect:-false}; then
+  sx::postgresql::connect "${dburi:-}"
+elif ${dump:-false}; then
   sx::postgresql::dump "${dburi:-}" "${file:-}"
 elif ${restore:-false}; then
   sx::postgresql::restore "${dburi:-}" "${file:-}"
