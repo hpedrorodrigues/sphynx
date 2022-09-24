@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 
-function sx::aws::list_profiles() {
+function sx::aws::profile::list() {
   sx::aws::check_requirements
 
   sx::aws_command::list_profiles
 }
 
-function sx::aws::switch_profile() {
+function sx::aws::profile::switch() {
   sx::aws::check_requirements
 
   local -r query="${1:-}"

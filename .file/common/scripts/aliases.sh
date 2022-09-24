@@ -17,7 +17,8 @@ alias watch='watch '
 # Shortcut to list files
 alias l='ls -lash'
 
-# Shortcut for Docker Compose
+# Shortcut for Docker and Docker Compose
+alias d='docker'
 alias dc='docker-compose'
 
 # NVM

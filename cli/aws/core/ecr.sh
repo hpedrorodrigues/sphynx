@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-function sx::aws::ecr::clear_untagged() {
+function sx::aws::ecr::delete_untagged_images_from_all_repositories() {
   sx::aws::check_requirements
   sx::require_network
 
@@ -26,7 +26,7 @@ function sx::aws::ecr::clear_untagged() {
   sx::log::info 'Done!'
 }
 
-function sx::aws::ecr::delete_untagged_from_repository() {
+function sx::aws::ecr::delete_untagged_images_from_repository() {
   sx::aws::check_requirements
   sx::require_network
 

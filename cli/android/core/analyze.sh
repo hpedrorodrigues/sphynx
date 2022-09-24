@@ -1,14 +1,18 @@
 #!/usr/bin/env bash
 
-function sx::android::analyze_apk() {
+function sx::android::analyze::apk() {
   sx::android::check_requirements
 
   local -r path="${1}"
 
+  if ! [ -f "${path}" ]; then
+    sx::log::fatal "No such file \"${path}\""
+  fi
+
   sx::android::aapt dump badging "${path}"
 }
 
-function sx::android::analyze_app() {
+function sx::android::analyze::app() {
   sx::android::check_requirements
 
   local -r filter="${1}"

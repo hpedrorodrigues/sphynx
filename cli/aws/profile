@@ -25,9 +25,9 @@ source "${SPHYNXN_DIR}/core/profile.sh"
 sx::parse_arguments "${@}"
 
 if ${list:-false}; then
-  sx::aws::list_profiles
+  sx::aws::profile::list
 elif ${switch:-false}; then
-  sx::aws::switch_profile "${query:-}"
+  sx::aws::profile::switch "${query:-}"
 else
   sx::error::illegal_arguments "${*}"
 fi
