@@ -4,7 +4,6 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-
 readonly script_dir="$(dirname "${BASH_SOURCE[0]}")"
 
 source "${script_dir}/common.sh"

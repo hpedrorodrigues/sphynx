@@ -4,6 +4,7 @@ readonly operating_systems=('centos' 'ubuntu')
 
 function show_operating_systems() {
   echo "Available OSes:"
+  # shellcheck disable=SC2068  # Double quote array expansions
   for operating_system in ${operating_systems[@]}; do
     echo "- ${operating_system}"
   done
@@ -20,6 +21,7 @@ function check_operating_system() {
   fi
 
   local is_valid_os=false
+  # shellcheck disable=SC2068  # Double quote array expansions
   for operating_system in ${operating_systems[@]}; do
     if [ "${operating_system}" = "${user_os}" ]; then
       is_valid_os=true
@@ -34,4 +36,3 @@ function check_operating_system() {
     exit 1
   fi
 }
-
