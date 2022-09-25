@@ -126,6 +126,7 @@ homebrew_apps:
   - temurin11 # JDK 11
   - temurin # JDK 17
   - tunnelblick
+  - vagrant
   - virtualbox
   - virtualbox-extension-pack
   - wireshark

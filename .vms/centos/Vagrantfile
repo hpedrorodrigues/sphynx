@@ -1,0 +1,29 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# Reference:
+# - [Available Boxes]: https://vagrantcloud.com/search
+# - [CLI Docs]: https://www.vagrantup.com/docs/cli
+# - [Forwarded Ports]: https://www.vagrantup.com/docs/networking/forwarded_ports
+# - [Private Networks]: https://www.vagrantup.com/docs/networking/private_network
+# - [Public Networks]: https://www.vagrantup.com/docs/networking/public_network
+
+Vagrant.configure("2") do |config|
+
+  config.vm.box = "centos/7"
+
+  # https://www.vagrantup.com/docs/providers/virtualbox/configuration
+  config.vm.provider "virtualbox" do |vb|
+    vb.name = "CentOS_7"
+    vb.gui = false
+
+    vb.memory = "2048" # 2GiB
+    vb.cpus = "2" # 2vCPUs
+  end
+
+  # https://www.vagrantup.com/docs/synced-folders
+  # By default, Vagrant will share your project directory (the directory with the Vagrantfile) to /vagrant.
+  config.vm.provision "shell", inline: <<-SHELL
+    sudo yum update -y
+  SHELL
+end
