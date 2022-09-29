@@ -84,6 +84,11 @@ fi
 #|> pyenv
 hash pyenv 2>/dev/null && eval "$(pyenv init -)"
 
+#|> Non-public scripts
+export SECRETS_BIN="${HOME}/Code/Personal/secrets/bin"
+
+[ -d "${SECRETS_BIN}" ] && export PATH="${PATH}:${SECRETS_BIN}"
+
 #|> AWS CLI
 export AWS_PROFILE='sphynx'
 
