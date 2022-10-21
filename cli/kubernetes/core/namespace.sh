@@ -12,7 +12,7 @@ function sx::k8s::namespace() {
   if [ -n "${exact_namespace}" ]; then
     sx::k8s_command::namespace::change "${exact_namespace}"
   elif [ "${query}" = '-' ]; then
-    ! [ -f "${SX_NS_STACK_FILE}" ] && return
+    ! [ -s "${SX_NS_STACK_FILE}" ] && return
 
     local -r last_namespace="$(tail -n1 "${SX_NS_STACK_FILE}")"
 
@@ -20,7 +20,7 @@ function sx::k8s::namespace() {
       | wc -c \
       | xargs -I % truncate "${SX_NS_STACK_FILE}" -s -%
 
-    sx::k8s_command::namespace::change "${last_namespace}"
+    sx::k8s_command::namespace::change "${last_namespace}" false
   elif ${list_namespaces}; then
     sx::k8s::ensure_api_access
 
@@ -95,10 +95,11 @@ function sx::k8s_command::namespace::names() {
 
 function sx::k8s_command::namespace::change() {
   local -r new_namespace="${1:-}"
+  local -r update_stack_file="${2:-true}"
 
   local -r current_namespace="$(sx::k8s::current_namespace)"
-  if [ "${current_namespace}" != "${new_namespace}" ]; then
-    sx::k8s::current_namespace >>"${SX_NS_STACK_FILE}"
+  if [ "${current_namespace}" != "${new_namespace}" ] && ${update_stack_file}; then
+    echo "${current_namespace}" >>"${SX_NS_STACK_FILE}"
   fi
 
   sx::k8s::cli config set-context --current --namespace "${new_namespace}"
