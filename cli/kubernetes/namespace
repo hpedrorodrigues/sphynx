@@ -8,10 +8,10 @@ source "${SPHYNXC_DIR}/.internal/all.sh"
 source "${SPHYNXN_DIR}/shared/shared.sh"
 source "${SPHYNXN_DIR}/core/namespace.sh"
 
-##? Change current namespace
+##? Manage namespaces
 ##?
 ##? Usage:
-##?     namespace [<query> | --list | --exact <name>]
+##?     namespace [<query> | --list | --exact <name> | -]
 ##?
 ##? Options:
 ##?     -l --list  Print all namespaces
@@ -22,6 +22,7 @@ source "${SPHYNXN_DIR}/core/namespace.sh"
 ##?     namespace istio
 ##?     namespace --exact traefik
 ##?     namespace --list
+##?     namespace -
 
 sx::parse_arguments "${@}"
 
