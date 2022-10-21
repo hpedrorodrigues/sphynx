@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+export SX_NS_STACK_FILE="${SX_NS_STACK_FILE:-${HOME}/.kube/sphynx_namespaces}"
+
 function sx::k8s::namespace() {
   sx::k8s::check_requirements
 
@@ -9,6 +11,16 @@ function sx::k8s::namespace() {
 
   if [ -n "${exact_namespace}" ]; then
     sx::k8s_command::namespace::change "${exact_namespace}"
+  elif [ "${query}" = '-' ]; then
+    ! [ -f "${SX_NS_STACK_FILE}" ] && return
+
+    local -r last_namespace="$(tail -n1 "${SX_NS_STACK_FILE}")"
+
+    tail -n1 "${SX_NS_STACK_FILE}" \
+      | wc -c \
+      | xargs -I % truncate "${SX_NS_STACK_FILE}" -s -%
+
+    sx::k8s_command::namespace::change "${last_namespace}"
   elif ${list_namespaces}; then
     sx::k8s::ensure_api_access
 
@@ -82,7 +94,12 @@ function sx::k8s_command::namespace::names() {
 }
 
 function sx::k8s_command::namespace::change() {
-  local -r ns="${1:-}"
+  local -r new_namespace="${1:-}"
 
-  sx::k8s::cli config set-context --current --namespace "${ns}"
+  local -r current_namespace="$(sx::k8s::current_namespace)"
+  if [ "${current_namespace}" != "${new_namespace}" ]; then
+    sx::k8s::current_namespace >>"${SX_NS_STACK_FILE}"
+  fi
+
+  sx::k8s::cli config set-context --current --namespace "${new_namespace}"
 }
