@@ -107,7 +107,7 @@ function sx::k8s::running_pods() {
 }
 
 function sx::k8s::current_context() {
-  sx::k8s::cli config current-context
+  sx::k8s::cli config current-context 2>/dev/null
 }
 
 function sx::k8s::current_namespace() {

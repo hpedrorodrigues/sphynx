@@ -8,10 +8,10 @@ source "${SPHYNXC_DIR}/.internal/all.sh"
 source "${SPHYNXN_DIR}/shared/shared.sh"
 source "${SPHYNXN_DIR}/core/context.sh"
 
-##? Change current context
+##? Manage contexts
 ##?
 ##? Usage:
-##?     context [<query> | --list | --exact <name>]
+##?     context [<query> | --list | --exact <name> | -]
 ##?
 ##? Options:
 ##?     -l --list  Print all contexts
@@ -22,6 +22,7 @@ source "${SPHYNXN_DIR}/core/context.sh"
 ##?     context prd
 ##?     context --exact staging
 ##?     context --list
+##?     context -
 
 sx::parse_arguments "${@}"
 
