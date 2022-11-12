@@ -2,7 +2,7 @@
 
 # External images
 
-export CONFLUENT_VERSION=${CONFLUENT_VERSION:-7.1.4}
+export CONFLUENT_VERSION=${CONFLUENT_VERSION:-7.3.0}
 
 ## Kafka CLI (https://kafka.apache.org)
 ##
@@ -30,6 +30,7 @@ function kcli() {
     --name "${tool_name}" \
     --interactive \
     --publish "${random_port}:9092" \
+    --volume "${KCLI_DIR:-${PWD}}:/mnt" \
     "confluentinc/cp-kafka:${CONFLUENT_VERSION}" "${@}"
 }
 
