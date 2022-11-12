@@ -49,6 +49,7 @@ homebrew_packages:
   - imgcat
   - jadx
   - jq
+  - kcat
   - kind
   - kotlin
   - kubernetes-cli
@@ -128,6 +129,5 @@ homebrew_apps:
   - tunnelblick
   - vagrant
   - virtualbox
-  - virtualbox-extension-pack
   - wireshark
   - zoom
