@@ -16,6 +16,9 @@ function sphynx() {
     (cd "${sphynx_repository}" && git status)
   elif [ "${action}" = 'repo' ]; then
     (cd "${sphynx_repository}" && sx git open)
+  elif [ "${action}" = 'run' ]; then
+    # shellcheck disable=SC2068  # Double quote array expansions
+    (cd "${secrets_repository}" && ${@:2})
   else
     if [ -z "${action}" ]; then
       echo "!!! No action provided." >&2
@@ -28,6 +31,7 @@ function sphynx() {
     echo '!!!   - go' >&2
     echo '!!!   - status' >&2
     echo '!!!   - repo' >&2
+    echo '!!!   - run' >&2
     return 1
   fi
 }
@@ -63,6 +67,9 @@ function secrets() {
     )
   elif [ "${action}" = 'repo' ]; then
     (cd "${secrets_repository}" && sx git open)
+  elif [ "${action}" = 'run' ]; then
+    # shellcheck disable=SC2068  # Double quote array expansions
+    (cd "${secrets_repository}" && ${@:2})
   else
     if [ -z "${action}" ]; then
       echo "!!! No action provided." >&2
@@ -77,6 +84,7 @@ function secrets() {
     echo '!!!   - pull' >&2
     echo '!!!   - push' >&2
     echo '!!!   - repo' >&2
+    echo '!!!   - run' >&2
     return 1
   fi
 }
