@@ -47,7 +47,7 @@ for dotfile in ${DOTFILES[*]}; do
 done
 
 #|> NVM
-# I'm disabling nvm for now because it makes the shell startup really slow
+# https://github.com/nvm-sh/nvm/issues/2724
 if ${NVM_ENABLED:-false}; then
   export NVM_DIR="${HOME}/.nvm"
   export NVM_INSTALLATION_DIR='/usr/local/opt/nvm'
@@ -82,7 +82,8 @@ if [ -d "${GOPATH}/bin" ] && echo "${PATH}" | grep "${GOPATH}/bin" -v -q; then
 fi
 
 #|> pyenv
-hash pyenv 2>/dev/null && eval "$(pyenv init -)"
+# https://github.com/pyenv/pyenv/issues/784#issuecomment-826444110
+hash pyenv 2>/dev/null && eval "$(pyenv init --path --no-rehash)"
 
 #|> Non-public scripts
 export SECRETS_BIN="${HOME}/Code/Personal/secrets/bin"
