@@ -102,6 +102,11 @@ alias kto='sx kubernetes topology'
 alias ktc='kubectl top pods --sort-by=cpu --all-namespaces --use-protocol-buffers'
 alias ktm='kubectl top pods --sort-by=memory --all-namespaces --use-protocol-buffers'
 
+# Terraform
+
+alias tf='terraform'
+alias tfm='terraform fmt -recursive'
+
 # Network
 alias dns='sx system dns --query'
 

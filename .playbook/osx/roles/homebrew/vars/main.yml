@@ -82,6 +82,7 @@ homebrew_packages:
   - stern
   - subnetcalc
   - telnet
+  - terragrunt
   - tfenv
   - the_silver_searcher
   - tmux
