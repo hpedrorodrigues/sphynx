@@ -10,4 +10,5 @@ dock_apps:
   - "/System/Applications/Calendar.app"
   - "/Applications/GitHub Desktop.app"
   - "/Applications/Alacritty.app"
+  - "/Applications/Toggl Track.app"
   - "/Applications/Obsidian.app"
