@@ -49,5 +49,8 @@ if [ -z "${CLOUDSDK_HOME:-}" ]; then
 
     [ -f "${CLOUDSDK_HOME}/path.bash.inc" ] \
       && source "${CLOUDSDK_HOME}/path.bash.inc"
+
+    [ -f "${CLOUDSDK_HOME}/completion.bash.inc" ] \
+      && source "${CLOUDSDK_HOME}/completion.bash.inc"
   done
 fi

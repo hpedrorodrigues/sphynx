@@ -74,6 +74,9 @@ if [ -z "${CLOUDSDK_HOME:-}" ]; then
 
     [ -f "${CLOUDSDK_HOME}/path.zsh.inc" ] \
       && source "${CLOUDSDK_HOME}/path.zsh.inc"
+
+    [ -f "${CLOUDSDK_HOME}/completion.zsh.inc" ] \
+      && source "${CLOUDSDK_HOME}/completion.zsh.inc"
   done
 fi
 
