@@ -109,6 +109,7 @@ homebrew_apps:
   - discord
   - github
   - google-chrome
+  - google-cloud-sdk
   - grammarly
   - grammarly-desktop
   - { name: "hpedrorodrigues/tools/dockutil", installed_name: "dockutil" }
