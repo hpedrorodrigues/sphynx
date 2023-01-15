@@ -12,12 +12,12 @@ function sx::k8s::namespace() {
   if [ -n "${exact_namespace}" ]; then
     sx::k8s_command::namespace::change "${exact_namespace}"
   elif [ "${query}" = '-' ]; then
-    local -r last_namespace="$(sx::file_stack::pop "${SX_K8S_NS_FILE}")"
+    local -r last_namespace="$(sx::file::read "${SX_K8S_NS_FILE}")"
 
     # return when there is no previous namespace
     [ -z "${last_namespace}" ] && return
 
-    sx::k8s_command::namespace::change "${last_namespace}" true
+    sx::k8s_command::namespace::change "${last_namespace}"
   elif ${list_namespaces}; then
     sx::k8s::ensure_api_access
 
@@ -92,13 +92,11 @@ function sx::k8s_command::namespace::names() {
 
 function sx::k8s_command::namespace::change() {
   local -r new_namespace="${1:-}"
-  local -r skip_stack_file="${2:-false}"
 
-  if ! ${skip_stack_file}; then
-    local -r current_namespace="$(sx::k8s::current_namespace)"
-    [ "${current_namespace}" != "${new_namespace}" ] \
-      && sx::file_stack::push "${SX_K8S_NS_FILE}" "${current_namespace}"
-  fi
+  local -r current_namespace="$(sx::k8s::current_namespace)"
+  [ "${current_namespace}" != "${new_namespace}" ] \
+    && [ -n "${current_namespace}" ] \
+    && sx::file::write_replacing "${SX_K8S_NS_FILE}" "${current_namespace}"
 
   sx::k8s::cli config set-context --current --namespace "${new_namespace}"
 }

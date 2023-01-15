@@ -12,12 +12,12 @@ function sx::k8s::context() {
   if [ -n "${exact_context}" ]; then
     sx::k8s_command::context::change "${exact_context}"
   elif [ "${query}" = '-' ]; then
-    local -r last_context="$(sx::file_stack::pop "${SX_K8S_CTX_FILE}")"
+    local -r last_context="$(sx::file::read "${SX_K8S_CTX_FILE}")"
 
     # return when there is no previous context
     [ -z "${last_context}" ] && return
 
-    sx::k8s_command::context::change "${last_context}" true
+    sx::k8s_command::context::change "${last_context}"
   elif ${list_contexts}; then
     local -r current_context="$(sx::k8s::current_context)"
 
@@ -85,13 +85,11 @@ function sx::k8s_command::context::names() {
 
 function sx::k8s_command::context::change() {
   local -r new_context="${1:-}"
-  local -r skip_stack_file="${2:-false}"
 
-  if ! ${skip_stack_file}; then
-    local -r current_context="$(sx::k8s::current_context)"
-    [ "${current_context}" != "${new_context}" ] \
-      && sx::file_stack::push "${SX_K8S_CTX_FILE}" "${current_context}"
-  fi
+  local -r current_context="$(sx::k8s::current_context)"
+  [ "${current_context}" != "${new_context}" ] \
+    && [ -n "${current_context}" ] \
+    && sx::file::write_replacing "${SX_K8S_CTX_FILE}" "${current_context}"
 
   sx::k8s::cli config use-context "${new_context}"
 }
