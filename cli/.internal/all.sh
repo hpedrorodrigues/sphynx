@@ -6,7 +6,7 @@ readonly library_path="${SPHYNXC_DIR}/.internal/library"
 
 source "${library_path}/docopts.sh"
 source "${library_path}/error.sh"
-source "${library_path}/file_stack.sh"
+source "${library_path}/file_handling.sh"
 source "${library_path}/general.sh"
 source "${library_path}/git.sh"
 source "${library_path}/github.sh"
