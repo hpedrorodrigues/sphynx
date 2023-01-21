@@ -53,4 +53,6 @@ if [ -z "${CLOUDSDK_HOME:-}" ]; then
     [ -f "${CLOUDSDK_HOME}/completion.bash.inc" ] \
       && source "${CLOUDSDK_HOME}/completion.bash.inc"
   done
+
+  unset gcloud_locations
 fi

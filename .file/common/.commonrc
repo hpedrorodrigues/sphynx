@@ -15,8 +15,8 @@ export LC_ALL='en_US.UTF-8'
 
 ### Loading personal scripts
 
-readonly DOTFILES_DIR="${HOME}/.sphynx"
-readonly DOTFILES=(
+export DOTFILES_DIR="${HOME}/.sphynx"
+export DOTFILES=(
   # Common
   "${DOTFILES_DIR}/aliases.sh"
   "${DOTFILES_DIR}/os_aliases.sh"
@@ -46,6 +46,9 @@ for dotfile in ${DOTFILES[*]}; do
   fi
 done
 
+unset DOTFILES_DIR
+unset DOTFILES
+
 #|> NVM
 # https://github.com/nvm-sh/nvm/issues/2724
 if ${NVM_ENABLED:-false}; then
@@ -64,6 +67,8 @@ if ${NVM_ENABLED:-false}; then
       source "${nvm_file}"
     fi
   done
+
+  unset NVM_FILES
 fi
 
 #|> Krew
