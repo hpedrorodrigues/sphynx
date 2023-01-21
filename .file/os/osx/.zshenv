@@ -2,7 +2,7 @@
 
 # Add some basic paths to PATH variable
 
-readonly BASIC_PATHS=(
+export BASIC_PATHS=(
   '/bin'
   '/usr/bin'
   '/usr/sbin'
@@ -17,6 +17,8 @@ for basic_path in ${BASIC_PATHS[*]}; do
     export PATH="${PATH}:${basic_path}"
   fi
 done
+
+unset BASIC_PATHS
 
 #|> Java
 export JAVA8_HOME='/Library/Java/JavaVirtualMachines/temurin-8.jdk/Contents/Home'

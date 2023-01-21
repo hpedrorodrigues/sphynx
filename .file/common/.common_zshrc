@@ -78,6 +78,8 @@ if [ -z "${CLOUDSDK_HOME:-}" ]; then
     [ -f "${CLOUDSDK_HOME}/completion.zsh.inc" ] \
       && source "${CLOUDSDK_HOME}/completion.zsh.inc"
   done
+
+  unset gcloud_locations
 fi
 
 ### Directory shortcuts

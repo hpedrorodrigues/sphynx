@@ -14,7 +14,8 @@ alias uposx='sudo softwareupdate --install --all'
 alias upbrew='brew update \
                 && brew upgrade \
                 && brew autoremove \
-                && brew cleanup -s --prune 30'
+                && brew cleanup -s --prune 30 \
+                && brew services cleanup'
 
 alias upbrewcask='brew update && brew upgrade --cask --greedy --force'
 
