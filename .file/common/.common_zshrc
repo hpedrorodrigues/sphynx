@@ -61,7 +61,7 @@ hash starship 2>/dev/null && eval "$(starship init zsh)"
 
 #|> Google Cloud SDK
 if [ -z "${CLOUDSDK_HOME:-}" ]; then
-  readonly gcloud_locations=(
+  gcloud_locations=(
     '/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk'
     '/snap/google-cloud-sdk/current'
   )
@@ -77,6 +77,8 @@ if [ -z "${CLOUDSDK_HOME:-}" ]; then
 
     [ -f "${CLOUDSDK_HOME}/completion.zsh.inc" ] \
       && source "${CLOUDSDK_HOME}/completion.zsh.inc"
+
+    break
   done
 
   unset gcloud_locations
