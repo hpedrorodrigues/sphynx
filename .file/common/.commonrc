@@ -55,20 +55,20 @@ if ${NVM_ENABLED:-false}; then
   export NVM_DIR="${HOME}/.nvm"
   export NVM_INSTALLATION_DIR='/usr/local/opt/nvm'
 
-  readonly NVM_FILES=(
+  nvm_files=(
     "${NVM_DIR}/nvm.sh"
     "${NVM_DIR}/bash_completion"
     "${NVM_INSTALLATION_DIR}/nvm.sh"
     "${NVM_INSTALLATION_DIR}/etc/bash_completion.d/nvm"
   )
 
-  for nvm_file in "${NVM_FILES[@]}"; do
+  for nvm_file in "${nvm_files[@]}"; do
     if [ -s "${nvm_file}" ]; then
       source "${nvm_file}"
     fi
   done
 
-  unset NVM_FILES
+  unset nvm_files
 fi
 
 #|> Krew
