@@ -3,7 +3,7 @@
   "cSpell.language": "en,pt-BR",
   "cSpell.userWords": ["kubernetes", "sphynx"],
   "editor.cursorBlinking": "phase",
-  "editor.cursorSmoothCaretAnimation": true,
+  "editor.cursorSmoothCaretAnimation": "on",
   "editor.cursorStyle": "line-thin",
   "editor.fontFamily": "Fira Code",
   "editor.fontLigatures": true,
