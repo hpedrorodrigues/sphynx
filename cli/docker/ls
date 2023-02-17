@@ -11,11 +11,16 @@ source "${SPHYNXN_DIR}/core/ls.sh"
 ##? List objects
 ##?
 ##? Usage:
-##?     ls
+##?     ls [--ips]
+##?
+##? Options:
+##?     --ips  Show only containers and their respective IPs
+##?
 ##?
 ##? Examples:
 ##?     ls
+##?     ls --ips
 
 sx::parse_arguments "${@}"
 
-sx::docker::objects
+sx::docker::objects "${ips:-}"
