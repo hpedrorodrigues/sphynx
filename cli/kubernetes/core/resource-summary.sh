@@ -7,13 +7,18 @@ function sx::k8s::pods::resource_summary() {
   local -r query="${1:-}"
   local -r namespace="${2:-}"
   local -r all_namespaces="${3:-false}"
+  local -r filter="${4:-}"
 
   if ${all_namespaces}; then
-    local -r flags='--all-namespaces'
+    local flags='--all-namespaces'
   elif [ -n "${namespace}" ]; then
-    local -r flags="--namespace ${namespace}"
+    local flags="--namespace ${namespace}"
   else
-    local -r flags=''
+    local flags=''
+  fi
+
+  if [ -n "${filter}" ]; then
+    flags+=" --selector ${filter}"
   fi
 
   if [ -n "${query}" ]; then
