@@ -129,7 +129,8 @@ homebrew_apps:
   - spotify
   - temurin8 # JDK 8
   - temurin11 # JDK 11
-  - temurin # JDK 17
+  - temurin17 # JDK 17
+  - temurin # JDK 19
   - vagrant
   - virtualbox
   - wireshark

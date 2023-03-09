@@ -24,6 +24,7 @@ unset BASIC_PATHS
 export JAVA8_HOME='/Library/Java/JavaVirtualMachines/temurin-8.jdk/Contents/Home'
 export JAVA11_HOME='/Library/Java/JavaVirtualMachines/temurin-11.jdk/Contents/Home'
 export JAVA17_HOME='/Library/Java/JavaVirtualMachines/temurin-17.jdk/Contents/Home'
+export JAVA19_HOME='/Library/Java/JavaVirtualMachines/temurin-19.jdk/Contents/Home'
 
 export JAVA_HOME="${JAVA11_HOME}"
 
