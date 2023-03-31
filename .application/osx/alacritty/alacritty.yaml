@@ -92,7 +92,6 @@ shell:
     - -c
     - sx terminal tmux force-attach 'sphynx'
 enable_experimental_conpty_backend: false
-alt_send_esc: true
 key_bindings:
   # See what is the scancode of a keyboard input (alacritty --print-events)
   - { key: 40, mods: Command, action: ClearHistory } # 40 = K
