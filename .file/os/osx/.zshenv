@@ -26,7 +26,7 @@ export JAVA11_HOME='/Library/Java/JavaVirtualMachines/temurin-11.jdk/Contents/Ho
 export JAVA17_HOME='/Library/Java/JavaVirtualMachines/temurin-17.jdk/Contents/Home'
 export JAVA19_HOME='/Library/Java/JavaVirtualMachines/temurin-19.jdk/Contents/Home'
 
-export JAVA_HOME="${JAVA11_HOME}"
+export JAVA_HOME="${JAVA17_HOME}"
 
 #|> Maven
 export MAVEN_OPTS='-Xms512m -Xmx1G'
