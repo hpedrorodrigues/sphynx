@@ -32,7 +32,7 @@ function sx::self::version() {
 
     if [ -n "${remote_url}" ]; then
       echo "Git (Branch): $(sx::git::current_branch)"
-      return ${?}
+      return 0
     fi
   fi
 

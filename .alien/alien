@@ -14,7 +14,7 @@ set -o pipefail
 ##?   -p | --push <tool_name>  Push docker image(s) to Dockerhub [Default: all images]
 ##?   -h | --help  Print this help message
 
-export ALIEN_PATH="${ALIEN_PATH:-${SPHYNX_DIR}/.alien}"
+export ALIEN_PATH="${ALIEN_PATH:-${SPHYNX_DIR:-.}/.alien}"
 export ALIEN_REPOSITORY="${ALIEN_REPOSITORY:-hpedrorodrigues/alien}"
 
 function alien::print_help() {
@@ -22,8 +22,8 @@ function alien::print_help() {
 }
 
 function alien::clean_up() {
-  if [ -d "${SPHYNX_DIR}/.alien/p2i/node_modules" ]; then
-    rm -rf "${SPHYNX_DIR}/.alien/p2i/node_modules"
+  if [ -d "${SPHYNX_DIR:-.}/.alien/p2i/node_modules" ]; then
+    rm -rf "${SPHYNX_DIR:-.}/.alien/p2i/node_modules"
   fi
 }
 
@@ -58,6 +58,7 @@ function alien::build_image() {
 
   docker \
     build "${recipe_path}" \
+    --progress 'plain' \
     --tag "${ALIEN_REPOSITORY}:${tag}"
 }
 

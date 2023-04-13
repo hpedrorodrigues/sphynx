@@ -7,6 +7,21 @@ on:
     branches:
       - main
 jobs:
+  build-images:
+    timeout-minutes: 2
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest
+    steps:
+      - name: Repository checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+      - name: Build container images
+        run: ./.alien/alien --build
+        shell: bash
   lint:
     timeout-minutes: 1
     runs-on: ${{ matrix.os }}
