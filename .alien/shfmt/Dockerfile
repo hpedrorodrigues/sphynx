@@ -14,7 +14,7 @@ ARG group=alien
 ENV ALIEN_HOME /home/${user}
 
 RUN addgroup -g "${gid}" "${group}" \
-  && adduser -h "${ALIEN_HOME}" -u "${uid}" -G "${group}" -s /bin/bash -D "${user}" \
+  && adduser -h "${ALIEN_HOME}" -u "${uid}" -G "${group}" -D "${user}" \
   && mkdir -p "${ALIEN_HOME}" /mnt \
   && chown -R "${uid}:${gid}" "${ALIEN_HOME}" /mnt
 
