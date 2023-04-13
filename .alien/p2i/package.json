@@ -5,7 +5,7 @@
   "main": "index.js",
   "author": "Pedro Rodrigues <github.com/hpedrorodrigues>",
   "dependencies": {
-    "puppeteer": "^19.2.2",
-    "yargs": "^17.6.2"
+    "puppeteer": "^19.8.5",
+    "yargs": "^17.7.1"
   }
 }

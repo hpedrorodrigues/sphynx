@@ -58,6 +58,7 @@ function alien::build_image() {
 
   docker \
     build "${recipe_path}" \
+    --progress 'plain' \
     --tag "${ALIEN_REPOSITORY}:${tag}"
 }
 
