@@ -21,7 +21,7 @@ among other things.
 
 ## About
 
-Sphynx has aliases, functions, CLI, workspace setup configuration, 
+Sphynx has aliases, functions, CLI, workspace setup configuration,
 applications' settings, docker images. Everything I use on a daily
 basis and how I set up my machine.
 
@@ -124,12 +124,12 @@ Also, [Github ❤ ~/][dotfiles-website] and
 
 ### Alien scripts
 
-[Alien commands][alien-functions] are tools that you don't want to install
-on your machine but you'd like to use them. For instance, you want to use 
+[Alien commands][alien-commands] are tools that you don't want to install
+on your machine but you'd like to use them. For instance, you want to use
 [p2i][p2i] but you don't want to configure a nodejs environment.
 
 They are basically shell functions calling Docker behind the scenes, but
-not all functions use the dockerfiles available in this project 
+not all functions use the dockerfiles available in this project
 (e.g. Kafka and Zookeeper).
 
 ### Workspace configuration
@@ -157,7 +157,7 @@ this repository and adjust it to your needs! Be careful!
 [dotfiles-folder]: ./../.file
 [playbooks-folder]: ./../.playbook
 [alien-folder]: ./../.alien
-[alien-functions]: ./../.file/common/alien
+[alien-commands]: ./../.file/common/scripts/alien.sh
 [p2i]: ./../.alien/p2i
 
 [ansible-website]: https://www.ansible.com
