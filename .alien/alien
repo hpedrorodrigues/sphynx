@@ -22,8 +22,8 @@ function alien::print_help() {
 }
 
 function alien::clean_up() {
-  if [ -d "${SPHYNX_DIR}/.alien/p2i/node_modules" ]; then
-    rm -rf "${SPHYNX_DIR}/.alien/p2i/node_modules"
+  if [ -d "${SPHYNX_DIR:-.}/.alien/p2i/node_modules" ]; then
+    rm -rf "${SPHYNX_DIR:-.}/.alien/p2i/node_modules"
   fi
 }
 
