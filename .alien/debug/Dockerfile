@@ -20,7 +20,6 @@ RUN apk update && \
       jq=1.6-r2 \
       mtr=0.95-r1 \
       net-snmp-tools=5.9.3-r2 \
-      netcat-openbsd=1.130-r4 \
       nftables=1.0.5-r2 \
       nmap=7.93-r0 \
       openssl=3.0.8-r3 \
