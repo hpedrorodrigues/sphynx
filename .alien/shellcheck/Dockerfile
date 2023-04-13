@@ -1,6 +1,9 @@
-FROM koalaman/shellcheck-alpine:v0.9.0
+FROM koalaman/shellcheck-alpine:v0.9.0 as shellcheck
+FROM alpine:3.17.3
 
 LABEL maintainer="Pedro Rodrigues <github.com/hpedrorodrigues>"
+
+COPY --from=shellcheck /bin/shellcheck /bin/shellcheck
 
 ARG uid=1000
 ARG gid=1000
@@ -19,4 +22,4 @@ USER ${user}
 
 WORKDIR /mnt
 
-ENTRYPOINT ["shellcheck", "--color=always"]
+ENTRYPOINT ["shellcheck"]
