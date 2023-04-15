@@ -39,7 +39,7 @@ export DOTFILES=(
 
 # shellcheck disable=SC2048  # Use "$@" (with quotes) to prevent whitespace problems
 for dotfile in ${DOTFILES[*]}; do
-  if [ -f "${dotfile}" ]; then
+  if [ -s "${dotfile}" ]; then
     source "${dotfile}"
   else
     echo "!!! No such file \"${dotfile}\". Ignoring it." >&2
@@ -51,30 +51,39 @@ unset DOTFILES
 
 #|> NVM
 # https://github.com/nvm-sh/nvm/issues/2724
-if ${NVM_ENABLED:-false}; then
-  export NVM_DIR="${HOME}/.nvm"
-  export NVM_INSTALLATION_DIR='/usr/local/opt/nvm'
+# Lazy loading nvm
+export NVM_DIR="${HOME}/.nvm"
 
-  nvm_files=(
-    "${NVM_DIR}/nvm.sh"
-    "${NVM_DIR}/bash_completion"
-    "${NVM_INSTALLATION_DIR}/nvm.sh"
-    "${NVM_INSTALLATION_DIR}/etc/bash_completion.d/nvm"
-  )
+if [ -d "${NVM_DIR}" ]; then
+  function nvm() {
+    unset -f nvm
 
-  for nvm_file in "${nvm_files[@]}"; do
-    if [ -s "${nvm_file}" ]; then
-      source "${nvm_file}"
-    fi
-  done
+    nvm_installation_dir='/usr/local/opt/nvm'
+    nvm_files=(
+      "${NVM_DIR}/nvm.sh"
+      "${NVM_DIR}/bash_completion"
+      "${nvm_installation_dir}/nvm.sh"
+      "${nvm_installation_dir}/etc/bash_completion.d/nvm"
+    )
 
-  unset nvm_files
+    for nvm_file in "${nvm_files[@]}"; do
+      if [ -s "${nvm_file}" ]; then
+        source "${nvm_file}"
+      fi
+    done
+
+    unset nvm_installation_dir
+    unset nvm_files
+
+    # shellcheck disable=SC2068  # Double quote array expansions
+    nvm ${@}
+  }
 fi
 
 #|> Krew
 export KREW_BIN="${HOME}/.krew/bin"
 
-if [ -d "${KREW_BIN}" ] && echo "${PATH}" | grep "${KREW_BIN}" -v -q; then
+if [ -d "${KREW_BIN}" ] && [[ "${PATH}" != *"${KREW_BIN}"* ]]; then
   export PATH="${PATH}:${KREW_BIN}"
 fi
 
@@ -82,18 +91,28 @@ fi
 export GOPATH="${HOME}/.go"
 export GO_WORKSPACE="${GOPATH}/src"
 
-if [ -d "${GOPATH}/bin" ] && echo "${PATH}" | grep "${GOPATH}/bin" -v -q; then
+if [ -d "${GOPATH}/bin" ] && [[ "${PATH}" != *"${GOPATH}/bin"* ]]; then
   export PATH="${PATH}:${GOPATH}/bin"
 fi
 
 #|> pyenv
 # https://github.com/pyenv/pyenv/issues/784#issuecomment-826444110
-hash pyenv 2>/dev/null && eval "$(pyenv init --path --no-rehash)"
+# Lazy loading pyenv (based on https://github.com/davidparsson/zsh-pyenv-lazy/tree/master)
+if hash pyenv 2>/dev/null; then
+  function pyenv() {
+    unset -f pyenv
+    eval "$(pyenv init --path --no-rehash)"
+    # shellcheck disable=SC2068  # Double quote array expansions
+    pyenv ${@}
+  }
+fi
 
 #|> Non-public scripts
 export SECRETS_BIN="${HOME}/Code/Personal/secrets/bin"
 
-[ -d "${SECRETS_BIN}" ] && export PATH="${PATH}:${SECRETS_BIN}"
+if [ -d "${SECRETS_BIN}" ] && [[ "${PATH}" != *"${SECRETS_BIN}"* ]]; then
+  export PATH="${PATH}:${SECRETS_BIN}"
+fi
 
 #|> AWS CLI
 export AWS_PROFILE='sphynx'

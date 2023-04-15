@@ -21,10 +21,6 @@ alias l='ls -lash'
 alias d='docker'
 alias dc='docker-compose'
 
-# NVM
-# https://github.com/nvm-sh/nvm/issues/1277
-alias load_nvm='NVM_ENABLED=true reload'
-
 # Flush the DNS cache
 alias flush='sx system dns --flush'
 

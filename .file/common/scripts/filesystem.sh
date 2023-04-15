@@ -42,7 +42,7 @@ function te() {
     return 1
   fi
 
-  if [ -f "${file_name}" ]; then
+  if [ -s "${file_name}" ]; then
     echo "!!! File \"${file_name}\" already exists" >&2
     return 1
   fi
