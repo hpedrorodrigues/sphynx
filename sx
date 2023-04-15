@@ -47,16 +47,16 @@ export SPHYNX_EXEC="${BASH_SOURCE[0]}"
 export SPHYNX_EXEC_NAME="$(basename "${SPHYNX_EXEC}")"
 
 export SPHYNX_DIR="$(dirname "${SPHYNX_EXEC}")"
-export SPHYNXC_DIR="${SPHYNX_DIR}/cli"
+export SPHYNX_COMMAND_DIR="${SPHYNX_DIR}/cli"
 
 ## Helper functions
 
 readonly error_message='The most similar namespaces (and global commands) are'
 
 function all_namespaces() {
-  find "${SPHYNXC_DIR}" \
+  find "${SPHYNX_COMMAND_DIR}" \
     -maxdepth 1 \
-    ! -path "${SPHYNXC_DIR}" \
+    ! -path "${SPHYNX_COMMAND_DIR}" \
     ! -path '*/.library*' \
     ! -path '*/.internal*' \
     -a -type d \
@@ -68,13 +68,13 @@ function all_namespaces() {
 function find_namespace() {
   local -r filter="${1}"
 
-  if [ -d "${SPHYNXC_DIR}/${filter}" ] || [ -f "${SPHYNXC_DIR}/${filter}" ]; then
-    echo "${SPHYNXC_DIR}/${filter}"
+  if [ -d "${SPHYNX_COMMAND_DIR}/${filter}" ] || [ -f "${SPHYNX_COMMAND_DIR}/${filter}" ]; then
+    echo "${SPHYNX_COMMAND_DIR}/${filter}"
   else
     local -r namespaces="$(
-      find "${SPHYNXC_DIR}" \
+      find "${SPHYNX_COMMAND_DIR}" \
         -maxdepth 1 \
-        ! -path "${SPHYNXC_DIR}" \
+        ! -path "${SPHYNX_COMMAND_DIR}" \
         ! -path '*/.library*' \
         ! -path '*/.internal*' \
         -a -type d -a -name "${filter}*" \
@@ -112,9 +112,9 @@ function commands() {
 function is_global_command() {
   local -r filter="$(basename "${1}")"
 
-  find "${SPHYNXC_DIR}" \
+  find "${SPHYNX_COMMAND_DIR}" \
     -maxdepth 1 \
-    ! -path "${SPHYNXC_DIR}" \
+    ! -path "${SPHYNX_COMMAND_DIR}" \
     ! -path '*/.library*' \
     ! -path '*/.internal*' \
     -a -type f -a -name "${filter}*" -a \( -perm -u=x -o -perm -g=x -o -perm -o=x \) \
@@ -233,7 +233,7 @@ function main() {
     local -r shift='3'
   fi
 
-  export SPHYNXN_DIR="${namespace}"
+  export SPHYNX_NAMESPACE_DIR="${namespace}"
 
   exec "${cmd}" "${@:shift}"
 }

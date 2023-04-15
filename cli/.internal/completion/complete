@@ -10,7 +10,7 @@ fi
 ## Variables
 
 # shellcheck disable=SC2153  # Possible Misspelling
-export SPHYNXC_DIR="${SPHYNX_DIR:-}/cli"
+export SPHYNX_COMMAND_DIR="${SPHYNX_DIR:-}/cli"
 
 ## Functions
 
@@ -18,9 +18,9 @@ function namespaces() {
   local -r filter="${1}"
 
   # shellcheck disable=SC2038  # Use -print0/-0 or find -exec + to allow for non-alphanumeric filenames
-  find "${SPHYNXC_DIR}" \
+  find "${SPHYNX_COMMAND_DIR}" \
     -maxdepth 1 \
-    ! -path "${SPHYNXC_DIR}" \
+    ! -path "${SPHYNX_COMMAND_DIR}" \
     ! -path '*/.library*' \
     ! -path '*/.internal*' \
     -a -type d -a -name "${filter}*" \
@@ -60,11 +60,11 @@ function main() {
     fi
 
     if [ -z "${current_word}" ]; then
-      if [ -d "${SPHYNXC_DIR}/${namespace_prefix}" ]; then
-        commands "${SPHYNXC_DIR}/${namespace_prefix}"
+      if [ -d "${SPHYNX_COMMAND_DIR}/${namespace_prefix}" ]; then
+        commands "${SPHYNX_COMMAND_DIR}/${namespace_prefix}"
         exit 0
-      elif [ "${n_namespaces}" = 1 ] && [ -d "${SPHYNXC_DIR}/${namespaces[*]}" ]; then
-        commands "${SPHYNXC_DIR}/${namespaces[*]}"
+      elif [ "${n_namespaces}" = 1 ] && [ -d "${SPHYNX_COMMAND_DIR}/${namespaces[*]}" ]; then
+        commands "${SPHYNX_COMMAND_DIR}/${namespaces[*]}"
         exit 0
       fi
     else
@@ -82,8 +82,8 @@ function main() {
   fi
 
   if [ "${n_args}" -eq 4 ] && [ -n "${current_word}" ]; then
-    if [ -d "${SPHYNXC_DIR}/${namespace_prefix}" ]; then
-      commands "${SPHYNXC_DIR}/${namespace_prefix}" | grep -- "${command_prefix}"
+    if [ -d "${SPHYNX_COMMAND_DIR}/${namespace_prefix}" ]; then
+      commands "${SPHYNX_COMMAND_DIR}/${namespace_prefix}" | grep -- "${command_prefix}"
       exit 0
     fi
 
@@ -95,8 +95,8 @@ function main() {
       exit 0
     fi
 
-    if [ "${n_namespaces}" = 1 ] && [ -d "${SPHYNXC_DIR}/${namespaces[*]}" ]; then
-      commands "${SPHYNXC_DIR}/${namespaces[*]}" | grep -- "${command_prefix}"
+    if [ "${n_namespaces}" = 1 ] && [ -d "${SPHYNX_COMMAND_DIR}/${namespaces[*]}" ]; then
+      commands "${SPHYNX_COMMAND_DIR}/${namespaces[*]}" | grep -- "${command_prefix}"
       exit 0
     fi
   fi

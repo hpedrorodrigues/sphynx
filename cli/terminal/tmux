@@ -4,10 +4,10 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-source "${SPHYNXC_DIR}/.internal/all.sh"
-source "${SPHYNXC_DIR}/.library/tmux/core.sh"
-source "${SPHYNXN_DIR}/shared/shared.sh"
-source "${SPHYNXN_DIR}/core/tmux.sh"
+source "${SPHYNX_COMMAND_DIR}/.internal/all.sh"
+source "${SPHYNX_COMMAND_DIR}/.library/tmux/core.sh"
+source "${SPHYNX_NAMESPACE_DIR}/shared/shared.sh"
+source "${SPHYNX_NAMESPACE_DIR}/core/tmux.sh"
 
 ##? tmux utility functions
 ##?

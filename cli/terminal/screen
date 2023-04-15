@@ -4,10 +4,10 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-source "${SPHYNXC_DIR}/.internal/all.sh"
-source "${SPHYNXC_DIR}/.library/screen/core.sh"
-source "${SPHYNXN_DIR}/shared/shared.sh"
-source "${SPHYNXN_DIR}/core/screen.sh"
+source "${SPHYNX_COMMAND_DIR}/.internal/all.sh"
+source "${SPHYNX_COMMAND_DIR}/.library/screen/core.sh"
+source "${SPHYNX_NAMESPACE_DIR}/shared/shared.sh"
+source "${SPHYNX_NAMESPACE_DIR}/core/screen.sh"
 
 ##? screen utility functions
 ##?

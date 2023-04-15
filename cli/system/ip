@@ -3,9 +3,9 @@
 set -o nounset
 set -o pipefail
 
-source "${SPHYNXC_DIR}/.internal/all.sh"
-source "${SPHYNXN_DIR}/shared/shared.sh"
-source "${SPHYNXN_DIR}/core/ip.sh"
+source "${SPHYNX_COMMAND_DIR}/.internal/all.sh"
+source "${SPHYNX_NAMESPACE_DIR}/shared/shared.sh"
+source "${SPHYNX_NAMESPACE_DIR}/core/ip.sh"
 
 ##? Print gateway/public/private(s) IP(s)
 ##?
