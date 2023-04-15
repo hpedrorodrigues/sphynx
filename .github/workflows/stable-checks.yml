@@ -1,0 +1,29 @@
+name: Checks (Stable)
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - "./alien/**"
+      - "**/**.md"
+jobs:
+  lint:
+    name: Lint
+    timeout-minutes: 1
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+      - run: ./sx lint
+        shell: bash
+  tests:
+    name: Tests
+    timeout-minutes: 1
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+      - run: ./sx test
+        shell: bash
