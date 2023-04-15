@@ -176,7 +176,7 @@ function shfmt() {
 }
 
 ## Web page to image - P2I
-## https://github.com/hpedrorodrigues/sphynx/blob/main/.alien/p2i/README.md
+## https://github.com/hpedrorodrigues/sphynx/blob/main/alien/p2i/README.md
 ##
 ## e.g.
 ##
@@ -204,7 +204,7 @@ function p2i() {
   docker run \
     --name "${tool_name}" \
     --rm \
-    --security-opt seccomp="${SPHYNX_DIR}/.alien/p2i/chrome.json" \
+    --security-opt seccomp="${SPHYNX_DIR}/alien/p2i/chrome.json" \
     --volume "${P2I_DIR:-${PWD}}:/mnt" \
     "${image}" "${@}"
 }

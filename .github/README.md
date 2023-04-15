@@ -155,9 +155,9 @@ this repository and adjust it to your needs! Be careful!
 [cli-folder]: ./../cli
 [dotfiles-folder]: ./../.file
 [playbooks-folder]: ./../.playbook
-[alien-folder]: ./../.alien
+[alien-folder]: ./../alien
 [alien-commands]: ./../.file/common/scripts/alien.sh
-[p2i]: ./../.alien/p2i
+[p2i]: ./../alien/p2i
 
 [ansible-website]: https://www.ansible.com
 [dotfiles-website]: http://dotfiles.github.io

@@ -20,7 +20,7 @@ jobs:
         with:
           fetch-depth: 1
       - name: Build container images
-        run: ./.alien/alien --build
+        run: ./alien/alien --build
         shell: bash
   lint:
     timeout-minutes: 1

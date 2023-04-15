@@ -69,5 +69,6 @@
   "workbench.iconTheme": "deepdark-material-icons",
   "workbench.settings.enableNaturalLanguageSearch": false,
   "workbench.startupEditor": "none",
-  "workbench.welcome.enabled": false
+  "workbench.welcome.enabled": false,
+  "explorer.confirmDelete": false
 }
