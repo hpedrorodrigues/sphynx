@@ -5,8 +5,7 @@ on:
       - main
     paths:
       - "./alien/**"
-    paths-ignore:
-      - "**/**.md"
+      - "!**/**.md"
 jobs:
   build-and-push:
     name: Build & Push
