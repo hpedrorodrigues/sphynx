@@ -7,11 +7,11 @@ set -o pipefail
 ##? Alien CLI
 ##?
 ##? Usage:
-##?   alien [--build <tool_name> | --push <tool_name>] [--help]
+##?   alien [--build <tool_name> | --build-and-push <tool_name>] [--help]
 ##?
 ##? Commands:
 ##?   -b | --build <tool_name>  Build docker image(s) [Default: all images]
-##?   -p | --push <tool_name>  Push docker image(s) to Dockerhub [Default: all images]
+##?   -p | --build-and-push <tool_name>  Build and push docker image(s) to Dockerhub [Default: all images]
 ##?   -h | --help  Print this help message
 
 export ALIEN_PATH="${ALIEN_PATH:-${SPHYNX_DIR:-.}/alien}"
