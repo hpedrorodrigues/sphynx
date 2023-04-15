@@ -1,0 +1,39 @@
+name: Checks (Pull Request)
+on:
+  pull_request:
+    branches:
+      - main
+    paths-ignore:
+      - "**/**.md"
+jobs:
+  lint:
+    name: Lint
+    timeout-minutes: 1
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+      - run: ./sx lint
+        shell: bash
+  tests:
+    name: Tests
+    timeout-minutes: 1
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+      - run: ./sx test
+        shell: bash
+  build:
+    name: Build
+    timeout-minutes: 3
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+      - uses: docker/setup-buildx-action@v2
+      - run: ./alien/alien --build
+        shell: bash
