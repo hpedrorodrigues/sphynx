@@ -390,7 +390,7 @@ function j() {
 
   if [ -n "${env_value}" ]; then
     local -r new_version="${env_value}"
-  elif [ -f '/usr/libexec/java_home' ] \
+  elif [ -s '/usr/libexec/java_home' ] \
     && [ -n "$(/usr/libexec/java_home --version "${version}" --failfast 2>/dev/null)" ]; then
     local -r new_version="$(/usr/libexec/java_home -v "${version}")"
   else

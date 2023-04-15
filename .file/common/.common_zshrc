@@ -45,43 +45,52 @@ zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#) ([0-9a-z-
 #|> Fuzzy Finder
 export FZF_BIN="${HOME}/.fzf.zsh"
 
-[ -f "${FZF_BIN}" ] && source "${FZF_BIN}"
+[ -s "${FZF_BIN}" ] && source "${FZF_BIN}"
 
 #|> Sphynx
 export SPHYNX_DIR="${HOME}/Code/Personal/sphynx"
 
-echo "${PATH}" | grep "${SPHYNX_DIR}" -v -q \
-  && export PATH="${PATH}:${SPHYNX_DIR}"
+if [[ "${PATH}" != *"${SPHYNX_DIR}"* ]]; then
+  export PATH="${PATH}:${SPHYNX_DIR}"
 
-# shellcheck disable=SC2206  # Quote to prevent word splitting/globbing
-fpath=("${SPHYNX_DIR}/cli/.internal/completion" ${fpath})
+  # shellcheck disable=SC2206  # Quote to prevent word splitting/globbing
+  fpath=("${SPHYNX_DIR}/cli/.internal/completion" ${fpath})
+fi
 
 #|> Startship
-hash starship 2>/dev/null && eval "$(starship init zsh)"
+hash starship 2>/dev/null && eval "$(starship init zsh --print-full-init)"
 
 #|> Google Cloud SDK
+# Lazy loading gcloud
 if [ -z "${CLOUDSDK_HOME:-}" ]; then
-  gcloud_locations=(
-    '/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk'
-    '/snap/google-cloud-sdk/current'
-  )
+  function gcloud() {
+    unset -f gcloud
 
-  # shellcheck disable=SC2068  # Double quote array expansions
-  for gcloud_location in ${gcloud_locations[@]}; do
-    [ -d "${gcloud_location}" ] || continue
+    gcloud_locations=(
+      '/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk'
+      '/snap/google-cloud-sdk/current'
+    )
 
-    export CLOUDSDK_HOME="${gcloud_location}"
+    # shellcheck disable=SC2068  # Double quote array expansions
+    for gcloud_location in ${gcloud_locations[@]}; do
+      [ -d "${gcloud_location}" ] || continue
 
-    [ -f "${CLOUDSDK_HOME}/path.zsh.inc" ] \
-      && source "${CLOUDSDK_HOME}/path.zsh.inc"
+      export CLOUDSDK_HOME="${gcloud_location}"
 
-    [ -f "${CLOUDSDK_HOME}/completion.zsh.inc" ] \
-      && source "${CLOUDSDK_HOME}/completion.zsh.inc"
+      [ -s "${CLOUDSDK_HOME}/path.zsh.inc" ] \
+        && source "${CLOUDSDK_HOME}/path.zsh.inc"
 
-    break
-  done
+      [ -s "${CLOUDSDK_HOME}/completion.zsh.inc" ] \
+        && source "${CLOUDSDK_HOME}/completion.zsh.inc"
 
-  unset gcloud_locations
+      break
+    done
+
+    unset gcloud_locations
+
+    # shellcheck disable=SC2068  # Double quote array expansions
+    gcloud ${@}
+  }
 fi
 
 ### Directory shortcuts
