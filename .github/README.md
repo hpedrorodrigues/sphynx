@@ -59,27 +59,27 @@ aliases, functions, and configuration files that I use daily.
 ♪ sx shell benchmark zsh
 > Hyperfine
 
-Benchmark #1: zsh -i -c exit
-  Time (mean ± σ):     130.6 ms ±   2.4 ms    [User: 70.4 ms, System: 52.5 ms]
-  Range (min … max):   126.4 ms … 136.7 ms    21 runs
+Benchmark 1: zsh -i -c exit
+  Time (mean ± σ):     121.2 ms ±   4.1 ms    [User: 55.9 ms, System: 48.5 ms]
+  Range (min … max):   117.4 ms … 134.2 ms    23 runs
 
 > Bench
 
 benchmarking zsh -i -c exit
-time                 128.7 ms   (125.4 ms .. 131.6 ms)
-                     0.999 R²   (0.998 R² .. 1.000 R²)
-mean                 126.2 ms   (125.3 ms .. 127.6 ms)
-std dev              1.628 ms   (964.9 μs .. 2.354 ms)
+time                 132.8 ms   (131.5 ms .. 134.6 ms)
+                     1.000 R²   (0.999 R² .. 1.000 R²)
+mean                 132.1 ms   (131.6 ms .. 132.8 ms)
+std dev              974.4 μs   (483.2 μs .. 1.488 ms)
 variance introduced by outliers: 11% (moderately inflated)
 
 > Time
 
 /usr/bin/time zsh -i -c exit (5x)
-        0.14 real         0.07 user         0.06 sys
-        0.13 real         0.07 user         0.05 sys
-        0.13 real         0.07 user         0.05 sys
-        0.14 real         0.07 user         0.05 sys
-        0.16 real         0.08 user         0.07 sys
+        0.13 real         0.05 user         0.06 sys
+        0.12 real         0.05 user         0.04 sys
+        0.12 real         0.05 user         0.04 sys
+        0.12 real         0.05 user         0.04 sys
+        0.13 real         0.05 user         0.05 sys
 ```
 
 **bash**
@@ -87,27 +87,26 @@ variance introduced by outliers: 11% (moderately inflated)
 ♪ sx shell benchmark bash
 > Hyperfine
 
-Benchmark #1: bash -i -c exit
-  Time (mean ± σ):     111.5 ms ±   2.7 ms    [User: 71.1 ms, System: 63.4 ms]
-  Range (min … max):   107.7 ms … 117.6 ms    24 runs
+Benchmark 1: bash -i -c exit
+  Time (mean ± σ):      97.2 ms ±   1.6 ms    [User: 40.3 ms, System: 49.2 ms]
+  Range (min … max):    94.6 ms … 100.7 ms    28 runs
 
 > Bench
 
 benchmarking bash -i -c exit
-time                 104.7 ms   (97.34 ms .. 112.0 ms)
-                     0.989 R²   (0.962 R² .. 1.000 R²)
-mean                 103.8 ms   (100.4 ms .. 106.9 ms)
-std dev              5.138 ms   (3.102 ms .. 7.333 ms)
-variance introduced by outliers: 10% (moderately inflated)
+time                 107.7 ms   (106.6 ms .. 108.7 ms)
+                     1.000 R²   (1.000 R² .. 1.000 R²)
+mean                 108.8 ms   (108.1 ms .. 110.5 ms)
+std dev              1.694 ms   (919.8 μs .. 2.447 ms)
 
 > Time
 
 /usr/bin/time bash -i -c exit (5x)
-        0.16 real         0.08 user         0.09 sys
-        0.11 real         0.07 user         0.06 sys
-        0.11 real         0.07 user         0.06 sys
-        0.11 real         0.07 user         0.07 sys
-        0.11 real         0.07 user         0.06 sys
+        0.09 real         0.03 user         0.04 sys
+        0.09 real         0.03 user         0.04 sys
+        0.09 real         0.03 user         0.04 sys
+        0.09 real         0.03 user         0.04 sys
+        0.09 real         0.03 user         0.04 sys
 ```
 
 In order to set up your dotfiles, I recommend using [dotly][dotly] which
