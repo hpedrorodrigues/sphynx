@@ -3,12 +3,13 @@ on:
   push:
     branches:
       - main
-    paths-ignore:
-      - "**.md"
+    paths:
+      - "alien/**"
+      - "!**.md"
 jobs:
   build-and-push:
     name: Build & Push
-    timeout-minutes: 3
+    timeout-minutes: 5
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
