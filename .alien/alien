@@ -38,7 +38,7 @@ function alien::run_over_all() {
   while IFS= read -r -d '' directory; do
     echo -e "\n==|> Running \"${action}\" over \"${directory}\"\n"
     "${action}" "${directory}"
-  done < <(find "${ALIEN_PATH}" ! -path "${ALIEN_PATH}" -type d -print0)
+  done < <(find "${ALIEN_PATH}" ! -path "${ALIEN_PATH}" -type d -print0 | sort -z)
 }
 
 function alien::build_image() {
