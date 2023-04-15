@@ -2,7 +2,7 @@
 
 # Loading internal files
 
-readonly library_path="${SPHYNX_COMMAND_DIR}/.internal/library"
+readonly library_path="${SPHYNX_CLI_DIR}/.internal/library"
 
 source "${library_path}/docopts.sh"
 source "${library_path}/error.sh"
@@ -25,7 +25,7 @@ source "${library_path}/variables.sh"
 
 # Loading core functions for global commands
 
-readonly global_commands_path="${SPHYNX_COMMAND_DIR}/.internal/global-commands"
+readonly global_commands_path="${SPHYNX_CLI_DIR}/.internal/global-commands"
 
 source "${global_commands_path}/fmt.sh"
 source "${global_commands_path}/lint.sh"

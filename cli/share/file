@@ -4,8 +4,8 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-source "${SPHYNX_COMMAND_DIR}/.internal/all.sh"
-source "${SPHYNX_COMMAND_DIR}/system/core/clipboard.sh"
+source "${SPHYNX_CLI_DIR}/.internal/all.sh"
+source "${SPHYNX_CLI_DIR}/system/core/clipboard.sh"
 source "${SPHYNX_NAMESPACE_DIR}/shared/shared.sh"
 source "${SPHYNX_NAMESPACE_DIR}/core/file.sh"
 
