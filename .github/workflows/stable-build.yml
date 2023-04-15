@@ -3,9 +3,8 @@ on:
   push:
     branches:
       - main
-    paths:
-      - "./alien/**"
-      - "!**/**.md"
+    paths-ignore:
+      - "**.md"
 jobs:
   build-and-push:
     name: Build & Push
