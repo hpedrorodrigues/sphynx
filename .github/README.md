@@ -2,8 +2,8 @@
   <img src="./assets/sphynx-landscape.png" align="center" height="50%" width="50%"/>
 </p>
 
-[![][github-action-badge]][github-action-sphynx]
-[![][written-in-badge]][shell-code-sphynx]
+[![Checks (Stable)][stable-checks-badge]][stable-checks-workflow]
+[![Build and Push (Stable)][stable-build-badge]][stable-build-workflow]
 
 Sphynx is a personal project including CLI, dotfiles, workspace setup scripts
 among other things.
@@ -169,11 +169,11 @@ this repository and adjust it to your needs! Be careful!
 
 [dotly]: https://github.com/CodelyTV/dotly
 
-[github-action-badge]: https://github.com/hpedrorodrigues/sphynx/workflows/Checks/badge.svg
-[github-action-sphynx]: https://github.com/hpedrorodrigues/sphynx/actions
+[stable-checks-badge]: https://github.com/hpedrorodrigues/sphynx/actions/workflows/stable-checks.yml/badge.svg
+[stable-checks-workflow]: https://github.com/hpedrorodrigues/sphynx/actions/workflows/stable-checks.yml
 
-[written-in-badge]: https://img.shields.io/badge/Written%20in-bash-ff69b4.svg
-[shell-code-sphynx]: https://github.com/hpedrorodrigues/sphynx/search?l=shell
+[stable-build-badge]: https://github.com/hpedrorodrigues/sphynx/actions/workflows/stable-build.yml/badge.svg
+[stable-build-workflow]: https://github.com/hpedrorodrigues/sphynx/actions/workflows/stable-build.yml
 
 [homebrew]: https://brew.sh
 [linuxbrew]: https://docs.brew.sh/Homebrew-on-Linux
