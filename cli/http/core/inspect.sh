@@ -11,5 +11,5 @@ function sx::http::inspect() {
   echo "http://127.0.0.1:${port}" | sx::system::clipboard::copy
   sx::log::info 'Server address copied to clipboard!\n'
 
-  PORT="${port}" exec node "${SPHYNXN_DIR}/code/server.js"
+  PORT="${port}" exec node "${SPHYNX_NAMESPACE_DIR}/code/server.js"
 }

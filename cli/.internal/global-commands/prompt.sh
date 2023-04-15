@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 
 function sx::self::prompt::find_available_commands() {
-  find "${SPHYNXC_DIR}" \
+  find "${SPHYNX_COMMAND_DIR}" \
     -maxdepth 2 \
-    ! -path "${SPHYNXC_DIR}" \
+    ! -path "${SPHYNX_COMMAND_DIR}" \
     ! -path '*/.library*' \
     ! -path '*/.internal*' \
     -a -type f -a \( -perm -u=x -o -perm -g=x -o -perm -o=x \) \
-    | sed "s#${SPHYNXC_DIR}/##g" \
+    | sed "s#${SPHYNX_COMMAND_DIR}/##g" \
     | sed 's#/# #g' \
     | sort
 }

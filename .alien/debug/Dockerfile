@@ -10,7 +10,7 @@ RUN apk update && \
       bridge-utils=1.7.1-r1 \
       busybox-extras=1.35.0-r29 \
       conntrack-tools=1.4.7-r0 \
-      curl=7.88.1-r1 \
+      curl=8.0.1-r0 \
       ethtool=6.0-r0 \
       iperf=2.1.8-r0 \
       iproute2=6.0.0-r1 \
