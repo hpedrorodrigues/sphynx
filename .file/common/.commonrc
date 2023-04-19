@@ -97,14 +97,8 @@ fi
 
 #|> pyenv
 # https://github.com/pyenv/pyenv/issues/784#issuecomment-826444110
-# Lazy loading pyenv (based on https://github.com/davidparsson/zsh-pyenv-lazy/tree/master)
 if hash pyenv 2>/dev/null; then
-  function pyenv() {
-    unset -f pyenv
-    eval "$(pyenv init --path --no-rehash)"
-    # shellcheck disable=SC2068  # Double quote array expansions
-    pyenv ${@}
-  }
+  eval "$(pyenv init --path --no-rehash)"
 fi
 
 #|> Non-public scripts
