@@ -40,6 +40,7 @@ homebrew_packages:
   - gradle
   - grep
   - gzip
+  - { name: "minamijoyo/hcledit/hcledit", installed_name: "hcledit" }
   - htop
   - hugo
   - hyperfine
@@ -83,6 +84,10 @@ homebrew_packages:
   - stern
   - subnetcalc
   - telnet
+  - {
+      name: "mbode/tap/terraform-state-mover",
+      installed_name: "terraform-state-mover",
+    }
   - terragrunt
   - tfenv
   - the_silver_searcher
