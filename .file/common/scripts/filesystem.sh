@@ -257,3 +257,23 @@ function jqrepl() {
 
   replfy "jq --color-output ${JQ_REPL_ARGS:-}" "${query}"
 }
+
+## Load environment variables from a .env file
+##
+## e.g. load_dot_env
+## e.g. load_dot_env <env_file>
+## e.g. load_dot_env .env.test
+function load_dot_env() {
+  local -r env_file="${1:-.env}"
+
+  if ! [ -f "${env_file}" ]; then
+    echo "!!! No such file \"${env_file}\"" >&2
+    return 1
+  fi
+
+  set -o allexport
+  source "${env_file}"
+  set +o allexport
+
+  echo 'Done!'
+}
