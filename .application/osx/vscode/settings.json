@@ -2,11 +2,13 @@
   "breadcrumbs.enabled": true,
   "cSpell.language": "en,pt-BR",
   "cSpell.userWords": ["kubernetes", "sphynx"],
+  "editor.bracketPairColorization.enabled": true,
   "editor.cursorBlinking": "phase",
   "editor.cursorSmoothCaretAnimation": "on",
   "editor.cursorStyle": "line-thin",
   "editor.fontFamily": "Fira Code",
   "editor.fontLigatures": true,
+  "editor.guides.bracketPairs": "active",
   "editor.insertSpaces": true,
   "editor.minimap.enabled": false,
   "editor.minimap.maxColumn": 100,
@@ -18,6 +20,7 @@
   "editor.suggestSelection": "first",
   "editor.tabSize": 2,
   "editor.wordWrap": "on",
+  "explorer.confirmDelete": false,
   "explorer.confirmDragAndDrop": false,
   "explorer.openEditors.visible": 0,
   "files.associations": {
@@ -69,6 +72,5 @@
   "workbench.iconTheme": "deepdark-material-icons",
   "workbench.settings.enableNaturalLanguageSearch": false,
   "workbench.startupEditor": "none",
-  "workbench.welcome.enabled": false,
-  "explorer.confirmDelete": false
+  "workbench.welcome.enabled": false
 }
