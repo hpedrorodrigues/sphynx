@@ -22,7 +22,7 @@ function sx::docker::remove_images() {
 function sx::docker::remove_volumes() {
   sx::docker::check_requirements
 
-  docker volume prune --force
+  docker volume prune --all --force
 }
 
 function sx::docker::remove_networks() {
