@@ -121,3 +121,10 @@ export BAT_STYLE='plain'
 
 #|> Sphynx
 export SX_CONFIRMATION_REQUIRED='false'
+
+#|> Rancher Desktop
+export RANCHER_DESKTOP_BIN="${HOME}/.rd/bin"
+
+if [ -d "${RANCHER_DESKTOP_BIN}" ] && [[ "${PATH}" != *"${RANCHER_DESKTOP_BIN}"* ]]; then
+  export PATH="${PATH}:${RANCHER_DESKTOP_BIN}"
+fi
