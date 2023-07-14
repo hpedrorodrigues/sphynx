@@ -401,3 +401,19 @@ function j() {
   export JAVA_HOME="${new_version}"
   echo "JAVA_HOME=${JAVA_HOME}"
 }
+
+## Run `compose` with the available CLI (e.g., docker, nerdctl).
+##
+## e.g. dc up -d
+function dc() {
+  if hash 'nerdctl' 2>/dev/null; then
+    # shellcheck disable=SC2068  # Double quote array expansions
+    nerdctl compose ${@}
+  elif hash 'docker' 2>/dev/null; then
+    # shellcheck disable=SC2068  # Double quote array expansions
+    docker compose ${@}
+  else
+    echo "!!! There's no CLI available for compose." >&2
+    return 1
+  fi
+}

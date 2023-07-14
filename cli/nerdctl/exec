@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNX_CLI_DIR}/.internal/all.sh"
+source "${SPHYNX_NAMESPACE_DIR}/shared/shared.sh"
+source "${SPHYNX_NAMESPACE_DIR}/core/exec.sh"
+
+##? Run a command in a running container
+##?
+##? Usage:
+##?     exec [--container <id>]
+##?
+##? Options:
+##?     -c --container <id>  The container id to execute commands in
+##?
+##? Examples:
+##?     exec
+
+sx::parse_arguments "${@}"
+
+sx::nerdctl::exec "${container:-}"
