@@ -4,11 +4,11 @@ LABEL maintainer="Pedro Rodrigues <github.com/hpedrorodrigues>"
 
 RUN apk update && \
     apk add --no-cache \
-      aws-cli=2.12.2-r0 \
+      aws-cli=2.13.0-r0 \
       bash=5.2.15-r5 \
       bind-tools=9.18.16-r0 \
       bridge-utils=1.7.1-r2 \
-      busybox-extras=1.36.1-r0 \
+      busybox-extras=1.36.1-r1 \
       conntrack-tools=1.4.7-r1 \
       curl=8.1.2-r0 \
       ethtool=6.2-r1 \
