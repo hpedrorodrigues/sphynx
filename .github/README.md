@@ -154,7 +154,7 @@ this repository and adjust it to your needs! Be careful!
 
 [cli-folder]: ./../cli
 [dotfiles-folder]: ./../dotfiles
-[playbooks-folder]: ./../.playbook
+[playbooks-folder]: ./../playbooks
 [alien-folder]: ./../alien
 [alien-commands]: ./../dotfiles/common/scripts/alien.sh
 [p2i]: ./../alien/p2i
