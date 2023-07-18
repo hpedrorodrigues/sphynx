@@ -49,7 +49,7 @@ dependency it could be good installing it.
 
 ### Dotfiles
 
-All dotfiles are inside the [.file][dotfiles-folder] directory. It has common
+All dotfiles are inside the [dotfiles][dotfiles-folder] directory. It has common
 aliases, functions, and configuration files that I use daily.
 
 **Ok, but how about shell startup performance?**
@@ -153,10 +153,10 @@ this repository and adjust it to your needs! Be careful!
 
 
 [cli-folder]: ./../cli
-[dotfiles-folder]: ./../.file
+[dotfiles-folder]: ./../dotfiles
 [playbooks-folder]: ./../.playbook
 [alien-folder]: ./../alien
-[alien-commands]: ./../.file/common/scripts/alien.sh
+[alien-commands]: ./../dotfiles/common/scripts/alien.sh
 [p2i]: ./../alien/p2i
 
 [ansible-website]: https://www.ansible.com
