@@ -406,12 +406,12 @@ function j() {
 ##
 ## e.g. dc up -d
 function dc() {
-  if hash 'nerdctl' 2>/dev/null; then
-    # shellcheck disable=SC2068  # Double quote array expansions
-    nerdctl compose ${@}
-  elif hash 'docker' 2>/dev/null; then
+  if hash 'docker' 2>/dev/null && docker info &>/dev/null; then
     # shellcheck disable=SC2068  # Double quote array expansions
     docker compose ${@}
+  elif hash 'nerdctl' 2>/dev/null && nerdctl info &>/dev/null; then
+    # shellcheck disable=SC2068  # Double quote array expansions
+    nerdctl compose ${@}
   else
     echo "!!! There's no CLI available for compose." >&2
     return 1
