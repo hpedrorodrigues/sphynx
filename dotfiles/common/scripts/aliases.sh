@@ -19,6 +19,7 @@ alias l='ls -lash'
 
 # Shortcut for Docker and Docker Compose
 alias d='docker'
+alias dc='docker compose'
 
 # Flush the DNS cache
 alias flush='sx system dns --flush'
@@ -32,13 +33,6 @@ alias ds='sx docker ls'
 alias dl='sx docker logs'
 alias di='sx docker inspect'
 alias dex='sx docker exec'
-
-# nerdctl
-alias nd='sx nerdctl delete'
-alias ns='sx nerdctl ls'
-alias nl='sx nerdctl logs'
-alias ni='sx nerdctl inspect'
-alias nex='sx nerdctl exec'
 
 # TMUX
 alias ts='sx terminal tmux ls'
