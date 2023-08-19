@@ -49,12 +49,15 @@ export FZF_BIN="${HOME}/.fzf.zsh"
 
 #|> Sphynx
 export SPHYNX_DIR="${HOME}/Code/Personal/sphynx"
+export SPHYNX_COMPLETION_DIR="${SPHYNX_DIR}/cli/.internal/completion"
 
 if [[ "${PATH}" != *"${SPHYNX_DIR}"* ]]; then
   export PATH="${PATH}:${SPHYNX_DIR}"
+fi
 
+if [[ "${fpath}" != *"${SPHYNX_COMPLETION_DIR}"* ]]; then
   # shellcheck disable=SC2206  # Quote to prevent word splitting/globbing
-  fpath=("${SPHYNX_DIR}/cli/.internal/completion" ${fpath})
+  fpath=("${SPHYNX_COMPLETION_DIR}" ${fpath})
 fi
 
 #|> Startship
