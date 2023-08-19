@@ -49,7 +49,7 @@ function sx::playbook::run() {
   sx::require_network
   sx::playbook::install_dependencies
 
-  local -r playbooks_home="${SPHYNX_DIR}/.playbook"
+  local -r playbooks_home="${SPHYNX_DIR}/playbooks"
 
   export ANSIBLE_CONFIG="${playbooks_home}"
 

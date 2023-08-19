@@ -87,11 +87,14 @@ alias kq='kubectl get --raw'
 
 alias kk='kubectl krew'
 
+alias kd='kubectl describe'
+alias kg='kubectl get'
+
 alias ks='sx kubernetes ls'
-alias kd='sx kubernetes describe'
+alias kde='sx kubernetes describe'
 alias ke='sx kubernetes edit'
 alias kex='sx kubernetes exec'
-alias kg='sx kubernetes get'
+alias kge='sx kubernetes get'
 alias kl='sx kubernetes logs'
 alias kns='sx kubernetes namespace'
 alias ktx='sx kubernetes context'
