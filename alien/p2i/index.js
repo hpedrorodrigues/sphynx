@@ -44,7 +44,7 @@ const main = async () => {
     } catch (e) {
       if (e instanceof puppeteer.errors.TimeoutError) {
         console.error(
-          `The selector "${args.selector}" cannot be found in page "${args.url}".`
+          `The selector "${args.selector}" cannot be found in page "${args.url}".`,
         );
       } else {
         console.error(e);

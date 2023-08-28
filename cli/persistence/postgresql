@@ -5,13 +5,15 @@ set -o nounset
 set -o pipefail
 
 source "${SPHYNX_CLI_DIR}/.internal/all.sh"
+source "${SPHYNX_CLI_DIR}/kubernetes/shared/shared.sh"
 source "${SPHYNX_NAMESPACE_DIR}/shared/shared.sh"
 source "${SPHYNX_NAMESPACE_DIR}/core/postgresql.sh"
 
-##? Dumps/Restores a PostgreSQL database
+##? Connect to/dump/restore and list Kubernetes pods currently connecting to a PostgreSQL database
 ##?
 ##? Usage:
 ##?     postgresql connect --dburi <uri>
+##?     postgresql list_connecting_pods --dburi <uri>
 ##?     postgresql (dump | restore) --dburi <uri> --file <filename>
 ##?
 ##? Options:
@@ -21,6 +23,7 @@ source "${SPHYNX_NAMESPACE_DIR}/core/postgresql.sh"
 ##?
 ##? Examples:
 ##?     postgresql connect --dburi 'postgresql://postgres:postgres@localhost:5432/postgres'
+##?     postgresql list_connecting_pods --dburi 'postgresql://postgres:postgres@localhost:5432/postgres'
 ##?     postgresql dump --dburi 'postgresql://qa:qa@localhost:5432/qa' --file qa.tar
 ##?     postgresql restore --file test.tar --dburi 'postgresql://test:test@localhost:5432/test'
 
@@ -28,6 +31,8 @@ sx::parse_arguments "${@}"
 
 if ${connect:-false}; then
   sx::postgresql::connect "${dburi:-}"
+elif ${list_connecting_pods:-false}; then
+  sx::postgresql::list_connecting_pods "${dburi:-}"
 elif ${dump:-false}; then
   sx::postgresql::dump "${dburi:-}" "${file:-}"
 elif ${restore:-false}; then
