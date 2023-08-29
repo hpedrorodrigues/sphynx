@@ -11,16 +11,15 @@ source "${SPHYNX_NAMESPACE_DIR}/core/certificate.sh"
 ##? Retrieve certificate information from hosts
 ##?
 ##? Usage:
-##?     certificate --host <address> [--get | --sans]
+##?     certificate <host> [--get | --sans]
 ##?
 ##? Options:
-##?     -h --host <address>  The domain address to get information from
 ##?     -g --get  Print the certificate
 ##?     -s --sans  Print the Subject Alternative Name(s)
 ##?
 ##? Examples:
-##?     certificate --host google.com --sans
-##?     certificate -h youtube.com -g
+##?     certificate google.com --sans
+##?     certificate youtube.com -g
 
 sx::parse_arguments "${@}"
 

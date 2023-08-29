@@ -5,8 +5,8 @@ set -o nounset
 set -o pipefail
 
 source "${SPHYNX_CLI_DIR}/.internal/all.sh"
-source "${SPHYNX_CLI_DIR}/.library/tmux/core.sh"
 source "${SPHYNX_NAMESPACE_DIR}/shared/shared.sh"
+source "${SPHYNX_NAMESPACE_DIR}/shared/tmux.sh"
 source "${SPHYNX_NAMESPACE_DIR}/core/tmux.sh"
 
 ##? tmux utility functions
