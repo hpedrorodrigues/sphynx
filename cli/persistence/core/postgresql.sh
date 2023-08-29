@@ -58,7 +58,7 @@ function sx::postgresql::connect() {
   PGAPPNAME="${SX_APPLICATION_NAME}" psql "${db_uri}"
 }
 
-function sx::postgresql::list_connecting_pods() {
+function sx::postgresql::list_connected_pods() {
   sx::persistence::check_requirements
   sx::require 'psql'
   sx::k8s::check_requirements
