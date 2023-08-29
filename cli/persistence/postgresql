@@ -9,7 +9,7 @@ source "${SPHYNX_CLI_DIR}/kubernetes/shared/shared.sh"
 source "${SPHYNX_NAMESPACE_DIR}/shared/shared.sh"
 source "${SPHYNX_NAMESPACE_DIR}/core/postgresql.sh"
 
-##? Connect to/dump/restore and list Kubernetes pods currently connecting to a PostgreSQL database
+##? Connect to/dump/restore and list Kubernetes pods connected to a database
 ##?
 ##? Usage:
 ##?     postgresql connect --dburi <uri>
