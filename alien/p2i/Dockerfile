@@ -26,7 +26,7 @@ RUN apk update \
          ttf-freefont=20120503-r4 \
     && rm -rf /var/cache/apk/* \
     && echo http://dl-2.alpinelinux.org/alpine/edge/community/ >> /etc/apk/repositories \
-    && apk --no-cache add shadow=4.13-r6 \
+    && apk --no-cache add shadow=4.13-r4 \
     && groupmod -g $((gid + 1)) node \
     && usermod -u $((uid + 1)) -g $((gid + 1)) node \
     && addgroup -g "${gid}" "${group}" \
