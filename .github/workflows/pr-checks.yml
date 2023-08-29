@@ -28,7 +28,7 @@ jobs:
         shell: bash
   build:
     name: Build
-    timeout-minutes: 3
+    timeout-minutes: 5
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
