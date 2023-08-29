@@ -10,7 +10,7 @@ ARG group=alien
 
 ENV ALIEN_HOME /home/${user}
 
-RUN npm install --global prettier@2.8.8 \
+RUN npm install --global prettier@3.0.2 \
   && echo http://dl-2.alpinelinux.org/alpine/edge/community/ >> /etc/apk/repositories \
   && apk --no-cache add shadow=4.13-r6 \
   && groupmod -g $((gid + 1)) node \
