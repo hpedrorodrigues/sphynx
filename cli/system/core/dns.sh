@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-function sx::system::flush_dns_cache() {
+function sx::system::flush_cache() {
   sx::require_supported_os
 
   if sx::os::is_osx; then
@@ -12,7 +12,7 @@ function sx::system::flush_dns_cache() {
   fi
 }
 
-function sx::system::query_dns() {
+function sx::system::resolve_address() {
   sx::require_supported_os
   sx::require_network
 
