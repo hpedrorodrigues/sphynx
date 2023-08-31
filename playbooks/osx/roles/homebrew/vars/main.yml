@@ -25,6 +25,7 @@ homebrew_packages:
   - { name: "fluxcd/tap/flux", installed_name: "flux" }
   - gawk
   - gcc
+  - gh
   - git
   - git-delta
   - git-flow
@@ -36,6 +37,7 @@ homebrew_packages:
   - gnu-which
   - gnutls
   - { name: "golang", installed_name: "go" }
+  - go-task
   - gpatch
   - gradle
   - grep

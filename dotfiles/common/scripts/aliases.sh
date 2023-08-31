@@ -21,9 +21,6 @@ alias l='ls -lash'
 alias d='docker'
 alias dc='docker compose'
 
-# Flush the DNS cache
-alias flush='sx system dns --flush'
-
 # Empty the trash
 alias empty-trash='sx system clear-trash'
 
@@ -107,10 +104,11 @@ alias tf='terraform'
 alias tfm='terraform fmt -recursive'
 
 # Network
-alias dns='sx system dns --query'
+alias dns='sx system dns'
+alias flush='sx system dns --flush'
 
-alias cert='sx security certificate --get --host'
-alias certsans='sx security certificate --sans --host'
+alias cert='sx security certificate --print'
+alias certsans='sx security certificate --print-sans'
 
 alias public_ip='sx system ip --public'
 alias private_ip='sx system ip --private'
