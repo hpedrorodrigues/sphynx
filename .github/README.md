@@ -124,8 +124,7 @@ Also, [Github ❤ ~/][dotfiles-website] and
 ### Alien scripts
 
 [Alien commands][alien-commands] are tools that you don't want to install
-on your machine but you'd like to use them. For instance, you want to use
-[p2i][p2i] but you don't want to configure a nodejs environment.
+on your machine but you'd like to use them.
 
 They are basically shell functions calling Docker behind the scenes, but
 not all functions use the dockerfiles available in this project
@@ -157,7 +156,6 @@ this repository and adjust it to your needs! Be careful!
 [playbooks-folder]: ./../playbooks
 [alien-folder]: ./../alien
 [alien-commands]: ./../dotfiles/common/scripts/alien.sh
-[p2i]: ./../alien/p2i
 
 [ansible-website]: https://www.ansible.com
 [dotfiles-website]: http://dotfiles.github.io

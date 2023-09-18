@@ -174,37 +174,3 @@ function shfmt() {
       "${image}" -i 2 -ci -bn "${@}"
   fi
 }
-
-## Web page to image - P2I
-## https://github.com/hpedrorodrigues/sphynx/blob/main/alien/p2i/README.md
-##
-## e.g.
-##
-## p2i \
-##   --url 'https://www.google.com/search?q=car+meaning' \
-##   --selector '.lr_container' \
-##   --filename "car-meaning.png"
-function p2i() {
-  local -r tool_name="${FUNCNAME[0]:-${funcstack[1]}}"
-  local -r image="${ALIEN_REPOSITORY}:${tool_name}"
-
-  if ! hash 'docker' 2>/dev/null; then
-    echo 'The command-line \"docker\" is not available in your path' >&2
-    return 1
-  fi
-
-  local -r state="$(
-    docker inspect --format '{{.State.Running}}' "${tool_name}" 2>/dev/null
-  )"
-  if [ "${state}" = 'true' ]; then
-    echo "There's already an instance of \"${tool_name}\" running." >&2
-    return 1
-  fi
-
-  docker run \
-    --name "${tool_name}" \
-    --rm \
-    --security-opt seccomp="${SPHYNX_DIR}/alien/p2i/chrome.json" \
-    --volume "${P2I_DIR:-${PWD}}:/mnt" \
-    "${image}" "${@}"
-}
