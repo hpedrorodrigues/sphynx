@@ -1,8 +1,7 @@
 dock_apps:
   - "/System/Applications/Mail.app"
-  - "/Applications/Google Chrome.app"
-  - "/Applications/Todoist.app"
-  - "/Applications/Pocket.app"
+  - "/System/Applications/Reminders.app"
+  - "/Applications/Brave Browser.app"
   - "/Applications/Slack.app"
   - "/Applications/Telegram Lite.app"
   - "/Applications/WhatsApp.app"
@@ -10,5 +9,4 @@ dock_apps:
   - "/System/Applications/Calendar.app"
   - "/Applications/GitHub Desktop.app"
   - "/Applications/Alacritty.app"
-  - "/Applications/Toggl Track.app"
   - "/Applications/Obsidian.app"
