@@ -21,12 +21,6 @@ function alien::print_help() {
   grep '[#]#?' "${BASH_SOURCE[0]}" | cut -c 5-
 }
 
-function alien::clean_up() {
-  if [ -d "${ALIEN_PATH}/p2i/node_modules" ]; then
-    rm -rf "${ALIEN_PATH}/p2i/node_modules"
-  fi
-}
-
 function alien::run_over_all() {
   local -r action="${1:-}"
 
@@ -86,8 +80,6 @@ function alien::build_and_push_image() {
 
 function alien::main() {
   local -r cmd="${1:-}"
-
-  alien::clean_up
 
   case ${cmd} in
     -b | --build)
