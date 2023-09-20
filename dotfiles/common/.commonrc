@@ -26,7 +26,6 @@ export DOTFILES=(
   "${DOTFILES_DIR}/filesystem.sh"
   "${DOTFILES_DIR}/git.sh"
   "${DOTFILES_DIR}/kubernetes.sh"
-  "${DOTFILES_DIR}/learning.sh"
   "${DOTFILES_DIR}/network.sh"
   "${DOTFILES_DIR}/management.sh"
 
@@ -58,8 +57,8 @@ if [ -d "${NVM_DIR}" ]; then
   function nvm() {
     unset -f nvm
 
-    nvm_installation_dir='/usr/local/opt/nvm'
-    nvm_files=(
+    local nvm_installation_dir='/usr/local/opt/nvm'
+    local nvm_files=(
       "${NVM_DIR}/nvm.sh"
       "${NVM_DIR}/bash_completion"
       "${nvm_installation_dir}/nvm.sh"
