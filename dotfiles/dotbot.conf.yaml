@@ -31,7 +31,6 @@
     ${HOME}/.sphynx/filesystem.sh: ${SPHYNX_DIR}/dotfiles/common/scripts/filesystem.sh
     ${HOME}/.sphynx/git.sh: ${SPHYNX_DIR}/dotfiles/common/scripts/git.sh
     ${HOME}/.sphynx/kubernetes.sh: ${SPHYNX_DIR}/dotfiles/common/scripts/kubernetes.sh
-    ${HOME}/.sphynx/learning.sh: ${SPHYNX_DIR}/dotfiles/common/scripts/learning.sh
     ${HOME}/.sphynx/network.sh: ${SPHYNX_DIR}/dotfiles/common/scripts/network.sh
     ${HOME}/.sphynx/management.sh: ${SPHYNX_DIR}/dotfiles/common/scripts/management.sh
 - link:

@@ -46,8 +46,6 @@ alias pbpaste='sx system clipboard paste'
 # Git & Github
 alias g='git'
 alias gs='git status'
-alias gst='git status'
-alias gba='git branch --all'
 
 alias gch='sx git check'
 alias gbc='sx git branch --clear'
