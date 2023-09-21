@@ -2,9 +2,9 @@ vscode_settings_files:
   - settings.json
   - keybindings.json
 
+# code --list-extensions | sort -uf | xargs -I {} echo '- {}'
 vscode_extensions:
   - armandphilippot.coldark
-  - bungcip.better-toml
   - christian-kohler.path-intellisense
   - DavidAnson.vscode-markdownlint
   - eamodio.gitlens
@@ -24,4 +24,4 @@ vscode_extensions:
   - redhat.vscode-yaml
   - streetsidesoftware.code-spell-checker
   - streetsidesoftware.code-spell-checker-portuguese-brazilian
-  - WakaTime.vscode-wakatime
+  - tamasfe.even-better-toml
