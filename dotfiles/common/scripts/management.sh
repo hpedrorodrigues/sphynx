@@ -18,7 +18,7 @@ function sphynx() {
     (cd "${sphynx_repository}" && sx git open)
   elif [ "${action}" = 'run' ]; then
     # shellcheck disable=SC2068  # Double quote array expansions
-    (cd "${secrets_repository}" && ${@:2})
+    (cd "${sphynx_repository}" && ${@:2})
   else
     if [ -z "${action}" ]; then
       echo "!!! No action provided." >&2
