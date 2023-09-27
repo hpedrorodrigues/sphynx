@@ -38,13 +38,14 @@ RUN apk update && \
       util-linux=2.38.1-r8 \
       vim=9.0.1568-r0 \
       wget=1.21.4-r0 \
-      doas=6.8.2-r4 \
+      sudo=1.9.13_p3-r2 \
     && rm -rf /var/cache/apk/*
 
 # https://wiki.alpinelinux.org/wiki/Setting_up_a_new_user
 RUN addgroup -g "${gid}" "${group}" \
   && adduser -h "${ALIEN_HOME}" -u "${uid}" -G "${group}" -s /bin/bash -D "${user}" \
-  && echo "permit persist :${group}" >> /etc/doas.d/doas.conf \
+  && echo "${user} ALL=(ALL) NOPASSWD: ALL" > "/etc/sudoers.d/${user}" \
+  && chmod 0440 "/etc/sudoers.d/${user}" \
   && mkdir -p "${ALIEN_HOME}" /mnt \
   && chown -R "${uid}:${gid}" "${ALIEN_HOME}" /mnt
 
