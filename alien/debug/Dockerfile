@@ -2,6 +2,14 @@ FROM alpine:3.18.2
 
 LABEL maintainer="Pedro Rodrigues <github.com/hpedrorodrigues>"
 
+ARG uid=1000
+ARG gid=1000
+
+ARG user=alien
+ARG group=alien
+
+ENV ALIEN_HOME /home/${user}
+
 RUN apk update && \
     apk add --no-cache \
       aws-cli=2.13.5-r0 \
@@ -30,4 +38,16 @@ RUN apk update && \
       util-linux=2.38.1-r8 \
       vim=9.0.1568-r0 \
       wget=1.21.4-r0 \
+      doas=6.8.2-r4 \
     && rm -rf /var/cache/apk/*
+
+# https://wiki.alpinelinux.org/wiki/Setting_up_a_new_user
+RUN addgroup -g "${gid}" "${group}" \
+  && adduser -h "${ALIEN_HOME}" -u "${uid}" -G "${group}" -s /bin/bash -D "${user}" \
+  && echo "permit persist :${group}" >> /etc/doas.d/doas.conf \
+  && mkdir -p "${ALIEN_HOME}" /mnt \
+  && chown -R "${uid}:${gid}" "${ALIEN_HOME}" /mnt
+
+USER ${user}
+
+WORKDIR ${ALIEN_HOME}

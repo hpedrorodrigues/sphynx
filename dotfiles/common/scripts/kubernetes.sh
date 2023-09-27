@@ -192,19 +192,63 @@ function kdeb() {
     return 1
   fi
 
+  local -r image='hpedrorodrigues/alien:debug'
   local -r pod_name='debug'
-  local -r pod_hash="$(uuidgen | cut -d '-' -f 1 | tr '[:upper:]' '[:lower:]')"
+  local -r pod_name_suffix="$(uuidgen | cut -d '-' -f 1 | tr '[:upper:]' '[:lower:]')"
+  local -r overrides="$(
+    cat <<EOF
+{
+  "metadata": {
+    "labels": {
+      "app": "debug"
+    }
+  },
+  "spec": {
+    "containers": [
+      {
+        "securityContext": {
+          "allowPrivilegeEscalation": false,
+          "privileged": false,
+          "readOnlyRootFilesystem": true,
+          "runAsGroup": 1000,
+          "runAsUser": 1000
+        },
+        "name": "debug",
+        "image": "${image}",
+        "stdin": true,
+        "stdinOnce": true,
+        "tty": true,
+        "volumeMounts": [
+          {
+            "name": "tmp",
+            "mountPath": "/tmp"
+          }
+        ],
+        "imagePullPolicy": "Always",
+        "restartPolicy": "Never"
+      }
+    ],
+    "terminationGracePeriodSeconds": 1,
+    "volumes": [
+      {
+        "name": "tmp",
+        "emptyDir": {
+          "medium": "Memory"
+        }
+      }
+    ]
+  }
+}
+EOF
+  )"
 
-  kubectl run "${pod_name}-${pod_hash}" \
+  kubectl run "${pod_name}-${pod_name_suffix}" \
     --rm \
     --stdin \
     --tty \
-    --image-pull-policy 'Always' \
-    --restart 'Never' \
-    --labels "app=${pod_name}" \
     --env 'SOURCE=sphynx' \
-    --grace-period '1' \
-    --image 'hpedrorodrigues/alien:debug'
+    --overrides="${overrides}" \
+    --image="${image}"
 }
 
 ## Diff configurations specified by file name or stdin between the current
