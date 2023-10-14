@@ -16,9 +16,9 @@ RUN apk update && \
       bash=5.2.15-r5 \
       bind-tools=9.18.19-r0 \
       bridge-utils=1.7.1-r2 \
-      busybox-extras=1.36.1-r2 \
+      busybox-extras=1.36.1-r4 \
       conntrack-tools=1.4.7-r1 \
-      curl=8.3.0-r0 \
+      curl=8.4.0-r0 \
       ethtool=6.2-r1 \
       iperf=2.1.9-r0 \
       iproute2=6.3.0-r0 \

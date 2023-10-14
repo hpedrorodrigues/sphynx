@@ -83,7 +83,7 @@ function fs() {
   if [[ -n ${*} ]]; then
     du "${args}" -- "${@}"
   else
-    du "${args}" -- * .*
+    find . -maxdepth 1 -exec du ${args} {} +
   fi
 }
 

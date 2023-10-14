@@ -5,6 +5,18 @@ const port = process.env.PORT || 3000;
 
 const APPLICATION_JSON = 'application/json';
 
+const deserializeBody = (contentType, data) => {
+  if (contentType === undefined || !contentType.startsWith(APPLICATION_JSON)) {
+    return data;
+  }
+
+  try {
+    return JSON.parse(data);
+  } catch (e) {
+    return data;
+  }
+};
+
 const listener = async (req, res) => {
   const buffer = [];
   for await (const chunk of req) {
@@ -12,11 +24,7 @@ const listener = async (req, res) => {
   }
 
   const data = Buffer.concat(buffer).toString();
-  const body =
-    req.headers['content-type'] !== undefined &&
-    req.headers['content-type'].startsWith(APPLICATION_JSON)
-      ? JSON.parse(data)
-      : data;
+  const body = deserializeBody(req.headers['content-type'], data);
   const result = {
     request: {
       httpVersion: req.httpVersion,
