@@ -1,9 +1,0 @@
-#!/usr/bin/env bash
-# Available keys: defaults read com.apple.mail
-
-readonly domain='com.apple.mail'
-
-
-# Disable the animation when sending and replying an e-mail
-defaults write ${domain} DisableReplyAnimations -bool true
-defaults write ${domain} DisableSendAnimations -bool true

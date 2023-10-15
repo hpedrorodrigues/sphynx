@@ -1,2 +1,0 @@
-- name: Restart iTerm
-  shell: killall iTerm2 && open -a iTerm2 || echo
