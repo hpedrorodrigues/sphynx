@@ -1,15 +1,18 @@
 - name: Creating Rectangle configuration directory
-  file: "path={{ ansible_env.HOME }}/Library/Preferences mode=0755 state=directory"
+  file:
+    path: "{{ ansible_env.HOME }}/Library/Application Support/Rectangle"
+    mode: 0755
+    state: directory
 
 - name: Detecting - Rectangle is available
   stat:
-    path: "{{ ansible_env.HOME }}/Library/Preferences/com.knollsoft.Rectangle.plist"
+    path: "{{ ansible_env.HOME }}/Library/Application Support/Rectangle/RectangleConfig.json"
   register: rectangle
 
 - name: Installing Rectangle settings
   file:
-    src: "{{ applications_settings_dir }}/osx/rectangle/com.knollsoft.Rectangle.plist"
-    dest: "{{ ansible_env.HOME }}/Library/Preferences/com.knollsoft.Rectangle.plist"
+    src: "{{ applications_settings_dir }}/osx/rectangle/RectangleConfig.json"
+    dest: "{{ ansible_env.HOME }}/Library/Application Support/Rectangle/RectangleConfig.json"
     state: link
     force: yes
   when:

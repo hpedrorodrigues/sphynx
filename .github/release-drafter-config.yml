@@ -11,6 +11,8 @@ categories:
     labels:
       - "chore"
       - "documentation"
+      - "dependencies"
+      - "github_actions"
 exclude-labels:
   - "no-changelog"
 change-template: "- $TITLE (#$NUMBER)"
