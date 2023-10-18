@@ -137,7 +137,7 @@ homebrew_apps:
   - temurin8 # JDK 8
   - temurin11 # JDK 11
   - temurin17 # JDK 17
-  - temurin # JDK 19
+  - temurin21 # JDK 21
   - vagrant
   - virtualbox
   - wireshark

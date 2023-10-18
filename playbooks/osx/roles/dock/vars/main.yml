@@ -1,7 +1,7 @@
 dock_apps:
   - "/System/Applications/Mail.app"
   - "/System/Applications/Reminders.app"
-  - "/Applications/Brave Browser.app"
+  - "/Applications/Google Chrome.app"
   - "/Applications/Slack.app"
   - "/Applications/Telegram Lite.app"
   - "/Applications/WhatsApp.app"
