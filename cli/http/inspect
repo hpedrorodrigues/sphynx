@@ -12,10 +12,12 @@ source "${SPHYNX_NAMESPACE_DIR}/core/inspect.sh"
 ##? Starts a server in order to inspect HTTP requests made to it
 ##?
 ##? Usage:
-##?     inspect [--port <port>]
+##?     inspect [--port <port>] [--status-code <code>] [--response-body <body>]
 ##?
 ##? Options:
 ##?     -p --port <port>  Port used to listen to
+##?     -s --status-code <code>  Status code to return for all requests
+##?     -r --response-body <body>  Response body to return for all requests
 ##?
 ##? Examples:
 ##?     inspect
@@ -23,4 +25,4 @@ source "${SPHYNX_NAMESPACE_DIR}/core/inspect.sh"
 
 sx::parse_arguments "${@}"
 
-sx::http::inspect "${port:-3000}"
+sx::http::inspect "${port:-}" "${status_code:-}" "${response_body:-}"
