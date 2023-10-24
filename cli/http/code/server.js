@@ -53,7 +53,7 @@ const listener = async (req, res) => {
       compact: false,
       sorted: true,
     }),
-    '\n\n'
+    '\n\n',
   );
 
   res.writeHead(statusCode, { 'Content-Type': APPLICATION_JSON });
