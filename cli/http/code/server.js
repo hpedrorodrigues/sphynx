@@ -8,9 +8,7 @@ const responseBody = process.env.RESPONSE_BODY;
 
 const APPLICATION_JSON = 'application/json';
 
-const decodeUrl = (url) => {
-  return { raw: url, content: decodeURIComponent(url) };
-};
+const decodeUrl = (url) => ({ raw: url, content: decodeURIComponent(url) });
 
 const deserializeBody = (contentType, data) => {
   if (data === '') {
