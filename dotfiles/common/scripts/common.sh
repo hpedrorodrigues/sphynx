@@ -380,7 +380,7 @@ function j() {
       done
     else
       echo "JAVA_HOME=${JAVA_HOME}" >&2
-      echo 'JAVA_HOME is pointing to an invalid location' >&2
+      echo 'JAVA_HOME is pointing to an invalid location!' >&2
     fi
 
     return 0
@@ -400,4 +400,8 @@ function j() {
 
   export JAVA_HOME="${new_version}"
   echo "JAVA_HOME=${JAVA_HOME}"
+
+  if ! [ -d "${JAVA_HOME}" ]; then
+    echo 'JAVA_HOME is now pointing to an invalid location!' >&2
+  fi
 }
