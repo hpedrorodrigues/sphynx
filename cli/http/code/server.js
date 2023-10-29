@@ -5,10 +5,18 @@ const hostname = '127.0.0.1';
 const port = process.env.PORT || 3000;
 const statusCode = process.env.STATUS_CODE || 200;
 const responseBody = process.env.RESPONSE_BODY;
+const compactMode = process.env.COMPACT_MODE == 'true';
 
 const APPLICATION_JSON = 'application/json';
 
-const decodeUrl = (url) => ({ raw: url, content: decodeURIComponent(url) });
+const decodeUrl = (url) => {
+  const decoded = decodeURIComponent(url);
+  if (compactMode) {
+    return decoded;
+  }
+
+  return { raw: url, decoded };
+};
 
 const deserializeBody = (contentType, data) => {
   if (data === '') {
@@ -20,7 +28,12 @@ const deserializeBody = (contentType, data) => {
   }
 
   try {
-    return { raw: data, content: JSON.parse(data) };
+    const deserialized = JSON.parse(data);
+    if (compactMode) {
+      return deserialized;
+    }
+
+    return { raw: data, deserialized };
   } catch (e) {
     return data;
   }
