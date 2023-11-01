@@ -11,13 +11,14 @@ source "${SPHYNX_NAMESPACE_DIR}/core/exec.sh"
 ##? Execute custom commands in a container
 ##?
 ##? Usage:
-##?     exec [[<query>] [--namespace <name> | --all-namespaces] | --namespace <name> --pod <name> --container <name>]
+##?     exec [[<query>] [--namespace <name> | --all-namespaces] | --namespace <name> --pod <name> --container <name>] [--command <command>]
 ##?
 ##? Options:
 ##?     -n --namespace <name>  The namespace scope for requests
 ##?     -a --all-namespaces  All namespaces
 ##?     -p --pod <name>  The pod name
 ##?     -c --container <name>  The container name
+##?     --command <command>  Command to execute in the container
 ##?
 ##? Examples:
 ##?     exec
@@ -34,4 +35,5 @@ sx::k8s::exec \
   "${namespace:-}" \
   "${pod:-}" \
   "${container:-}" \
+  "${command:-}" \
   "${all_namespaces:-false}"
