@@ -8,10 +8,11 @@ function sx::k8s::exec() {
   local -r namespace="${2:-}"
   local -r pod="${3:-}"
   local -r container="${4:-}"
-  local -r all_namespaces="${5:-false}"
+  local -r command="${5:-}"
+  local -r all_namespaces="${6:-false}"
 
   if [ -n "${namespace}" ] && [ -n "${pod}" ] && [ -n "${container}" ]; then
-    sx::k8s_command::exec "${namespace}" "${pod}" "${container}"
+    sx::k8s_command::exec "${namespace}" "${pod}" "${container}" "${command}"
   elif sx::os::is_command_available 'fzf'; then
     local -r options="$(
       sx::k8s::running_pods "${query}" "${namespace}" "${all_namespaces}" true
@@ -29,7 +30,7 @@ function sx::k8s::exec() {
       local -r name="$(echo "${selected}" | awk '{ print $2 }')"
       local -r container_name="$(echo "${selected}" | awk '{ print $3 }')"
 
-      sx::k8s_command::exec "${ns}" "${name}" "${container_name}"
+      sx::k8s_command::exec "${ns}" "${name}" "${container_name}" "${command}"
     fi
   else
     export PS3=$'\n''Please, choose the pod: '$'\n'
@@ -48,7 +49,7 @@ function sx::k8s::exec() {
       local -r name="$(echo "${selected}" | awk '{ print $2 }')"
       local -r container_name="$(echo "${selected}" | awk '{ print $3 }')"
 
-      sx::k8s_command::exec "${ns}" "${name}" "${container_name}"
+      sx::k8s_command::exec "${ns}" "${name}" "${container_name}" "${command}"
       break
     done
   fi
@@ -58,6 +59,7 @@ function sx::k8s_command::exec() {
   local -r ns="${1}"
   local -r name="${2}"
   local -r container="${3}"
+  local -r command="${4}"
 
   local -r shells=(
     '/bin/bash'
@@ -66,14 +68,14 @@ function sx::k8s_command::exec() {
 
   for shell in "${shells[@]}"; do
     if sx::k8s::cli exec -n "${ns}" "${name}" -c "${container}" -- "${shell}" -c 'exit' &>/dev/null; then
-      sx::log::info "Now you can execute commands in pod \"${name}/${container}\" using \"${shell}\"\n"
+      sx::log::info "Now you can execute commands in pod \"${name}/${container}\" using \"${shell}(${command:-*})\"\n"
 
       sx::k8s::cli exec "${name}" \
         --stdin \
         --tty \
         --namespace "${ns}" \
         --container "${container}" \
-        -- "${shell}" -c "PS1='${SX_PS1}' exec ${shell}"
+        -- "${shell}" -c "PS1='${SX_PS1}' exec ${command:-${shell}}"
 
       exit "${?}"
     fi
