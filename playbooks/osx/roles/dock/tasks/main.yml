@@ -1,27 +1,17 @@
-- name: Detecting - Dockutil is available
-  stat:
-    path: /usr/local/bin/dockutil
-  register: dock
-
-- name: Getting all current Dock items
+- name: Loading existing items
   shell: "dockutil --list | awk -F '\t' '{ print $1 }'"
   register: current_items
   changed_when: false
-  when:
-    - dock.stat.exists
 
-- name: Removing all current items from Dock
+- name: Removing all existing items
   command: dockutil --no-restart --remove all
   when:
-    - dock.stat.exists
-    - dock_apps != current_items.stdout.split('\n')
+    - applications != current_items.stdout.split('\n')
 
-- name: Applying Dock items
+- name: Adding new items
   shell: "dockutil --no-restart --add '{{ item }}' '{{ ansible_env.HOME }}/Library/Preferences/com.apple.dock.plist'"
-  with_items: "{{ dock_apps }}"
+  loop: "{{ applications }}"
   notify:
     - Restart Dock
   when:
-    - dock.stat.exists
-    - dock_apps | count > 0
-    - item not in current_items.stdout.split('\n') or dock_apps != current_items.stdout.split('\n')
+    - item not in current_items.stdout.split('\n') or applications != current_items.stdout.split('\n')

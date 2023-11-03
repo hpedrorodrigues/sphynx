@@ -1,4 +1,4 @@
-dock_apps:
+applications:
   - "/System/Applications/Mail.app"
   - "/System/Applications/Reminders.app"
   - "/Applications/Google Chrome.app"

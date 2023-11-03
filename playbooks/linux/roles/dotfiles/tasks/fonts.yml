@@ -1,6 +1,6 @@
 - name: Installing fonts
   become: true
   file:
-    src: "{{ fonts_dir }}"
+    src: "{{ sphynx_fonts_directory }}"
     dest: "{{ ansible_env.HOME }}/.fonts"
     state: link

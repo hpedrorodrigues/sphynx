@@ -1,6 +1,25 @@
-- name: Installing fonts
-  copy:
-    src: "{{ item }}"
-    dest: "{{ ansible_env.HOME }}/Library/Fonts/{{ item | basename }}"
-  with_items:
-    - "{{ lookup('fileglob', '{{ fonts_dir }}/firacode/otf/*.otf').split(',') }}"
+- name: Fonts - Creating configuration directory
+  file:
+    path: "{{ ansible_env.HOME }}/Library/Fonts"
+    mode: 0755
+    state: directory
+
+- name: Fonts - Checking installation
+  stat:
+    path: "{{ ansible_env.HOME }}/Library/Fonts/FiraCode-Regular.ttf"
+  register: font
+
+- name: Fonts - Downloading and installing
+  unarchive:
+    src: https://github.com/tonsky/FiraCode/releases/download/6.2/Fira_Code_v6.2.zip
+    dest: "{{ ansible_env.HOME }}/Library/Fonts/"
+    remote_src: yes
+    extra_opts: "-j"
+    include:
+      - ttf/FiraCode-Bold.ttf
+      - ttf/FiraCode-Light.ttf
+      - ttf/FiraCode-Medium.ttf
+      - ttf/FiraCode-Regular.ttf
+      - ttf/FiraCode-Retina.ttf
+      - ttf/FiraCode-SemiBold.ttf
+  when: not font.stat.exists

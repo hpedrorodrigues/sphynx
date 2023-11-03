@@ -4,13 +4,9 @@
   roles:
     - homebrew
     - mas
-    - pip
-    - npm
-    - fuzzy-finder
+    - fzf
     - vscode
-    - karabiner-elements
-    - leiningen
-    - go
+    - karabiner
     - git
     - dock
     - dotfiles

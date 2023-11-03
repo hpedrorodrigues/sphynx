@@ -1,40 +1,32 @@
-- name: Detecting - Zsh is available
-  stat:
-    path: "/usr/local/bin/zsh"
-  register: zsh
-
-- name: Installing Zsh package
-  homebrew:
-    name: "zsh"
+- name: Installing ZSH
+  community.general.homebrew:
+    name: zsh
     state: present
-    upgrade_all: yes
-  register: new_zsh
-  when:
-    - not zsh.stat.exists
 
-- name: Making Zsh the default shell
-  shell: "chsh -s /usr/local/bin/zsh {{ ansible_env.USER }}"
-  become: yes
+- name: Adding Homebrew ZSH to /etc/shells
+  lineinfile:
+    path: /etc/shells
+    search_string: /usr/local/bin/zsh
+    line: /usr/local/bin/zsh
+  become: true
   when:
-    - zsh.stat.exists or new_zsh is successful
     - lookup('env','SHELL') != '/usr/local/bin/zsh'
 
-- name: Installing Dotfiles
-  command: "{{ sphynx_cli }} dotfiles configure"
+- name: Setting default shell
+  shell: "chsh -s /usr/local/bin/zsh {{ ansible_env.USER }}"
+  become: true
   when:
-    - zsh.stat.exists or new_zsh is successful
+    - lookup('env','SHELL') != '/usr/local/bin/zsh'
 
-- name: Configuring Vundle
-  include: vundle.yml
+- name: Configuring Dotfiles
+  command: "{{ sphynx_cli }} dotfiles configure"
 
-- name: Configuring Fonts
-  include: fonts.yml
-
-- name: Configuring Alacritty
-  include: alacritty.yml
-
-- name: Configuring Starship
-  include: starship.yml
-
-- name: Configuring Rectangle
-  include: rectangle.yml
+- name: Include additional tasks
+  include_tasks:
+    file: "{{ item }}"
+  loop:
+    - vundle.yml
+    - fonts.yml
+    - terminal.yml
+    - starship.yml
+    - rectangle.yml

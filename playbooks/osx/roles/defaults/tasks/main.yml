@@ -1,22 +1,18 @@
-- name: Detecting - Inventory is available
+- name: Checking inventory file
   stat:
     path: "{{ inventory_path }}"
   register: inventory
 
-- name: Getting current inventory state
-  shell: "test -f {{ inventory_path }} && cat {{ inventory_path }} || echo"
+- name: Checking inventory state
+  shell: "test -f {{ inventory_path }} && cat {{ inventory_path }} || true"
   register: inventory_state
   changed_when: false
   when:
     - inventory.stat.exists
 
-# Close any open System Preferences panes, to prevent them from overriding
-# settings we’re about to change
 - name: Closing System Preferences
   shell: |
     osascript -e 'tell application "System Preferences" to quit'
-  register: system_preferences
-  changed_when: system_preferences.rc != 0
 
 - name: Applying defaults
   script: "{{ item }}"

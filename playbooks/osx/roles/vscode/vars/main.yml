@@ -1,9 +1,9 @@
-vscode_settings_files:
+settings_files:
   - settings.json
   - keybindings.json
 
 # code --list-extensions | sort -uf | xargs -I {} echo '- {}'
-vscode_extensions:
+extensions:
   - armandphilippot.coldark
   - christian-kohler.path-intellisense
   - DavidAnson.vscode-markdownlint

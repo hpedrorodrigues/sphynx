@@ -1,0 +1,14 @@
+- name: Installing Fuzzy Finder formula
+  community.general.homebrew:
+    name: fzf
+    state: present
+
+- name: Checking - Fuzzy Finder installation
+  stat:
+    path: "{{ ansible_env.HOME }}/.fzf.zsh"
+  register: fzf_installation
+
+- name: Installing Fuzzy Finder completion + key bindings
+  shell: "$(brew --prefix)/opt/fzf/install"
+  when:
+    - not fzf_installation.stat.exists

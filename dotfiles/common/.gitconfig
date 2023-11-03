@@ -66,10 +66,12 @@
 [rerere]
   enabled = 1
 [merge]
-  tool = meld
-[mergetool]
+  tool = idea
+[mergetool "idea"]
+  cmd = idea merge $LOCAL $REMOTE $BASE $MERGED --wait
   prompt = false
   keepBackup = false
+  trustExitCode = true
 [init]
   defaultBranch = main
 [url "git@github.com:hpedrorodrigues/"]

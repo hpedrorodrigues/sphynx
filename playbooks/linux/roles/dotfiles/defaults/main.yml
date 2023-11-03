@@ -1,1 +1,1 @@
-sphynx_cli: "{{ sphynx_dir }}/sx"
+sphynx_cli: "{{ sphynx_directory }}/sx"
