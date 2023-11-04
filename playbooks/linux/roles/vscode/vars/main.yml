@@ -4,24 +4,22 @@ vscode_settings_files:
 
 # code --list-extensions | sort -uf | xargs -I {} echo '- {}'
 vscode_extensions:
-  - armandphilippot.coldark
   - christian-kohler.path-intellisense
-  - DavidAnson.vscode-markdownlint
   - eamodio.gitlens
   - EditorConfig.EditorConfig
-  - golang.go
-  - hashicorp.hcl
-  - hashicorp.terraform
-  - ipedrazas.kubernetes-snippets
+  - GitHub.github-vscode-theme
   - k--kato.intellij-idea-keybindings
   - mads-hartmann.bash-ide-vscode
   - mechatroner.rainbow-csv
   - ms-azuretools.vscode-docker
   - ms-kubernetes-tools.vscode-kubernetes-tools
   - naumovs.color-highlight
-  - Nimda.deepdark-material
+  - patricklee.vsnotes
   - qezhu.gitlink
   - redhat.vscode-yaml
   - streetsidesoftware.code-spell-checker
   - streetsidesoftware.code-spell-checker-portuguese-brazilian
+  - svsool.markdown-memo
   - tamasfe.even-better-toml
+  - vscode-icons-team.vscode-icons
+  - yzhang.markdown-all-in-one

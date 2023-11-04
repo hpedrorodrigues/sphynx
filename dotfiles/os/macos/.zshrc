@@ -23,9 +23,7 @@ if [ -f "${HOME}/.zgen/zgen.zsh" ]; then
   fi
 fi
 
-if hash sx &>/dev/null; then
-  # Regenerating .zcompdump file when sphynx completions were not loaded
-  if ! grep -q 'sx' "${HOME}/.zcompdump"; then
-    autoload -U compinit && compinit
-  fi
+# Regenerate .zcompdump file if sphynx completions are not loaded
+if hash sx &>/dev/null && ! grep -q 'sx' "${HOME}/.zcompdump"; then
+  autoload -U compinit && compinit
 fi
