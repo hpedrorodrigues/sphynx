@@ -57,56 +57,61 @@ aliases, functions, and configuration files that I use daily.
 **zsh**
 ```
 ♪ sx shell benchmark zsh
+ProductName:            macOS
+ProductVersion:         14.0
+
 > Hyperfine
 
 Benchmark 1: zsh -i -c exit
-  Time (mean ± σ):     121.2 ms ±   4.1 ms    [User: 55.9 ms, System: 48.5 ms]
-  Range (min … max):   117.4 ms … 134.2 ms    23 runs
+  Time (mean ± σ):      57.2 ms ±   0.5 ms    [User: 31.2 ms, System: 22.2 ms]
+  Range (min … max):    56.0 ms …  58.5 ms    50 runs
 
 > Bench
 
 benchmarking zsh -i -c exit
-time                 132.8 ms   (131.5 ms .. 134.6 ms)
+time                 57.97 ms   (57.61 ms .. 58.59 ms)
                      1.000 R²   (0.999 R² .. 1.000 R²)
-mean                 132.1 ms   (131.6 ms .. 132.8 ms)
-std dev              974.4 μs   (483.2 μs .. 1.488 ms)
-variance introduced by outliers: 11% (moderately inflated)
+mean                 57.96 ms   (57.78 ms .. 58.31 ms)
+std dev              430.2 μs   (251.9 μs .. 635.6 μs)
 
 > Time
 
 /usr/bin/time zsh -i -c exit (5x)
-        0.13 real         0.05 user         0.06 sys
-        0.12 real         0.05 user         0.04 sys
-        0.12 real         0.05 user         0.04 sys
-        0.12 real         0.05 user         0.04 sys
-        0.13 real         0.05 user         0.05 sys
+        0.06 real         0.03 user         0.02 sys
+        0.06 real         0.03 user         0.02 sys
+        0.05 real         0.03 user         0.02 sys
+        0.05 real         0.03 user         0.02 sys
+        0.05 real         0.03 user         0.02 sys
 ```
 
 **bash**
 ```
 ♪ sx shell benchmark bash
+ProductName:            macOS
+ProductVersion:         14.0
+
 > Hyperfine
 
 Benchmark 1: bash -i -c exit
-  Time (mean ± σ):      97.2 ms ±   1.6 ms    [User: 40.3 ms, System: 49.2 ms]
-  Range (min … max):    94.6 ms … 100.7 ms    28 runs
+  Time (mean ± σ):      40.5 ms ±   1.1 ms    [User: 19.1 ms, System: 20.1 ms]
+  Range (min … max):    39.2 ms …  45.2 ms    69 runs
 
 > Bench
 
 benchmarking bash -i -c exit
-time                 107.7 ms   (106.6 ms .. 108.7 ms)
+time                 41.15 ms   (40.94 ms .. 41.48 ms)
                      1.000 R²   (1.000 R² .. 1.000 R²)
-mean                 108.8 ms   (108.1 ms .. 110.5 ms)
-std dev              1.694 ms   (919.8 μs .. 2.447 ms)
+mean                 41.00 ms   (40.95 ms .. 41.18 ms)
+std dev              155.3 μs   (46.41 μs .. 291.6 μs)
 
 > Time
 
 /usr/bin/time bash -i -c exit (5x)
-        0.09 real         0.03 user         0.04 sys
-        0.09 real         0.03 user         0.04 sys
-        0.09 real         0.03 user         0.04 sys
-        0.09 real         0.03 user         0.04 sys
-        0.09 real         0.03 user         0.04 sys
+        0.04 real         0.01 user         0.01 sys
+        0.04 real         0.01 user         0.02 sys
+        0.03 real         0.01 user         0.01 sys
+        0.03 real         0.01 user         0.01 sys
+        0.04 real         0.01 user         0.02 sys
 ```
 
 ### Alien scripts
@@ -139,11 +144,11 @@ But if you want to give this whole project a try, it's recommended you fork
 this repository and adjust it to your needs! Be careful!
 
 
-[cli-folder]: ./../cli
-[dotfiles-folder]: ./../dotfiles
-[playbooks-folder]: ./../playbooks
-[alien-folder]: ./../alien
-[alien-commands]: ./../dotfiles/common/scripts/alien.sh
+[cli-folder]: ./cli
+[dotfiles-folder]: ./dotfiles
+[playbooks-folder]: ./playbooks
+[alien-folder]: ./alien
+[alien-commands]: ./dotfiles/common/scripts/alien.sh
 
 [ansible-website]: https://www.ansible.com
 [docopt-website]: http://docopt.org

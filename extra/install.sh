@@ -1,11 +1,8 @@
 #!/usr/bin/env bash
 
-# References
-# - https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent
-# - https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/githubs-ssh-key-fingerprints
-
-# Running
-# bash -c "$(curl -fsSL https://raw.githubusercontent.com/hpedrorodrigues/sphynx/fresh-install/management/install.sh)" -- <email>
+# Running this script
+#
+# bash -c "$(curl -fsSL https://raw.githubusercontent.com/hpedrorodrigues/sphynx/main/extra/install.sh)" -- <email>
 
 set -o errexit
 set -o nounset

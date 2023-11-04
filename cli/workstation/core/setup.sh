@@ -4,13 +4,13 @@ function sx::workstation::setup() {
   sx::workstation::check_requirements
   sx::workstation::install_dependencies
 
-  local -r playbooks_home="${SPHYNX_DIR}/playbooks"
-
-  export ANSIBLE_CONFIG="${playbooks_home}"
+  export ANSIBLE_CONFIG="${SPHYNX_DIR}/playbooks"
 
   if sx::os::is_osx; then
-    ansible-playbook "${playbooks_home}/osx/main.yml" --ask-become-pass
+    local -r playbook_path="${ANSIBLE_CONFIG}/macos/main.yml"
   else
-    ansible-playbook "${playbooks_home}/linux/main.yml" --ask-become-pass
+    local -r playbook_path="${ANSIBLE_CONFIG}/linux/main.yml"
   fi
+
+  ansible-playbook "${playbook_path}" --ask-become-pass
 }

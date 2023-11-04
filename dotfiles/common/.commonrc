@@ -120,14 +120,7 @@ export AWS_PROFILE='sphynx'
 # https://docs.brew.sh/Analytics
 export HOMEBREW_NO_ANALYTICS='1'
 
-if ! hash brew 2>/dev/null; then
-  for homebrew_bin in '/opt/homebrew/bin/brew' '/usr/local/bin/brew'; do
-    if [ -f "${homebrew_bin}" ]; then
-      eval "$("${homebrew_bin}" shellenv)"
-      break
-    fi
-  done
-fi
+hash brew 2>/dev/null && eval "$(brew shellenv)"
 
 #|> Bat
 export BAT_THEME='Dracula'
