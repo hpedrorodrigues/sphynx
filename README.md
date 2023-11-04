@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./assets/sphynx-landscape.png" align="center" height="50%" width="50%"/>
+  <img src="./.github/assets/sphynx-landscape.png" align="center" height="50%" width="50%"/>
 </p>
 
 [![Checks (Stable)][stable-checks-badge]][stable-checks-workflow]
