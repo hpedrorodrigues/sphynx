@@ -40,9 +40,6 @@
   },
   "files.restoreUndoStack": false,
   "files.trimTrailingWhitespace": true,
-  "go.autocompleteUnimportedPackages": true,
-  "go.enableCodeLens": true,
-  "go.toolsManagement.autoUpdate": true,
   "redhat.telemetry.enabled": false,
   "search.exclude": {
     "**/.DS_Store": true,
@@ -65,12 +62,13 @@
   ],
   "vsintellicode.modify.editor.suggestSelection": "choseToUpdateConfiguration",
   "window.zoomLevel": 0,
-  "workbench.colorTheme": "Coldark - Dark",
-  "workbench.editor.enablePreview": false,
+  "workbench.colorTheme": "GitHub Dark",
   "workbench.editor.highlightModifiedTabs": true,
   "workbench.editor.restoreViewState": false,
-  "workbench.iconTheme": "deepdark-material-icons",
+  "workbench.iconTheme": "vscode-icons",
   "workbench.settings.enableNaturalLanguageSearch": false,
   "workbench.startupEditor": "none",
-  "workbench.welcome.enabled": false
+  "workbench.welcome.enabled": false,
+  "markdown.extension.preview.autoShowPreviewToSide": true,
+  "markdown.extension.toc.updateOnSave": false
 }

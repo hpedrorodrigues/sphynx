@@ -8,7 +8,7 @@
 Sphynx is a personal project including CLI, dotfiles, workspace setup scripts
 among other things.
 
-<img align="right" src="./assets/sphynx-demo.gif" width="60%" />
+<img align="right" src=".github/assets/sphynx-demo.gif" width="60%" />
 
 # Summary
 

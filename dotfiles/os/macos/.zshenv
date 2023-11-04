@@ -33,20 +33,19 @@ export JAVA_HOME="${JAVA17_HOME}"
 export MAVEN_OPTS='-Xms512m -Xmx1G'
 
 #|> Android
-# References:
-# - https://developer.android.com/studio/command-line/variables
+# Reference: https://developer.android.com/tools/variables
 export ANDROID_HOME="${HOME}/Library/Android/sdk"
 export ANDROID_SDK_ROOT="${ANDROID_HOME}"
 
-export ANDROID_CMDLINE_TOOLS="${ANDROID_HOME}/cmdline-tools/latest/bin"
+export ANDROID_BUILD_TOOLS="${ANDROID_HOME}/build-tools/34.0.0"
 export ANDROID_EMULATOR_TOOLS="${ANDROID_HOME}/emulator"
 export ANDROID_PLATFORM_TOOLS="${ANDROID_HOME}/platform-tools"
 export ANDROID_TOOLS="${ANDROID_HOME}/tools"
 
-[ -d "${ANDROID_CMDLINE_TOOLS}" ] && export PATH="${PATH}:${ANDROID_CMDLINE_TOOLS}"
+[ -d "${ANDROID_BUILD_TOOLS}" ] && export PATH="${PATH}:${ANDROID_BUILD_TOOLS}"
 [ -d "${ANDROID_EMULATOR_TOOLS}" ] && export PATH="${PATH}:${ANDROID_EMULATOR_TOOLS}"
 [ -d "${ANDROID_PLATFORM_TOOLS}" ] && export PATH="${PATH}:${ANDROID_PLATFORM_TOOLS}"
-[ -d "${ANDROID_TOOLS}" ] && export PATH="${PATH}:${ANDROID_TOOLS}:${ANDROID_TOOLS}/bin"
+[ -d "${ANDROID_TOOLS}" ] && export PATH="${PATH}:${ANDROID_TOOLS}"
 
 #|> Gradle
 export GRADLE_USER_HOME="${HOME}/.gradle"
