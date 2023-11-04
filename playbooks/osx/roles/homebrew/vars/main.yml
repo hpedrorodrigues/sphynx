@@ -133,5 +133,6 @@ casks:
   - temurin19 # JDK 19
   - temurin21 # JDK 21
   - vagrant
+  - virtualbox-beta
   - wireshark
   - zoom
