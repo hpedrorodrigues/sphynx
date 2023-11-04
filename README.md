@@ -139,11 +139,11 @@ But if you want to give this whole project a try, it's recommended you fork
 this repository and adjust it to your needs! Be careful!
 
 
-[cli-folder]: ./../cli
-[dotfiles-folder]: ./../dotfiles
-[playbooks-folder]: ./../playbooks
-[alien-folder]: ./../alien
-[alien-commands]: ./../dotfiles/common/scripts/alien.sh
+[cli-folder]: ./cli
+[dotfiles-folder]: ./dotfiles
+[playbooks-folder]: ./playbooks
+[alien-folder]: ./alien
+[alien-commands]: ./dotfiles/common/scripts/alien.sh
 
 [ansible-website]: https://www.ansible.com
 [docopt-website]: http://docopt.org
