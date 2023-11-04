@@ -3,7 +3,7 @@
 function sx::system::clear_trash() {
   sx::require_supported_os
 
-  if sx::os::is_osx; then
+  if sx::os::is_macos; then
     sx::require 'sqlite3'
 
     for log_file in /private/var/log/asl/*.asl; do

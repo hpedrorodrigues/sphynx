@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-function sx::osx::airport() {
-  if sx::os::is_osx; then
+function sx::macos::airport() {
+  if sx::os::is_macos; then
     '/System/Library/PrivateFrameworks/Apple80211.framework/Versions/A/Resources/airport' "${@}"
   else
     sx::log::fatal 'The airport command is not available in your OS'
@@ -10,7 +10,7 @@ function sx::osx::airport() {
 
 # References:
 # - http://blog.macromates.com/2006/keychain-access-from-shell
-function sx::osx::keychain_pass() {
+function sx::macos::keychain_pass() {
   local -r account="${1:-}"
 
   if [ -z "${account:-}" ]; then
@@ -33,8 +33,8 @@ function sx::osx::keychain_pass() {
   echo "${password}"
 }
 
-function sx::osx::default_browser_application() {
-  if sx::os::is_osx; then
+function sx::macos::default_browser_application() {
+  if sx::os::is_macos; then
     local -r browser_id="$(
       defaults read com.apple.LaunchServices/com.apple.launchservices.secure LSHandlers \
         | grep 'LSHandlerURLScheme = https;' -B1 \

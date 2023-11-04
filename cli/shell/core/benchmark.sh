@@ -5,7 +5,7 @@ function sx::shell::run_tests() {
 
   local -r sh="${1}"
 
-  if sx::os::is_osx; then
+  if sx::os::is_macos; then
     sw_vers
     echo
   fi

@@ -5,7 +5,7 @@ function sx::uuid() {
 
   local -r id="$(uuidgen)"
 
-  if sx::os::is_osx; then
+  if sx::os::is_macos; then
     sx::log::info "${id}"
   else
     sx::log::info "${id^^}"
