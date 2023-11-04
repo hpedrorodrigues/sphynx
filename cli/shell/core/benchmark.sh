@@ -5,6 +5,11 @@ function sx::shell::run_tests() {
 
   local -r sh="${1}"
 
+  if sx::os::is_osx; then
+    sw_vers
+    echo
+  fi
+
   if sx::os::is_command_available 'hyperfine'; then
     sx::log::info '> Hyperfine\n'
     hyperfine --warmup 3 "${sh} -i -c exit"

@@ -120,6 +120,10 @@ export AWS_PROFILE='sphynx'
 # https://docs.brew.sh/Analytics
 export HOMEBREW_NO_ANALYTICS='1'
 
+if hash brew 2>/dev/null; then
+  eval "$(brew shellenv)"
+fi
+
 #|> Bat
 export BAT_THEME='Dracula'
 export BAT_STYLE='plain'
