@@ -10,7 +10,7 @@
 
 - name: Installing personal settings
   file:
-    src: "{{ sphynx_settings_directory }}/osx/karabiner-elements/karabiner.json"
+    src: "{{ sphynx_settings_directory }}/macos/karabiner-elements/karabiner.json"
     dest: "{{ ansible_env.HOME }}/.config/karabiner/karabiner.json"
     state: link
     force: yes

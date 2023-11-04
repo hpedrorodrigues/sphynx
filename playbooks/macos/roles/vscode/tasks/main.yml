@@ -10,7 +10,7 @@
 
 - name: Installing personal settings
   file:
-    src: "{{ sphynx_settings_directory }}/osx/vscode/{{ item }}"
+    src: "{{ sphynx_settings_directory }}/macos/vscode/{{ item }}"
     dest: "{{ ansible_env.HOME }}/Library/Application Support/Code/User/{{ item }}"
     state: link
     force: yes
