@@ -1,0 +1,2 @@
+- name: Restart Karabiner Elements
+  shell: kill -9 $(pgrep karabiner) && open -a 'Karabiner-Elements' || echo

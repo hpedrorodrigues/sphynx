@@ -19,7 +19,7 @@
 
 - name: Installing personal VSCode settings
   file:
-    src: "{{ applications_settings_dir }}/linux/vscode/{{ item }}"
+    src: "{{ sphynx_settings_directory }}/linux/vscode/{{ item }}"
     dest: "{{ ansible_env.HOME }}/.config/Code/User/{{ item }}"
     state: link
     force: yes

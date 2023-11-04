@@ -1,2 +1,2 @@
-- name: Restart VSCode
+- name: Restart Visual Studio Code
   shell: kill -9 $(pgrep Electron) && open -a 'Visual Studio Code' || echo

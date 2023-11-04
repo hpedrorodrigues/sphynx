@@ -1,13 +1,7 @@
-homebrew_repositories:
-  - eddieantonio/eddieantonio
-  - hashicorp/tap
-  - homebrew/cask
+repositories:
   - homebrew/cask-versions
-  - homebrew/cask-fonts
-  - homebrew/cask-drivers
-  - teamookla/speedtest
 
-homebrew_packages:
+formulas:
   - apktool
   - awscli
   - bash
@@ -17,52 +11,56 @@ homebrew_packages:
   - coreutils
   - dex2jar
   - diffutils
+  - dotbot
   - duf
   - ed
+  - eksctl
   - ffmpeg
   - file-formula
   - findutils
-  - { name: "fluxcd/tap/flux", installed_name: "flux" }
+  - fluxcd/tap/flux
   - gawk
   - gcc
+  - gettext # envsubst
   - gh
   - git
   - git-delta
   - git-flow
   - git-lfs
   - gnu-indent
-  - gnupg
   - gnu-sed
   - gnu-tar
   - gnu-which
+  - gnupg
   - gnutls
-  - { name: "golang", installed_name: "go" }
+  - go
   - go-task
   - gpatch
   - gradle
   - grep
   - gzip
-  - { name: "minamijoyo/hcledit/hcledit", installed_name: "hcledit" }
+  - hexyl
+  - htmlq
   - htop
   - hugo
   - hyperfine
-  - hexyl
-  - htmlq
   - icdiff
-  - imgcat
   - jadx
   - jq
   - kcat
   - kind
   - kotlin
-  - kubernetes-cli
   - krew
+  - kubernetes-cli
   - kubespy
+  - leiningen
   - less
   - m4
   - make
   - mas
   - maven
+  - mbode/tap/terraform-state-mover
+  - minamijoyo/hcledit/hcledit
   - mongosh
   - navi
   - ncdu
@@ -74,25 +72,21 @@ homebrew_packages:
   - poetry
   - postgresql
   - pyenv
-  - { name: "python", installed_name: "python@3.9" }
   - rsync
   - scrcpy
   - screen
   - shpotify
   - sipcalc
-  - speedtest
+  - speedtest-cli
   - sqlite
   - starship
   - stern
   - subnetcalc
   - telnet
-  - {
-      name: "mbode/tap/terraform-state-mover",
-      installed_name: "terraform-state-mover",
-    }
   - terragrunt
   - tfenv
   - the_silver_searcher
+  - tldr
   - tmux
   - topgrade
   - translate-shell
@@ -102,11 +96,10 @@ homebrew_packages:
   - vim
   - watch
   - wdiff
-  - { name: "weaveworks/tap/eksctl", installed_name: "eksctl" }
   - wget
   - yq
 
-homebrew_apps:
+casks:
   - alacritty
   - appcleaner
   - bartender
@@ -115,17 +108,17 @@ homebrew_apps:
   - clipy
   - deckset
   - discord
+  - docker
   - github
   - google-chrome
   - google-cloud-sdk
   - grammarly
   - grammarly-desktop
-  - { name: "hpedrorodrigues/tools/dockutil", installed_name: "dockutil" }
+  - hpedrorodrigues/tools/dockutil
   - iina
   - istat-menus
   - jetbrains-toolbox
   - licecap
-  - meld
   - monitorcontrol
   - obsidian
   - pdfelement
@@ -140,6 +133,5 @@ homebrew_apps:
   - temurin19 # JDK 19
   - temurin21 # JDK 21
   - vagrant
-  - virtualbox
   - wireshark
   - zoom

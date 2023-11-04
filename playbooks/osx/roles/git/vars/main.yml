@@ -1,7 +1,7 @@
-git_repositories:
-  - repo: "https://github.com/VundleVim/Vundle.vim"
-    dest: "{{ ansible_env.HOME }}/.vim/bundle/Vundle.vim"
-  - repo: "https://github.com/tarjoilija/zgen.git"
-    dest: "{{ ansible_env.HOME }}/.zgen"
-  - repo: "https://github.com/tmux-plugins/tpm"
-    dest: "{{ ansible_env.HOME }}/.tmux/plugins/tpm"
+repositories:
+  - origin_url: "https://github.com/VundleVim/Vundle.vim"
+    directory: "{{ ansible_env.HOME }}/.vim/bundle/Vundle.vim"
+  - origin_url: "https://github.com/tarjoilija/zgen.git"
+    directory: "{{ ansible_env.HOME }}/.zgen"
+  - origin_url: "https://github.com/tmux-plugins/tpm"
+    directory: "{{ ansible_env.HOME }}/.tmux/plugins/tpm"

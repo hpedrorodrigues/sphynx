@@ -109,18 +109,6 @@ std dev              1.694 ms   (919.8 μs .. 2.447 ms)
         0.09 real         0.03 user         0.04 sys
 ```
 
-In order to set up your dotfiles, I recommend using [dotly][dotly] which
-is a framework with this purpose.
-
-**Inspiration**:
-
-- [denisidoro/dotfiles](https://github.com/denisidoro/dotfiles)
-- [mathiasbynens/dotfiles](https://github.com/mathiasbynens/dotfiles)
-- [jessfraz/dotfiles](https://github.com/jessfraz/dotfiles)
-
-Also, [Github ❤ ~/][dotfiles-website] and
-[Everything I know - Dotfiles][dotfiles-website2] are your friends.
-
 ### Alien scripts
 
 [Alien commands][alien-commands] are tools that you don't want to install
@@ -158,14 +146,10 @@ this repository and adjust it to your needs! Be careful!
 [alien-commands]: ./../dotfiles/common/scripts/alien.sh
 
 [ansible-website]: https://www.ansible.com
-[dotfiles-website]: http://dotfiles.github.io
-[dotfiles-website2]: https://wiki.nikitavoloboev.xyz/unix/dotfiles
 [docopt-website]: http://docopt.org
 [dotbot-website]: https://github.com/anishathalye/dotbot
 
 [fzf]: https://github.com/junegunn/fzf
-
-[dotly]: https://github.com/CodelyTV/dotly
 
 [stable-checks-badge]: https://github.com/hpedrorodrigues/sphynx/actions/workflows/stable-checks.yml/badge.svg
 [stable-checks-workflow]: https://github.com/hpedrorodrigues/sphynx/actions/workflows/stable-checks.yml

@@ -8,20 +8,8 @@ alias ls='gls --color=tty --group-directories-first --human-readable'
 
 # Updates
 
-alias uposx='sudo softwareupdate --install --all'
+alias up_os='sudo softwareupdate --install --all'
+alias up_brew='brew update && brew upgrade && brew autoremove && brew cleanup -s --prune 30 && brew services cleanup'
+alias up_cask='brew update && brew upgrade --cask --greedy --force'
 
-# shellcheck disable=SC1004  # This backslash+linefeed is literal
-alias upbrew='brew update \
-                && brew upgrade \
-                && brew autoremove \
-                && brew cleanup -s --prune 30 \
-                && brew services cleanup'
-
-alias upbrewcask='brew update && brew upgrade --cask --greedy --force'
-
-# shellcheck disable=SC1004  # This backslash+linefeed is literal
-alias upnpm='npm install --global npm \
-              && npm --global cache clean --force \
-              && npm --global update'
-
-alias upall='uposx && upbrew && upbrewcask && upnpm'
+alias up_all='up_os && up_brew && up_cask'
