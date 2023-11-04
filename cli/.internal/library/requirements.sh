@@ -37,14 +37,14 @@ function sx::require_linux() {
   fi
 }
 
-function sx::require_osx() {
-  if ! sx::os::is_osx; then
+function sx::require_macos() {
+  if ! sx::os::is_macos; then
     sx::log::fatal 'You are not running on a MacOS machine'
   fi
 }
 
 function sx::require_supported_os() {
-  if ! sx::os::is_osx && ! sx::os::is_linux; then
+  if ! sx::os::is_macos && ! sx::os::is_linux; then
     sx::log::fatal 'You are not running on a supported OS'
   fi
 }

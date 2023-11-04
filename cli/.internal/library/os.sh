@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-function sx::os::is_osx() {
+function sx::os::is_macos() {
   [ "$(uname)" = 'Darwin' ]
 }
 
@@ -54,8 +54,8 @@ function sx::os::browser::open() {
         return 0
       fi
     done
-  elif sx::os::is_osx; then
-    local -r browser_application="$(sx::osx::default_browser_application)"
+  elif sx::os::is_macos; then
+    local -r browser_application="$(sx::macos::default_browser_application)"
     if [ -n "${browser_application}" ]; then
       open -a "${browser_application}" "${*}"
       return 0

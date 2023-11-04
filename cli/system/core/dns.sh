@@ -3,7 +3,7 @@
 function sx::system::flush_cache() {
   sx::require_supported_os
 
-  if sx::os::is_osx; then
+  if sx::os::is_macos; then
     sudo dscacheutil -flushcache
     sudo killall -HUP mDNSResponder mDNSResponderHelper
   else

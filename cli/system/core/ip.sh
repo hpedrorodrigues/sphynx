@@ -38,7 +38,7 @@ function sx::system::ip::public() {
 function sx::system::ip::gateway() {
   sx::require_supported_os
 
-  if sx::os::is_osx; then
+  if sx::os::is_macos; then
     netstat -rn | grep 'default' | head -n 1 | awk '{ print $2 }'
   else
     ip route | grep 'default' | awk '{ print $3 }'

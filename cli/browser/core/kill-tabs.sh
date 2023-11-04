@@ -3,7 +3,7 @@
 # Kill all the tabs in Chrome to free up memory
 # [C] explained: http://www.commandlinefu.com/commands/view/402/exclude-grep-from-your-grepped-output-of-ps-alias-included-in-description
 function sx::browser::kill_tabs::chrome() {
-  if sx::os::is_osx; then
+  if sx::os::is_macos; then
     local -r output="$(pgrep \
       -ifl \
       '[C]hrome.*--type=renderer')"
@@ -24,7 +24,7 @@ function sx::browser::kill_tabs::chrome() {
 }
 
 function sx::browser::kill_tabs::firefox() {
-  if sx::os::is_osx; then
+  if sx::os::is_macos; then
     local -r output="$(pgrep \
       -ifl \
       '[F]irefox.*-isForBrowser')"

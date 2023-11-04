@@ -6,7 +6,7 @@ function sx::workstation::setup() {
 
   export ANSIBLE_CONFIG="${SPHYNX_DIR}/playbooks"
 
-  if sx::os::is_osx; then
+  if sx::os::is_macos; then
     local -r playbook_path="${ANSIBLE_CONFIG}/macos/main.yml"
   else
     local -r playbook_path="${ANSIBLE_CONFIG}/linux/main.yml"
