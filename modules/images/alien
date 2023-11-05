@@ -14,7 +14,7 @@ set -o pipefail
 ##?   -p | --build-and-push <tool_name>  Build and push docker image(s) to Dockerhub [Default: all images]
 ##?   -h | --help  Print this help message
 
-export ALIEN_PATH="${ALIEN_PATH:-${SPHYNX_DIR:-.}/alien}"
+export ALIEN_PATH="${ALIEN_PATH:-${SPHYNX_DIR:-.}/modules/images}"
 export ALIEN_REPOSITORY="${ALIEN_REPOSITORY:-hpedrorodrigues/alien}"
 
 function alien::print_help() {
