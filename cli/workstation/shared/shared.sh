@@ -12,8 +12,6 @@ function sx::workstation::require_homebrew() {
 
 function sx::workstation::check_requirements() {
   sx::require_supported_os
-  sx::require_network
-  sx::workstation::require_homebrew
 }
 
 function sx::workstation::install_dependencies() {

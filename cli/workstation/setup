@@ -11,13 +11,21 @@ source "${SPHYNX_NAMESPACE_DIR}/core/setup.sh"
 ##? Configure personal workstation
 ##?
 ##? Usage:
-##?     setup
+##?     setup [--dotfiles]
+##?
+##? Options:
+##?     --dotfiles  Configure symbolic links for dotfiles
 ##?
 ##? Examples:
 ##?     setup
+##?     setup --dotfiles
 
 if [ "${#}" -ne '0' ]; then
   sx::parse_arguments "${@}"
 fi
 
-sx::workstation::setup
+if ${dotfiles:-false}; then
+  sx::workstation::setup_dotfiles
+else
+  sx::workstation::setup
+fi

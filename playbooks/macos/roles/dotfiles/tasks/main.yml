@@ -19,7 +19,7 @@
     - lookup('env','SHELL') != '/usr/local/bin/zsh'
 
 - name: Configuring Dotfiles
-  command: "{{ sphynx_cli }} dotfiles configure"
+  command: "{{ sphynx_cli }} workstation setup --dotfiles"
 
 - name: Include additional tasks
   include_tasks:

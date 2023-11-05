@@ -23,7 +23,7 @@
     - lookup('env','SHELL') != '/bin/zsh'
 
 - name: Installing Dotfiles
-  command: "{{ sphynx_cli }} dotfiles configure"
+  command: "{{ sphynx_cli }} workstation setup --dotfiles"
   when:
     - zsh.stat.exists or new_zsh is success
 

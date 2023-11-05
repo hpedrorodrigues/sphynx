@@ -5,7 +5,7 @@ set -o nounset
 set -o pipefail
 
 source "${SPHYNX_CLI_DIR}/.internal/all.sh"
-source "${SPHYNX_DIR}/dotfiles/common/scripts/alien.sh"
+source "${SPHYNX_DIR}/modules/dotfiles/common/scripts/alien.sh"
 
 ##? Run linters
 ##?
