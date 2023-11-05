@@ -1,0 +1,2 @@
+sphynx_settings_directory: '{{ sphynx_directory }}/modules/settings'
+sphynx_cli: "{{ sphynx_directory }}/sx"

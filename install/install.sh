@@ -2,7 +2,7 @@
 
 # Running this script
 #
-# bash -c "$(curl -fsSL https://raw.githubusercontent.com/hpedrorodrigues/sphynx/main/extra/install.sh)" -- <email>
+# bash -c "$(curl -fsSL https://raw.githubusercontent.com/hpedrorodrigues/sphynx/main/install/install.sh)" -- <email>
 
 set -o errexit
 set -o nounset

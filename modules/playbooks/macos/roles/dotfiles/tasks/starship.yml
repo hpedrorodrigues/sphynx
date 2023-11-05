@@ -4,16 +4,9 @@
     mode: "0755"
     state: directory
 
-- name: Starship - Checking installation
-  stat:
-    path: "{{ ansible_env.HOME }}/.config/starship/starship.toml"
-  register: starship
-
 - name: Starship - Installing personal settings
   file:
     src: "{{ sphynx_settings_directory }}/common/starship/starship.toml"
     dest: "{{ ansible_env.HOME }}/.config/starship/starship.toml"
     state: link
     force: yes
-  when:
-    - not starship.stat.exists or (starship.stat.islnk is defined and not starship.stat.islnk)
