@@ -30,14 +30,6 @@ function main() {
     exit 1
   fi
 
-  if [ "${action}" != 'start' ] \
-    && [ "${action}" != 'stop' ] \
-    && [ "${action}" != 'destroy' ]; then
-    echo -e "!!! Unsupported action: ${action}." >&2
-    echo -e "!!! Available options are start, stop and destroy." >&2
-    exit 1
-  fi
-
   case "${action}" in
     start)
       run_action "${operating_system}" 'up'
@@ -45,11 +37,15 @@ function main() {
     stop)
       run_action "${operating_system}" 'halt'
       ;;
+    shell)
+      run_action "${operating_system}" 'ssh'
+      ;;
     destroy)
       run_action "${operating_system}" 'destroy'
       ;;
     *)
       echo -e "!!! Unsupported action: ${action}." >&2
+      exit 1
       ;;
   esac
 }

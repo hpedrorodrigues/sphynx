@@ -20,9 +20,9 @@ export DOTFILES=(
   # Common
   "${DOTFILES_DIR}/aliases.sh"
   "${DOTFILES_DIR}/os_aliases.sh"
-  "${DOTFILES_DIR}/alien.sh"
   "${DOTFILES_DIR}/aws.sh"
   "${DOTFILES_DIR}/common.sh"
+  "${DOTFILES_DIR}/external_tools.sh"
   "${DOTFILES_DIR}/filesystem.sh"
   "${DOTFILES_DIR}/git.sh"
   "${DOTFILES_DIR}/kubernetes.sh"
