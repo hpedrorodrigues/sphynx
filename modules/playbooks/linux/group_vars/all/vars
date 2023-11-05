@@ -1,0 +1,3 @@
+sphynx_settings_directory: '{{ sphynx_directory }}/modules/settings'
+sphynx_fonts_directory: '{{ sphynx_directory }}/.font'
+linuxbrew_directory: '/home/linuxbrew/.linuxbrew/bin'

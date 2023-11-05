@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNX_CLI_DIR}/.internal/all.sh"
+source "${SPHYNX_DIR}/modules/dotfiles/common/scripts/alien.sh"
+
+##? Run formatters
+##?
+##? Usage:
+##?     fmt
+##?
+##? Examples:
+##?     fmt
+
+if [ "${#}" -ne '0' ]; then
+  sx::parse_arguments "${@}"
+fi
+
+sx::self::fmt

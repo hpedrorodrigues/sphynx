@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNX_CLI_DIR}/.internal/all.sh"
+source "${SPHYNX_NAMESPACE_DIR}/shared/shared.sh"
+source "${SPHYNX_NAMESPACE_DIR}/core/setup.sh"
+
+##? Configure personal workstation
+##?
+##? Usage:
+##?     setup [--dotfiles]
+##?
+##? Options:
+##?     --dotfiles  Configure symbolic links for dotfiles
+##?
+##? Examples:
+##?     setup
+##?     setup --dotfiles
+
+if [ "${#}" -ne '0' ]; then
+  sx::parse_arguments "${@}"
+fi
+
+if ${dotfiles:-false}; then
+  sx::workstation::setup_dotfiles
+else
+  sx::workstation::setup
+fi

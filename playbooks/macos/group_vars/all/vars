@@ -1,4 +1,0 @@
-sphynx_directory: '{{ playbook_dir | dirname | dirname }}'
-sphynx_settings_directory: '{{ sphynx_directory }}/settings'
-sphynx_fonts_directory: '{{ sphynx_directory }}/.font'
-sphynx_cli: "{{ sphynx_directory }}/sx"

@@ -1,4 +1,0 @@
-sphynx_directory: '{{ playbook_dir | dirname | dirname }}'
-sphynx_settings_directory: '{{ sphynx_directory }}/settings'
-sphynx_fonts_directory: '{{ sphynx_directory }}/.font'
-linuxbrew_directory: '/home/linuxbrew/.linuxbrew/bin'
