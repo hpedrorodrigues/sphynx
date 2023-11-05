@@ -36,14 +36,14 @@ function kcli() {
 
 # Sphynx images
 
-export ALIEN_REPOSITORY="${ALIEN_REPOSITORY:-hpedrorodrigues/alien}"
+export DOCKER_REPOSITORY="${DOCKER_REPOSITORY:-hpedrorodrigues/alien}"
 
 ## Prettier (https://prettier.io)
 ##
 ## e.g. prettier --check '*/**/*.{yml,yaml}'
 function prettier() {
   local -r tool_name="${FUNCNAME[0]:-${funcstack[1]}}"
-  local -r image="${ALIEN_REPOSITORY}:${tool_name}"
+  local -r image="${DOCKER_REPOSITORY}:${tool_name}"
 
   if { [ -n "${ZSH_VERSION:-}" ] && whence -cp "${tool_name}" &>/dev/null; } \
     || { type -P "${tool_name}" &>/dev/null; }; then
@@ -77,7 +77,7 @@ function prettier() {
 ## e.g. hadolint < <path-to-Dockerfile>
 function hadolint() {
   local -r tool_name="${FUNCNAME[0]:-${funcstack[1]}}"
-  local -r image="${ALIEN_REPOSITORY}:${tool_name}"
+  local -r image="${DOCKER_REPOSITORY}:${tool_name}"
 
   if { [ -n "${ZSH_VERSION:-}" ] && whence -cp "${tool_name}" &>/dev/null; } \
     || { type -P "${tool_name}" &>/dev/null; }; then
@@ -111,7 +111,7 @@ function hadolint() {
 ## e.g. shellcheck <script-file>
 function shellcheck() {
   local -r tool_name="${FUNCNAME[0]:-${funcstack[1]}}"
-  local -r image="${ALIEN_REPOSITORY}:${tool_name}"
+  local -r image="${DOCKER_REPOSITORY}:${tool_name}"
 
   if { [ -n "${ZSH_VERSION:-}" ] && whence -cp "${tool_name}" &>/dev/null; } \
     || { type -P "${tool_name}" &>/dev/null; }; then
@@ -146,7 +146,7 @@ function shellcheck() {
 ## e.g. shfmt -l -w <script-file>
 function shfmt() {
   local -r tool_name="${FUNCNAME[0]:-${funcstack[1]}}"
-  local -r image="${ALIEN_REPOSITORY}:${tool_name}"
+  local -r image="${DOCKER_REPOSITORY}:${tool_name}"
 
   if { [ -n "${ZSH_VERSION:-}" ] && whence -cp "${tool_name}" &>/dev/null; } \
     || { type -P "${tool_name}" &>/dev/null; }; then

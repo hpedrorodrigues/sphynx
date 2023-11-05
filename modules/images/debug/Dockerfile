@@ -5,10 +5,10 @@ LABEL maintainer="Pedro Rodrigues <github.com/hpedrorodrigues>"
 ARG uid=1000
 ARG gid=1000
 
-ARG user=alien
-ARG group=alien
+ARG user=sphynx
+ARG group=sphynx
 
-ENV ALIEN_HOME /home/${user}
+ENV SPHYNX_HOME /home/${user}
 
 RUN apk update && \
     apk add --no-cache \
@@ -43,12 +43,12 @@ RUN apk update && \
 
 # https://wiki.alpinelinux.org/wiki/Setting_up_a_new_user
 RUN addgroup -g "${gid}" "${group}" \
-  && adduser -h "${ALIEN_HOME}" -u "${uid}" -G "${group}" -s /bin/bash -D "${user}" \
+  && adduser -h "${SPHYNX_HOME}" -u "${uid}" -G "${group}" -s /bin/bash -D "${user}" \
   && echo "${user} ALL=(ALL) NOPASSWD: ALL" > "/etc/sudoers.d/${user}" \
   && chmod 0440 "/etc/sudoers.d/${user}" \
-  && mkdir -p "${ALIEN_HOME}" /mnt \
-  && chown -R "${uid}:${gid}" "${ALIEN_HOME}" /mnt
+  && mkdir -p "${SPHYNX_HOME}" /mnt \
+  && chown -R "${uid}:${gid}" "${SPHYNX_HOME}" /mnt
 
 USER ${user}
 
-WORKDIR ${ALIEN_HOME}
+WORKDIR ${SPHYNX_HOME}

@@ -13,7 +13,7 @@ among other things.
 - [About](#about)
   - [CLI](#cli)
   - [Dotfiles](#dotfiles)
-  - [Alien scripts](#alien-scripts)
+  - [External tools](#external-tools)
   - [Workspace configuration](#workspace-configuration)
 - [Installation](#installation)
 
@@ -112,9 +112,9 @@ std dev              155.3 μs   (46.41 μs .. 291.6 μs)
         0.04 real         0.01 user         0.02 sys
 ```
 
-### Alien scripts
+### External tools
 
-[Alien commands][alien-commands] are tools that you don't want to install
+[External tools][external-tools] are tools that you don't want to install
 on your machine but you'd like to use them.
 
 They are basically shell functions calling Docker behind the scenes, but
@@ -144,9 +144,7 @@ this repository and adjust it to your needs! Be careful!
 
 [cli-folder]: ./modules/cli
 [dotfiles-folder]: ./modules/dotfiles
-[playbooks-folder]: ./modules/playbooks
-[alien-folder]: ./modules/images
-[alien-commands]: ./modules/dotfiles/common/scripts/alien.sh
+[external-tools]: ./modules/dotfiles/common/scripts/external_tools.sh
 
 [ansible-website]: https://www.ansible.com
 [docopt-website]: http://docopt.org

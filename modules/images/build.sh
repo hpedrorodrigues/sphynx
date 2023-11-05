@@ -4,24 +4,23 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-##? Alien CLI
+##? Build
 ##?
 ##? Usage:
-##?   alien [--build <tool_name> | --build-and-push <tool_name>] [--help]
+##?   build [--push] | [--help]
 ##?
 ##? Commands:
-##?   -b | --build <tool_name>  Build docker image(s) [Default: all images]
-##?   -p | --build-and-push <tool_name>  Build and push docker image(s) to Dockerhub [Default: all images]
-##?   -h | --help  Print this help message
+##?   --push  Build and push docker image(s) to Dockerhub [default: all images]
+##?   --help  Print this help message
 
-export ALIEN_PATH="${ALIEN_PATH:-${SPHYNX_DIR:-.}/modules/images}"
-export ALIEN_REPOSITORY="${ALIEN_REPOSITORY:-hpedrorodrigues/alien}"
+export IMAGES_PATH="${IMAGES_PATH:-${SPHYNX_DIR:-.}/modules/images}"
+export DOCKER_REPOSITORY="${DOCKER_REPOSITORY:-hpedrorodrigues/alien}"
 
-function alien::print_help() {
+function print_help() {
   grep '[#]#?' "${BASH_SOURCE[0]}" | cut -c 5-
 }
 
-function alien::run_over_all() {
+function run_over_all() {
   local -r action="${1:-}"
 
   if [ -z "${action}" ]; then
@@ -32,10 +31,10 @@ function alien::run_over_all() {
   while IFS= read -r -d '' directory; do
     echo -e "\n==|> Running \"${action}\" over \"${directory}\"\n"
     "${action}" "${directory}"
-  done < <(find "${ALIEN_PATH}" ! -path "${ALIEN_PATH}" -type d -print0 | sort -z)
+  done < <(find "${IMAGES_PATH}" ! -path "${IMAGES_PATH}" -type d -print0 | sort -z)
 }
 
-function alien::build_image() {
+function build_image() {
   local -r recipe_path="${1:-}"
 
   if [ -z "${recipe_path}" ]; then
@@ -53,10 +52,10 @@ function alien::build_image() {
 
   docker buildx build "${recipe_path}" \
     --platform "${platforms}" \
-    --tag "${ALIEN_REPOSITORY}:${tag}"
+    --tag "${DOCKER_REPOSITORY}:${tag}"
 }
 
-function alien::build_and_push_image() {
+function build_and_push_image() {
   local -r recipe_path="${1:-}"
 
   if [ -z "${recipe_path}" ]; then
@@ -75,31 +74,17 @@ function alien::build_and_push_image() {
   docker buildx build "${recipe_path}" \
     --platform "${platforms}" \
     --push \
-    --tag "${ALIEN_REPOSITORY}:${tag}"
+    --tag "${DOCKER_REPOSITORY}:${tag}"
 }
 
-function alien::main() {
-  local -r cmd="${1:-}"
-
-  case ${cmd} in
-    -b | --build)
-      if [ -z "${2:-}" ]; then
-        alien::run_over_all alien::build_image
-      else
-        echo -e "\n==|> Building \"${ALIEN_PATH}/${2}\"\n"
-        alien::build_image "${ALIEN_PATH}/${2}"
-      fi
-      ;;
-    -p | --build-and-push)
-      if [ -z "${2:-}" ]; then
-        alien::run_over_all alien::build_and_push_image
-      else
-        echo -e "\n==|> Building and pushing \"${ALIEN_PATH}/${2}\"\n"
-        alien::build_and_push_image "${ALIEN_PATH}/${2}"
-      fi
-      ;;
-    *) alien::print_help ;;
-  esac
+function main() {
+  if [ -z "${1:-}" ]; then
+    run_over_all build_image
+  elif [ "${1:-}" == '--push' ]; then
+    run_over_all build_and_push_image
+  else
+    print_help
+  fi
 }
 
-alien::main "${@}"
+main "${@}"
