@@ -4,26 +4,25 @@
 <p align="center">
   <img alt="Logo" src="./assets/sphynx-landscape.png" width="80%">
 </p>
-
-- [About](#about)
-  - [CLI](#cli)
-  - [Dotfiles](#dotfiles)
-  - [External tools](#external-tools)
-  - [Workspace configuration](#workspace-configuration)
-- [Installation](#installation)
+<p align="center">
+  <a href="#cli">CLI</a>&nbsp;&nbsp;&nbsp;&nbsp;
+  <a href="#dotfiles">Dotfiles</a>&nbsp;&nbsp;&nbsp;&nbsp;
+  <a href="#external-tools">External Tools</a>&nbsp;&nbsp;&nbsp;&nbsp;
+  <a href="#workspace-configuration">Workspace Configuration</a>
+</p>
 
 ## About
 
 This is a personal project containing everything I use on a daily basis and how
-I set up my machine. It has aliases, functions, CLI, workspace setup
-configuration, applications' settings, docker images, etc.
+I set up my machine. It has aliases, functions, CLI, workspace configuration,
+applications' settings, docker images, and more.
 
 ### CLI
 
 <img align="right" alt="Demo" src="./assets/sphynx-demo.gif" width="60%">
 
-There is a [command-line interface][cli-folder] that I use to automate
-boring/repetitive tasks.
+This is the core of Sphynx. The [command-line interface][cli-folder] is used to
+automate boring/repetitive tasks and helps me manage the other parts.
 
 e.g.
 ```bash
@@ -32,13 +31,15 @@ $ sx android device --connect
 $ sx system clear-trash
 ```
 
-The commands are configured using environment variables, and each command may
-have its own settings. For instance, `sx kubernetes ls` uses the env var
-`SX_KUBERNETES_RESOURCES` to know what resources to list.
-
 Most commands use the [fuzzy finder][fzf] to provide a better experience with an
-interactive menu + fuzzy searching, and even though it's not a mandatory
-dependency it could be good installing it.
+interactive menu + fuzzy searching.
+
+If you want to give the CLI a try, you can use [Homebrew][homebrew] or
+[Linuxbrew][linuxbrew] to install it.
+
+```bash
+brew install hpedrorodrigues/tools/sphynx
+```
 
 ### Dotfiles
 
@@ -118,39 +119,26 @@ not all functions use the dockerfiles available in this project
 
 ### Workspace configuration
 
-[Ansible][ansible-website] playbooks are recipes that configures and install tools
-on my machine.
+I use [Ansible][ansible-website] to configure my machine. It automates tedious
+tasks [installing packages and applications][playbooks-folder] that I use almost
+daily.
 
-It automates tedious tasks installing packages and applications that I use
-almost daily.
-
-## Installation
-
-If you want to give the CLI a try, you can use [Homebrew][homebrew] or
-[Linuxbrew][linuxbrew] to install it.
-
-```bash
-brew install hpedrorodrigues/tools/sphynx
-```
-
-But if you want to give this whole project a try, it's recommended you fork
-this repository and adjust it to your needs! Be careful!
 
 
 [cli-folder]: ./modules/cli
+[fzf]: https://github.com/junegunn/fzf
+[homebrew]: https://brew.sh
+[linuxbrew]: https://docs.brew.sh/Homebrew-on-Linux
+
 [dotfiles-folder]: ./modules/dotfiles
+
 [external-tools]: ./modules/dotfiles/common/scripts/external_tools.sh
 
 [ansible-website]: https://www.ansible.com
-[dotbot-website]: https://github.com/anishathalye/dotbot
-
-[fzf]: https://github.com/junegunn/fzf
+[playbooks-folder]: ./modules/playbooks
 
 [stable-checks-badge]: https://github.com/hpedrorodrigues/sphynx/actions/workflows/stable-checks.yml/badge.svg
 [stable-checks-workflow]: https://github.com/hpedrorodrigues/sphynx/actions/workflows/stable-checks.yml
 
 [stable-build-badge]: https://github.com/hpedrorodrigues/sphynx/actions/workflows/stable-build.yml/badge.svg
 [stable-build-workflow]: https://github.com/hpedrorodrigues/sphynx/actions/workflows/stable-build.yml
-
-[homebrew]: https://brew.sh
-[linuxbrew]: https://docs.brew.sh/Homebrew-on-Linux
