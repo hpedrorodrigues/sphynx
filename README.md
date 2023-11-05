@@ -44,10 +44,10 @@ brew install hpedrorodrigues/tools/sphynx
 
 ### Dotfiles
 
-All dotfiles are inside the [dotfiles][dotfiles-folder] directory. It has common
+All dotfiles are inside the [dotfiles][dotfiles-folder] module. It has common
 aliases, functions, and configuration files that I use daily.
 
-**Ok, but how about shell startup performance?**
+#### Shell startup performance
 
 **zsh**
 ```
