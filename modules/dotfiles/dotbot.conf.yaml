@@ -36,26 +36,26 @@
 - link:
     ${HOME}/.bashrc:
       if: '[ "$(uname)" = "Darwin" ]'
-      path: ${SPHYNX_DIR}/modules/dotfiles/os/macos/.bashrc
+      path: ${SPHYNX_DIR}/modules/dotfiles/macos/.bashrc
     ${HOME}/.zshrc:
       if: '[ "$(uname)" = "Darwin" ]'
-      path: ${SPHYNX_DIR}/modules/dotfiles/os/macos/.zshrc
+      path: ${SPHYNX_DIR}/modules/dotfiles/macos/.zshrc
     ${HOME}/.zshenv:
       if: '[ "$(uname)" = "Darwin" ]'
-      path: ${SPHYNX_DIR}/modules/dotfiles/os/macos/.zshenv
+      path: ${SPHYNX_DIR}/modules/dotfiles/macos/.zshenv
     ${HOME}/.sphynx/os_aliases.sh:
       if: '[ "$(uname)" = "Darwin" ]'
-      path: ${SPHYNX_DIR}/modules/dotfiles/os/macos/os_aliases.sh
+      path: ${SPHYNX_DIR}/modules/dotfiles/macos/os_aliases.sh
 - link:
     ${HOME}/.bashrc:
       if: '[ "$(uname)" = "Linux" ]'
-      path: ${SPHYNX_DIR}/modules/dotfiles/os/linux/.bashrc
+      path: ${SPHYNX_DIR}/modules/dotfiles/linux/.bashrc
     ${HOME}/.zshrc:
       if: '[ "$(uname)" = "Linux" ]'
-      path: ${SPHYNX_DIR}/modules/dotfiles/os/linux/.zshrc
+      path: ${SPHYNX_DIR}/modules/dotfiles/linux/.zshrc
     ${HOME}/.zshenv:
       if: '[ "$(uname)" = "Linux" ]'
-      path: ${SPHYNX_DIR}/modules/dotfiles/os/linux/.zshenv
+      path: ${SPHYNX_DIR}/modules/dotfiles/linux/.zshenv
     ${HOME}/.sphynx/os_aliases.sh:
       if: '[ "$(uname)" = "Linux" ]'
-      path: ${SPHYNX_DIR}/modules/dotfiles/os/linux/os_aliases.sh
+      path: ${SPHYNX_DIR}/modules/dotfiles/linux/os_aliases.sh
