@@ -108,7 +108,7 @@ casks:
   - clipy
   - deckset
   - discord
-  - docker
+  # - docker
   - github
   - google-chrome
   - google-cloud-sdk
@@ -120,8 +120,7 @@ casks:
   - jetbrains-toolbox
   - licecap
   - monitorcontrol
-  - obsidian
-  - pdfelement
+  # - pdfelement
   - postman
   - rectangle
   - session-manager-plugin
@@ -133,6 +132,5 @@ casks:
   - temurin19 # JDK 19
   - temurin21 # JDK 21
   - vagrant
-  - virtualbox-beta
   - wireshark
   - zoom
