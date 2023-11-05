@@ -10,5 +10,5 @@ function sx::dotfiles::check_requirements() {
 function sx::dotfiles::configure() {
   sx::dotfiles::check_requirements
 
-  dotbot -c "${SPHYNX_DIR}/dotfiles/${DOTBOT_CONFIG_FILE}"
+  dotbot -c "${SPHYNX_DIR}/modules/dotfiles/${DOTBOT_CONFIG_FILE}"
 }
