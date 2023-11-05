@@ -36,6 +36,7 @@ Most commands use the [fuzzy finder][fzf] to provide a better experience with an
 interactive menu + fuzzy searching.
 
 <p></p>
+<p></p>
 
 If you want to give the CLI a try, you can use [Homebrew][homebrew] or
 [Linuxbrew][linuxbrew] to install it.
