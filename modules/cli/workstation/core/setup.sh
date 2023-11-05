@@ -17,7 +17,9 @@ function sx::workstation::setup() {
     local -r playbook_path="${ANSIBLE_CONFIG}/linux/main.yml"
   fi
 
-  ansible-playbook "${playbook_path}" --extra-vars="sphynx_directory=${SPHYNX_DIR}" --ask-become-pass
+  ansible-playbook "${playbook_path}" \
+    --extra-vars="sphynx_directory=${SPHYNX_DIR}" \
+    --ask-become-pass
 }
 
 function sx::workstation::setup_dotfiles() {
