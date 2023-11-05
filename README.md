@@ -19,7 +19,7 @@ applications' settings, docker images, and more.
 
 ### CLI
 
-<img align="right" alt="Demo" src="./assets/sphynx-demo.gif" width="60%" style="margin-left:8px;">
+<img align="right" alt="Demo" src="./assets/sphynx-demo.gif" width="60%">
 
 This is the core of Sphynx. The [command-line interface][cli-folder] is used to
 automate boring/repetitive tasks and helps me manage the other parts of this
