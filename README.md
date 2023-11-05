@@ -1,14 +1,9 @@
-<p align="center">
-  <img src="./assets/sphynx-landscape.png" align="center" height="50%" width="50%"/>
-</p>
-
 [![Checks (Stable)][stable-checks-badge]][stable-checks-workflow]
 [![Build and Push (Stable)][stable-build-badge]][stable-build-workflow]
 
-Sphynx is a personal project including CLI, dotfiles, workspace setup scripts
-among other things.
-
-<img align="right" src="./assets/sphynx-demo.gif" width="60%" />
+<p align="center">
+  <img alt="Logo" src="./assets/sphynx-landscape.png" width="80%">
+</p>
 
 - [About](#about)
   - [CLI](#cli)
@@ -19,16 +14,16 @@ among other things.
 
 ## About
 
-Sphynx has aliases, functions, CLI, workspace setup configuration,
-applications' settings, docker images. Everything I use on a daily
-basis and how I set up my machine.
-
-It's divided into four main components described below.
+This is a personal project containing everything I use on a daily basis and how
+I set up my machine. It has aliases, functions, CLI, workspace setup
+configuration, applications' settings, docker images, etc.
 
 ### CLI
 
-Sphynx provides a [command-line interface][cli-folder] to handle all stuff related to
-this project and to automate boring tasks using [docopt][docopt-website].
+<img align="right" alt="Demo" src="./assets/sphynx-demo.gif" width="60%">
+
+There is a [command-line interface][cli-folder] that I use to automate
+boring/repetitive tasks.
 
 e.g.
 ```bash
@@ -147,7 +142,6 @@ this repository and adjust it to your needs! Be careful!
 [external-tools]: ./modules/dotfiles/common/scripts/external_tools.sh
 
 [ansible-website]: https://www.ansible.com
-[docopt-website]: http://docopt.org
 [dotbot-website]: https://github.com/anishathalye/dotbot
 
 [fzf]: https://github.com/junegunn/fzf
