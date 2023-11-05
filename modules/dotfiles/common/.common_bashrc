@@ -24,12 +24,13 @@ export FZF_BIN="${HOME}/.fzf.bash"
 
 #|> Sphynx
 export SPHYNX_DIR="${HOME}/Code/Personal/sphynx"
+export SPHYNX_COMPLETION_DIR="${SPHYNX_DIR}/modules/cli/.internal/completion"
 
 if [[ "${PATH}" != *"${SPHYNX_DIR}"* ]]; then
   export PATH="${PATH}:${SPHYNX_DIR}"
 
-  [ -s "${SPHYNX_DIR}/cli/.internal/completion/sx.bash" ] \
-  && source "${SPHYNX_DIR}/cli/.internal/completion/sx.bash"
+  [ -s "${SPHYNX_COMPLETION_DIR}/sx.bash" ] \
+  && source "${SPHYNX_COMPLETION_DIR}/sx.bash"
 fi
 
 #|> Startship

@@ -5,7 +5,7 @@
 # - https://debian-administration.org/article/316/An_introduction_to_bash_completion_part_1
 # - https://debian-administration.org/article/317/An_introduction_to_bash_completion_part_2
 
-completion_dirname="${SPHYNX_DIR:-}/cli/.internal/completion"
+completion_dirname="${SPHYNX_DIR:-}/modules/cli/.internal/completion"
 
 function _sx() {
   COMPREPLY=()
