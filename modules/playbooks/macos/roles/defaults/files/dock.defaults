@@ -1,20 +1,26 @@
 #!/usr/bin/env bash
+
 # Available keys: defaults read com.apple.dock
 
 readonly domain='com.apple.dock'
 
+# Set position to bottom
+defaults write ${domain} orientation -string bottom
 
-# Automatically hide/show dock
+# Automatically hide the Dock
 defaults write ${domain} autohide -bool true
 
-# Adjust the time when the Dock hides and reappears
+# Change the opening and closing animation times
 defaults write ${domain} autohide-time-modifier -float 0.8
+
+# Adjust minimize and maximize animation
+defaults write ${domain} mineffect suck
+
+# Don't show recent applications
+defaults write ${domain} show-recents -bool false
 
 # Show hidden apps
 defaults write ${domain} showhidden -bool true
-
-# Adjust minimise and maximise gesture
-defaults write ${domain} mineffect suck
 
 # Minimize windows into the application icon
 defaults write ${domain} minimize-to-application -bool true
@@ -24,9 +30,6 @@ defaults write ${domain} show-process-indicators -bool true
 
 # Enable animations when open an application
 defaults write ${domain} launchanim -bool true
-
-# Don't show recent applications
-defaults write ${domain} show-recents -bool false
 
 # Enable magnification
 defaults write ${domain} magnification -bool true
@@ -39,3 +42,6 @@ defaults write ${domain} tilesize -integer 45
 
 # Make all animations faster that are used by Mission Control
 defaults write ${domain} expose-animation-duration -float 0.1
+
+# Make Dock more transparent
+defaults write ${domain} hide-mirror -bool true

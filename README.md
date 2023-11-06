@@ -5,9 +5,9 @@
   <img alt="Logo" src="./assets/sphynx-landscape.png" width="80%">
 </p>
 <p align="center">
-  <a href="#cli">CLI</a>&nbsp;&nbsp;&nbsp;&nbsp;
-  <a href="#dotfiles">Dotfiles</a>&nbsp;&nbsp;&nbsp;&nbsp;
-  <a href="#external-tools">External Tools</a>&nbsp;&nbsp;&nbsp;&nbsp;
+  <a href="#cli">CLI</a> •
+  <a href="#dotfiles">Dotfiles</a> •
+  <a href="#external-tools">External Tools</a> •
   <a href="#workspace-configuration">Workspace Configuration</a>
 </p>
 

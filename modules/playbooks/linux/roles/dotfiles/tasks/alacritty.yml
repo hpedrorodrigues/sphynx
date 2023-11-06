@@ -13,4 +13,4 @@
     state: link
     force: yes
   when:
-    - not alacritty.stat.exists or (alacritty.stat.islnk is defined and not alacritty.stat.islnk)
+    - not alacritty.stat.exists or not alacritty.stat.islnk

@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+
 # Available keys: defaults read com.apple.appstore
 
 readonly domain='com.apple.SoftwareUpdate'

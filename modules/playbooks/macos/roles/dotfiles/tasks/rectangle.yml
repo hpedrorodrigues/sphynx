@@ -16,4 +16,4 @@
     state: link
     force: yes
   when:
-    - not rectangle.stat.exists or (rectangle.stat.islnk is defined and not rectangle.stat.islnk)
+    - not rectangle.stat.exists or not rectangle.stat.islnk
