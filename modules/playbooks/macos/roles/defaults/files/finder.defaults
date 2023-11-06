@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+
 # Available keys: defaults read com.apple.finder
 
 readonly domain='com.apple.finder'

@@ -13,4 +13,4 @@
     state: link
     force: yes
   when:
-    - not starship.stat.exists or (starship.stat.islnk is defined and not starship.stat.islnk)
+    - not starship.stat.exists or not starship.stat.islnk

@@ -6,9 +6,9 @@
 - name: Checking - Fuzzy Finder installation
   stat:
     path: "{{ ansible_env.HOME }}/.fzf.zsh"
-  register: fzf_installation
+  register: fzf
 
 - name: Installing Fuzzy Finder completion + key bindings
   shell: "$(brew --prefix)/opt/fzf/install"
   when:
-    - not fzf_installation.stat.exists
+    - not fzf.stat.exists
