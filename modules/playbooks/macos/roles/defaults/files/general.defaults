@@ -61,3 +61,6 @@ if [ "$(scutil --get ComputerName)" != "${computer_name}" ]; then
 
   sudo defaults write /Library/Preferences/SystemConfiguration/com.apple.smb.server NetBIOSName -string "${computer_name}"
 fi
+
+# Disable "Click Wallpaper To Show Desktop Items"
+defaults write com.apple.WindowManager EnableStandardClickToShowDesktop -bool false
