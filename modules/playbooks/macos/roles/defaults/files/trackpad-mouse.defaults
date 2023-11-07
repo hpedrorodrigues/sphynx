@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+# Sets trackpad & mouse speed to a reasonable number
+defaults read NSGlobalDomain com.apple.trackpad.scaling -float 4.0
+defaults read NSGlobalDomain com.apple.mouse.scaling -float 4.0
+
+# Enables force click and haptic feedback
+defaults write NSGlobalDomain com.apple.trackpad.forceClick -bool true
+defaults write com.apple.AppleMultitouchTrackpad ForceSuppressed -bool false
+defaults write com.apple.AppleMultitouchTrackpad ActuateDetents -bool true
+## 0: Light | 1: Medium | 2: Firm
+defaults write com.apple.AppleMultitouchTrackpad FirstClickThreshold -int 0
+defaults write com.apple.AppleMultitouchTrackpad SecondClickThreshold -int 0
+
+# Enable tap-to-click for this user and for the login screen
+defaults -currentHost write com.apple.AppleMultitouchTrackpad Clicking -bool true
+defaults -currentHost write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool true
+defaults write com.apple.AppleMultitouchTrackpad Clicking -bool true
+defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool true
+
+# Disable three finger drag
+defaults write com.apple.AppleMultitouchTrackpad Dragging -bool false
+defaults write com.apple.AppleMultitouchTrackpad TrackpadThreeFingerDrag -bool false
+defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Dragging -bool false
+defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadThreeFingerDrag -bool false

@@ -1,17 +1,5 @@
 #!/usr/bin/env bash
 
-# Enable tap-to-click for this user and for the login screen
-defaults -currentHost write com.apple.AppleMultitouchTrackpad Clicking -bool true
-defaults -currentHost write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool true
-defaults write com.apple.AppleMultitouchTrackpad Clicking -bool true
-defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool true
-
-# Disable three finger drag
-defaults write com.apple.AppleMultitouchTrackpad TrackpadThreeFingerDrag -bool false
-defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadThreeFingerDrag -bool false
-
-defaults write com.apple.AppleMultitouchTrackpad Dragging -bool false
-defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Dragging -bool false
 
 # Enable "natural" (touchscreen-style) scrolling
 defaults write NSGlobalDomain com.apple.swipescrolldirection -bool true
