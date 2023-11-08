@@ -69,6 +69,5 @@
   "workbench.settings.enableNaturalLanguageSearch": false,
   "workbench.startupEditor": "none",
   "workbench.welcome.enabled": false,
-  "markdown.extension.preview.autoShowPreviewToSide": true,
   "markdown.extension.toc.updateOnSave": false
 }
