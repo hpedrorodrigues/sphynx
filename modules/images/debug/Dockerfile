@@ -36,7 +36,7 @@ RUN apk update && \
       tcpdump=4.99.4-r1 \
       tcptraceroute=1.5b7-r4 \
       util-linux=2.38.1-r8 \
-      vim=9.0.1568-r0 \
+      vim=9.0.2073-r0 \
       wget=1.21.4-r0 \
       sudo=1.9.13_p3-r2 \
     && rm -rf /var/cache/apk/*
