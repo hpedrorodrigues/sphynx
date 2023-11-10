@@ -109,6 +109,7 @@ casks:
   - deckset
   - discord
   # - docker
+  - flux
   - github
   - google-chrome
   - google-cloud-sdk
