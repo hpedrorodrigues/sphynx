@@ -30,7 +30,7 @@ RUN apk update && \
       net-snmp-tools=5.9.3-r3 \
       nftables=1.0.7-r2 \
       nmap=7.93-r1 \
-      openssl=3.1.4-r0 \
+      openssl=3.1.4-r1 \
       socat=1.7.4.4-r1 \
       strace=6.3-r1 \
       tcpdump=4.99.4-r1 \
