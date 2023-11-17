@@ -36,7 +36,7 @@ function kcli() {
 
 # Sphynx images
 
-export DOCKER_REPOSITORY="${DOCKER_REPOSITORY:-hpedrorodrigues/tools}"
+export DOCKER_REPOSITORY="${DOCKER_REPOSITORY:-hpedrorodrigues/alien}"
 
 ## Base function responsible for running external tools
 ##

@@ -14,7 +14,7 @@ set -o pipefail
 ##?   --help  Print this help message
 
 export IMAGES_PATH="${IMAGES_PATH:-${SPHYNX_DIR:-.}/modules/images}"
-export DOCKER_REPOSITORY="${DOCKER_REPOSITORY:-hpedrorodrigues/tools}"
+export DOCKER_REPOSITORY="${DOCKER_REPOSITORY:-hpedrorodrigues/alien}"
 
 function print_help() {
   grep '[#]#?' "${BASH_SOURCE[0]}" | cut -c 5-

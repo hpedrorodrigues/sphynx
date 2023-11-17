@@ -192,7 +192,7 @@ function kdeb() {
     return 1
   fi
 
-  local -r image='hpedrorodrigues/tools:debug'
+  local -r image='hpedrorodrigues/alien:debug'
   local -r pod_name='debug'
   local -r pod_name_suffix="$(uuidgen | cut -d '-' -f 1 | tr '[:upper:]' '[:lower:]')"
   local -r overrides="$(
