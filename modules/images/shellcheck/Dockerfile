@@ -1,5 +1,5 @@
 FROM koalaman/shellcheck-alpine:v0.9.0 as shellcheck
-FROM alpine:3.18.2
+FROM alpine:3.18.4
 
 LABEL maintainer="Pedro Rodrigues <github.com/hpedrorodrigues>"
 
