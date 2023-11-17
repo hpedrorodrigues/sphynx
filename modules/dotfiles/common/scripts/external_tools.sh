@@ -36,7 +36,7 @@ function kcli() {
 
 # Sphynx images
 
-export DOCKER_REPOSITORY="${DOCKER_REPOSITORY:-hpedrorodrigues/alien}"
+export DOCKER_REPOSITORY="${DOCKER_REPOSITORY:-hpedrorodrigues/tools}"
 
 ## Prettier (https://prettier.io)
 ##
