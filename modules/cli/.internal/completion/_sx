@@ -9,7 +9,6 @@ completion_dirname="${SPHYNX_DIR:-}/modules/cli/.internal/completion"
 _sx() {
   local current_word="${words[-1]}"
 
-  # shellcheck disable=SC2068  # Double quote array expansions
   _arguments "*: :($("${completion_dirname}/complete" "${current_word}" ${words}))"
 }
 

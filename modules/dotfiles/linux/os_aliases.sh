@@ -15,25 +15,8 @@ alias apts='sudo apt-cache search'
 
 # Updates
 
-# shellcheck disable=SC1004  # This backslash+linefeed is literal
-alias upos='sudo apt update -y \
-              && sudo apt-get update -y \
-              && sudo apt-get upgrade -y \
-              && sudo apt autoremove -y \
-              && sudo apt autoclean -y \
-              && sudo apt clean -y'
+alias up_os='sudo apt update -y && sudo apt-get update -y && sudo apt-get upgrade -y && sudo apt autoremove -y && sudo apt autoclean -y && sudo apt clean -y'
+alias up_snap='sudo snap refresh'
+alias up_brew='brew update && brew upgrade && brew autoremove && brew cleanup -s --prune 30 && brew services cleanup'
 
-# shellcheck disable=SC1004  # This backslash+linefeed is literal
-alias upsnap='sudo snap refresh'
-
-# shellcheck disable=SC1004  # This backslash+linefeed is literal
-alias upbrew='brew update \
-                && brew upgrade \
-                && brew cleanup -s --prune 30'
-
-# shellcheck disable=SC1004  # This backslash+linefeed is literal
-alias upnpm='npm install --global npm \
-              && npm --global cache clean --force \
-              && npm --global update'
-
-alias upall='upos && upsnap && upbrew && upnpm'
+alias up_all='up_os && up_snap && up_brew'

@@ -115,8 +115,7 @@ std dev              155.3 μs   (46.41 μs .. 291.6 μs)
 on your machine but you'd like to use them.
 
 They are basically shell functions calling Docker behind the scenes, but
-not all functions use the dockerfiles available in this project
-(e.g. Kafka and Zookeeper).
+not all functions use the dockerfiles available in this project (e.g. Kafka).
 
 ### Workspace configuration
 
