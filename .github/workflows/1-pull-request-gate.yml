@@ -35,5 +35,6 @@ jobs:
         with:
           fetch-depth: 1
       - uses: docker/setup-buildx-action@v3
-      - run: ./modules/images/build.sh
+      - uses: arduino/setup-task@v1
+      - run: task --taskfile=modules/images/Taskfile.yml build
         shell: bash
