@@ -1,5 +1,5 @@
-[![Checks (Stable)][stable-checks-badge]][stable-checks-workflow]
-[![Build and Push (Stable)][stable-build-badge]][stable-build-workflow]
+[![Checks][stable-gate-badge]][stable-gate-workflow]
+[![Release (Build & Push)][stable-release-badge]][stable-release-workflow]
 
 <p align="center">
   <img alt="Logo" src="./assets/sphynx-landscape.png" width="80%">
@@ -137,8 +137,8 @@ daily.
 [ansible-website]: https://www.ansible.com
 [playbooks-folder]: ./modules/playbooks
 
-[stable-checks-badge]: https://github.com/hpedrorodrigues/sphynx/actions/workflows/stable-checks.yml/badge.svg
-[stable-checks-workflow]: https://github.com/hpedrorodrigues/sphynx/actions/workflows/stable-checks.yml
+[stable-gate-badge]: https://github.com/hpedrorodrigues/sphynx/actions/workflows/2-stable-gate.yml/badge.svg
+[stable-gate-workflow]: https://github.com/hpedrorodrigues/sphynx/actions/workflows/2-stable-gate.yml
 
-[stable-build-badge]: https://github.com/hpedrorodrigues/sphynx/actions/workflows/stable-build.yml/badge.svg
-[stable-build-workflow]: https://github.com/hpedrorodrigues/sphynx/actions/workflows/stable-build.yml
+[stable-release-badge]: https://github.com/hpedrorodrigues/sphynx/actions/workflows/3-stable-release.yml/badge.svg
+[stable-release-workflow]: https://github.com/hpedrorodrigues/sphynx/actions/workflows/3-stable-release.yml

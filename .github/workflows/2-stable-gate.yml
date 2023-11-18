@@ -1,4 +1,4 @@
-name: Checks (Stable)
+name: Checks
 on:
   push:
     branches:
@@ -12,8 +12,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
       - run: ./sx lint
         shell: bash
   tests:
@@ -22,7 +20,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
       - run: ./sx test
         shell: bash
