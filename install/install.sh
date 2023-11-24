@@ -92,7 +92,7 @@ fi
 
 ##########|> Homebrew
 
-if hash 'brew' 2>/dev/null || [ -f '/opt/homebrew/bin/brew' ]; then
+if hash 'brew' 2>/dev/null || [ -f '/opt/homebrew/bin/brew' ] || [ -f '/home/linuxbrew/.linuxbrew/bin/brew' ]; then
   log_info 'Homebrew is already installed. Ignoring...'
 else
   log_info 'Homebrew is not installed. Installing it...'
