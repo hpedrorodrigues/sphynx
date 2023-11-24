@@ -13,7 +13,6 @@ packages:
   - gettext
   - git
   - gnome-screensaver
-  - gnome-tweak-tool
   - gnupg
   - gnupg-agent
   - gtypist
