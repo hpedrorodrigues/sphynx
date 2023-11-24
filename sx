@@ -46,7 +46,10 @@ fi
 export SPHYNX_EXEC="${BASH_SOURCE[0]}"
 export SPHYNX_EXEC_NAME="$(basename "${SPHYNX_EXEC}")"
 
-export SPHYNX_DIR="$(dirname "${SPHYNX_EXEC}")"
+export SPHYNX_DIR="$(
+  cd -- "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 || exit 1
+  pwd -P
+)"
 export SPHYNX_CLI_DIR="${SPHYNX_DIR}/modules/cli"
 
 ## Helper functions
