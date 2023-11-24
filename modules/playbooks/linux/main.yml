@@ -9,7 +9,7 @@
     # - role: docker
     #   become: true
     # - git
-    # - linuxbrew
+    - linuxbrew
     # - npm
     # - go
     # - pip

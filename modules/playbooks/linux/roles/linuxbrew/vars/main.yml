@@ -1,7 +1,4 @@
-# linuxbrew_repositories:
-#   -
-
-linuxbrew_packages:
+packages:
   - awscli
   - git-delta
   - git-lfs
