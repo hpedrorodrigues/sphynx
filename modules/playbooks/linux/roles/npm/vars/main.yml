@@ -1,6 +1,0 @@
-npm_packages:
-  - eslint
-  - npm-check-updates
-  - tldr
-  - webpack
-  - yarn

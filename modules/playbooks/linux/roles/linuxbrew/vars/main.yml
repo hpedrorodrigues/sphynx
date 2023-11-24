@@ -1,5 +1,6 @@
 packages:
   - awscli
+  - dotbot
   - git-delta
   - git-lfs
   - go
@@ -8,7 +9,9 @@ packages:
   - kotlin
   - kustomize
   - kubespy
+  - leiningen
   - maven
   - shpotify
   - starship
+  - tldr
   - tmux
