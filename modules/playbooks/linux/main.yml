@@ -4,8 +4,8 @@
   roles:
     - role: apt
       become: true
-    # - role: snap
-    #   become: true
+    - role: snap
+      become: true
     # - role: docker
     #   become: true
     # - git

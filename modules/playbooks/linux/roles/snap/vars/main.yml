@@ -1,10 +1,11 @@
-snap_packages:
-  - { name: alacritty, options: "--classic" }
+packages:
+  - name: alacritty
+    classic: true
+  - name: google-cloud-sdk
+    classic: true
   - discord
-  - { name: "google-cloud-sdk", options: "--classic" }
-  - mailspring
-  - { name: skype, options: "--classic" }
-  - { name: slack, options: "--classic" }
+  - skype
+  - slack
   - spotify
-  - whatsdesk
+  - whatsapp-for-linux
   - zoom-client

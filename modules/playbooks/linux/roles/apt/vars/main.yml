@@ -1,5 +1,5 @@
 builtin_repositories:
-- universe
+  - universe
 
 packages:
   - apt-transport-https
@@ -39,6 +39,7 @@ packages:
   - openjdk-11-dbg
   - openjdk-17-jdk
   - openjdk-17-dbg
+  - python3
   - python3-dev
   - ruby
   - screen
