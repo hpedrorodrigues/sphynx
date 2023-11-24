@@ -1,4 +1,4 @@
-repositories:
+builtin_repositories:
 - universe
 
 packages:

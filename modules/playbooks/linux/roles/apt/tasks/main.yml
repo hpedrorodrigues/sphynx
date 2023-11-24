@@ -12,10 +12,9 @@
   apt:
     autoremove: yes
 
-- name: Adding repositories
-  apt_repository:
-    repo: "{{ repositories }}"
-    state: present
+- name: Enabling built-in repositories
+  shell: add-apt-repository -y {{ item }}
+  loop: "{{ builtin_repositories }}"
 
 - name: Installing packages
   apt:
