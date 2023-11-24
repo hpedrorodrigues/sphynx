@@ -1,3 +1,6 @@
+repositories:
+- universe
+
 packages:
   - apt-transport-https
   - aptitude
@@ -13,6 +16,7 @@ packages:
   - gettext
   - git
   - gnome-screensaver
+  - gnome-tweaks
   - gnupg
   - gnupg-agent
   - gtypist

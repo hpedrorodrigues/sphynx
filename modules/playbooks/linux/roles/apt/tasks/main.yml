@@ -12,7 +12,12 @@
   apt:
     autoremove: yes
 
-- name: Updating repositories cache and installing required packages
+- name: Adding repositories
+  apt_repository:
+    repo: "{{ repositories }}"
+    state: present
+
+- name: Installing packages
   apt:
     name: "{{ packages }}"
     state: present
