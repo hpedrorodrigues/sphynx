@@ -4,20 +4,20 @@
   roles:
     - role: apt
       become: true
-    - role: snap
-      become: true
-    - role: docker
-      become: true
-    - git
-    - linuxbrew
-    - npm
-    - go
-    - pip
-    - leiningen
-    - dotfiles
-    - fuzzy-finder
-    - vscode
-    - google-chrome
-    - firefox-developer-edition
-    - jetbrains-toolbox
-    - scripts
+    # - role: snap
+    #   become: true
+    # - role: docker
+    #   become: true
+    # - git
+    # - linuxbrew
+    # - npm
+    # - go
+    # - pip
+    # - leiningen
+    # - dotfiles
+    # - fuzzy-finder
+    # - vscode
+    # - google-chrome
+    # - firefox-developer-edition
+    # - jetbrains-toolbox
+    # - scripts

@@ -1,7 +1,4 @@
-# apt_repositories:
-#
-
-apt_packages:
+packages:
   - apt-transport-https
   - aptitude
   - autoconf
@@ -24,7 +21,7 @@ apt_packages:
   - icdiff
   - libbz2-dev
   - libcurl4-openssl-dev
-  - { name: libexpat-dev, installed_name: libexpat1-dev }
+  - libexpat-dev
   - libncurses-dev
   - libssl-dev
   - libtool

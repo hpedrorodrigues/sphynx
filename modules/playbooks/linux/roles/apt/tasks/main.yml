@@ -1,33 +1,8 @@
-- name: Getting all installed packages
-  shell: "apt list --installed"
-  register: current_packages
-  changed_when: false
-
-- name: Adding repositories
-  apt_repository:
-    repo: "{{ item }}"
-    state: present
-    update_cache: yes
-  with_items: "{{ apt_repositories }}"
-  when: apt_repositories is defined and apt_repositories | count > 0
-
-- name: Updating repositories cache and installing required packages
-  apt:
-    name: "{{ item.name | default(item) }}"
-    state: present
-    update_cache: yes
-  with_items: "{{ apt_packages }}"
-  when:
-    - current_packages.stdout.find("{{ item.installed_name | default(item.name) | default(item) }}/") == -1
-
-- name: Updating all packages to the latest version
+- name: Updating all packages
   apt:
     name: "*"
     state: latest
-
-- name: Upgrading all packages to the latest version
-  apt:
-    upgrade: dist
+    update_cache: true
 
 - name: Removing useless packages from the cache
   apt:
@@ -36,3 +11,8 @@
 - name: Removing dependencies that are no longer required
   apt:
     autoremove: yes
+
+- name: Updating repositories cache and installing required packages
+  apt:
+    name: "{{ packages }}"
+    state: present
