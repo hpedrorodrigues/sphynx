@@ -35,7 +35,7 @@ packages:
   - openjdk-11-dbg
   - openjdk-17-jdk
   - openjdk-17-dbg
-  - python-dev
+  - python3-dev
   - ruby
   - screen
   - sipcalc
