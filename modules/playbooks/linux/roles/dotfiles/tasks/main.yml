@@ -27,14 +27,11 @@
   when:
     - zsh.stat.exists or new_zsh is success
 
-- name: Configuring Vundle
-  include: vundle.yml
-
-- name: Configuring Fonts
-  include: fonts.yml
-
-- name: Configuring Alacritty
-  include: alacritty.yml
-
-- name: Configuring Starship
-  include: starship.yml
+- name: Include additional tasks
+  include_tasks:
+    file: "{{ item }}"
+  loop:
+    - vundle.yml
+    - fonts.yml
+    - terminal.yml
+    - starship.yml
