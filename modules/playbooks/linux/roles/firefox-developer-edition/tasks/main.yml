@@ -33,6 +33,14 @@
   when:
     - not firefox.stat.exists
 
+- name: Creating bin directory
+  file:
+    path: "{{ ansible_env.HOME }}/.local/bin"
+    mode: 0755
+    state: directory
+  when:
+    - not firefox.stat.exists
+
 - name: Creating link for Firefox Developer Edition
   file:
     src: /opt/firefox-developer-edition/firefox/firefox
