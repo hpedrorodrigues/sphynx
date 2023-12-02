@@ -1,8 +1,0 @@
-# https://github.com/nvm-sh/nvm/releases
-nvm_version: v0.39.0
-
-# https://formulae.brew.sh/api/formula-linux/node.json
-npm_version: v16.12.0
-
-npm_dir: "{{ ansible_env.HOME }}/.nvm/versions/node/{{ npm_version }}/bin"
-npm_bin: "{{ npm_dir }}/npm"

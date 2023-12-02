@@ -1,36 +1,6 @@
-- name: Detecting - Linuxbrew is available
-  stat:
-    path: "{{ brew_path }}"
-  register: linuxbrew
-
-- name: Installing Linuxbrew
-  shell: 'sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh)"'
-  register: new_linuxbrew
-  when:
-    - not linuxbrew.stat.exists
-
-- name: Updating Linuxbrew
+- name: Updating packages
   command: "{{ brew_path }} update"
-  when:
-    - linuxbrew.stat.exists or new_linuxbrew.rc == 0
 
-- name: Tapping Linuxbrew repositories
-  shell: "{{ brew_path }} tap {{ item.user_repo | default(item) }} {{ item.url | default(None) }}"
-  with_items: "{{ linuxbrew_repositories }}"
-  when:
-    - linuxbrew.stat.exists or new_linuxbrew.rc == 0
-    - linuxbrew_repositories is defined and linuxbrew_repositories | count > 0
-
-- name: Installing Linuxbrew packages
-  shell: "{{ brew_path }} install {{ item.name | default(item) }}"
-  with_items: "{{ linuxbrew_packages }}"
-  when:
-    - linuxbrew.stat.exists or new_linuxbrew.rc == 0
-    - linuxbrew_packages is defined and linuxbrew_packages | count > 0
-
-- name: Removing outdated package versions
-  command: "{{ brew_path }} cleanup"
-  register: cleanup
-  changed_when: cleanup.stdout | length > 0
-  when:
-    - linuxbrew.stat.exists or new_linuxbrew.rc == 0
+- name: Installing packages
+  shell: "{{ brew_path }} install {{ item }}"
+  loop: "{{ packages }}"

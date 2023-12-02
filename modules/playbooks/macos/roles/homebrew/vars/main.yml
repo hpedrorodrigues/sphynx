@@ -73,6 +73,8 @@ formulas:
   - postgresql
   - pyenv
   - rsync
+  - scala # Scala 3
+  - scala@2.13
   - scrcpy
   - screen
   - shpotify

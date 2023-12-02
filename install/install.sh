@@ -22,6 +22,10 @@ function log_info() {
   echo
 }
 
+function is_macos() {
+  [ "$(uname)" = 'Darwin' ]
+}
+
 ##########|> SSH
 
 if [ -z "${user_email}" ]; then
@@ -45,39 +49,50 @@ else
     ssh-keyscan -t 'ed25519' 'github.com'
   } >>"${known_hosts_file}"
 
-  pbcopy <"${authentication_key_file}.pub"
-  log_info 'Public key copied to clipboard! Please configure a new SSH key on GitHub!'
+  if is_macos; then
+    pbcopy <"${authentication_key_file}.pub"
+    log_info 'Public key copied to clipboard! Please configure a new SSH key on GitHub!'
 
-  open 'https://github.com/settings/keys'
+    open 'https://github.com/settings/keys'
+  else
+    log_info 'Now, copy the public key content and configure a new SSH key on GitHub!'
+    cat "${authentication_key_file}.pub"
+
+    hash 'xdg-open' 2>/dev/null && xdg-open 'https://github.com/settings/keys'
+  fi
 fi
 
 ##########|> Xcode Command Line Tools
 
-if xcode-select --print-path &>/dev/null; then
-  log_info 'Xcode Command Line Tools installed. Ignoring...'
-else
-  log_info 'Xcode Command Line Tools not installed. Installing it...'
+if is_macos; then
+  if xcode-select --print-path &>/dev/null; then
+    log_info 'Xcode Command Line Tools installed. Ignoring...'
+  else
+    log_info 'Xcode Command Line Tools not installed. Installing it...'
 
-  xcode-select --install
+    xcode-select --install
 
-  until xcode-select --print-path &>/dev/null; do
-    echo 'Waiting for Xcode Command Line Tools to be installed...'
-    sleep 5
-  done
+    until xcode-select --print-path &>/dev/null; do
+      echo 'Waiting for Xcode Command Line Tools to be installed...'
+      sleep 5
+    done
+  fi
 fi
 
 ##########|> Rosetta
 
-if [ "$(arch)" = 'arm64' ] && arch -arch x86_64 uname -m &>/dev/null; then
-  log_info 'Rosetta is already installed. Ignoring...'
-else
-  log_info 'Rosetta is not installed. Installing it...'
-  softwareupdate --install-rosetta --agree-to-license
+if is_macos; then
+  if [ "$(arch)" = 'arm64' ] && arch -arch x86_64 uname -m &>/dev/null; then
+    log_info 'Rosetta is already installed. Ignoring...'
+  else
+    log_info 'Rosetta is not installed. Installing it...'
+    softwareupdate --install-rosetta --agree-to-license
+  fi
 fi
 
 ##########|> Homebrew
 
-if hash 'brew' 2>/dev/null || [ -f '/opt/homebrew/bin/brew' ]; then
+if hash 'brew' 2>/dev/null || [ -f '/opt/homebrew/bin/brew' ] || [ -f '/home/linuxbrew/.linuxbrew/bin/brew' ]; then
   log_info 'Homebrew is already installed. Ignoring...'
 else
   log_info 'Homebrew is not installed. Installing it...'

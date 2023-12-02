@@ -1,8 +1,6 @@
-# linuxbrew_repositories:
-#   -
-
-linuxbrew_packages:
+packages:
   - awscli
+  - dotbot
   - git-delta
   - git-lfs
   - go
@@ -11,7 +9,9 @@ linuxbrew_packages:
   - kotlin
   - kustomize
   - kubespy
+  - leiningen
   - maven
   - shpotify
   - starship
+  - tldr
   - tmux

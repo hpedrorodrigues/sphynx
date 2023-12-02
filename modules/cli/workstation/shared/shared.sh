@@ -1,6 +1,12 @@
 #!/usr/bin/env bash
 
-export SX_HOMEBREW_PATH="${SX_HOMEBREW_PATH:-/opt/homebrew/bin/brew}"
+if sx::os::is_macos; then
+  export SX_HOMEBREW_PATH="${SX_HOMEBREW_PATH:-/opt/homebrew/bin/brew}"
+elif sx::os::is_linux; then
+  export SX_HOMEBREW_PATH="${SX_HOMEBREW_PATH:-/home/linuxbrew/.linuxbrew/bin/brew}"
+else
+  export SX_HOMEBREW_PATH="${SX_HOMEBREW_PATH}"
+fi
 
 function sx::workstation::require_homebrew() {
   if ! sx::os::is_command_available 'brew' && [ -f "${SX_HOMEBREW_PATH}" ]; then

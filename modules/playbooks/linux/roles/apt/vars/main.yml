@@ -1,7 +1,7 @@
-# apt_repositories:
-#
+builtin_repositories:
+  - universe
 
-apt_packages:
+packages:
   - apt-transport-https
   - aptitude
   - autoconf
@@ -16,7 +16,7 @@ apt_packages:
   - gettext
   - git
   - gnome-screensaver
-  - gnome-tweak-tool
+  - gnome-tweaks
   - gnupg
   - gnupg-agent
   - gtypist
@@ -24,7 +24,7 @@ apt_packages:
   - icdiff
   - libbz2-dev
   - libcurl4-openssl-dev
-  - { name: libexpat-dev, installed_name: libexpat1-dev }
+  - libexpat-dev
   - libncurses-dev
   - libssl-dev
   - libtool
@@ -39,7 +39,8 @@ apt_packages:
   - openjdk-11-dbg
   - openjdk-17-jdk
   - openjdk-17-dbg
-  - python-dev
+  - python3
+  - python3-dev
   - ruby
   - screen
   - sipcalc

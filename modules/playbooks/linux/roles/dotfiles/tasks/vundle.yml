@@ -1,9 +1,11 @@
 - name: Creating VIM configuration directories
-  file: "path={{ item }} mode=0755 state=directory"
-  with_items:
+  file: "path={{ directory_item }} mode=0755 state=directory"
+  loop:
     - "{{ ansible_env.HOME }}/.vim/backups"
     - "{{ ansible_env.HOME }}/.vim/swaps"
     - "{{ ansible_env.HOME }}/.vim/undo"
+  loop_control:
+    loop_var: directory_item
 
 - name: Detecting - Vundle is available
   stat:

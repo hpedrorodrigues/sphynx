@@ -10,12 +10,8 @@
       become: true
     - git
     - linuxbrew
-    - npm
     - go
-    - pip
-    - leiningen
     - dotfiles
-    - fuzzy-finder
     - vscode
     - google-chrome
     - firefox-developer-edition

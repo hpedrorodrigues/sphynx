@@ -1,4 +1,4 @@
-settings_files:
+configuration_files:
   - settings.json
   - keybindings.json
 

@@ -1,11 +1,6 @@
-git_repositories:
+repositories:
   - repo: "https://github.com/VundleVim/Vundle.vim"
     dest: "{{ ansible_env.HOME }}/.vim/bundle/Vundle.vim"
-  - repo: "https://github.com/Tudmotu/gnome-shell-extension-clipboard-indicator.git"
-    dest: "{{ ansible_env.HOME }}/.local/share/gnome-shell/extensions/clipboard-indicator@tudmotu.com"
-    hooks: |
-      gsettings set org.gnome.shell enabled-extensions "['clipboard-indicator@tudmotu.com']"
-      dconf write /org/gnome/shell/extensions/clipboard-indicator/toggle-menu "['<Primary><Alt>period']"
   - repo: "https://github.com/tarjoilija/zgen.git"
     dest: "{{ ansible_env.HOME }}/.zgen"
   - repo: "https://github.com/tmux-plugins/tpm"

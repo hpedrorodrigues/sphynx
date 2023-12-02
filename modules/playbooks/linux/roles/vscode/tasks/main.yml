@@ -1,18 +1,9 @@
-- name: Detecting - VSCode is available
-  stat:
-    path: "/usr/bin/code"
-  register: vscode
-
-- name: Installing VSCode application
+- name: Installing Visual Studio Code
+  community.general.snap:
+    name: code
+    classic: true
+    state: present
   become: true
-  shell: |
-    readonly vscode_path='/tmp/vscode.deb'
-    curl "https://go.microsoft.com/fwlink/?LinkID=760868" -L -o "${vscode_path}"
-    dpkg -i "${vscode_path}"
-    apt-get install -f
-  register: new_vscode
-  when:
-    - not vscode.stat.exists
 
 - name: Creating VSCode directories
   file: "path={{ ansible_env.HOME }}/.config/Code/User state=directory"
@@ -23,21 +14,14 @@
     dest: "{{ ansible_env.HOME }}/.config/Code/User/{{ item }}"
     state: link
     force: yes
-  with_items: "{{ vscode_settings_files }}"
-  when:
-    - vscode.stat.exists or new_vscode.rc == 0
+  loop: "{{ configuration_files }}"
 
 - name: Getting all installed VSCode extensions
   command: "code --list-extensions"
   register: installed_extensions
-  changed_when: false
-  when:
-    - vscode.stat.exists or new_vscode.rc == 0
 
 - name: Installing VSCode extensions
   command: "code --install-extension {{ item.name | default(item) }}"
-  with_items: "{{ vscode_extensions }}"
+  loop: "{{ extensions }}"
   when:
-    - vscode.stat.exists or new_vscode.rc == 0
-    - vscode_extensions | count > 0
     - item.name | default(item) not in installed_extensions.stdout
