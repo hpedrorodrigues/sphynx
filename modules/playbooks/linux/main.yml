@@ -12,8 +12,7 @@
     - linuxbrew
     # - go
     - dotfiles
-    - fuzzy-finder
-    # - vscode
+    - vscode
     # - google-chrome
     # - firefox-developer-edition
     # - jetbrains-toolbox

@@ -14,7 +14,7 @@
     dest: "{{ ansible_env.HOME }}/Library/Application Support/Code/User/{{ item }}"
     state: link
     force: yes
-  loop: "{{ settings_files }}"
+  loop: "{{ configuration_files }}"
   notify:
     - Restart Visual Studio Code
 

@@ -35,3 +35,4 @@
     - fonts.yml
     - terminal.yml
     - starship.yml
+    - fzf.yml

@@ -1,9 +1,9 @@
-vscode_settings_files:
+configuration_files:
   - settings.json
   - keybindings.json
 
 # code --list-extensions | sort -uf | xargs -I {} echo '- {}'
-vscode_extensions:
+extensions:
   - christian-kohler.path-intellisense
   - eamodio.gitlens
   - EditorConfig.EditorConfig
