@@ -1,11 +1,10 @@
 #!/usr/bin/env bash
 
-# Requirements
+# Requirements:
 # - curl
 # - git
-
-# Running this script
 #
+# Running:
 # bash -c "$(curl -fsSL https://raw.githubusercontent.com/hpedrorodrigues/sphynx/main/install/install.sh)"
 
 set -o errexit
