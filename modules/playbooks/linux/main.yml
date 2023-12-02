@@ -8,7 +8,7 @@
       become: true
     # - role: docker
     #   become: true
-    # - git
+    - git
     - linuxbrew
     # - go
     - dotfiles
