@@ -10,10 +10,10 @@
       become: true
     - git
     - linuxbrew
-    # - go
+    - go
     - dotfiles
     - vscode
     - google-chrome
     - firefox-developer-edition
     - jetbrains-toolbox
-    # - scripts
+    - scripts
