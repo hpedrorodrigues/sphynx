@@ -14,6 +14,6 @@
     - dotfiles
     - vscode
     - google-chrome
-    # - firefox-developer-edition
+    - firefox-developer-edition
     # - jetbrains-toolbox
     # - scripts
