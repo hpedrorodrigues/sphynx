@@ -6,8 +6,8 @@
       become: true
     - role: snap
       become: true
-    # - role: docker
-    #   become: true
+    - role: docker
+      become: true
     - git
     - linuxbrew
     # - go
