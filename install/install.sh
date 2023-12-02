@@ -1,8 +1,12 @@
 #!/usr/bin/env bash
 
+# Requirements
+# - curl
+# - git
+
 # Running this script
 #
-# bash -c "$(curl -fsSL https://raw.githubusercontent.com/hpedrorodrigues/sphynx/main/install/install.sh)" -- <email>
+# bash -c "$(curl -fsSL https://raw.githubusercontent.com/hpedrorodrigues/sphynx/main/install/install.sh)"
 
 set -o errexit
 set -o nounset
@@ -11,7 +15,6 @@ set -o pipefail
 readonly key_type='ed25519'
 readonly authentication_key_file="${HOME}/.ssh/id_ed25519"
 readonly known_hosts_file="${HOME}/.ssh/known_hosts"
-readonly user_email="${1:-}"
 readonly personal_directory="${HOME}/Code/Personal"
 readonly sphynx_directory="${personal_directory}/sphynx"
 readonly secrets_directory="${personal_directory}/secrets"
@@ -28,14 +31,18 @@ function is_macos() {
 
 ##########|> SSH
 
-if [ -z "${user_email}" ]; then
-  echo >&2 "User email not provided! It's required as first argument."
-  exit 1
-fi
-
 if [ -f "${authentication_key_file}" ]; then
   log_info 'SSH is already installed. Ignoring...'
 else
+  echo 'Enter your email: '
+  echo
+  read -r user_email
+
+  if [ -z "${user_email}" ] || ! [[ "${user_email}" =~ ^.*@.*\..*$ ]]; then
+    echo >&2 "User email not provided or invalid!"
+    exit 1
+  fi
+
   log_info 'Generating a new SSH key...'
   ssh-keygen \
     -t "${key_type}" \
