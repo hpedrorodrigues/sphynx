@@ -3,6 +3,7 @@
     name: code
     classic: true
     state: present
+  become: true
 
 - name: Creating VSCode directories
   file: "path={{ ansible_env.HOME }}/.config/Code/User state=directory"
