@@ -13,7 +13,7 @@
     # - go
     - dotfiles
     - vscode
-    # - google-chrome
+    - google-chrome
     # - firefox-developer-edition
     # - jetbrains-toolbox
     # - scripts
