@@ -36,7 +36,8 @@ export SCALA3_HOME='/usr/local/opt/scala'
 export SCALA_HOME="${SCALA2_HOME}"
 
 #|> Maven
-export MAVEN_OPTS='-Xms512m -Xmx1G'
+# https://github.com/adoptium/jdk17u/blob/master/src/java.base/share/classes/sun/launcher/resources/launcher.properties#L153-L154
+export MAVEN_OPTS='-Xms512m -Xmx2G'
 
 #|> Android
 # Reference: https://developer.android.com/tools/variables
