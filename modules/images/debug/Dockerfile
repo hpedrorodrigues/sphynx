@@ -18,14 +18,14 @@ RUN apk update && \
       bridge-utils=1.7.1-r2 \
       busybox-extras=1.36.1-r5 \
       conntrack-tools=1.4.7-r1 \
-      curl=8.4.0-r0 \
+      curl=8.5.0-r0 \
       ethtool=6.2-r1 \
       iperf=2.1.9-r0 \
       iproute2=6.3.0-r0 \
       ipset=7.17-r1 \
       iptables=1.8.9-r2 \
       iputils=20221126-r2 \
-      jq=1.6-r3 \
+      jq=1.6-r4 \
       mtr=0.95-r2 \
       net-snmp-tools=5.9.3-r3 \
       nftables=1.0.7-r2 \
