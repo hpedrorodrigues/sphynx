@@ -29,7 +29,7 @@ multiplier = 5
 # As of the writing of this comment, Alacritty doesn't support ligatures.
 # Configuring Fira Code here for when it eventually supports.
 [font]
-size = 13.0
+size = 12.0
 normal = { family = "Fira Code", style = "Regular" }
 bold = { family = "Fira Code", style = "Bold" }
 italic = { family = "Fira Code", style = "Retina" }
