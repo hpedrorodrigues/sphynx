@@ -29,7 +29,8 @@ export JAVA_HOME="${JAVA11_HOME}"
 [ -d "${JAVA_HOME}" ] && export PATH="${PATH}:${JAVA_HOME}"
 
 #|> Maven
-export MAVEN_OPTS='-Xms512m -Xmx1G'
+# https://github.com/adoptium/jdk17u/blob/master/src/java.base/share/classes/sun/launcher/resources/launcher.properties#L153-L154
+export MAVEN_OPTS='-Xms512m -Xmx2G'
 
 #|> x11
 # https://www.x.org/wiki

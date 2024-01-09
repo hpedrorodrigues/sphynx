@@ -3,13 +3,13 @@
 
 - name: Detecting - Alacrity is available
   stat:
-    path: "{{ ansible_env.HOME }}/.config/alacritty/alacritty.yml"
+    path: "{{ ansible_env.HOME }}/.config/alacritty/alacritty.toml"
   register: alacritty
 
 - name: Installing Alacritty settings
   file:
-    src: "{{ sphynx_settings_directory }}/linux/alacritty/alacritty.yaml"
-    dest: "{{ ansible_env.HOME }}/.config/alacritty/alacritty.yml"
+    src: "{{ sphynx_settings_directory }}/linux/alacritty/alacritty.toml"
+    dest: "{{ ansible_env.HOME }}/.config/alacritty/alacritty.toml"
     state: link
     force: yes
   when:
