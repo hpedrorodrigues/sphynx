@@ -1,6 +1,6 @@
 # https://alacritty.org/config-alacritty.html
 
-live_config_reload = false
+live_config_reload = true
 
 [shell]
 program = "/usr/local/bin/zsh"
@@ -15,19 +15,19 @@ args = [
 TERM = "xterm-256color"
 
 [window]
-decorations = "transparent"
+decorations = "full"
 dynamic_padding = true
 dynamic_title = true
 opacity = 0.9
 dimensions = { columns = 120, lines = 40 }
-padding = { y = 15 }
+padding = { x = 5 }
 
 [scrolling]
 history = 100000
 multiplier = 5
 
 # As of the writing of this comment, Alacritty doesn't support ligatures.
-# Configuring Fira Code here for when it eventually supports.
+# Configuring Fira Code here hoping it eventually supports.
 [font]
 size = 12.0
 normal = { family = "Fira Code", style = "Regular" }
