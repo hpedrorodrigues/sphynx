@@ -4,6 +4,7 @@ format = """
 $username\
 $hostname\
 $directory\
+$time\
 $git_branch\
 $git_commit\
 $git_status\
@@ -23,7 +24,7 @@ style_user = "bold white"
 
 [hostname]
 ssh_only = false
-format = "@[$hostname]($style) ɸ "
+format = "@[$hostname]($style) "
 style = "white"
 
 [directory]
@@ -31,6 +32,12 @@ truncation_length = 7
 truncate_to_repo = false
 truncation_symbol = "…/"
 style = "bold white"
+
+[time]
+disabled = false
+time_format = "%I:%M %p | %v"
+format = "[$time]($style) "
+style = "white"
 
 [git_branch]
 format = "[$symbol$branch]($style) "
@@ -53,12 +60,12 @@ style = "fg:#8be9fd"
 [aws]
 symbol = "❄ "
 format = "[$symbol$profile(\\($region\\))]($style) "
-style = "fg:#bd93f9"
+style = "fg:#ffb86c"
 
 [gcloud]
 symbol = "☸ "
 format = "[$symbol$project(\\($region\\))]($style) "
-style = "fg:#ffb86c"
+style = "fg:#bd93f9"
 
 [cmd_duration]
 min_time = 5_000
@@ -68,4 +75,4 @@ style = "bright-red"
 [character]
 success_symbol = "[♪](bold green)"
 error_symbol = "[✗](bold red)"
-vicmd_symbol = "[ⓥ](bold yellow)"
+vimcmd_symbol = "[ⓥ](bold yellow)"
