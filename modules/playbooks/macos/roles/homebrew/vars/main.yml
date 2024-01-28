@@ -110,7 +110,7 @@ casks:
   - clipy
   - deckset
   - discord
-  # - docker
+  - docker
   - flux
   - github
   - google-chrome
