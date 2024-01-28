@@ -32,8 +32,8 @@ export DOTFILES=(
   # Secrets
   "${DOTFILES_DIR}/secrets.sh"
 
-  # Jetbridge
-  "${HOME}/.jetbridgerc"
+  # Chili Piper
+  "${HOME}/.chilipiperrc"
 )
 
 # shellcheck disable=SC2048  # Use "$@" (with quotes) to prevent whitespace problems
