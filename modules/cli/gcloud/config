@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNX_CLI_DIR}/.internal/all.sh"
+source "${SPHYNX_NAMESPACE_DIR}/shared/shared.sh"
+source "${SPHYNX_NAMESPACE_DIR}/core/config.sh"
+
+##? Manage Google Cloud CLI configurations
+##?
+##? Usage:
+##?     config [<query> | --list | --exact <name> | -]
+##?
+##? Options:
+##?     -l --list  Print all named configurations
+##?     -e --exact <name>  Name to be used without checking for it
+##?
+##? Examples:
+##?     config
+##?     config prd
+##?     config --exact sphynx
+##?     config --list
+
+sx::parse_arguments "${@}"
+
+sx::gcloud::named_configuration "${query:-}" "${exact:-}" "${list:-false}"

@@ -21,6 +21,9 @@ function management() {
     code)
       code "${directory}"
       ;;
+    zed)
+      zed "${directory}"
+      ;;
     go | j | jump)
       cd "${directory}" || return 1
       ;;
@@ -56,6 +59,7 @@ function management() {
       echo '!!!' >&2
       echo '!!! Available actions:' >&2
       echo '!!!   - code' >&2
+      echo '!!!   - zed' >&2
       echo '!!!   - go | j | jump' >&2
       echo '!!!   - status' >&2
       echo '!!!   - repo' >&2
