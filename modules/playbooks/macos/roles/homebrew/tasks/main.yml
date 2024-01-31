@@ -43,9 +43,11 @@
 
 - name: Installing Homebrew formulas
   community.general.homebrew:
-    name: "{{ formulas }}"
+    name: "{{ item }}"
     state: present
+  loop: "{{ formulas }}"
 
 - name: Installing Homebrew casks
   community.general.homebrew_cask:
-    name: "{{ casks }}"
+    name: "{{ item }}"
+  loop: "{{ casks }}"
