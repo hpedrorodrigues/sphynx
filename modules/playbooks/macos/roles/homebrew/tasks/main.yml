@@ -7,7 +7,7 @@
   shell: "mv /usr/local/bin/* /opt/homebrew/bin/ || true"
   become: true
   when:
-    - not local_bin.stat.islnk
+    - local_bin.stat.islnk is not defined
     - ansible_architecture == 'arm64'
     - ansible_os_family == 'Darwin'
 
@@ -19,7 +19,7 @@
     force: true
   become: true
   when:
-    - not local_bin.stat.islnk
+    - local_bin.stat.islnk is not defined
     - ansible_architecture == 'arm64'
     - ansible_os_family == 'Darwin'
 
