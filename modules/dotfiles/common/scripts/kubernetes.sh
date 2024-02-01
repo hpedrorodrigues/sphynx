@@ -61,6 +61,7 @@ function kgp() {
     | GREP_COLOR='01;31' grep --color=always -E 'RunContainerError|$' \
     | GREP_COLOR='01;31' grep --color=always -E 'ErrImagePull|$' \
     | GREP_COLOR='01;31' grep --color=always -E 'Init:Error|$' \
+    | GREP_COLOR='01;31' grep --color=always -E 'PostStartHookError|$' \
     | GREP_COLOR='01;31' grep --color=always -E 'Error|$' \
     | GREP_COLOR='01;31' grep --color=always -E 'Init:CrashLoopBackOff|$' \
     | GREP_COLOR='01;31' grep --color=always -E 'CrashLoopBackOff|$' \
@@ -207,8 +208,8 @@ function kdeb() {
     "containers": [
       {
         "securityContext": {
-          "allowPrivilegeEscalation": false,
-          "privileged": false,
+          "allowPrivilegeEscalation": true,
+          "privileged": true,
           "readOnlyRootFilesystem": true,
           "runAsGroup": 1000,
           "runAsUser": 1000
@@ -224,8 +225,7 @@ function kdeb() {
             "mountPath": "/tmp"
           }
         ],
-        "imagePullPolicy": "Always",
-        "restartPolicy": "Never"
+        "imagePullPolicy": "Always"
       }
     ],
     "terminationGracePeriodSeconds": 1,

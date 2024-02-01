@@ -8,6 +8,7 @@ formulas:
   - bat
   - bench
   - binutils
+  - cloud-sql-proxy
   - coreutils
   - dex2jar
   - diffutils
@@ -53,6 +54,7 @@ formulas:
   - krew
   - kubernetes-cli
   - kubespy
+  - kustomize
   - leiningen
   - less
   - m4
