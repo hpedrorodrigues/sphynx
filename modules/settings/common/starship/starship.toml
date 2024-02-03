@@ -56,6 +56,9 @@ disabled = false
 symbol = "☀ "
 format = "[$symbol$context(\\($namespace\\))]($style) "
 style = "fg:#8be9fd"
+contexts = [
+  { context_pattern = "gke_.*_(?P<cluster>[\\w-]+)", context_alias = "$cluster" },
+]
 
 [aws]
 symbol = "❄ "
