@@ -96,6 +96,10 @@ alias kto='sx kubernetes topology'
 alias ktc='kubectl top pods --sort-by=cpu --all-namespaces --use-protocol-buffers'
 alias ktm='kubectl top pods --sort-by=memory --all-namespaces --use-protocol-buffers'
 
+# Flux
+
+alias fxs='flux get all'
+
 # Terraform
 
 alias tf='terraform'
