@@ -11,11 +11,12 @@ source "${SPHYNX_NAMESPACE_DIR}/core/namespace.sh"
 ##? Manage namespaces
 ##?
 ##? Usage:
-##?     namespace [<query> | --list | --exact <name> | -]
+##?     namespace [<query> | --list | --exact <name> | --current | -]
 ##?
 ##? Options:
 ##?     -l --list  Print all namespaces
 ##?     -e --exact <name>  Name to be used without checking for it
+##?     -c --current  Print current namespace
 ##?
 ##? Examples:
 ##?     namespace
@@ -23,7 +24,8 @@ source "${SPHYNX_NAMESPACE_DIR}/core/namespace.sh"
 ##?     namespace --exact traefik
 ##?     namespace --list
 ##?     namespace -
+##?     namespace --current
 
 sx::parse_arguments "${@}"
 
-sx::k8s::namespace "${query:-}" "${exact:-}" "${list:-false}"
+sx::k8s::namespace "${query:-}" "${exact:-}" "${list:-false}" "${current:-false}"

@@ -8,8 +8,11 @@ function sx::k8s::namespace() {
   local -r query="${1:-}"
   local -r exact_namespace="${2:-}"
   local -r list_namespaces="${3:-false}"
+  local -r print_current_namespace="${4:-false}"
 
-  if [ -n "${exact_namespace}" ]; then
+  if ${print_current_namespace}; then
+    sx::k8s::current_namespace
+  elif [ -n "${exact_namespace}" ]; then
     sx::k8s_command::namespace::change "${exact_namespace}"
   elif [ "${query}" = '-' ]; then
     local -r last_namespace="$(sx::file::read "${SX_K8S_NS_FILE}")"

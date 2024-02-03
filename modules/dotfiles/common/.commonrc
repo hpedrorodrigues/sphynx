@@ -24,6 +24,7 @@ export DOTFILES=(
   "${DOTFILES_DIR}/common.sh"
   "${DOTFILES_DIR}/external_tools.sh"
   "${DOTFILES_DIR}/filesystem.sh"
+  "${DOTFILES_DIR}/flux.sh"
   "${DOTFILES_DIR}/git.sh"
   "${DOTFILES_DIR}/kubernetes.sh"
   "${DOTFILES_DIR}/network.sh"
