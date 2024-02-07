@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNX_CLI_DIR}/.internal/all.sh"
+source "${SPHYNX_NAMESPACE_DIR}/shared/shared.sh"
+source "${SPHYNX_NAMESPACE_DIR}/core/project.sh"
+
+##? Manage Google Cloud CLI projects
+##?
+##? Usage:
+##?     project [<query> | --list | --exact <name> | -]
+##?
+##? Options:
+##?     -l --list  Print all projects
+##?     -e --exact <name>  Project ID to be used without checking for it
+##?
+##? Examples:
+##?     project
+##?     project staging
+##?     project --exact sphynx
+##?     project --list
+
+sx::parse_arguments "${@}"
+
+sx::gcloud::project "${query:-}" "${exact:-}" "${list:-false}"
