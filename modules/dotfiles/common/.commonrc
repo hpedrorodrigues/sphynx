@@ -58,12 +58,13 @@ if [ -d "${NVM_DIR}" ]; then
   function nvm() {
     unset -f nvm
 
-    local nvm_installation_dir='/usr/local/opt/nvm'
     local nvm_files=(
       "${NVM_DIR}/nvm.sh"
       "${NVM_DIR}/bash_completion"
-      "${nvm_installation_dir}/nvm.sh"
-      "${nvm_installation_dir}/etc/bash_completion.d/nvm"
+      "/opt/homebrew/opt/nvm/nvm.sh"
+      "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
+      "/usr/local/opt/nvm/nvm.sh"
+      "/usr/local/opt/nvm/etc/bash_completion.d/nvm"
     )
 
     for nvm_file in "${nvm_files[@]}"; do
@@ -72,7 +73,6 @@ if [ -d "${NVM_DIR}" ]; then
       fi
     done
 
-    unset nvm_installation_dir
     unset nvm_files
 
     # shellcheck disable=SC2068  # Double quote array expansions
