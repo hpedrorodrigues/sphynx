@@ -20,3 +20,20 @@ function sx::gcloud::named_configuration::change() {
 
   gcloud config configurations activate "${new_named_configuration}"
 }
+
+function sx::gcloud::project::current() {
+  gcloud config list \
+    --format 'value(core.project)'
+}
+
+function sx::gcloud::project::list() {
+  gcloud projects list \
+    --format='value[separator=","](projectId, name, lifecycleState)' \
+    | column -t -s ','
+}
+
+function sx::gcloud::project::change() {
+  local -r project_id="${1:-}"
+
+  gcloud config set project "${project_id}"
+}
