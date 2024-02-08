@@ -1,10 +1,7 @@
-command_timeout = 750
-
 format = """
 $username\
 $hostname\
 $directory\
-$time\
 $git_branch\
 $git_commit\
 $git_status\
@@ -32,12 +29,6 @@ truncation_length = 7
 truncate_to_repo = false
 truncation_symbol = "…/"
 style = "bold white"
-
-[time]
-disabled = false
-time_format = "%I:%M %p | %v"
-format = "[$time]($style) "
-style = "white"
 
 [git_branch]
 format = "[$symbol$branch]($style) "
