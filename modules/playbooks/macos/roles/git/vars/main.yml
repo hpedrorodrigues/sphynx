@@ -1,7 +1,7 @@
 repositories:
   - origin_url: "https://github.com/VundleVim/Vundle.vim"
     directory: "{{ ansible_env.HOME }}/.vim/bundle/Vundle.vim"
-  - origin_url: "https://github.com/tarjoilija/zgen.git"
-    directory: "{{ ansible_env.HOME }}/.zgen"
+  - origin_url: "https://github.com/jandamm/zgenom.git"
+    directory: "{{ ansible_env.HOME }}/.zgenom"
   - origin_url: "https://github.com/tmux-plugins/tpm"
     directory: "{{ ansible_env.HOME }}/.tmux/plugins/tpm"

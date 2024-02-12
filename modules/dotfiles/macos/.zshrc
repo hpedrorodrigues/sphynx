@@ -12,14 +12,16 @@ source "${HOME}/.common_zshrc"
 
 #|> zgen
 # Don't move this block to .common_zshrc
-if [ -f "${HOME}/.zgen/zgen.zsh" ]; then
-  source "${HOME}/.zgen/zgen.zsh"
+if [ -f "${HOME}/.zgenom/zgenom.zsh" ]; then
+  source "${HOME}/.zgenom/zgenom.zsh"
 
-  if ! zgen saved; then
-    zgen load zsh-users/zsh-autosuggestions
-    zgen load agkozak/zsh-z
+  zgenom autoupdate
 
-    zgen save
+  if ! zgenom saved; then
+    zgenom load zsh-users/zsh-autosuggestions
+    zgenom load agkozak/zsh-z
+
+    zgenom save
   fi
 fi
 
