@@ -1,7 +1,7 @@
 repositories:
   - repo: "https://github.com/VundleVim/Vundle.vim"
     dest: "{{ ansible_env.HOME }}/.vim/bundle/Vundle.vim"
-  - repo: "https://github.com/tarjoilija/zgen.git"
-    dest: "{{ ansible_env.HOME }}/.zgen"
+  - repo: "https://github.com/jandamm/zgenom.git"
+    dest: "{{ ansible_env.HOME }}/.zgenom"
   - repo: "https://github.com/tmux-plugins/tpm"
     dest: "{{ ansible_env.HOME }}/.tmux/plugins/tpm"
