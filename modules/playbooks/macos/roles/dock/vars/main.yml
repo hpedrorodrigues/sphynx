@@ -1,6 +1,5 @@
 applications:
   - "/System/Applications/Mail.app"
-  - "/System/Applications/Reminders.app"
   - "/Applications/Google Chrome.app"
   - "/Applications/Slack.app"
   - "/Applications/Telegram Lite.app"
