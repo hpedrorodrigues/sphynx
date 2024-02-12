@@ -74,7 +74,9 @@ formulas:
   - poetry
   - postgresql
   - pyenv
+  - redis
   - rsync
+  - sbt
   - scala # Scala 3
   - scala@2.13
   - scrcpy
@@ -139,4 +141,5 @@ casks:
   - vagrant
   # - virtualbox-beta
   - wireshark
+  - zed
   - zoom
