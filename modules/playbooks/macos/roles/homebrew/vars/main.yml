@@ -12,6 +12,7 @@ formulas:
   - coreutils
   - dex2jar
   - diffutils
+  - dockutil
   - dotbot
   - duf
   - ed
@@ -122,7 +123,6 @@ casks:
   - google-cloud-sdk
   - grammarly
   - grammarly-desktop
-  - hpedrorodrigues/tools/dockutil
   - iina
   - istat-menus
   - jetbrains-toolbox

@@ -14,7 +14,7 @@ RUN apk update && \
     apk add --no-cache \
       aws-cli=2.13.5-r0 \
       bash=5.2.15-r5 \
-      bind-tools=9.18.19-r0 \
+      bind-tools=9.18.24-r0 \
       bridge-utils=1.7.1-r2 \
       busybox-extras=1.36.1-r5 \
       conntrack-tools=1.4.7-r1 \
