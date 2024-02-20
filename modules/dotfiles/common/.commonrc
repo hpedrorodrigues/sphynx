@@ -73,7 +73,7 @@ if [ -d "${NVM_DIR}" ]; then
       fi
     done
 
-    unset nvm_files
+    unset nvm_file nvm_files
 
     # shellcheck disable=SC2068  # Double quote array expansions
     nvm ${@}

@@ -92,7 +92,7 @@ if [ -z "${CLOUDSDK_HOME:-}" ]; then
       break
     done
 
-    unset gcloud_locations
+    unset gcloud_location gcloud_locations
 
     # shellcheck disable=SC2068  # Double quote array expansions
     gcloud ${@}
