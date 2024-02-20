@@ -106,6 +106,7 @@ formulas:
   - wdiff
   - wget
   - yq
+  - zoxide
 
 casks:
   - alacritty
