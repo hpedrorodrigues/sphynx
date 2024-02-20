@@ -19,7 +19,6 @@ if [ -f "${HOME}/.zgenom/zgenom.zsh" ]; then
 
   if ! zgenom saved; then
     zgenom load zsh-users/zsh-autosuggestions
-    zgenom load agkozak/zsh-z
 
     zgenom save
   fi

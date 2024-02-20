@@ -36,6 +36,9 @@ fi
 #|> Startship
 hash starship 2>/dev/null && eval "$(starship init bash --print-full-init)"
 
+#|> zoxide
+hash zoxide 2>/dev/null && eval "$(zoxide init bash)"
+
 #|> Google Cloud SDK
 # Lazy loading gcloud
 if [ -z "${CLOUDSDK_HOME:-}" ]; then
