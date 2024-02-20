@@ -207,5 +207,5 @@ function sx::k8s::nodes() {
 
 function sx::k8s::cli() {
   # shellcheck disable=SC2086  # quote this to prevent word splitting
-  command ${SX_K8SCTL} "${@}"
+  ${SX_K8SCTL} "${@}"
 }

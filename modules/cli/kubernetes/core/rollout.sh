@@ -70,7 +70,12 @@ function sx::k8s_command::rollout() {
   local -r kind="${3}"
   local -r name="${4}"
 
-  sx::k8s::cli rollout "${action}" --namespace "${ns}" "${kind}" "${name}"
+  local flags=''
+  if [ "${action}" == 'restart' ] && sx::k8s::is_managed_by_flux "${ns}" "${kind}" "${name}"; then
+    flags+='--field-manager=flux-client-side-apply'
+  fi
+
+  sx::k8s::cli rollout "${action}" --namespace "${ns}" "${kind}" "${name}" ${flags}
 }
 
 function sx::k8s::rollout::restart() {
