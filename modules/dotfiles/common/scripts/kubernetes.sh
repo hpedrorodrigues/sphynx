@@ -184,7 +184,7 @@ function kpi() {
     --output 'custom-columns=POD:.metadata.name,IP:.status.podIPs[*].ip'
 }
 
-## Run a pod in the current namespace to help troubleshoot network issues
+## Run a pod in the current kubernetes namespace to help troubleshoot network issues
 ##
 ## e.g. kdeb
 function kdeb() {
