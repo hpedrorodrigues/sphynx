@@ -27,6 +27,7 @@ function sx::fs::extract() {
     *.cbt | *.tar.bz2 | *.tar.gz | *.tar.xz | *.tbz2 | *.tgz | *.txz | *.tar)
       tar xvf "${relative_path}"
       ;;
+    *.jar) jar xf "${relative_path}" ;;
     *.lzma) unlzma "${relative_path}" ;;
     *.bz2) bunzip2 "${relative_path}" ;;
     *.cbr | *.rar) unrar x -ad "${relative_path}" ;;
