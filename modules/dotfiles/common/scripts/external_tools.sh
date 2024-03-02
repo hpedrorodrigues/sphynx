@@ -2,7 +2,7 @@
 
 # External images
 
-export CONFLUENT_VERSION=${CONFLUENT_VERSION:-7.5.2}
+export CONFLUENT_VERSION=${CONFLUENT_VERSION:-7.6.0}
 
 ## Kafka CLI (https://kafka.apache.org)
 ##

@@ -210,7 +210,6 @@ function kdeb() {
         "securityContext": {
           "allowPrivilegeEscalation": true,
           "privileged": true,
-          "readOnlyRootFilesystem": true,
           "runAsGroup": 1000,
           "runAsUser": 1000
         },

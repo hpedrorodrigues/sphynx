@@ -1,5 +1,5 @@
 FROM hadolint/hadolint:v2.12.0-alpine as hadolint
-FROM alpine:3.18.4
+FROM alpine:3.19.1
 
 LABEL maintainer="Pedro Rodrigues <github.com/hpedrorodrigues>"
 

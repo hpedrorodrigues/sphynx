@@ -1,4 +1,4 @@
-FROM alpine:3.18.4
+FROM alpine:3.19.1
 
 LABEL maintainer="Pedro Rodrigues <github.com/hpedrorodrigues>"
 
