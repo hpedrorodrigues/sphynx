@@ -31,14 +31,14 @@ RUN apk update && \
       nftables=1.0.7-r2 \
       nmap=7.93-r1 \
       openssl=3.1.4-r5 \
-      socat=1.7.4.4-r1 \
-      strace=6.3-r1 \
+      socat=1.8.0.0-r0 \
+      strace=6.6-r0 \
       tcpdump=4.99.4-r1 \
       tcptraceroute=1.5b7-r4 \
-      util-linux=2.38.1-r8 \
-      vim=9.0.2073-r0 \
+      util-linux=2.39.3-r0 \
+      vim=9.0.2127-r0 \
       wget=1.21.4-r0 \
-      sudo=1.9.13_p3-r2 \
+      sudo=1.9.15_p2-r0 \
     && rm -rf /var/cache/apk/*
 
 # https://wiki.alpinelinux.org/wiki/Setting_up_a_new_user
