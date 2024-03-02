@@ -12,9 +12,9 @@ ENV SPHYNX_HOME /home/${user}
 
 RUN apk update && \
     apk add --no-cache \
-      aws-cli=2.13.5-r0 \
-      bash=5.2.15-r5 \
-      bind-tools=9.18.24-r0 \
+      aws-cli=2.13.25-r0 \
+      bash=5.2.21-r0 \
+      bind-tools=9.18.24-r1 \
       bridge-utils=1.7.1-r2 \
       busybox-extras=1.36.1-r15 \
       conntrack-tools=1.4.8-r0 \
