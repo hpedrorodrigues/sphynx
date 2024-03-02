@@ -1,4 +1,4 @@
-FROM node:lts-alpine3.18
+FROM node:lts-alpine3.19
 
 LABEL maintainer="Pedro Rodrigues <github.com/hpedrorodrigues>"
 
@@ -10,9 +10,9 @@ ARG group=sphynx
 
 ENV SPHYNX_HOME /home/${user}
 
-RUN npm install --global prettier@3.1.0 \
+RUN npm install --global prettier@3.2.5 \
   && echo http://dl-2.alpinelinux.org/alpine/edge/community/ >> /etc/apk/repositories \
-  && apk --no-cache add shadow=4.13-r4 \
+  && apk --no-cache add shadow=4.14.2-r0 \
   && groupmod -g $((gid + 1)) node \
   && usermod -u $((uid + 1)) -g $((gid + 1)) node \
   && addgroup -g "${gid}" "${group}" \
