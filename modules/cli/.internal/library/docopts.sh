@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 function sx::docopts() {
-  local -r docopts_script="${SPHYNX_CLI_DIR}/.internal/docopt/docopts"
+  local -r docopts_script="${SPHYNX_CLI_DIR}/.internal/docopt/docopt_shell.py"
 
   sx::python "${docopts_script}" "${@}"
 }
