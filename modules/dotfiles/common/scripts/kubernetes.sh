@@ -69,6 +69,28 @@ function kgp() {
     | GREP_COLOR='01;31' grep --color=always -E 'Evicted|$'
 }
 
+## Print ingresses with their URI (host + path)
+##
+## e.g. king
+## e.g. king -A
+function king() {
+  # shellcheck disable=SC2068  # Double quote array expansions
+  kubectl get ingresses \
+    ${@} \
+    --output json \
+    | jq -r '
+    .items[]
+    | .metadata.namespace as $namespace
+    | .metadata.name as $name
+    | .spec.rules[]
+    | .host as $host
+    | .http.paths[]
+    | {namespace: $namespace, name: $name, uri: ($host + .path)}
+    | "\(.namespace),\(.name),\(.uri)"
+  ' \
+    | column -t -s ','
+}
+
 ## Print nodes highlighting their status
 ##
 ## e.g. kgn
