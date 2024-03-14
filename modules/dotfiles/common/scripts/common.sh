@@ -405,3 +405,14 @@ function j() {
     echo 'JAVA_HOME is now pointing to an invalid location!' >&2
   fi
 }
+
+## Detects whether to run `terraform` or `terragrunt` over a module
+##
+## e.g. tf plan
+function tf() {
+  if [ -s 'terragrunt.hcl' ]; then
+    terragrunt "${@}"
+  else
+    terraform "${@}"
+  fi
+}
