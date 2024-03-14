@@ -100,7 +100,6 @@ alias fxs='flux get all'
 
 # Terraform
 
-alias tf='terraform'
 alias tfm='terraform fmt -recursive'
 
 # Network
