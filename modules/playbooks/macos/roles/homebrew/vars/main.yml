@@ -11,8 +11,10 @@ formulas:
   - cdk8s
   - cloud-sql-proxy
   - coreutils
+  - crane
   - dex2jar
   - diffutils
+  - dive
   - dockutil
   - dotbot
   - duf
