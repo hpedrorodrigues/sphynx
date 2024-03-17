@@ -89,7 +89,7 @@ alias krr='sx kubernetes rollout restart'
 alias krh='sx kubernetes rollout history'
 alias kpf='sx kubernetes port-forward'
 alias kto='sx kubernetes topology'
-alias kdb='sx kubernetes debug --image=hpedrorodrigues/tools:debug'
+alias kdb='sx kubernetes debug --image=ghcr.io/hpedrorodrigues/debug'
 
 alias ktc='kubectl top pods --sort-by=cpu --all-namespaces --use-protocol-buffers'
 alias ktm='kubectl top pods --sort-by=memory --all-namespaces --use-protocol-buffers'
