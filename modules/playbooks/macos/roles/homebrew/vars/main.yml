@@ -77,7 +77,7 @@ formulas:
   - openssh
   - pidcat
   - poetry
-  - postgresql
+  - postgresql@16
   - pyenv
   - redis
   - rsync

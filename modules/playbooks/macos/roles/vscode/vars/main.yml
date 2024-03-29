@@ -6,8 +6,8 @@ configuration_files:
 extensions:
   - christian-kohler.path-intellisense
   - eamodio.gitlens
-  - EditorConfig.EditorConfig
-  - GitHub.github-vscode-theme
+  - editorconfig.editorconfig
+  - github.github-vscode-theme
   - k--kato.intellij-idea-keybindings
   - mads-hartmann.bash-ide-vscode
   - mechatroner.rainbow-csv
