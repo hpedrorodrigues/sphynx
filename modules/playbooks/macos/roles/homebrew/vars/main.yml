@@ -109,6 +109,7 @@ formulas:
   - wget
   - yq
   - zoxide
+  - zsh-autosuggestions
 
 casks:
   - alacritty

@@ -30,7 +30,7 @@ if [[ "${PATH}" != *"${SPHYNX_DIR}"* ]]; then
   export PATH="${PATH}:${SPHYNX_DIR}"
 
   [ -s "${SPHYNX_COMPLETION_DIR}/sx.bash" ] \
-  && source "${SPHYNX_COMPLETION_DIR}/sx.bash"
+    && source "${SPHYNX_COMPLETION_DIR}/sx.bash"
 fi
 
 #|> Startship
