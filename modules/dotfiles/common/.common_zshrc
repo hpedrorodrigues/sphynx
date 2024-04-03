@@ -66,6 +66,12 @@ hash starship 2>/dev/null && eval "$(starship init zsh --print-full-init)"
 #|> zoxide
 hash zoxide 2>/dev/null && eval "$(zoxide init zsh)"
 
+#|> zsh-autosuggestions
+export ZSH_AUTO_SUGGESTIONS_DIR='/opt/homebrew/share/zsh-autosuggestions'
+
+[ -s "${ZSH_AUTO_SUGGESTIONS_DIR}/zsh-autosuggestions.zsh" ] \
+  && source "${ZSH_AUTO_SUGGESTIONS_DIR}/zsh-autosuggestions.zsh"
+
 #|> Google Cloud SDK
 # Lazy loading gcloud
 if [ -z "${CLOUDSDK_HOME:-}" ]; then

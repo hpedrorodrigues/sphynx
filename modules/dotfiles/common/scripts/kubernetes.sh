@@ -160,6 +160,13 @@ function ksv() {
   # shellcheck disable=SC2016  # Expressions don't expand in single quotes, use double quotes for that
   local -r template='
   {{"NAMESPACE"}}{{","}}{{"SECRET"}}{{","}}{{"KEY"}}{{","}}{{"VALUE"}}{{"\\n"}}
+  {{if ne .type "kubernetes.io/service-account-token"}}
+    {{$namespace := .metadata.namespace}}
+    {{$name := .metadata.name}}
+    {{ range $k, $v := .data }}
+      {{$namespace}}{{","}}{{$name}}{{","}}{{$k}}{{","}}{{ $v | base64decode}}{{"\\n"}}
+    {{end}}
+  {{end}}
   {{range .items}}
     {{if ne .type "kubernetes.io/service-account-token"}}
       {{$namespace := .metadata.namespace}}
