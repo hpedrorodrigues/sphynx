@@ -10,7 +10,5 @@ esac
 source "${HOME}/.commonrc"
 source "${HOME}/.common_zshrc"
 
-# Regenerate .zcompdump file if sphynx completions are not loaded
-if hash sx &>/dev/null && ! grep -q 'sx' "${HOME}/.zcompdump"; then
-  autoload -U compinit && compinit
-fi
+# This takes a while to run. Need to figure out how to speed up this.
+autoload -Uz compinit && compinit
