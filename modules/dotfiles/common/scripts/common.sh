@@ -416,3 +416,14 @@ function tf() {
     terraform "${@}"
   fi
 }
+
+## Recursively find hcl files and rewrite them into a canonical format
+##
+## e.g. tfm
+function tfm() {
+  terraform fmt -recursive
+
+  if hash 'terragrunt' 2>/dev/null; then
+    terragrunt hclfmt
+  fi
+}

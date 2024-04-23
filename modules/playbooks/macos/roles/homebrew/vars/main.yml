@@ -86,6 +86,7 @@ formulas:
   - scala@2.13
   - scrcpy
   - screen
+  - sendemail
   - shpotify
   - sipcalc
   - speedtest-cli

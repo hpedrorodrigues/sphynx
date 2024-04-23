@@ -98,10 +98,6 @@ alias ktm='kubectl top pods --sort-by=memory --all-namespaces --use-protocol-buf
 
 alias fxs='flux get all'
 
-# Terraform
-
-alias tfm='terraform fmt -recursive'
-
 # Network
 alias dns='sx system dns'
 alias flush='sx system dns --flush'
