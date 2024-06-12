@@ -23,7 +23,6 @@ function sx::github::email() {
 
     if [ -n "${user_email}" ]; then
       echo "${user_email}"
-      break
     fi
   done
 }
