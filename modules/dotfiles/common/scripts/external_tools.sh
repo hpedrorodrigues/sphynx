@@ -77,7 +77,12 @@ function external_tool() {
 ## e.g. prettier --check '*/**/*.{yml,yaml}'
 function prettier() {
   # shellcheck disable=SC2068  # Double quote array expansions
-  external_tool 'prettier' ${@}
+  docker run \
+    --name 'prettier' \
+    --rm \
+    --interactive \
+    --volume "${PWD}:/mnt" \
+    ghcr.io/hpedrorodrigues/prettier ${@}
 }
 
 ## Hadolint (https://github.com/hadolint/hadolint)
