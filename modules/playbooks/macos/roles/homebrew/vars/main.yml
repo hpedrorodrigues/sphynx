@@ -1,5 +1,4 @@
-repositories:
-  - homebrew/cask-versions
+repositories: []
 
 formulas:
   - apktool
@@ -26,7 +25,7 @@ formulas:
   - fluxcd/tap/flux
   - gawk
   - gcc
-  - gettext # envsubst
+  - gettext
   - gh
   - git
   - git-delta
@@ -125,26 +124,22 @@ casks:
   - github
   - google-chrome
   - google-cloud-sdk
-  - grammarly
   - grammarly-desktop
   - iina
   - istat-menus
   - jetbrains-toolbox
   - licecap
   - monitorcontrol
-  # - pdfelement
   - postman
   - rectangle
   - session-manager-plugin
   - skype
   - spotify
-  - temurin8 # JDK 8
-  - temurin11 # JDK 11
-  - temurin17 # JDK 17
-  - temurin19 # JDK 19
-  - temurin21 # JDK 21
+  - temurin@8 # JDK 8
+  - temurin@11 # JDK 11
+  - temurin@17 # JDK 17
+  - temurin@21 # JDK 21
   - vagrant
-  # - virtualbox-beta
   - wireshark
   - zed
   - zoom

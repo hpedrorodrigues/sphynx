@@ -32,6 +32,9 @@ export JAVA_HOME="${JAVA11_HOME}"
 # https://github.com/adoptium/jdk17u/blob/master/src/java.base/share/classes/sun/launcher/resources/launcher.properties#L153-L154
 export MAVEN_OPTS='-Xms512m -Xmx2G'
 
+#|> Gradle
+export GRADLE_USER_HOME="${HOME}/.gradle"
+
 #|> x11
 # https://www.x.org/wiki
 export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-"${HOME}/.config"}"
@@ -53,9 +56,6 @@ export ANDROID_EMULATOR_TOOLS="${ANDROID_HOME}/emulator"
 [ -d "${ANDROID_BUILD_TOOLS}" ] && export PATH="${PATH}:${ANDROID_BUILD_TOOLS}"
 [ -d "${ANDROID_PLATFORM_TOOLS}" ] && export PATH="${PATH}:${ANDROID_PLATFORM_TOOLS}"
 [ -d "${ANDROID_EMULATOR_TOOLS}" ] && export PATH="${PATH}:${ANDROID_EMULATOR_TOOLS}"
-
-#|> Gradle
-export GRADLE_USER_HOME="${HOME}/.gradle"
 
 #|> Starship
 export STARSHIP_CONFIG="${HOME}/.config/starship/starship.toml"

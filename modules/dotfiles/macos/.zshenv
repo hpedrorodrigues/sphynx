@@ -24,7 +24,6 @@ unset BASIC_PATHS
 export JAVA8_HOME='/Library/Java/JavaVirtualMachines/temurin-8.jdk/Contents/Home'
 export JAVA11_HOME='/Library/Java/JavaVirtualMachines/temurin-11.jdk/Contents/Home'
 export JAVA17_HOME='/Library/Java/JavaVirtualMachines/temurin-17.jdk/Contents/Home'
-export JAVA19_HOME='/Library/Java/JavaVirtualMachines/temurin-19.jdk/Contents/Home'
 export JAVA21_HOME='/Library/Java/JavaVirtualMachines/temurin-21.jdk/Contents/Home'
 
 export JAVA_HOME="${JAVA17_HOME}"
@@ -38,6 +37,9 @@ export SCALA_HOME="${SCALA2_HOME}"
 #|> Maven
 # https://github.com/adoptium/jdk17u/blob/master/src/java.base/share/classes/sun/launcher/resources/launcher.properties#L153-L154
 export MAVEN_OPTS='-Xms512m -Xmx2G'
+
+#|> Gradle
+export GRADLE_USER_HOME="${HOME}/.gradle"
 
 #|> Android
 # Reference: https://developer.android.com/tools/variables
@@ -53,9 +55,6 @@ export ANDROID_TOOLS="${ANDROID_HOME}/tools"
 [ -d "${ANDROID_EMULATOR_TOOLS}" ] && export PATH="${PATH}:${ANDROID_EMULATOR_TOOLS}"
 [ -d "${ANDROID_PLATFORM_TOOLS}" ] && export PATH="${PATH}:${ANDROID_PLATFORM_TOOLS}"
 [ -d "${ANDROID_TOOLS}" ] && export PATH="${PATH}:${ANDROID_TOOLS}"
-
-#|> Gradle
-export GRADLE_USER_HOME="${HOME}/.gradle"
 
 #|> Starship
 export STARSHIP_CONFIG="${HOME}/.config/starship/starship.toml"
