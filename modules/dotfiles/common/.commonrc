@@ -49,37 +49,6 @@ done
 unset DOTFILES_DIR
 unset DOTFILES
 
-#|> NVM
-# https://github.com/nvm-sh/nvm/issues/2724
-# Lazy loading nvm
-export NVM_DIR="${HOME}/.nvm"
-
-if [ -d "${NVM_DIR}" ]; then
-  function nvm() {
-    unset -f nvm
-
-    local nvm_files=(
-      "${NVM_DIR}/nvm.sh"
-      "${NVM_DIR}/bash_completion"
-      "/opt/homebrew/opt/nvm/nvm.sh"
-      "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
-      "/usr/local/opt/nvm/nvm.sh"
-      "/usr/local/opt/nvm/etc/bash_completion.d/nvm"
-    )
-
-    for nvm_file in "${nvm_files[@]}"; do
-      if [ -s "${nvm_file}" ]; then
-        source "${nvm_file}"
-      fi
-    done
-
-    unset nvm_file nvm_files
-
-    # shellcheck disable=SC2068  # Double quote array expansions
-    nvm ${@}
-  }
-fi
-
 #|> Krew
 export KREW_BIN="${HOME}/.krew/bin"
 
@@ -93,18 +62,6 @@ export GO_WORKSPACE="${GOPATH}/src"
 
 if [ -d "${GOPATH}/bin" ] && [[ "${PATH}" != *"${GOPATH}/bin"* ]]; then
   export PATH="${PATH}:${GOPATH}/bin"
-fi
-
-#|> pyenv
-# https://github.com/pyenv/pyenv/issues/784#issuecomment-826444110
-# Lazy loading pyenv (based on https://github.com/davidparsson/zsh-pyenv-lazy/tree/master)
-if hash pyenv 2>/dev/null; then
-  function pyenv() {
-    unset -f pyenv
-    eval "$(pyenv init -)"
-    # shellcheck disable=SC2068  # Double quote array expansions
-    pyenv ${@}
-  }
 fi
 
 #|> Non-public scripts
