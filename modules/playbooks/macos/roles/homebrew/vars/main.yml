@@ -68,6 +68,7 @@ formulas:
   - maven
   - mbode/tap/terraform-state-mover
   - minamijoyo/hcledit/hcledit
+  - mise
   - mongosh
   - navi
   - ncdu
