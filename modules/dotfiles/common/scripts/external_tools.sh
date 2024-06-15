@@ -107,5 +107,10 @@ function shellcheck() {
 ## e.g. shfmt -l -w <script-file>
 function shfmt() {
   # shellcheck disable=SC2068  # Double quote array expansions
-  external_tool 'shfmt' -i 2 -ci -bn ${@}
+  docker run \
+    --name 'shfmt' \
+    --rm \
+    --interactive \
+    --volume "${PWD}:/mnt" \
+    ghcr.io/hpedrorodrigues/shfmt -i 2 -ci -bn ${@}
 }
