@@ -99,7 +99,12 @@ function hadolint() {
 function shellcheck() {
   # shellcheck disable=SC2086  # quote this to prevent word splitting
   # shellcheck disable=SC2068  # Double quote array expansions
-  external_tool 'shellcheck' ${SHELLCHECK_OPTS:-} ${@}
+  docker run \
+    --name 'shellcheck' \
+    --rm \
+    --interactive \
+    --volume "${PWD}:/mnt" \
+    ghcr.io/hpedrorodrigues/shellcheck ${SHELLCHECK_OPTS:-} ${@}
 }
 
 ## shfmt (https://github.com/mvdan/sh)

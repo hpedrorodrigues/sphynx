@@ -9,7 +9,7 @@ tasks:
       - docker buildx create --name multiarch --driver docker-container --use
   build:
     vars:
-      IMAGES: hadolint shellcheck
+      IMAGES: hadolint
       PLATFORM: linux/amd64,linux/arm64
     cmds:
       - for: { var: IMAGES }
