@@ -78,35 +78,28 @@ export ZSH_AUTO_SUGGESTIONS_DIR='/opt/homebrew/share/zsh-autosuggestions'
 #|> Google Cloud SDK
 # Lazy loading gcloud
 if [ -z "${CLOUDSDK_HOME:-}" ]; then
-  function gcloud() {
-    unset -f gcloud
+  gcloud_locations=(
+    '/opt/homebrew/Caskroom/google-cloud-sdk/latest/google-cloud-sdk'
+    '/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk'
+    '/snap/google-cloud-sdk/current'
+  )
 
-    local gcloud_locations=(
-      '/opt/homebrew/Caskroom/google-cloud-sdk/latest/google-cloud-sdk'
-      '/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk'
-      '/snap/google-cloud-sdk/current'
-    )
+  # shellcheck disable=SC2068  # Double quote array expansions
+  for gcloud_location in ${gcloud_locations[@]}; do
+    [ -d "${gcloud_location}" ] || continue
 
-    # shellcheck disable=SC2068  # Double quote array expansions
-    for gcloud_location in ${gcloud_locations[@]}; do
-      [ -d "${gcloud_location}" ] || continue
+    export CLOUDSDK_HOME="${gcloud_location}"
 
-      export CLOUDSDK_HOME="${gcloud_location}"
+    [ -s "${CLOUDSDK_HOME}/path.zsh.inc" ] \
+      && source "${CLOUDSDK_HOME}/path.zsh.inc"
 
-      [ -s "${CLOUDSDK_HOME}/path.zsh.inc" ] \
-        && source "${CLOUDSDK_HOME}/path.zsh.inc"
+    [ -s "${CLOUDSDK_HOME}/completion.zsh.inc" ] \
+      && source "${CLOUDSDK_HOME}/completion.zsh.inc"
 
-      [ -s "${CLOUDSDK_HOME}/completion.zsh.inc" ] \
-        && source "${CLOUDSDK_HOME}/completion.zsh.inc"
+    break
+  done
 
-      break
-    done
-
-    unset gcloud_location gcloud_locations
-
-    # shellcheck disable=SC2068  # Double quote array expansions
-    gcloud ${@}
-  }
+  unset gcloud_location gcloud_locations
 fi
 
 ### Directory shortcuts
