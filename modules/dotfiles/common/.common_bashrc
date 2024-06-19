@@ -43,34 +43,26 @@ hash zoxide 2>/dev/null && eval "$(zoxide init bash)"
 hash mise 2>/dev/null && eval "$(mise activate bash)"
 
 #|> Google Cloud SDK
-# Lazy loading gcloud
 if [ -z "${CLOUDSDK_HOME:-}" ]; then
-  function gcloud() {
-    unset -f gcloud
+  gcloud_locations=(
+    '/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk'
+    '/snap/google-cloud-sdk/current'
+  )
 
-    local gcloud_locations=(
-      '/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk'
-      '/snap/google-cloud-sdk/current'
-    )
+  # shellcheck disable=SC2068  # Double quote array expansions
+  for gcloud_location in ${gcloud_locations[@]}; do
+    [ -d "${gcloud_location}" ] || continue
 
-    # shellcheck disable=SC2068  # Double quote array expansions
-    for gcloud_location in ${gcloud_locations[@]}; do
-      [ -d "${gcloud_location}" ] || continue
+    export CLOUDSDK_HOME="${gcloud_location}"
 
-      export CLOUDSDK_HOME="${gcloud_location}"
+    [ -s "${CLOUDSDK_HOME}/path.bash.inc" ] \
+      && source "${CLOUDSDK_HOME}/path.bash.inc"
 
-      [ -s "${CLOUDSDK_HOME}/path.bash.inc" ] \
-        && source "${CLOUDSDK_HOME}/path.bash.inc"
+    [ -s "${CLOUDSDK_HOME}/completion.bash.inc" ] \
+      && source "${CLOUDSDK_HOME}/completion.bash.inc"
 
-      [ -s "${CLOUDSDK_HOME}/completion.bash.inc" ] \
-        && source "${CLOUDSDK_HOME}/completion.bash.inc"
+    break
+  done
 
-      break
-    done
-
-    unset gcloud_location gcloud_locations
-
-    # shellcheck disable=SC2068  # Double quote array expansions
-    gcloud ${@}
-  }
+  unset gcloud_location gcloud_locations
 fi
