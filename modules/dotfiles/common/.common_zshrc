@@ -76,7 +76,6 @@ export ZSH_AUTO_SUGGESTIONS_DIR='/opt/homebrew/share/zsh-autosuggestions'
   && source "${ZSH_AUTO_SUGGESTIONS_DIR}/zsh-autosuggestions.zsh"
 
 #|> Google Cloud SDK
-# Lazy loading gcloud
 if [ -z "${CLOUDSDK_HOME:-}" ]; then
   gcloud_locations=(
     '/opt/homebrew/Caskroom/google-cloud-sdk/latest/google-cloud-sdk'
