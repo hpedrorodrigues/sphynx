@@ -59,6 +59,7 @@ function kgp() {
     | GREP_COLOR='01;31' grep --color=always -E 'OOMKilled|$' \
     | GREP_COLOR='01;31' grep --color=always -E 'CreateContainerConfigError|$' \
     | GREP_COLOR='01;31' grep --color=always -E 'RunContainerError|$' \
+    | GREP_COLOR='01;31' grep --color=always -E 'InvalidImageName|$' \
     | GREP_COLOR='01;31' grep --color=always -E 'ErrImagePull|$' \
     | GREP_COLOR='01;31' grep --color=always -E 'Init:Error|$' \
     | GREP_COLOR='01;31' grep --color=always -E 'PostStartHookError|$' \
