@@ -69,7 +69,7 @@ function sx::k8s::pods::resource_summary() {
   while IFS='' read -r pod_output; do
     local pod_name="$(echo "${pod_output}" | awk -F ',' '{ print $2 }')"
     local container_name="$(echo "${pod_output}" | grep "${pod_name}" | awk -F ',' '{ print $3 }')"
-    local container_top_output="$(echo -e "${top_output}" | grep "${pod_name}" | grep " ${container_name} ")"
+    local container_top_output="$(echo -e "${top_output}" | grep "${pod_name} " | grep " ${container_name} ")"
 
     if ${all_namespaces}; then
       local cpu_usage="$(echo -e "${container_top_output}" | awk '{ print $4 }')"
