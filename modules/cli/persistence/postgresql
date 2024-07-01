@@ -24,8 +24,8 @@ source "${SPHYNX_NAMESPACE_DIR}/core/postgresql.sh"
 ##? Examples:
 ##?     postgresql connect --dburi 'postgresql://postgres:postgres@localhost:5432/postgres'
 ##?     postgresql list_connected_pods --dburi 'postgresql://postgres:postgres@localhost:5432/postgres'
-##?     postgresql dump --dburi 'postgresql://qa:qa@localhost:5432/qa' --file qa.tar
-##?     postgresql restore --file test.tar --dburi 'postgresql://test:test@localhost:5432/test'
+##?     postgresql dump --dburi 'postgresql://qa:qa@localhost:5432/qa' --file qa.dump
+##?     postgresql restore --file test.dump --dburi 'postgresql://test:test@localhost:5432/test'
 
 sx::parse_arguments "${@}"
 
