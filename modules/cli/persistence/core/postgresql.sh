@@ -19,7 +19,7 @@ function sx::postgresql::dump() {
   PGAPPNAME="${SX_APPLICATION_NAME}" pg_dump \
     --dbname "${db_uri}" \
     --blobs \
-    --format t \
+    --format c \
     --file "${file_name}" \
     --verbose
 }
@@ -40,8 +40,7 @@ function sx::postgresql::restore() {
 
   PGAPPNAME="${SX_APPLICATION_NAME}" pg_restore \
     --dbname "${db_uri}" \
-    --no-owner \
-    --no-privileges \
+    --format c \
     --verbose \
     "${file_name}"
 }
