@@ -50,7 +50,6 @@ function sx::k8s::debug() {
       local -r container_name="$(echo "${selected}" | awk '{ print $3 }')"
 
       sx::k8s_command::debug "${ns}" "${name}" "${container_name}" "${image}"
-      break
     done
   fi
 }
@@ -61,27 +60,18 @@ function sx::k8s_command::debug() {
   local -r container="${3}"
   local -r image="${4}"
 
-  local -r shells=(
-    '/bin/bash'
-    '/bin/sh'
-  )
+  local -r shell='/bin/bash'
 
-  for shell in "${shells[@]}"; do
-    if sx::k8s::cli exec -n "${ns}" "${name}" -c "${container}" -- "${shell}" -c 'exit' &>/dev/null; then
-      sx::log::info "Now you can execute commands in \"${name}/${container}\" using image \"${image}\" with \"${shell}\"\n"
+  sx::log::info "Now you can execute commands in \"${name}/${container}\" using image \"${image}\" with \"${shell}\"\n"
 
-      sx::k8s::cli debug "${name}" \
-        --stdin \
-        --tty \
-        --namespace "${ns}" \
-        --target "${container}" \
-        --image "${image}" \
-        --quiet \
-        -- "${shell}" -c "PS1='${SX_PS1}' exec ${shell}"
+  sx::k8s::cli debug "${name}" \
+    --stdin \
+    --tty \
+    --namespace "${ns}" \
+    --target "${container}" \
+    --image "${image}" \
+    --quiet \
+    -- "${shell}" -c "PS1='${SX_PS1}' exec ${shell}"
 
-      exit "${?}"
-    fi
-  done
-
-  sx::log::fatal "No shell available to run in \"${name}/${image}\""
+  exit "${?}"
 }
