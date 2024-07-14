@@ -24,9 +24,8 @@ function sx::fs::extract() {
   local -r relative_path="../${compressed_file}"
 
   case "${relative_path%,}" in
-    *.cbt | *.tar.bz2 | *.tar.gz | *.tar.xz | *.tbz2 | *.tgz | *.txz | *.tar)
-      tar xvf "${relative_path}"
-      ;;
+    *.cbt | *.tar.bz2 | *.tar.gz | *.tar.xz | *.tbz2 | *.tgz | *.txz | *.tar) tar xvf "${relative_path}" ;;
+    *-r*.apk) tar xvf "${relative_path}" ;; # alpine package
     *.jar) jar xf "${relative_path}" ;;
     *.lzma) unlzma "${relative_path}" ;;
     *.bz2) bunzip2 "${relative_path}" ;;
