@@ -34,44 +34,6 @@ function kcli() {
     "confluentinc/cp-kafka:${CONFLUENT_VERSION}" "${@}"
 }
 
-# Sphynx images
-
-export DOCKER_REPOSITORY="${DOCKER_REPOSITORY:-hpedrorodrigues/tools}"
-
-## Base function responsible for running external tools
-##
-## e.g. external_tool <tool-name> <args>...
-function external_tool() {
-  local -r tool_name="${1}"
-  local -r image="${DOCKER_REPOSITORY}:${tool_name}"
-
-  if { [ -n "${ZSH_VERSION:-}" ] && whence -cp "${tool_name}" &>/dev/null; } \
-    || { type -P "${tool_name}" &>/dev/null; }; then
-    # shellcheck disable=SC2068  # Double quote array expansions
-    command ${tool_name} ${@:2}
-    return ${?}
-  elif ! hash 'docker' 2>/dev/null; then
-    echo 'The command-line \"docker\" is not available in your path' >&2
-    return 1
-  else
-    local -r state="$(
-      docker inspect --format '{{.State.Running}}' "${tool_name}" 2>/dev/null
-    )"
-    if [ "${state}" = 'true' ]; then
-      echo "There's already an instance of \"${tool_name}\" running." >&2
-      return 1
-    fi
-
-    # shellcheck disable=SC2068  # Double quote array expansions
-    docker run \
-      --name "${tool_name}" \
-      --rm \
-      --interactive \
-      --volume "${PWD}:/mnt" \
-      "${image}" ${@:2}
-  fi
-}
-
 ## Prettier (https://prettier.io)
 ##
 ## e.g. prettier --check '*/**/*.{yml,yaml}'
@@ -87,10 +49,15 @@ function prettier() {
 
 ## Hadolint (https://github.com/hadolint/hadolint)
 ##
-## e.g. hadolint < <path-to-Dockerfile>
+## e.g. hadolint - --format=tty < <path-to-Dockerfile>
 function hadolint() {
   # shellcheck disable=SC2068  # Double quote array expansions
-  external_tool 'hadolint' ${@}
+  docker run \
+    --name 'hadolint' \
+    --rm \
+    --interactive \
+    --volume "${PWD}:/mnt" \
+    ghcr.io/hpedrorodrigues/hadolint ${@}
 }
 
 ## ShellCheck (https://github.com/koalaman/shellcheck)

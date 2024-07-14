@@ -27,8 +27,8 @@ function sx::self::fmt::run_prettier() {
 
     cd "${SPHYNX_DIR}" || exit 1
 
-    prettier --write '*/**/*.{yml,yaml}'
     prettier --write '*/**/*.json'
+    prettier --write '*/**/*.{yml,yaml}'
     prettier --single-quote --write '*/**/*.js'
   )
 }

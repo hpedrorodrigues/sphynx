@@ -45,7 +45,7 @@ function sx::self::lint::run_hadolint() {
 
   while IFS= read -r -d '' dockerfile; do
     sx::log::info "${dockerfile}"
-    hadolint --format=tty <"${dockerfile}"
+    hadolint - --format=tty <"${dockerfile}"
   done < <(find . -name 'Dockerfile' -print0)
 }
 
