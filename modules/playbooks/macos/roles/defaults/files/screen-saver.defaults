@@ -26,8 +26,8 @@ defaults write ${domain} wvous-tl-modifier -int 0
 defaults write ${domain} wvous-tr-corner -int 5
 defaults write ${domain} wvous-tr-modifier -int 0
 
-# Bottom left screen corner — start screen saver
-defaults write ${domain} wvous-bl-corner -int 5
+# Bottom left screen corner — put display to sleep
+defaults write ${domain} wvous-bl-corner -int 10
 defaults write ${domain} wvous-bl-modifier -int 0
 
 # Bottom right screen corner — start screen saver

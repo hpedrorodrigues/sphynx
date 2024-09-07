@@ -8,6 +8,7 @@
     ${HOME}/.sphynx:
       force: true
 - link:
+    ${HOME}/.zprofile: ${SPHYNX_DIR}/modules/dotfiles/common/.zprofile
     ${HOME}/.commonrc: ${SPHYNX_DIR}/modules/dotfiles/common/.commonrc
     ${HOME}/.common_bashrc: ${SPHYNX_DIR}/modules/dotfiles/common/.common_bashrc
     ${HOME}/.common_zshrc: ${SPHYNX_DIR}/modules/dotfiles/common/.common_zshrc
