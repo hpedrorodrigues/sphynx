@@ -93,8 +93,7 @@ formulas:
   - stern
   - subnetcalc
   - telnet
-  - terragrunt
-  - tfenv
+  - tenv
   - the_silver_searcher
   - tldr
   - tmux
@@ -111,6 +110,7 @@ formulas:
   - zsh-autosuggestions
 
 casks:
+  - 1password
   - alacritty
   - appcleaner
   - bartender
