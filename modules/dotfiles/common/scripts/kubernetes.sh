@@ -57,6 +57,7 @@ function kgp() {
     | GREP_COLOR='01;33' grep --color=always -E 'Pending|$' \
     | GREP_COLOR='01;33' grep --color=always -E 'Terminating|$' \
     | GREP_COLOR='01;31' grep --color=always -E 'OutOfcpu|$' \
+    | GREP_COLOR='01;31' grep --color=always -E 'OutOfmemory|$' \
     | GREP_COLOR='01;31' grep --color=always -E 'OOMKilled|$' \
     | GREP_COLOR='01;31' grep --color=always -E 'CreateContainerConfigError|$' \
     | GREP_COLOR='01;31' grep --color=always -E 'RunContainerError|$' \
