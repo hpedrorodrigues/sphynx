@@ -50,6 +50,7 @@
   syntax-theme = Dracula
   plus-style = syntax "#0f5323"
   minus-style = syntax "#67060c"
+  navigate = true # use n and N to move between diff sections
 [delta "decorations"]
   file-style = bold yellow ul
 [filter "lfs"]
@@ -67,6 +68,9 @@
   enabled = 1
 [merge]
   tool = idea
+  conflictstyle = diff3
+[diff]
+  colorMoved = default
 [mergetool "idea"]
   cmd = idea merge $LOCAL $REMOTE $BASE $MERGED --wait
   prompt = false
