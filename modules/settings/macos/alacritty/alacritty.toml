@@ -1,8 +1,10 @@
 # https://alacritty.org/config-alacritty.html
-
+[general]
 live_config_reload = true
 
-[shell]
+[terminal]
+
+[terminal.shell]
 program = "/usr/local/bin/zsh"
 args = [
   "--login",
