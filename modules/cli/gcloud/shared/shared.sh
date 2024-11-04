@@ -28,7 +28,7 @@ function sx::gcloud::project::current() {
 
 function sx::gcloud::project::list() {
   gcloud projects list \
-    --format='value[separator=","](projectId, name, lifecycleState)' \
+    --format='value[separator=","](projectNumber, projectId, name, lifecycleState)' \
     | column -t -s ','
 }
 
