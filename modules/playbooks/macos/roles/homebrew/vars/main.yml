@@ -110,7 +110,7 @@ formulas:
   - zsh-autosuggestions
 
 casks:
-  - 1password
+  # - 1password
   - alacritty
   - appcleaner
   - bartender
@@ -120,7 +120,6 @@ casks:
   - deckset
   - discord
   - docker
-  - flux
   - github
   - google-chrome
   - google-cloud-sdk
@@ -132,6 +131,7 @@ casks:
   - monitorcontrol
   - postman
   - rectangle
+  - rio
   - session-manager-plugin
   - skype
   - spotify
