@@ -4,6 +4,9 @@ hide-mouse-cursor-when-typing = true
 padding-x = 5
 padding-y = [5, 5]
 
+[keyboard]
+disable-ctlseqs-alt = false
+
 [cursor]
 shape = 'underline'
 blinking = false
