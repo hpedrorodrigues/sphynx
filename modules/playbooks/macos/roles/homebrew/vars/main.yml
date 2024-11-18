@@ -50,6 +50,7 @@ formulas:
   - hugo
   - hyperfine
   - icdiff
+  - ipcalc
   - jadx
   - jq
   - kcat
