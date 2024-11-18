@@ -69,6 +69,7 @@ formulas:
   - minamijoyo/hcledit/hcledit
   - mise
   - mongosh
+  - mtr
   - navi
   - ncdu
   - nmap
