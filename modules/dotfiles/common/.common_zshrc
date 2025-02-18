@@ -88,17 +88,19 @@ if [ -z "${CLOUDSDK_HOME:-}" ]; then
     [ -d "${gcloud_location}" ] || continue
 
     export CLOUDSDK_HOME="${gcloud_location}"
-
-    [ -s "${CLOUDSDK_HOME}/path.zsh.inc" ] \
-      && source "${CLOUDSDK_HOME}/path.zsh.inc"
-
-    [ -s "${CLOUDSDK_HOME}/completion.zsh.inc" ] \
-      && source "${CLOUDSDK_HOME}/completion.zsh.inc"
-
     break
   done
 
   unset gcloud_location gcloud_locations
+fi
+
+# These files take a while to run. Need to figure out how to speed up their load.
+if [ -n "${CLOUDSDK_HOME:-}" ]; then
+  [ -s "${CLOUDSDK_HOME}/path.zsh.inc" ] \
+    && source "${CLOUDSDK_HOME}/path.zsh.inc"
+
+  [ -s "${CLOUDSDK_HOME}/completion.zsh.inc" ] \
+    && source "${CLOUDSDK_HOME}/completion.zsh.inc"
 fi
 
 ### Directory shortcuts

@@ -2,7 +2,7 @@ applications:
   - 946399090 # Telegram Lite
   - 310633997 # WhatsApp
   - 497799835 # Xcode
-  - 803453959 # Slack
+  # - 803453959 # Slack
   - 425955336 # Skitch
   - 1056643111 # Clocker
   - 409183694 # Keynote

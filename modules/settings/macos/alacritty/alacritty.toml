@@ -10,7 +10,7 @@ args = [
   "--login",
   "--interactive",
   "-c",
-  "sx terminal tmux force-attach 'sphynx'",
+  "exec sx terminal tmux force-attach 'sphynx'",
 ]
 
 [env]

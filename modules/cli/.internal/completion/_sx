@@ -12,4 +12,5 @@ _sx() {
   _arguments "*: :($("${completion_dirname}/complete" "${current_word}" ${words}))"
 }
 
-_sx "${@}"
+# Registers `_sx` as completion function for `sx`.
+compdef _sx sx
