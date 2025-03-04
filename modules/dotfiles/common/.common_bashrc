@@ -5,7 +5,7 @@
 # https://www.gnu.org/software/bash/manual/html_node/Bash-Variables.html
 export HISTSIZE='1000000000'
 export HISTFILESIZE="${HISTSIZE}"
-export HISTIGNORE='ls:history:cd:cd -:* --help: *:pwd:exit'
+export HISTIGNORE='ls:history:cd:cd -:* --help:* --version: *:pwd:exit'
 export HISTCONTROL='ignoreboth:erasedups'
 
 shopt -s nocaseglob # case-insensitive globbing (used in pathname expansion)
@@ -45,6 +45,7 @@ hash mise 2>/dev/null && eval "$(mise activate bash)"
 #|> Google Cloud SDK
 if [ -z "${CLOUDSDK_HOME:-}" ]; then
   gcloud_locations=(
+    '/opt/homebrew/Caskroom/google-cloud-sdk/latest/google-cloud-sdk'
     '/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk'
     '/snap/google-cloud-sdk/current'
   )
@@ -54,15 +55,17 @@ if [ -z "${CLOUDSDK_HOME:-}" ]; then
     [ -d "${gcloud_location}" ] || continue
 
     export CLOUDSDK_HOME="${gcloud_location}"
-
-    [ -s "${CLOUDSDK_HOME}/path.bash.inc" ] \
-      && source "${CLOUDSDK_HOME}/path.bash.inc"
-
-    [ -s "${CLOUDSDK_HOME}/completion.bash.inc" ] \
-      && source "${CLOUDSDK_HOME}/completion.bash.inc"
-
     break
   done
 
   unset gcloud_location gcloud_locations
+fi
+
+# These files take a while to run. Need to figure out how to speed up their load.
+if [ -n "${CLOUDSDK_HOME:-}" ]; then
+  [ -s "${CLOUDSDK_HOME}/path.bash.inc" ] \
+    && source "${CLOUDSDK_HOME}/path.bash.inc"
+
+  [ -s "${CLOUDSDK_HOME}/completion.bash.inc" ] \
+    && source "${CLOUDSDK_HOME}/completion.bash.inc"
 fi
