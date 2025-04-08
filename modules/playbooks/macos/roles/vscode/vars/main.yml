@@ -2,11 +2,13 @@ configuration_files:
   - settings.json
   - keybindings.json
 
-# code --list-extensions | sort -uf | xargs -I {} echo '- {}'
+# code --list-extensions | sort -uf | xargs -I {} echo '  - {}'
 extensions:
   - christian-kohler.path-intellisense
   - eamodio.gitlens
   - editorconfig.editorconfig
+  - github.copilot
+  - github.copilot-chat
   - github.github-vscode-theme
   - k--kato.intellij-idea-keybindings
   - mads-hartmann.bash-ide-vscode
