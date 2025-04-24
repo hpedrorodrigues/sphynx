@@ -410,18 +410,65 @@ function j() {
 ##
 ## e.g. tf plan
 function tf() {
-  if [ -s 'terragrunt.hcl' ]; then
-    terragrunt "${@}"
-  else
-    terraform "${@}"
+  local -r root_directory="$(git rev-parse --show-toplevel 2>/dev/null)"
+  if [ -z "${root_directory}" ]; then
+    echo 'Not inside a Git repository.' >&2
+    return 1
   fi
+
+  # Search upward from current directory to git root for terragrunt.hcl
+  local search_directory="${PWD}"
+  local tool=''
+  while [[ "${search_directory}" != "/" && "${search_directory}" != "${root_directory}" ]]; do
+    if [[ -f "${search_directory}/terragrunt.hcl" ]]; then
+      tool='terragrunt'
+      break
+    fi
+    search_directory="$(dirname "${search_directory}")"
+  done
+
+  # If not already set, check Git root for terragrunt.hcl
+  if [[ -z "${tool}" && -f "${root_directory}/terragrunt.hcl" ]]; then
+    tool='terragrunt'
+  fi
+
+  # If still not set, check .tool-versions in the Git root
+  if [[ -z "${tool}" ]]; then
+    local -r tool_file="${root_directory}/.tool-versions"
+    if [[ ! -f "${tool_file}" ]]; then
+      echo 'No .tool-versions file found at the Git root.' >&2
+      return 1
+    fi
+
+    if grep -q '^terragrunt ' "${tool_file}"; then
+      tool='terragrunt'
+    elif grep -q '^terraform ' "${tool_file}"; then
+      tool='terraform'
+    elif grep -q '^opentofu ' "${tool_file}"; then
+      tool='tofu'
+    fi
+  fi
+
+  # Exit if no supported tool found
+  if [[ -z "${tool}" ]]; then
+    echo 'No supported tool found (terragrunt, terraform, opentofu).' >&2
+    return 1
+  fi
+
+  command "${tool}" "$@"
 }
 
 ## Recursively find hcl files and rewrite them into a canonical format
 ##
 ## e.g. tfm
 function tfm() {
-  terraform fmt -recursive
+  if hash 'terraform' 2>/dev/null; then
+    terraform fmt -recursive
+  fi
+
+  if hash 'tofu' 2>/dev/null; then
+    tofu fmt -recursive
+  fi
 
   if hash 'terragrunt' 2>/dev/null; then
     terragrunt hclfmt
