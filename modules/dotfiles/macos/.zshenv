@@ -26,7 +26,7 @@ export JAVA11_HOME='/Library/Java/JavaVirtualMachines/temurin-11.jdk/Contents/Ho
 export JAVA17_HOME='/Library/Java/JavaVirtualMachines/temurin-17.jdk/Contents/Home'
 export JAVA21_HOME='/Library/Java/JavaVirtualMachines/temurin-21.jdk/Contents/Home'
 
-export JAVA_HOME="${JAVA17_HOME}"
+export JAVA_HOME="${JAVA21_HOME}"
 
 #|> Scala
 export SCALA2_HOME='/usr/local/opt/scala@2.13'
