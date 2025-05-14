@@ -61,8 +61,9 @@ function sx::k8s_command::debug() {
   local -r image="${4}"
 
   local -r shell='/bin/bash'
+  local -r debugger_container="debugger-$(uuidgen | cut -d '-' -f 1 | tr '[:upper:]' '[:lower:]')"
 
-  sx::log::info "Now you can execute commands in \"${name}/${container}\" using image \"${image}\" with \"${shell}\"\n"
+  sx::log::info "Now you can execute commands in \"${name}(${container})/${debugger_container}\" using image \"${image}\" with \"${shell}\"\n"
 
   sx::k8s::cli debug "${name}" \
     --stdin \
@@ -70,8 +71,9 @@ function sx::k8s_command::debug() {
     --namespace "${ns}" \
     --target "${container}" \
     --image "${image}" \
+    --container "${debugger_container}" \
     --quiet \
-    -- "${shell}" -c "PS1='${SX_PS1}' exec ${shell}"
+    -- "${shell}" -c "PS1='\u@\h|${debugger_container}:\w ' exec ${shell}"
 
   exit "${?}"
 }
