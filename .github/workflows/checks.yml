@@ -11,6 +11,8 @@ jobs:
     name: Lint
     timeout-minutes: 1
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
       - run: ./sx lint
@@ -19,6 +21,8 @@ jobs:
     name: Tests
     timeout-minutes: 1
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
       - run: ./sx test

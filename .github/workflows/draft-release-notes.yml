@@ -7,6 +7,9 @@ on:
 jobs:
   draft_release_notes:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       - uses: release-drafter/release-drafter@v6
         with:
