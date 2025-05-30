@@ -48,32 +48,14 @@ function kgp() {
   # shellcheck disable=SC2068  # Double quote array expansions
   kubectl get pods \
     ${@} \
-    | GREP_COLOR='01;32' grep --color=always -E 'Completed|$' \
-    | GREP_COLOR='01;32' grep --color=always -E 'Running|$' \
-    | GREP_COLOR='01;33' grep --color=always -E 'NotReady|$' \
-    | GREP_COLOR='01;33' grep --color=always -E 'ContainerCreating|$' \
-    | GREP_COLOR='01;33' grep --color=always -E 'PodInitializing|$' \
-    | GREP_COLOR='01;33' grep --color=always -E 'Init:[0-9]/[0-9]|$' \
-    | GREP_COLOR='01;33' grep --color=always -E 'Pending|$' \
-    | GREP_COLOR='01;33' grep --color=always -E 'Terminating|$' \
-    | GREP_COLOR='01;31' grep --color=always -E 'OutOfcpu|$' \
-    | GREP_COLOR='01;31' grep --color=always -E 'OutOfmemory|$' \
-    | GREP_COLOR='01;31' grep --color=always -E 'OOMKilled|$' \
-    | GREP_COLOR='01;31' grep --color=always -E 'Init:CreateContainerConfigError|$' \
-    | GREP_COLOR='01;31' grep --color=always -E 'CreateContainerConfigError|$' \
-    | GREP_COLOR='01;31' grep --color=always -E 'CreateContainerError|$' \
-    | GREP_COLOR='01;31' grep --color=always -E 'RunContainerError|$' \
-    | GREP_COLOR='01;31' grep --color=always -E 'InvalidImageName|$' \
-    | GREP_COLOR='01;31' grep --color=always -E 'ErrImagePull|$' \
-    | GREP_COLOR='01;31' grep --color=always -E 'Init:Error|$' \
-    | GREP_COLOR='01;31' grep --color=always -E 'PostStartHookError|$' \
-    | GREP_COLOR='01;31' grep --color=always -E 'Error|$' \
-    | GREP_COLOR='01;31' grep --color=always -E 'Init:CrashLoopBackOff|$' \
-    | GREP_COLOR='01;31' grep --color=always -E 'Init:ImagePullBackOff|$' \
-    | GREP_COLOR='01;31' grep --color=always -E 'CrashLoopBackOff|$' \
-    | GREP_COLOR='01;31' grep --color=always -E 'ImagePullBackOff|$' \
-    | GREP_COLOR='01;31' grep --color=always -E 'ContainerStatusUnknown|$' \
-    | GREP_COLOR='01;31' grep --color=always -E 'Evicted|$'
+    | GREP_COLOR='01;32' grep --color=always -E '(Running|Completed)|$' \
+    | GREP_COLOR='01;33' grep --color=always -E '(ContainerCreating|PodInitializing|Pending|Terminating|NotReady)|$' \
+    | GREP_COLOR='01;31' grep --color=always -E 'Init:(CreateContainerConfigError|Error|CrashLoopBackOff|ImagePullBackOff)|$' \
+    | GREP_COLOR='01;31' grep --color=always -E '(OutOfcpu|OutOfmemory|OOMKilled)|$' \
+    | GREP_COLOR='01;31' grep --color=always -E '(CreateContainerConfigError|CreateContainerError|RunContainerError|PostStartHookError|Error)|$' \
+    | GREP_COLOR='01;31' grep --color=always -E '(CrashLoopBackOff|ImagePullBackOff)|$' \
+    | GREP_COLOR='01;31' grep --color=always -E '(InvalidImageName|ErrImagePull)|$' \
+    | GREP_COLOR='01;31' grep --color=always -E '(ContainerStatusUnknown|Evicted)|$'
 }
 
 ## Print ingresses with their URI (host + path)
