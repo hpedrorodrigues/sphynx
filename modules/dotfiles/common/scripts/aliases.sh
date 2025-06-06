@@ -76,7 +76,6 @@ alias kq='kubectl get --raw'
 
 alias kk='kubectl krew'
 
-alias ks='sx kubernetes ls'
 alias kd='sx kubernetes describe'
 alias ke='sx kubernetes edit'
 alias kex='sx kubernetes exec'
@@ -96,7 +95,8 @@ alias ktm='kubectl top pods --sort-by=memory --all-namespaces --use-protocol-buf
 
 # Flux
 
-alias fxs='flux get all'
+alias fks='flux get kustomizations'
+alias fhs='flux get helmreleases'
 
 # Network
 alias dns='sx system dns'

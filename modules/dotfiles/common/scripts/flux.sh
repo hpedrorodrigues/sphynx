@@ -1,30 +1,29 @@
 #!/usr/bin/env bash
 
-## Print suspended kustomizations
+## Force Helm Controller to perform a Helm install or upgrade without making
+## changes to the spec.
 ##
-## e.g. fxss
-function fxss() {
-  # Source: https://github.com/fluxcd/flux2/discussions/2494#discussion-3913582
-  kubectl get kustomizations.kustomize.toolkit.fluxcd.io \
-    --all-namespaces \
-    --output json \
-    | jq -r '.items[] | select(.spec.suspend==true) | [.metadata.name,.spec.suspend] | @tsv'
-}
-
-## Suspend kustomization for the current namespace
+## e.g. fr litellm
 ##
-## e.g. fxsn
-function fxsn() {
-  local -r current_namespace="$(sx kubernetes namespace --current)"
+## Reference: https://fluxcd.io/flux/components/helm/helmreleases/#forcing-a-release
+function fr() {
+  local -r func_name="${FUNCNAME[0]:-${funcstack[1]}}"
+  local -r release_name="${1:-}"
+  if [ -z "${release_name}" ]; then
+    echo '!!! You should pass a release name to this function' >&2
+    echo "!!! e.g. ${func_name} litellm" >&2
+    return 1
+  fi
 
-  flux suspend kustomization "${current_namespace}"
-}
+  if ! hash 'kubectl' 2>/dev/null; then
+    echo 'The command-line \"kubectl\" is not available in your path' >&2
+    return 1
+  fi
 
-## Resume kustomization for the current namespace
-##
-## e.g. fxsr
-function fxsr() {
-  local -r current_namespace="$(sx kubernetes namespace --current)"
-
-  flux resume kustomization "${current_namespace}"
+  local -r token="$(date +%s)"
+  kubectl annotate "helmrelease/${release_name}" \
+    --overwrite \
+    --field-manager='flux-client-side-apply' \
+    "reconcile.fluxcd.io/requestedAt=${token}" \
+    "reconcile.fluxcd.io/forceAt=${token}"
 }

@@ -35,15 +35,7 @@ function sx::docker::remove_all() {
   sx::docker::check_requirements
 
   sx::docker::remove_all_containers
+  sx::docker::remove_volumes
 
   docker system prune --force --all --volumes
-}
-
-function sx::docker::clean_up_dirt() {
-  sx::docker::check_requirements
-
-  sx::docker::remove_containers
-  sx::docker::remove_images
-  sx::docker::remove_volumes
-  sx::docker::remove_networks
 }
