@@ -104,6 +104,13 @@ function sx::k8s::resources_and_ports() {
         {{$namespace}}{{","}}{{$kind}}{{","}}{{$name}}{{","}}{{.containerPort}}{{"\n"}}
       {{end}}
     {{end}}
+    {{range .spec.initContainers}}
+      {{if eq .restartPolicy "Always"}}
+        {{range .ports}}
+          {{$namespace}}{{","}}{{$kind}}{{","}}{{$name}}{{","}}{{.containerPort}}{{"\n"}}
+        {{end}}
+      {{end}}
+    {{end}}
   {{end}}'
   # shellcheck disable=SC2016  # expressions don't expand in single quotes
   local -r services_template='

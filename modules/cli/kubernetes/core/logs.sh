@@ -103,7 +103,11 @@ function sx::k8s_command::pod::list() {
     {{$name := .metadata.name}}
     {{$createdAt := .metadata.creationTimestamp}}
     {{range .spec.initContainers}}
-      {{$namespace}}{{","}}{{$name}}{{","}}{{.name}}{{", (Init Container)"}}{{"\n"}}
+      {{if eq .restartPolicy "Always"}}
+        {{$namespace}}{{","}}{{$name}}{{","}}{{.name}}{{", (Sidecar Container)"}}{{"\n"}}
+      {{else}}
+        {{$namespace}}{{","}}{{$name}}{{","}}{{.name}}{{", (Init Container)"}}{{"\n"}}
+      {{end}}
     {{end}}
     {{range .spec.containers}}
       {{$namespace}}{{","}}{{$name}}{{","}}{{.name}}{{"\n"}}

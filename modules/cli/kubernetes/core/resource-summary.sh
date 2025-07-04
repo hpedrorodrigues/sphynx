@@ -41,6 +41,17 @@ function sx::k8s::pods::resource_summary() {
       {{.resources.requests.memory}}{{","}}
       {{.resources.limits.memory}}{{"\n"}}
     {{end}}
+    {{range .spec.initContainers}}
+      {{if eq .restartPolicy "Always"}}
+        {{$namespace}}{{","}}
+        {{$name}}{{","}}
+        {{.name}}{{",_cpu_usage_,"}}
+        {{.resources.requests.cpu}}{{","}}
+        {{.resources.limits.cpu}}{{",_memory_usage_,"}}
+        {{.resources.requests.memory}}{{","}}
+        {{.resources.limits.memory}}{{"\n"}}
+      {{end}}
+    {{end}}
   {{end}}'
 
   # shellcheck disable=SC2086  # quote this to prevent word splitting
