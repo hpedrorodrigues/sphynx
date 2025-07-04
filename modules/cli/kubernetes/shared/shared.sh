@@ -57,6 +57,11 @@ function sx::k8s::running_pods() {
     {{range .spec.containers}}
       {{$namespace}}{{","}}{{$name}}{{","}}{{.name}}{{"\n"}}
     {{end}}
+    {{range .spec.initContainers}}
+      {{if eq .restartPolicy "Always"}}
+        {{$namespace}}{{","}}{{$name}}{{","}}{{.name}}{{"\n"}}
+      {{end}}
+    {{end}}
   {{end}}'
 
   # shellcheck disable=SC2086  # quote this to prevent word splitting
