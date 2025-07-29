@@ -123,6 +123,7 @@ casks:
   - deckset
   - discord
   - docker
+  - ghostty
   - github
   - google-chrome
   - google-cloud-sdk

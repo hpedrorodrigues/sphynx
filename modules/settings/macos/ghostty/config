@@ -1,0 +1,47 @@
+# Documentation
+#
+# ghostty +show-config --default --docs
+# https://ghostty.org/docs/config/reference
+# https://github.com/search?type=code&q=path%3A%2F%5E.*ghostty.*config%24%2F
+
+### Window
+background-opacity = "0.9"
+background-blur = "true"
+
+window-padding-x = "8"
+window-padding-y = "8"
+window-theme = "auto"
+window-padding-balance = "true"
+
+confirm-close-surface = "false"
+
+### Terminal
+command = "/usr/local/bin/zsh --login --interactive -c 'exec sx terminal tmux force-attach \"sphynx\"'"
+
+shell-integration = "zsh"
+shell-integration-features = "no-cursor,title"
+
+clipboard-read = "allow"
+clipboard-write = "allow"
+copy-on-select = "true"
+
+### System
+
+macos-option-as-alt = "false"
+
+### Font (ghostty +list-fonts)
+font-family = "Fira Code"
+font-family-bold = "Fira Code Bold"
+font-family-italic = "Fira Code Retina"
+font-family-bold-italic = "Fira Code SemiBold"
+font-size = "15"
+
+### Colors (ghostty +list-themes)
+theme = "Dracula"
+
+### Cursor
+cursor-style = "underline"
+
+### Keyboard (ghostty +list-actions)
+
+keybind = "cmd+shift+r=reload_config"
