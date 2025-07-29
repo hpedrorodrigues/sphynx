@@ -14,9 +14,10 @@ window-theme = "auto"
 window-padding-balance = "true"
 
 confirm-close-surface = "false"
+quit-after-last-window-closed = "true"
 
 ### Terminal
-command = "/usr/local/bin/zsh --login --interactive -c 'exec sx terminal tmux force-attach \"sphynx\"'"
+command = "/usr/local/bin/zsh --login --interactive -c 'exec sx terminal tmux force-attach sphynx'"
 
 shell-integration = "zsh"
 shell-integration-features = "no-cursor,title"

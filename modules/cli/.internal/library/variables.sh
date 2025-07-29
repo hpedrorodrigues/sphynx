@@ -13,15 +13,17 @@ export SX_FZF_ARGS="${SX_FZF_ARGS:---ansi --select-1 --no-preview --cycle}"
 # These variables are used in commands that are based on a state
 # e.g. tmux ls
 # e.g. kubernetes namespace --list
-if sx::os::is_command_available 'tput' \
-  && { [ "${TERM}" = 'xterm-256color' ] || [ "${TERM}" = 'screen-256color' ]; }; then
-  export SX_CURRENT_ITEM_BGCOLOR="${SX_CURRENT_ITEM_BGCOLOR:-$(tput setab 0)}" # Black
-  export SX_CURRENT_ITEM_FGCOLOR="${SX_CURRENT_ITEM_FGCOLOR:-$(tput setaf 6)}" # Cyan
-  export SX_RESETCOLOR="${SX_RESETCOLOR:-$(tput sgr0)}"
+# Similar to the `fzf` command: https://github.com/junegunn/fzf/blob/v0.65.0/src/tui/light_unix.go#L22-L29
+if sx::os::is_command_available 'tput' && [[ "$(tput colors)" -ge 256 ]]; then
+  export SX_CURRENT_ITEM_BGCOLOR="${SX_CURRENT_ITEM_BGCOLOR:-$(tput setab 236)}" # Background: dark gray (236)
+  export SX_CURRENT_ITEM_FGCOLOR="${SX_CURRENT_ITEM_FGCOLOR:-$(tput setaf 15)}"  # Foreground: bright white (15)
+  export SX_RESETCOLOR="${SX_RESETCOLOR:-$(tput sgr0)}"                          # Reset attributes
 else
-  export SX_CURRENT_ITEM_BGCOLOR="${SX_CURRENT_ITEM_BGCOLOR:-\e[1;40m}" # Black
-  export SX_CURRENT_ITEM_FGCOLOR="${SX_CURRENT_ITEM_FGCOLOR:-\e[1;36m}" # Cyan
-  export SX_RESETCOLOR="${SX_RESETCOLOR:-\e[0m}"
+  # Fallback using safe, widely supported ANSI escape codes.
+  # Use closest available basic colors: black bg + bold white text.
+  export SX_CURRENT_ITEM_BGCOLOR="${SX_CURRENT_ITEM_BGCOLOR:-$'\e[40m'}"   # Background: black
+  export SX_CURRENT_ITEM_FGCOLOR="${SX_CURRENT_ITEM_FGCOLOR:-$'\e[1;37m'}" # Foreground: bright white (bold)
+  export SX_RESETCOLOR="${SX_RESETCOLOR:-$'\e[0m'}"                        # Reset attributes
 fi
 
 function sx::color::current_item::echo() {
