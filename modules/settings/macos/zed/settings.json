@@ -23,5 +23,6 @@
   },
   "preview_tabs": {
     "enabled": false
-  }
+  },
+  "restore_on_startup": "none"
 }
