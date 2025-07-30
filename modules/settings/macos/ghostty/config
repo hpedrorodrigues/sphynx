@@ -5,7 +5,7 @@
 # https://github.com/search?type=code&q=path%3A%2F%5E.*ghostty.*config%24%2F
 
 ### Window
-background-opacity = "0.9"
+background-opacity = "0.8"
 background-blur = "true"
 
 window-padding-x = "8"
@@ -14,9 +14,10 @@ window-theme = "auto"
 window-padding-balance = "true"
 
 confirm-close-surface = "false"
+quit-after-last-window-closed = "true"
 
 ### Terminal
-command = "/usr/local/bin/zsh --login --interactive -c 'exec sx terminal tmux force-attach \"sphynx\"'"
+command = "/usr/local/bin/zsh --login --interactive -c 'exec sx terminal tmux force-attach sphynx'"
 
 shell-integration = "zsh"
 shell-integration-features = "no-cursor,title"
