@@ -18,12 +18,6 @@ function management() {
   fi
 
   case "${action}" in
-    code)
-      code "${directory}"
-      ;;
-    cursor)
-      cursor "${directory}"
-      ;;
     zed)
       zed "${directory}"
       ;;
@@ -61,8 +55,6 @@ function management() {
       echo "!!! No supported action: \"${action}\"" >&2
       echo '!!!' >&2
       echo '!!! Available actions:' >&2
-      echo '!!!   - code' >&2
-      echo '!!!   - cursor' >&2
       echo '!!!   - zed' >&2
       echo '!!!   - go | j | jump' >&2
       echo '!!!   - status' >&2

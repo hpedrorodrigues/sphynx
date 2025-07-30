@@ -15,9 +15,9 @@ export SX_FZF_ARGS="${SX_FZF_ARGS:---ansi --select-1 --no-preview --cycle}"
 # e.g. kubernetes namespace --list
 # Similar to the `fzf` command: https://github.com/junegunn/fzf/blob/v0.65.0/src/tui/light_unix.go#L22-L29
 if sx::os::is_command_available 'tput' && [[ "$(tput colors)" -ge 256 ]]; then
-  export SX_CURRENT_ITEM_BGCOLOR="${SX_CURRENT_ITEM_BGCOLOR:-$(tput setab 236)}" # Background: dark gray (236)
-  export SX_CURRENT_ITEM_FGCOLOR="${SX_CURRENT_ITEM_FGCOLOR:-$(tput setaf 15)}"  # Foreground: bright white (15)
-  export SX_RESETCOLOR="${SX_RESETCOLOR:-$(tput sgr0)}"                          # Reset attributes
+  export SX_CURRENT_ITEM_BGCOLOR="${SX_CURRENT_ITEM_BGCOLOR:-$(tput bold && tput setab 8)}" # Background: bright black (8)
+  export SX_CURRENT_ITEM_FGCOLOR="${SX_CURRENT_ITEM_FGCOLOR:-$(tput setaf 15)}"             # Foreground: bright white (15)
+  export SX_RESETCOLOR="${SX_RESETCOLOR:-$(tput sgr0)}"                                     # Reset attributes
 else
   # Fallback using safe, widely supported ANSI escape codes.
   # Use closest available basic colors: black bg + bold white text.

@@ -7,7 +7,20 @@
 // custom settings, run the `open default settings` command
 // from the command palette or from `Zed` application menu.
 {
+  "theme": "One Dark",
   "icon_theme": "Catppuccin Macchiato",
+  "ui_font_family": "Fira Code",
+  "ui_font_size": 16,
+  "buffer_font_family": "Fira Code",
+  "buffer_font_size": 16,
+  "restore_on_startup": "none",
+  "scroll_beyond_last_line": "off",
+  "lsp_document_colors": "background", // https://github.com/huacnlee/color-lsp/tree/main/zed-color-highlight
+  "auto_install_extensions": {
+    "catppuccin-icons": true,
+    "color-highlight": true,
+    "git-firefly": true
+  },
   "agent": {
     "model_parameters": [],
     "default_model": {
@@ -15,14 +28,10 @@
       "model": "gpt-4.1"
     }
   },
-  "theme": "One Dark",
-  "ui_font_size": 16,
-  "buffer_font_size": 16,
-  "auto_install_extensions": {
-    "catppuccin-icons": true
-  },
   "preview_tabs": {
     "enabled": false
   },
-  "restore_on_startup": "none"
+  "minimap": {
+    "show": "never"
+  }
 }
