@@ -15,11 +15,15 @@
   "buffer_font_size": 16,
   "restore_on_startup": "none",
   "scroll_beyond_last_line": "off",
-  "lsp_document_colors": "background", // https://github.com/huacnlee/color-lsp/tree/main/zed-color-highlight
+  // https://github.com/huacnlee/color-lsp/tree/main/zed-color-highlight
+  "lsp_document_colors": "background",
+  "base_keymap": "JetBrains",
   "auto_install_extensions": {
     "catppuccin-icons": true,
     "color-highlight": true,
-    "git-firefly": true
+    "git-firefly": true,
+    "terraform": true,
+    "toml": true
   },
   "agent": {
     "model_parameters": [],
