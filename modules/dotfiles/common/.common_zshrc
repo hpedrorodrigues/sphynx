@@ -42,6 +42,18 @@ zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#) ([0-9a-z-
 
 ### Loading external scripts
 
+#|> zsh-defer
+export ZSH_DEFER_DIR='/opt/homebrew/share/zsh-defer'
+
+[ -s "${ZSH_DEFER_DIR}/zsh-defer.plugin.zsh" ] \
+  && source "${ZSH_DEFER_DIR}/zsh-defer.plugin.zsh"
+
+#|> zsh-autosuggestions
+export ZSH_AUTO_SUGGESTIONS_DIR='/opt/homebrew/share/zsh-autosuggestions'
+
+[ -s "${ZSH_AUTO_SUGGESTIONS_DIR}/zsh-autosuggestions.zsh" ] \
+  && source "${ZSH_AUTO_SUGGESTIONS_DIR}/zsh-autosuggestions.zsh"
+
 #|> Fuzzy Finder
 export FZF_BIN="${HOME}/.fzf.zsh"
 
@@ -67,13 +79,8 @@ hash starship 2>/dev/null && eval "$(starship init zsh --print-full-init)"
 hash zoxide 2>/dev/null && eval "$(zoxide init zsh)"
 
 #|> mise
-hash mise 2>/dev/null && eval "$(mise activate zsh)"
-
-#|> zsh-autosuggestions
-export ZSH_AUTO_SUGGESTIONS_DIR='/opt/homebrew/share/zsh-autosuggestions'
-
-[ -s "${ZSH_AUTO_SUGGESTIONS_DIR}/zsh-autosuggestions.zsh" ] \
-  && source "${ZSH_AUTO_SUGGESTIONS_DIR}/zsh-autosuggestions.zsh"
+# https://mise.jdx.dev/dev-tools/shims.html#shims-vs-path
+hash mise 2>/dev/null && eval "$(mise activate zsh --shims)"
 
 #|> Google Cloud SDK
 if [ -z "${CLOUDSDK_HOME:-}" ]; then
@@ -94,13 +101,13 @@ if [ -z "${CLOUDSDK_HOME:-}" ]; then
   unset gcloud_location gcloud_locations
 fi
 
-# These files take a while to run. Need to figure out how to speed up their load.
-if [ -n "${CLOUDSDK_HOME:-}" ]; then
+# These files take a while to run. Using zsh-defer to postpone their loading.
+if [ -n "${CLOUDSDK_HOME:-}" ] && which zsh-defer &>/dev/null; then
   [ -s "${CLOUDSDK_HOME}/path.zsh.inc" ] \
-    && source "${CLOUDSDK_HOME}/path.zsh.inc"
+    && zsh-defer source "${CLOUDSDK_HOME}/path.zsh.inc"
 
   [ -s "${CLOUDSDK_HOME}/completion.zsh.inc" ] \
-    && source "${CLOUDSDK_HOME}/completion.zsh.inc"
+    && zsh-defer source "${CLOUDSDK_HOME}/completion.zsh.inc"
 fi
 
 ### Directory shortcuts
