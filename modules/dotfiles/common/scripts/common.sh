@@ -471,6 +471,6 @@ function tfm() {
   fi
 
   if hash 'terragrunt' 2>/dev/null; then
-    terragrunt hclfmt
+    terragrunt hcl format
   fi
 }
