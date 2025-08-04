@@ -40,7 +40,8 @@ hash starship 2>/dev/null && eval "$(starship init bash --print-full-init)"
 hash zoxide 2>/dev/null && eval "$(zoxide init bash)"
 
 #|> mise
-hash mise 2>/dev/null && eval "$(mise activate bash)"
+# https://mise.jdx.dev/dev-tools/shims.html#shims-vs-path
+hash mise 2>/dev/null && eval "$(mise activate bash --shims)"
 
 #|> Google Cloud SDK
 if [ -z "${CLOUDSDK_HOME:-}" ]; then

@@ -148,3 +148,4 @@ casks:
   - wireshark
   - zed
   - zoom
+  - hpedrorodrigues/tools/zsh-defer
