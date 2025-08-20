@@ -110,6 +110,7 @@ formulas:
   - yq
   - zoxide
   - zsh-autosuggestions
+  - hpedrorodrigues/tools/zsh-defer
 
 casks:
   # - 1password
@@ -148,4 +149,3 @@ casks:
   - wireshark
   - zed
   - zoom
-  - hpedrorodrigues/tools/zsh-defer
