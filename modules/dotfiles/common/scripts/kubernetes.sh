@@ -50,7 +50,7 @@ function kgp() {
     ${@} \
     | GREP_COLOR='01;32' grep --color=always -E '(Running|Completed)|$' \
     | GREP_COLOR='01;33' grep --color=always -E '(ContainerCreating|PodInitializing|Pending|Terminating|NotReady|Init:[0-9]/[0-9])|$' \
-    | GREP_COLOR='01;31' grep --color=always -E 'Init:(CreateContainerConfigError|Error|CrashLoopBackOff|ImagePullBackOff)|$' \
+    | GREP_COLOR='01;31' grep --color=always -E 'Init:(ErrImagePull|CreateContainerConfigError|Error|CrashLoopBackOff|ImagePullBackOff)|$' \
     | GREP_COLOR='01;31' grep --color=always -E '(OutOfcpu|OutOfmemory|OOMKilled)|$' \
     | GREP_COLOR='01;31' grep --color=always -E '(CreateContainerConfigError|CreateContainerError|RunContainerError|PostStartHookError|Error)|$' \
     | GREP_COLOR='01;31' grep --color=always -E '(CrashLoopBackOff|ImagePullBackOff)|$' \

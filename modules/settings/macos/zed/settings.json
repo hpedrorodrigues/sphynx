@@ -28,8 +28,8 @@
   "agent": {
     "model_parameters": [],
     "default_model": {
-      "provider": "copilot_chat",
-      "model": "gpt-4.1"
+      "provider": "anthropic",
+      "model": "claude-sonnet-4-thinking-latest"
     }
   },
   "preview_tabs": {
