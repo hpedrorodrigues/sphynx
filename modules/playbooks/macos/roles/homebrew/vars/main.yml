@@ -7,7 +7,6 @@ formulas:
   - bat
   - bench
   - binutils
-  - cdk8s
   - cloud-sql-proxy
   - coreutils
   - crane
@@ -69,12 +68,10 @@ formulas:
   - mbode/tap/terraform-state-mover
   - minamijoyo/hcledit/hcledit
   - mise
-  - mongosh
   - mtr
   - navi
   - ncdu
   - nmap
-  - node
   - openssh
   - pidcat
   - poetry
@@ -95,13 +92,9 @@ formulas:
   - stern
   - subnetcalc
   - telnet
-  - tenv
-  - the_silver_searcher
-  - tldr
   - tmux
-  - topgrade
-  - translate-shell
   - tree
+  - trivy
   - unzip
   - vim
   - watch
