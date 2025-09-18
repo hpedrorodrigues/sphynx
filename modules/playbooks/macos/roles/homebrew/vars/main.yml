@@ -94,6 +94,7 @@ formulas:
   - telnet
   - tmux
   - tree
+  - trivy
   - unzip
   - vim
   - watch
