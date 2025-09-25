@@ -110,7 +110,6 @@ casks:
   - alacritty
   - appcleaner
   - bartender
-  - caffeine
   - cleanshot
   - clipy
   - cursor
@@ -125,6 +124,7 @@ casks:
   - iina
   - istat-menus
   - jetbrains-toolbox
+  - keepingyouawake
   - licecap
   - monitorcontrol
   - obsidian
