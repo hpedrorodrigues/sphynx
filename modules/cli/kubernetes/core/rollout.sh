@@ -70,13 +70,7 @@ function sx::k8s_command::rollout() {
   local -r kind="${3}"
   local -r name="${4}"
 
-  local flags=''
-  if [ "${action}" == 'restart' ] && sx::k8s::is_managed_by_flux "${ns}" "${kind}" "${name}"; then
-    # https://fluxcd.io/flux/faq/#why-are-kubectl-edits-rolled-back-by-flux
-    flags+='--field-manager=flux-client-side-apply'
-  fi
-
-  sx::k8s::cli rollout "${action}" --namespace "${ns}" "${kind}" "${name}" ${flags}
+  sx::k8s::cli rollout "${action}" --namespace "${ns}" "${kind}" "${name}"
 }
 
 function sx::k8s::rollout::restart() {
