@@ -1,10 +1,7 @@
 packages:
-  - name: alacritty
-    classic: true
   - name: google-cloud-sdk
     classic: true
   - discord
-  - skype
   - slack
   - spotify
   - whatsapp-for-linux

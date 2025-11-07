@@ -107,7 +107,6 @@ formulas:
 
 casks:
   # - 1password
-  - alacritty
   - appcleaner
   - bartender
   - cleanshot
@@ -132,9 +131,8 @@ casks:
   - rectangle
   - rio
   - session-manager-plugin
-  - skype
   - spotify
-  - temurin@8 # JDK 8
+  - tailscale-app
   - temurin@11 # JDK 11
   - temurin@17 # JDK 17
   - temurin@21 # JDK 21
