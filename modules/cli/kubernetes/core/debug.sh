@@ -68,6 +68,7 @@ function sx::k8s_command::debug() {
   sx::k8s::cli debug "${name}" \
     --stdin \
     --tty \
+    --profile 'sysadmin' \
     --namespace "${ns}" \
     --target "${container}" \
     --image "${image}" \

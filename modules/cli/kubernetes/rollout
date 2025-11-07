@@ -6,7 +6,6 @@ set -o pipefail
 
 source "${SPHYNX_CLI_DIR}/.internal/all.sh"
 source "${SPHYNX_NAMESPACE_DIR}/shared/shared.sh"
-source "${SPHYNX_NAMESPACE_DIR}/shared/flux.sh"
 source "${SPHYNX_NAMESPACE_DIR}/core/rollout.sh"
 
 ##? Manage the rollout of a resource

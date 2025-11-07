@@ -13,6 +13,5 @@ packages:
   - maven
   - shpotify
   - starship
-  - tldr
   - tmux
   - zoxide
