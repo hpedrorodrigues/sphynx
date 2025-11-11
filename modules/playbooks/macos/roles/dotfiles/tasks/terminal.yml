@@ -1,29 +1,3 @@
-- name: Alacritty - Creating configuration directory
-  file:
-    path: "{{ ansible_env.HOME }}/.config/alacritty"
-    mode: "0755"
-    state: directory
-
-- name: Alacritty - Installing personal settings
-  file:
-    src: "{{ sphynx_settings_directory }}/macos/alacritty/alacritty.toml"
-    dest: "{{ ansible_env.HOME }}/.config/alacritty/alacritty.toml"
-    state: link
-    force: yes
-
-- name: Rio - Creating configuration directory
-  file:
-    path: "{{ ansible_env.HOME }}/.config/rio"
-    mode: "0755"
-    state: directory
-
-- name: Rio - Installing personal settings
-  file:
-    src: "{{ sphynx_settings_directory }}/macos/rio/rio.toml"
-    dest: "{{ ansible_env.HOME }}/.config/rio/config.toml"
-    state: link
-    force: yes
-
 - name: Ghostty - Creating configuration directory
   file:
     path: "{{ ansible_env.HOME }}/Library/Application Support/com.mitchellh.ghostty"
