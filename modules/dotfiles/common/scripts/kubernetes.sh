@@ -16,7 +16,11 @@ function kimg() {
     {{$namespace := .metadata.namespace}}
     {{$name := .metadata.name}}
     {{range .spec.initContainers}}
-      {{$namespace}}{{","}}{{$name}}{{","}}{{.name}}{{",Init,"}}{{.image}}{{"\\n"}}
+      {{if eq .restartPolicy "Always"}}
+        {{$namespace}}{{","}}{{$name}}{{","}}{{.name}}{{",Sidecar,"}}{{.image}}{{"\\n"}}
+      {{else}}
+        {{$namespace}}{{","}}{{$name}}{{","}}{{.name}}{{",Init,"}}{{.image}}{{"\\n"}}
+      {{end}}
     {{end}}
     {{range .spec.containers}}
       {{$namespace}}{{","}}{{$name}}{{","}}{{.name}}{{",Main,"}}{{.image}}{{"\\n"}}
