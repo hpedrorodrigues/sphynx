@@ -15,9 +15,14 @@ function kimg() {
   {{range .items}}
     {{$namespace := .metadata.namespace}}
     {{$name := .metadata.name}}
-    {{"NAMESPACE"}}{{","}}{{"POD"}}{{","}}{{"IMAGE"}}{{"\\n"}}
+    {{range .spec.initContainers}}
+      {{$namespace}}{{","}}{{$name}}{{","}}{{.name}}{{",Init,"}}{{.image}}{{"\\n"}}
+    {{end}}
     {{range .spec.containers}}
-      {{$namespace}}{{","}}{{$name}}{{","}}{{.image}}{{"\\n"}}
+      {{$namespace}}{{","}}{{$name}}{{","}}{{.name}}{{",Main,"}}{{.image}}{{"\\n"}}
+    {{end}}
+    {{range .spec.ephemeralContainers}}
+      {{$namespace}}{{","}}{{$name}}{{","}}{{.name}}{{",Ephemeral,"}}{{.image}}{{"\\n"}}
     {{end}}
   {{end}}'
   local -r cleared_template="$(
@@ -27,12 +32,11 @@ function kimg() {
       | sed 's/^ *//g'
   )"
 
+  local -r header='NAMESPACE,POD,CONTAINER,TYPE,IMAGE'
   # shellcheck disable=SC2068  # Double quote array expansions
-  kubectl get pods \
-    --template="${cleared_template}" \
-    ${@} \
-    | sort -u \
-    | column -t -s ','
+  local -r content="$(kubectl get pods --template="${cleared_template}" ${@} | sort -u)"
+
+  printf "%s\n%s\n" "${header}" "${content}" | column -t -s ','
 }
 
 ## Print pods highlighting their status
