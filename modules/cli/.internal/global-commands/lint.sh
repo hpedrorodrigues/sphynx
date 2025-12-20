@@ -56,7 +56,7 @@ function sx::self::lint::run_prettier() {
 
   cd "${SPHYNX_DIR}" || exit 1
 
-  prettier --check '*/**/*.{yml,yaml}'
-  prettier --check '*/**/*.json'
+  prettier --single-quote --check '*/**/*.{yml,yaml}'
   prettier --single-quote --check '*/**/*.js'
+  prettier --check '*/**/*.json'
 }
