@@ -1,20 +1,20 @@
 - name: Fonts - Creating configuration directory
   file:
-    path: "{{ ansible_env.HOME }}/Library/Fonts"
+    path: '{{ ansible_facts["user_dir"] }}/Library/Fonts'
     mode: 0755
     state: directory
 
 - name: Fonts - Checking installation
   stat:
-    path: "{{ ansible_env.HOME }}/Library/Fonts/FiraCode-Regular.ttf"
+    path: '{{ ansible_facts["user_dir"] }}/Library/Fonts/FiraCode-Regular.ttf'
   register: font
 
 - name: Fonts - Downloading and installing
   unarchive:
     src: https://github.com/tonsky/FiraCode/releases/download/6.2/Fira_Code_v6.2.zip
-    dest: "{{ ansible_env.HOME }}/Library/Fonts/"
+    dest: '{{ ansible_facts["user_dir"] }}/Library/Fonts/'
     remote_src: yes
-    extra_opts: "-j"
+    extra_opts: '-j'
     include:
       - ttf/FiraCode-Bold.ttf
       - ttf/FiraCode-Light.ttf

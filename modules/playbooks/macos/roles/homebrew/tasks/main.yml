@@ -1,10 +1,10 @@
 - name: Checking /usr/local/bin directory
   stat:
-    path: "/usr/local/bin"
+    path: '/usr/local/bin'
   register: local_bin
 
 - name: Moving all /usr/local/bin content to /opt/homebrew/bin
-  shell: "mv /usr/local/bin/* /opt/homebrew/bin/ || true"
+  shell: 'mv /usr/local/bin/* /opt/homebrew/bin/ || true'
   become: true
   when:
     - local_bin.stat.islnk is not defined
@@ -13,8 +13,8 @@
 
 - name: Creating symbolic link from /usr/local/bin to /opt/homebrew/bin
   file:
-    src: "/opt/homebrew/bin"
-    dest: "/usr/local/bin"
+    src: '/opt/homebrew/bin'
+    dest: '/usr/local/bin'
     state: link
     force: true
   become: true
@@ -25,9 +25,9 @@
 
 - name: Tapping repositories
   community.general.homebrew_tap:
-    name: "{{ item }}"
+    name: '{{ item }}'
     state: present
-  loop: "{{ repositories }}"
+  loop: '{{ repositories }}'
 
 - name: Updating Homebrew
   community.general.homebrew:
@@ -43,11 +43,11 @@
 
 - name: Installing Homebrew formulas
   community.general.homebrew:
-    name: "{{ item }}"
+    name: '{{ item }}'
     state: present
-  loop: "{{ formulas }}"
+  loop: '{{ formulas }}'
 
 - name: Installing Homebrew casks
   community.general.homebrew_cask:
-    name: "{{ item }}"
-  loop: "{{ casks }}"
+    name: '{{ item }}'
+  loop: '{{ casks }}'

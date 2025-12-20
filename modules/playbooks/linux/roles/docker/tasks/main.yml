@@ -1,6 +1,6 @@
 - name: Detecting - Docker is available
   stat:
-    path: "/usr/bin/docker"
+    path: '/usr/bin/docker'
   register: docker
 
 - name: Installing Docker CE repository
@@ -17,7 +17,7 @@
 
 - name: Updating repositories cache and installing Docker CE
   apt:
-    name: ["docker-ce", "docker-ce-cli", "containerd.io"]
+    name: ['docker-ce', 'docker-ce-cli', 'containerd.io']
     state: present
     update_cache: yes
   when:
@@ -25,7 +25,7 @@
 
 - name: Adding current user to the docker group
   user:
-    name: "{{ ansible_env.USER }}"
+    name: '{{ ansible_env.USER }}'
     groups: docker
     append: true
   when:

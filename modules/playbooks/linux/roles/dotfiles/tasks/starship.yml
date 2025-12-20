@@ -1,15 +1,15 @@
 - name: Creating Starship configuration directory
-  file: "path={{ ansible_env.HOME }}/.config/starship mode=0755 state=directory"
+  file: 'path={{ ansible_facts["user_dir"] }}/.config/starship mode=0755 state=directory'
 
 - name: Detecting - Starship is available
   stat:
-    path: "{{ ansible_env.HOME }}/.config/starship/starship.toml"
+    path: '{{ ansible_facts["user_dir"] }}/.config/starship/starship.toml'
   register: starship
 
 - name: Installing Starship settings
   file:
-    src: "{{ sphynx_settings_directory }}/common/starship/starship.toml"
-    dest: "{{ ansible_env.HOME }}/.config/starship/starship.toml"
+    src: '{{ sphynx_settings_directory }}/common/starship/starship.toml'
+    dest: '{{ ansible_facts["user_dir"] }}/.config/starship/starship.toml'
     state: link
     force: yes
   when:

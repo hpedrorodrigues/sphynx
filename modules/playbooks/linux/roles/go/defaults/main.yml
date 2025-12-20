@@ -1,1 +1,1 @@
-go_bin: "{{ linuxbrew_directory }}/go"
+go_bin: '{{ linuxbrew_directory }}/go'

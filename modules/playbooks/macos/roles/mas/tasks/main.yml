@@ -4,6 +4,6 @@
 
 - name: Installing applications
   community.general.mas:
-    id: "{{ item }}"
+    id: '{{ item }}'
     state: present
-  loop: "{{ applications }}"
+  loop: '{{ applications }}'

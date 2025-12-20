@@ -1,8 +1,8 @@
 - name: Creating Go configuration directory
   file:
-    path: "{{ workspace }}"
+    path: '{{ workspace }}'
     state: directory
 
 - name: Installing Go packages
-  shell: "GOPATH={{ workspace }} {{ go_bin }} install {{ item.repository }}"
-  loop: "{{ packages }}"
+  shell: 'GOPATH={{ workspace }} {{ go_bin }} install {{ item.repository }}'
+  loop: '{{ packages }}'

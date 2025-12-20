@@ -1,6 +1,6 @@
 - name: Updating packages
-  command: "{{ brew_path }} update"
+  command: '{{ brew_path }} update'
 
 - name: Installing packages
-  shell: "{{ brew_path }} install {{ item }}"
-  loop: "{{ packages }}"
+  shell: '{{ brew_path }} install {{ item }}'
+  loop: '{{ packages }}'

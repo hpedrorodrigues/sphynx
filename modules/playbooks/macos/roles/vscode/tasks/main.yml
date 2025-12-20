@@ -5,26 +5,26 @@
 
 - name: Creating required directories
   file:
-    path: "{{ ansible_env.HOME }}/Library/Application Support/Code/User"
+    path: '{{ ansible_facts["user_dir"] }}/Library/Application Support/Code/User'
     state: directory
 
 - name: Installing personal settings
   file:
-    src: "{{ sphynx_settings_directory }}/macos/vscode/{{ item }}"
-    dest: "{{ ansible_env.HOME }}/Library/Application Support/Code/User/{{ item }}"
+    src: '{{ sphynx_settings_directory }}/macos/vscode/{{ item }}'
+    dest: '{{ ansible_facts["user_dir"] }}/Library/Application Support/Code/User/{{ item }}'
     state: link
     force: yes
-  loop: "{{ configuration_files }}"
+  loop: '{{ configuration_files }}'
   notify:
     - Restart Visual Studio Code
 
 - name: Loading existing extensions
-  command: "code --list-extensions"
+  command: 'code --list-extensions'
   register: installed_extensions
   changed_when: false
 
 - name: Installing extensions
-  command: "code --install-extension {{ item }}"
-  loop: "{{ extensions }}"
+  command: 'code --install-extension {{ item }}'
+  loop: '{{ extensions }}'
   when:
     - item not in installed_extensions.stdout.split('\n')

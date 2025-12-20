@@ -6,22 +6,22 @@
   become: true
 
 - name: Creating VSCode directories
-  file: "path={{ ansible_env.HOME }}/.config/Code/User state=directory"
+  file: 'path={{ ansible_facts["user_dir"] }}/.config/Code/User state=directory'
 
 - name: Installing personal VSCode settings
   file:
-    src: "{{ sphynx_settings_directory }}/linux/vscode/{{ item }}"
-    dest: "{{ ansible_env.HOME }}/.config/Code/User/{{ item }}"
+    src: '{{ sphynx_settings_directory }}/linux/vscode/{{ item }}'
+    dest: '{{ ansible_facts["user_dir"] }}/.config/Code/User/{{ item }}'
     state: link
     force: yes
-  loop: "{{ configuration_files }}"
+  loop: '{{ configuration_files }}'
 
 - name: Getting all installed VSCode extensions
-  command: "code --list-extensions"
+  command: 'code --list-extensions'
   register: installed_extensions
 
 - name: Installing VSCode extensions
-  command: "code --install-extension {{ item.name | default(item) }}"
-  loop: "{{ extensions }}"
+  command: 'code --install-extension {{ item.name | default(item) }}'
+  loop: '{{ extensions }}'
   when:
     - item.name | default(item) not in installed_extensions.stdout

@@ -9,8 +9,8 @@
     - applications != current_items.stdout.split('\n')
 
 - name: Adding new items
-  shell: "dockutil --no-restart --add '{{ item }}' '{{ ansible_env.HOME }}/Library/Preferences/com.apple.dock.plist'"
-  loop: "{{ applications }}"
+  shell: 'dockutil --no-restart --add ''{{ item }}'' ''{{ ansible_facts["user_dir"] }}/Library/Preferences/com.apple.dock.plist'''
+  loop: '{{ applications }}'
   notify:
     - Restart Dock
   when:

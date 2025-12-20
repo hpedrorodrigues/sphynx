@@ -5,7 +5,7 @@
 
 - name: Detecting latest Jetbrains Toolbox version
   uri:
-    url: "{{ toolbox_version_url }}"
+    url: '{{ toolbox_version_url }}'
     method: GET
     return_content: yes
     body_format: json
@@ -16,13 +16,13 @@
 - name: Downloading Jetbrains Toolbox
   get_url:
     url: "https://download-cf.jetbrains.com/toolbox/jetbrains-toolbox-{{ toolbox_version_response.json.version.split(',')[-1] }}.tar.gz"
-    dest: "{{ toolbox_dest }}"
+    dest: '{{ toolbox_dest }}'
   when:
     - not toolbox_folder.stat.exists
 
 - name: Unarchiving Jetbrains Toolbox
   unarchive:
-    src: "{{ toolbox_dest }}"
+    src: '{{ toolbox_dest }}'
     dest: /tmp
     remote_src: yes
   when:
@@ -44,6 +44,6 @@
 - name: Creating Jetbrains Toolbox launcher
   template:
     src: jetbrains-toolbox.desktop.j2
-    dest: "{{ ansible_env.HOME }}/.local/share/applications/jetbrains-toolbox.desktop"
+    dest: '{{ ansible_facts["user_dir"] }}/.local/share/applications/jetbrains-toolbox.desktop'
   when:
     - not toolbox_folder.stat.exists

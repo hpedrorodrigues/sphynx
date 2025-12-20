@@ -1,12 +1,12 @@
 - name: Zed - Creating configuration directory
   file:
-    path: "{{ ansible_env.HOME }}/.config/zed"
+    path: '{{ ansible_facts["user_dir"] }}/.config/zed'
     mode: 0755
     state: directory
 
 - name: Zed - Installing personal settings
   file:
-    src: "{{ sphynx_settings_directory }}/macos/zed/settings.json"
-    dest: "{{ ansible_env.HOME }}/.config/zed/settings.json"
+    src: '{{ sphynx_settings_directory }}/macos/zed/settings.json'
+    dest: '{{ ansible_facts["user_dir"] }}/.config/zed/settings.json'
     state: link
     force: yes

@@ -1,18 +1,18 @@
 - name: Vundle - Creating configuration directories
   file:
-    path: "{{ directory_item }}"
-    mode: "0755"
+    path: '{{ directory_item }}'
+    mode: '0755'
     state: directory
   loop:
-    - "{{ ansible_env.HOME }}/.vim/backups"
-    - "{{ ansible_env.HOME }}/.vim/swaps"
-    - "{{ ansible_env.HOME }}/.vim/undo"
+    - '{{ ansible_facts["user_dir"] }}/.vim/backups'
+    - '{{ ansible_facts["user_dir"] }}/.vim/swaps'
+    - '{{ ansible_facts["user_dir"] }}/.vim/undo'
   loop_control:
     loop_var: directory_item
 
 - name: Vundle - Checking installation
   stat:
-    path: "{{ ansible_env.HOME }}/.vim/bundle/Vundle.vim"
+    path: '{{ ansible_facts["user_dir"] }}/.vim/bundle/Vundle.vim'
   register: vundle
 
 - name: Vundle - Installing plugins

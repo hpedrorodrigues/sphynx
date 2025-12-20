@@ -1,9 +1,9 @@
 - name: Cloning repositories
-  git: "repo={{ item.repo }} dest={{ item.dest }} update=no"
-  loop: "{{ repositories }}"
+  git: 'repo={{ item.repo }} dest={{ item.dest }} update=no'
+  loop: '{{ repositories }}'
 
 - name: Running hooks
-  shell: "{{ item.hooks }}"
-  loop: "{{ repositories }}"
+  shell: '{{ item.hooks }}'
+  loop: '{{ repositories }}'
   when:
     - item.hooks is defined
