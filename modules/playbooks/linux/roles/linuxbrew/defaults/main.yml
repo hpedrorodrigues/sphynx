@@ -1,1 +1,1 @@
-brew_path: "{{ linuxbrew_directory }}/brew"
+brew_path: '{{ linuxbrew_directory }}/brew'

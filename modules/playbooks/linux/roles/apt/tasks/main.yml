@@ -1,6 +1,6 @@
 - name: Updating all packages
   apt:
-    name: "*"
+    name: '*'
     state: latest
     update_cache: true
 
@@ -14,9 +14,9 @@
 
 - name: Enabling built-in repositories
   shell: add-apt-repository -y {{ item }}
-  loop: "{{ builtin_repositories }}"
+  loop: '{{ builtin_repositories }}'
 
 - name: Installing packages
   apt:
-    name: "{{ packages }}"
+    name: '{{ packages }}'
     state: present

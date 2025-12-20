@@ -1,5 +1,5 @@
 repositories:
-  - origin_url: "https://github.com/VundleVim/Vundle.vim"
-    directory: "{{ ansible_env.HOME }}/.vim/bundle/Vundle.vim"
-  - origin_url: "https://github.com/tmux-plugins/tpm"
-    directory: "{{ ansible_env.HOME }}/.tmux/plugins/tpm"
+  - origin_url: 'https://github.com/VundleVim/Vundle.vim'
+    directory: '{{ ansible_facts["user_dir"] }}/.vim/bundle/Vundle.vim'
+  - origin_url: 'https://github.com/tmux-plugins/tpm'
+    directory: '{{ ansible_facts["user_dir"] }}/.tmux/plugins/tpm'

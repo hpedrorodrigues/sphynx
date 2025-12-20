@@ -3,7 +3,7 @@
       relink: true
       create: true
       force: true
-- clean: ["~"]
+- clean: ['~']
 - clean:
     ${HOME}/.sphynx:
       force: true

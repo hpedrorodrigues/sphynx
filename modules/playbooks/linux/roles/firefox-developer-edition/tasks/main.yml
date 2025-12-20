@@ -1,17 +1,17 @@
 - name: Detecting - Firefox Developer Edition is available
   stat:
-    path: "{{ ansible_env.HOME }}/.local/bin/firefox-developer-edition"
+    path: '{{ ansible_facts["user_dir"] }}/.local/bin/firefox-developer-edition'
   register: firefox
 
 - name: Downloading Firefox Developer Edition
   get_url:
-    url: "{{ firefox_url }}"
-    dest: "{{ firefox_dest }}"
+    url: '{{ firefox_url }}'
+    dest: '{{ firefox_dest }}'
   when:
     - not firefox.stat.exists
 
 - name: Creating directory for Firefox Developer Edition
-  file: "path=/opt/firefox-developer-edition mode=0755 state=directory"
+  file: 'path=/opt/firefox-developer-edition mode=0755 state=directory'
   become: true
   when:
     - not firefox.stat.exists
@@ -19,7 +19,7 @@
 - name: Unarchiving Firefox Developer Edition
   become: true
   unarchive:
-    src: "{{ firefox_dest }}"
+    src: '{{ firefox_dest }}'
     dest: /opt/firefox-developer-edition
     remote_src: yes
   when:
@@ -35,7 +35,7 @@
 
 - name: Creating bin directory
   file:
-    path: "{{ ansible_env.HOME }}/.local/bin"
+    path: '{{ ansible_facts["user_dir"] }}/.local/bin'
     mode: 0755
     state: directory
   when:
@@ -44,7 +44,7 @@
 - name: Creating link for Firefox Developer Edition
   file:
     src: /opt/firefox-developer-edition/firefox/firefox
-    dest: "{{ ansible_env.HOME }}/.local/bin/firefox-developer-edition"
+    dest: '{{ ansible_facts["user_dir"] }}/.local/bin/firefox-developer-edition'
     state: link
   when:
     - not firefox.stat.exists
@@ -52,6 +52,6 @@
 - name: Creating Firefox Developer Edition launcher
   template:
     src: firefox-developer-edition.desktop.j2
-    dest: "{{ ansible_env.HOME }}/.local/share/applications/firefox-developer-edition.desktop"
+    dest: '{{ ansible_facts["user_dir"] }}/.local/share/applications/firefox-developer-edition.desktop'
   when:
     - not firefox.stat.exists

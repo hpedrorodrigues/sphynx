@@ -1,6 +1,6 @@
 - name: Detecting - Zsh is available
   stat:
-    path: "/usr/bin/zsh"
+    path: '/usr/bin/zsh'
   register: zsh
 
 - name: Installing Zsh package
@@ -16,20 +16,20 @@
 - name: Making Zsh the default shell
   become: true
   user:
-    name: "{{ ansible_env.USER }}"
-    shell: "/bin/zsh"
+    name: '{{ ansible_env.USER }}'
+    shell: '/bin/zsh'
   when:
     - zsh.stat.exists or new_zsh is success
     - lookup('env','SHELL') != '/bin/zsh'
 
 - name: Installing Dotfiles
-  command: "{{ sphynx_cli }} workstation setup --dotfiles"
+  command: '{{ sphynx_cli }} workstation setup --dotfiles'
   when:
     - zsh.stat.exists or new_zsh is success
 
 - name: Include additional tasks
   include_tasks:
-    file: "{{ item }}"
+    file: '{{ item }}'
   loop:
     - vundle.yml
     - fonts.yml

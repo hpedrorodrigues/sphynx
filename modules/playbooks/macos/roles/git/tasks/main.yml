@@ -1,5 +1,5 @@
 - name: Cloning repositories
   git:
-    repo: "{{ item.origin_url }}"
-    dest: "{{ item.directory }}"
-  loop: "{{ repositories }}"
+    repo: '{{ item.origin_url }}'
+    dest: '{{ item.directory }}'
+  loop: '{{ repositories }}'

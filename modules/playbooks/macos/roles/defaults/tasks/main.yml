@@ -1,10 +1,10 @@
 - name: Checking inventory file
   stat:
-    path: "{{ inventory_path }}"
+    path: '{{ inventory_path }}'
   register: inventory
 
 - name: Checking inventory state
-  shell: "test -f {{ inventory_path }} && cat {{ inventory_path }} || true"
+  shell: 'test -f {{ inventory_path }} && cat {{ inventory_path }} || true'
   register: inventory_state
   changed_when: false
   when:
@@ -15,7 +15,7 @@
     osascript -e 'tell application "System Preferences" to quit'
 
 - name: Applying defaults
-  script: "{{ item }}"
+  script: '{{ item }}'
   with_items:
     - "{{ lookup('fileglob', '*.defaults').split(',') }}"
   register: defaults
@@ -29,7 +29,7 @@
 
 - name: Creating inventory file
   file:
-    path: "{{ inventory_path }}"
+    path: '{{ inventory_path }}'
     state: touch
   when:
     - not inventory.stat.exists
@@ -38,7 +38,7 @@
 - name: Updating inventory with current state
   lineinfile:
     line: "{{ lookup('file', item) | checksum }}"
-    dest: "{{ inventory_path }}"
+    dest: '{{ inventory_path }}'
     state: present
   with_items:
     - "{{ lookup('fileglob', '*.defaults').split(',') }}"

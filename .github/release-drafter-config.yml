@@ -1,32 +1,32 @@
-name-template: "v$RESOLVED_VERSION"
-tag-template: "v$RESOLVED_VERSION"
+name-template: 'v$RESOLVED_VERSION'
+tag-template: 'v$RESOLVED_VERSION'
 categories:
-  - title: "Features"
+  - title: 'Features'
     labels:
-      - "enhancement"
-  - title: "Bug Fixes"
+      - 'enhancement'
+  - title: 'Bug Fixes'
     labels:
-      - "bug"
-  - title: "Maintenance"
+      - 'bug'
+  - title: 'Maintenance'
     labels:
-      - "chore"
-      - "documentation"
-      - "dependencies"
-      - "github_actions"
+      - 'chore'
+      - 'documentation'
+      - 'dependencies'
+      - 'github_actions'
 exclude-labels:
-  - "no-changelog"
-change-template: "- $TITLE (#$NUMBER)"
+  - 'no-changelog'
+change-template: '- $TITLE (#$NUMBER)'
 change-title-escapes: '\<*_&'
 version-resolver:
   major:
     labels:
-      - "major"
+      - 'major'
   minor:
     labels:
-      - "minor"
+      - 'minor'
   patch:
     labels:
-      - "patch"
+      - 'patch'
   default: patch
 template: |
   ## What's changed

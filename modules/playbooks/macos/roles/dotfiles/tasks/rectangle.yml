@@ -1,18 +1,18 @@
 - name: Rectangle - Creating configuration directory
   file:
-    path: "{{ ansible_env.HOME }}/Library/Application Support/Rectangle"
+    path: '{{ ansible_facts["user_dir"] }}/Library/Application Support/Rectangle'
     mode: 0755
     state: directory
 
 - name: Rectangle - Checking installation
   stat:
-    path: "{{ ansible_env.HOME }}/Library/Application Support/Rectangle/RectangleConfig.json"
+    path: '{{ ansible_facts["user_dir"] }}/Library/Application Support/Rectangle/RectangleConfig.json'
   register: rectangle
 
 - name: Rectangle - Installing personal settings
   file:
-    src: "{{ sphynx_settings_directory }}/macos/rectangle/RectangleConfig.json"
-    dest: "{{ ansible_env.HOME }}/Library/Application Support/Rectangle/RectangleConfig.json"
+    src: '{{ sphynx_settings_directory }}/macos/rectangle/RectangleConfig.json'
+    dest: '{{ ansible_facts["user_dir"] }}/Library/Application Support/Rectangle/RectangleConfig.json'
     state: link
     force: yes
   when:

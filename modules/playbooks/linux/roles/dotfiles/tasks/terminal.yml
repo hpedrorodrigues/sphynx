@@ -1,15 +1,15 @@
 - name: Creating Alacritty configuration directory
-  file: "path={{ ansible_env.HOME }}/.config/alacritty mode=0755 state=directory"
+  file: 'path={{ ansible_facts["user_dir"] }}/.config/alacritty mode=0755 state=directory'
 
 - name: Detecting - Alacrity is available
   stat:
-    path: "{{ ansible_env.HOME }}/.config/alacritty/alacritty.toml"
+    path: '{{ ansible_facts["user_dir"] }}/.config/alacritty/alacritty.toml'
   register: alacritty
 
 - name: Installing Alacritty settings
   file:
-    src: "{{ sphynx_settings_directory }}/linux/alacritty/alacritty.toml"
-    dest: "{{ ansible_env.HOME }}/.config/alacritty/alacritty.toml"
+    src: '{{ sphynx_settings_directory }}/linux/alacritty/alacritty.toml'
+    dest: '{{ ansible_facts["user_dir"] }}/.config/alacritty/alacritty.toml'
     state: link
     force: yes
   when:

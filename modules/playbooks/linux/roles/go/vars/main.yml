@@ -1,5 +1,5 @@
-workspace: "{{ ansible_env.HOME }}/.go" # GOPATH
+workspace: '{{ ansible_facts["user_dir"] }}/.go' # GOPATH
 
 packages:
   - name: envsubst
-    repository: "github.com/a8m/envsubst/cmd/envsubst@latest"
+    repository: 'github.com/a8m/envsubst/cmd/envsubst@latest'

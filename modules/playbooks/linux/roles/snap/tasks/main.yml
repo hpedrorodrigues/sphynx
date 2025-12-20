@@ -1,6 +1,6 @@
 - name: Installing packages
   community.general.snap:
-    name: "{{ item.name | default(item) }}"
-    classic: "{{ item.classic | default(False) }}"
+    name: '{{ item.name | default(item) }}'
+    classic: '{{ item.classic | default(False) }}'
     state: present
-  loop: "{{ packages }}"
+  loop: '{{ packages }}'

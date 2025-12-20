@@ -1,12 +1,12 @@
 - name: Detecting - Google Chrome is available
   stat:
-    path: "/usr/bin/google-chrome"
+    path: '/usr/bin/google-chrome'
   register: chrome
 
 - name: Downloading Google Chrome
   get_url:
-    url: "{{ google_chrome_url }}"
-    dest: "{{ google_chrome_dest }}"
+    url: '{{ google_chrome_url }}'
+    dest: '{{ google_chrome_dest }}'
   when:
     - not chrome.stat.exists
 

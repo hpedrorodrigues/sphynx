@@ -13,17 +13,17 @@
     - lookup('env','SHELL') != '/usr/local/bin/zsh'
 
 - name: Setting default shell
-  shell: "chsh -s /usr/local/bin/zsh {{ ansible_env.USER }}"
+  shell: 'chsh -s /usr/local/bin/zsh {{ ansible_env.USER }}'
   become: true
   when:
     - lookup('env','SHELL') != '/usr/local/bin/zsh'
 
 - name: Configuring Dotfiles
-  command: "{{ sphynx_cli }} workstation setup --dotfiles"
+  command: '{{ sphynx_cli }} workstation setup --dotfiles'
 
 - name: Include additional tasks
   include_tasks:
-    file: "{{ item }}"
+    file: '{{ item }}'
   loop:
     - vundle.yml
     - fonts.yml
