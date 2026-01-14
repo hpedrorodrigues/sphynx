@@ -28,7 +28,6 @@ formulas:
   - gh
   - git
   - git-delta
-  - git-flow
   - git-lfs
   - gnu-indent
   - gnu-sed
@@ -83,7 +82,6 @@ formulas:
   - scala@2.13
   - scrcpy
   - screen
-  - sendemail
   - shpotify
   - sipcalc
   - speedtest-cli
@@ -129,7 +127,6 @@ casks:
   - obsidian
   - postman
   - rectangle
-  - session-manager-plugin
   - spotify
   - tailscale-app
   - temurin@11 # JDK 11
