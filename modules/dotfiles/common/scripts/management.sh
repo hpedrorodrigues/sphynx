@@ -12,14 +12,9 @@ function management() {
     return 1
   fi
 
-  if [ -z "${action}" ]; then
-    echo "!!! No action provided." >&2
-    return 1
-  fi
-
   case "${action}" in
-    zed)
-      zed "${directory}"
+    code | editor)
+      command "${UI_EDITOR:${VISUAL:-${EDITOR:-vi}}}" "${directory}"
       ;;
     go | j | jump)
       cd "${directory}" || return 1
@@ -55,7 +50,7 @@ function management() {
       echo "!!! No supported action: \"${action}\"" >&2
       echo '!!!' >&2
       echo '!!! Available actions:' >&2
-      echo '!!!   - zed' >&2
+      echo '!!!   - code | editor' >&2
       echo '!!!   - go | j | jump' >&2
       echo '!!!   - status' >&2
       echo '!!!   - repo' >&2
