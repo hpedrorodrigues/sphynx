@@ -70,5 +70,9 @@
   "workbench.settings.enableNaturalLanguageSearch": false,
   "workbench.startupEditor": "none",
   "workbench.welcome.enabled": false,
-  "markdown.extension.toc.updateOnSave": false
+  "markdown.extension.toc.updateOnSave": false,
+  "vsicons.dontShowNewVersionMessage": true,
+  "vs-kubernetes": {
+    "vs-kubernetes.crd-code-completion": "disabled"
+  }
 }
