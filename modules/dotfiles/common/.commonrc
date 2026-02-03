@@ -4,8 +4,8 @@
 export VISUAL='vim'
 export EDITOR="${VISUAL}"
 
-# Make zed the default UI editor
-export UI_EDITOR='zed'
+# Make vscode the default UI editor
+export UI_EDITOR='code'
 
 # Make less the default pager
 export LESS='-iRFXMx4'
