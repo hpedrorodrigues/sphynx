@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNX_CLI_DIR}/.internal/all.sh"
+source "${SPHYNX_NAMESPACE_DIR}/shared/shared.sh"
+source "${SPHYNX_NAMESPACE_DIR}/core/config.sh"
+
+##? Get Envoy proxy configuration
+##?
+##? Usage:
+##?     config [<query>] [--namespace <name> | --all-namespaces] [--output <format>] [--resource <type>]
+##?
+##? Options:
+##?     -n --namespace <name>   Namespace scope for requests
+##?     -a --all-namespaces     Search all namespaces
+##?     -o --output <format>    Output format (json|yaml) [default: yaml]
+##?     -r --resource <type>    Resource type (all|bootstrap|cluster|endpoint|listener|route) [default: all]
+##?
+##? Examples:
+##?     config
+##?     config envoy
+##?     config --namespace envoy-gateway-system
+##?     config --all-namespaces
+##?     config --output json
+##?     config --resource listener
+##?     config --resource cluster --output json
+
+sx::parse_arguments "${@}"
+
+sx::eg::config \
+  "${query:-}" \
+  "${namespace:-}" \
+  "${all_namespaces:-false}" \
+  "${output:-yaml}" \
+  "${resource:-all}"

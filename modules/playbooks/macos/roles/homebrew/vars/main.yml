@@ -17,6 +17,7 @@ formulas:
   - dotbot
   - duf
   - ed
+  - egctl
   - eksctl
   - ffmpeg
   - file-formula
