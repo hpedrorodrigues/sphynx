@@ -8,14 +8,14 @@ source "${SPHYNX_CLI_DIR}/.internal/all.sh"
 source "${SPHYNX_NAMESPACE_DIR}/shared/shared.sh"
 source "${SPHYNX_NAMESPACE_DIR}/core/status.sh"
 
-##? Get Envoy Gateway resource status
+##? Show the summary of the status of resources in Envoy Gateway
 ##?
 ##? Usage:
 ##?     status [<kind>] [--namespace <name> | --all-namespaces] [--verbose]
 ##?
 ##? Arguments:
 ##?     <kind>  Resource kind to show status for
-##?             Supported: GatewayClass, Gateway, HTTPRoute, GRPCRoute, TCPRoute,
+##?             Supported: all, GatewayClass, Gateway, HTTPRoute, GRPCRoute, TCPRoute,
 ##?             UDPRoute, TLSRoute, BackendTLSPolicy, BackendTrafficPolicy,
 ##?             ClientTrafficPolicy, SecurityPolicy, EnvoyPatchPolicy, EnvoyExtensionPolicy
 ##?
@@ -30,6 +30,7 @@ source "${SPHYNX_NAMESPACE_DIR}/core/status.sh"
 ##?     status HTTPRoute --namespace my-namespace
 ##?     status --all-namespaces
 ##?     status Gateway --verbose
+##?     status all --all-namespaces
 
 sx::parse_arguments "${@}"
 
