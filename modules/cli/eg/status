@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNX_CLI_DIR}/.internal/all.sh"
+source "${SPHYNX_NAMESPACE_DIR}/shared/shared.sh"
+source "${SPHYNX_NAMESPACE_DIR}/core/status.sh"
+
+##? Get Envoy Gateway resource status
+##?
+##? Usage:
+##?     status [<kind>] [--namespace <name> | --all-namespaces] [--verbose]
+##?
+##? Arguments:
+##?     <kind>  Resource kind to show status for
+##?             Supported: GatewayClass, Gateway, HTTPRoute, GRPCRoute, TCPRoute,
+##?             UDPRoute, TLSRoute, BackendTLSPolicy, BackendTrafficPolicy,
+##?             ClientTrafficPolicy, SecurityPolicy, EnvoyPatchPolicy, EnvoyExtensionPolicy
+##?
+##? Options:
+##?     -n --namespace <name>   Namespace scope for requests
+##?     -a --all-namespaces     Search all namespaces
+##?     -v --verbose            Verbose output
+##?
+##? Examples:
+##?     status
+##?     status Gateway
+##?     status HTTPRoute --namespace my-namespace
+##?     status --all-namespaces
+##?     status Gateway --verbose
+
+sx::parse_arguments "${@}"
+
+sx::eg::status \
+  "${kind:-}" \
+  "${namespace:-}" \
+  "${all_namespaces:-false}" \
+  "${verbose:-false}"
