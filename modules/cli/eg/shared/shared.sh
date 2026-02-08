@@ -18,9 +18,17 @@ function sx::eg::cli() {
 
 function sx::eg::resource_kinds() {
   local -r print_header="${1:-false}"
+  local -r include_all="${2:-false}"
 
   local -r header='KIND'
-  local -r result="$(echo "${SX_ENVOY_GATEWAY_RESOURCES}" | tr ',' '\n')"
+  local -r resources="$(echo "${SX_ENVOY_GATEWAY_RESOURCES}" | tr ',' '\n')"
+
+  local result
+  if ${include_all}; then
+    result="all\n${resources}"
+  else
+    result="${resources}"
+  fi
 
   if ${print_header}; then
     echo -e "${header}\n${result}"

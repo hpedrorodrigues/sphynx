@@ -12,7 +12,7 @@ alias please='sudo $(fc -ln -1)'
 # If the last character of the alias value is a blank, then the next command
 # word following the alias is also checked for alias expansion.
 alias sudo='sudo '
-alias watch='watch '
+alias watch='hwatch '
 
 # Shortcut to list files
 alias l='ls -lash'

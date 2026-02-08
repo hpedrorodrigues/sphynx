@@ -8,7 +8,7 @@ source "${SPHYNX_CLI_DIR}/.internal/all.sh"
 source "${SPHYNX_NAMESPACE_DIR}/shared/shared.sh"
 source "${SPHYNX_NAMESPACE_DIR}/core/config.sh"
 
-##? Get Envoy proxy configuration
+##? Retrieve information from envoy proxy
 ##?
 ##? Usage:
 ##?     config [<query>] [--namespace <name> | --all-namespaces] [--output <format>] [--resource <type>]

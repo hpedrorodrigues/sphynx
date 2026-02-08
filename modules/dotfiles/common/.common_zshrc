@@ -54,11 +54,6 @@ export ZSH_AUTO_SUGGESTIONS_DIR='/opt/homebrew/share/zsh-autosuggestions'
 [ -s "${ZSH_AUTO_SUGGESTIONS_DIR}/zsh-autosuggestions.zsh" ] \
   && source "${ZSH_AUTO_SUGGESTIONS_DIR}/zsh-autosuggestions.zsh"
 
-#|> Fuzzy Finder
-export FZF_BIN="${HOME}/.fzf.zsh"
-
-[ -s "${FZF_BIN}" ] && source "${FZF_BIN}"
-
 #|> Sphynx
 export SPHYNX_DIR="${HOME}/Code/Personal/sphynx"
 export SPHYNX_COMPLETION_DIR="${SPHYNX_DIR}/modules/cli/.internal/completion"
@@ -71,6 +66,9 @@ if [[ "${fpath}" != *"${SPHYNX_COMPLETION_DIR}"* ]]; then
   # shellcheck disable=SC2206  # Quote to prevent word splitting/globbing
   fpath=("${SPHYNX_COMPLETION_DIR}" ${fpath})
 fi
+
+#|> Fuzzy Finder
+hash fzf 2>/dev/null && source <(fzf --zsh)
 
 #|> Startship
 hash starship 2>/dev/null && eval "$(starship init zsh --print-full-init)"
