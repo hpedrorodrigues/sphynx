@@ -4,7 +4,6 @@
   roles:
     - homebrew
     - mas
-    - fzf
     - vscode
     - karabiner
     - git

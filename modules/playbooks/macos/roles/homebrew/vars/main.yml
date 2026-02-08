@@ -1,4 +1,7 @@
-repositories: []
+repositories:
+  - hpedrorodrigues/tools
+  - fluxcd/tap
+  - homeport/tap
 
 formulas:
   - apktool
@@ -18,11 +21,11 @@ formulas:
   - duf
   - ed
   - egctl
-  - eksctl
   - ffmpeg
   - file-formula
   - findutils
   - fluxcd/tap/flux
+  - fzf
   - gawk
   - gcc
   - gettext
@@ -44,13 +47,16 @@ formulas:
   - gzip
   - helm
   - hexyl
+  - homeport/tap/dyff
   - htmlq
   - htop
   - hugo
+  - hwatch
   - hyperfine
   - icdiff
   - ipcalc
   - jadx
+  - jless
   - jq
   - kcat
   - kind
@@ -65,11 +71,8 @@ formulas:
   - make
   - mas
   - maven
-  - mbode/tap/terraform-state-mover
-  - minamijoyo/hcledit/hcledit
   - mise
   - mtr
-  - navi
   - ncdu
   - nmap
   - openssh
@@ -85,7 +88,6 @@ formulas:
   - screen
   - shpotify
   - sipcalc
-  - speedtest-cli
   - sqlite
   - starship
   - stern
@@ -96,7 +98,6 @@ formulas:
   - trivy
   - unzip
   - vim
-  - watch
   - wdiff
   - wget
   - yq

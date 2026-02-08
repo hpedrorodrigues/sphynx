@@ -275,13 +275,6 @@ function fgpick() {
   fi
 }
 
-## Execute a program periodically running the current shell interactively
-##
-## e.g. loop 'ls -la'
-function loop() {
-  watch "${SHELL} -i -c '${*}'"
-}
-
 ## Format and display the on-line manual pages (but with colors)
 ##
 ## e.g. man 'ls'

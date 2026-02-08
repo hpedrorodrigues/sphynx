@@ -17,11 +17,6 @@ shopt -s cdspell    # autocorrect typos in path names when using `cd`
 #|> Global definitions
 [ -s '/etc/bashrc' ] && source '/etc/bashrc'
 
-#|> Fuzzy Finder
-export FZF_BIN="${HOME}/.fzf.bash"
-
-[ -s "${FZF_BIN}" ] && source "${FZF_BIN}"
-
 #|> Sphynx
 export SPHYNX_DIR="${HOME}/Code/Personal/sphynx"
 export SPHYNX_COMPLETION_DIR="${SPHYNX_DIR}/modules/cli/.internal/completion"
@@ -32,6 +27,9 @@ if [[ "${PATH}" != *"${SPHYNX_DIR}"* ]]; then
   [ -s "${SPHYNX_COMPLETION_DIR}/sx.bash" ] \
     && source "${SPHYNX_COMPLETION_DIR}/sx.bash"
 fi
+
+#|> Fuzzy Finder
+hash fzf 2>/dev/null && eval "$(fzf --bash)"
 
 #|> Startship
 hash starship 2>/dev/null && eval "$(starship init bash --print-full-init)"
