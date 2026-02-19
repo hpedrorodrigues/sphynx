@@ -74,5 +74,6 @@
   "vsicons.dontShowNewVersionMessage": true,
   "vs-kubernetes": {
     "vs-kubernetes.crd-code-completion": "disabled"
-  }
+  },
+  "docker.extension.enableComposeLanguageServer": false
 }
