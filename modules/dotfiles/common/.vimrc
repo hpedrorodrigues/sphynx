@@ -257,8 +257,6 @@ let g:airline#extensions#tabline#enabled=1
 let g:airline#extensions#tabline#left_sep=' '
 let g:airline#extensions#tabline#left_alt_sep='|'
 
-let $FZF_DEFAULT_COMMAND='ag --files-with-matches --hidden --vimgrep --smart-case --nocolor --ignore .git'
-
 
 " =====> Fuzzy files finder
 

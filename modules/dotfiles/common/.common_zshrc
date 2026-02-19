@@ -68,7 +68,8 @@ if [[ "${fpath}" != *"${SPHYNX_COMPLETION_DIR}"* ]]; then
 fi
 
 #|> Fuzzy Finder
-hash fzf 2>/dev/null && source <(fzf --zsh)
+# Disable CTRL+R shortcut to prevent conflicts with Atuin.
+hash fzf 2>/dev/null && FZF_CTRL_R_COMMAND='' eval "$(fzf --zsh)"
 
 #|> Startship
 hash starship 2>/dev/null && eval "$(starship init zsh --print-full-init)"
@@ -79,6 +80,9 @@ hash zoxide 2>/dev/null && eval "$(zoxide init zsh)"
 #|> mise
 # https://mise.jdx.dev/dev-tools/shims.html#shims-vs-path
 hash mise 2>/dev/null && eval "$(mise activate zsh --shims)"
+
+#|> Atuin
+hash atuin 2>/dev/null && eval "$(atuin init zsh  --disable-up-arrow)"
 
 #|> Google Cloud SDK
 if [ -z "${CLOUDSDK_HOME:-}" ]; then

@@ -5,6 +5,7 @@ repositories:
 
 formulas:
   - apktool
+  - atuin
   - awscli
   - bash
   - bat
