@@ -11,6 +11,7 @@ source "${SPHYNX_NAMESPACE_DIR}/core/suspend.sh"
 ##? Suspend a Flux resource
 ##?
 ##? Usage:
+##?     suspend --list [[<query>] [--namespace <name> | --all-namespaces]]
 ##?     suspend [[<query>] [--namespace <name> | --all-namespaces] | <kind> <name> [--namespace <name>]]
 ##?
 ##? Arguments:
@@ -18,10 +19,14 @@ source "${SPHYNX_NAMESPACE_DIR}/core/suspend.sh"
 ##?     <name>  The Flux resource name
 ##?
 ##? Options:
+##?     -l --list  List all suspended resources
 ##?     -n --namespace <name>  The namespace scope for requests
 ##?     -a --all-namespaces  All namespaces
 ##?
 ##? Examples:
+##?     suspend --list
+##?     suspend --list --all-namespaces
+##?     suspend --list my-app
 ##?     suspend
 ##?     suspend my-app
 ##?     suspend --namespace flux-system
@@ -31,9 +36,16 @@ source "${SPHYNX_NAMESPACE_DIR}/core/suspend.sh"
 
 sx::parse_arguments "${@}"
 
-sx::flux::suspend \
-  "${query:-}" \
-  "${namespace:-}" \
-  "${all_namespaces:-false}" \
-  "${kind:-}" \
-  "${name:-}"
+if ${list:-false}; then
+  sx::flux::suspend::list \
+    "${query:-}" \
+    "${namespace:-}" \
+    "${all_namespaces:-false}"
+else
+  sx::flux::suspend \
+    "${query:-}" \
+    "${namespace:-}" \
+    "${all_namespaces:-false}" \
+    "${kind:-}" \
+    "${name:-}"
+fi

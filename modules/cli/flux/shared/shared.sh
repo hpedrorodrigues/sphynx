@@ -44,6 +44,36 @@ function sx::flux::resources() {
     | grep -E "${selector}" 2>/dev/null
 }
 
+function sx::flux::suspended_resources() {
+  local -r query="${1:-}"
+  local -r namespace="${2:-}"
+  local -r all_namespaces="${3:-false}"
+
+  if ${all_namespaces}; then
+    local -r flags='--all-namespaces'
+  elif [ -n "${namespace}" ]; then
+    local -r flags="--namespace ${namespace}"
+  else
+    local -r flags=''
+  fi
+
+  if [ -n "${query}" ]; then
+    local -r selector="$(echo "${query}" | sx::string::lowercase)"
+  else
+    local -r selector='.*'
+  fi
+
+  # shellcheck disable=SC2086  # quote this to prevent word splitting
+  kubectl get "${SX_FLUX_RESOURCES}" \
+    ${flags} \
+    --output custom-columns=NAMESPACE:.metadata.namespace,KIND:.kind,NAME:.metadata.name,SUSPENDED:.spec.suspend \
+    --no-headers 2>/dev/null \
+    | sx::string::lowercase \
+    | grep -E '\btrue$' \
+    | awk '{ print $1, $2, $3 }' \
+    | grep -E "${selector}" 2>/dev/null
+}
+
 function sx::flux::kind_to_type() {
   local -r kind="${1}"
 

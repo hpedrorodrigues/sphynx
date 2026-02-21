@@ -26,11 +26,11 @@ function sx::flux::resume() {
     local -r selected="$(echo -e "${options}" | fzf ${SX_FZF_ARGS})"
 
     if [ -n "${selected}" ]; then
-      local -r ns="$(echo "${selected}" | awk '{ print $1 }')"
-      local -r kind="$(echo "${selected}" | awk '{ print $2 }')"
-      local -r name="$(echo "${selected}" | awk '{ print $3 }')"
+      local -r selected_ns="$(echo "${selected}" | awk '{ print $1 }')"
+      local -r selected_kind="$(echo "${selected}" | awk '{ print $2 }')"
+      local -r selected_name="$(echo "${selected}" | awk '{ print $3 }')"
 
-      sx::flux_command::resume "${ns}" "${kind}" "${name}"
+      sx::flux_command::resume "${selected_ns}" "${selected_kind}" "${selected_name}"
     fi
   else
     export PS3=$'\n''Please, choose the resource: '$'\n'
@@ -45,11 +45,11 @@ function sx::flux::resume() {
     fi
 
     select selected in "${options[@]}"; do
-      local -r ns="$(echo "${selected}" | awk '{ print $1 }')"
-      local -r kind="$(echo "${selected}" | awk '{ print $2 }')"
-      local -r name="$(echo "${selected}" | awk '{ print $3 }')"
+      local -r selected_ns="$(echo "${selected}" | awk '{ print $1 }')"
+      local -r selected_kind="$(echo "${selected}" | awk '{ print $2 }')"
+      local -r selected_name="$(echo "${selected}" | awk '{ print $3 }')"
 
-      sx::flux_command::resume "${ns}" "${kind}" "${name}"
+      sx::flux_command::resume "${selected_ns}" "${selected_kind}" "${selected_name}"
       break
     done
   fi

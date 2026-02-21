@@ -1,5 +1,21 @@
 #!/usr/bin/env bash
 
+function sx::flux::suspend::list() {
+  sx::flux::check_requirements
+
+  local -r query="${1:-}"
+  local -r namespace="${2:-}"
+  local -r all_namespaces="${3:-false}"
+
+  local -r resources="$(sx::flux::suspended_resources "${query}" "${namespace}" "${all_namespaces}")"
+
+  if [ -z "${resources}" ]; then
+    sx::log::fatal 'No suspended resources found'
+  fi
+
+  echo "${resources}"
+}
+
 function sx::flux::suspend() {
   sx::flux::check_requirements
 
@@ -26,11 +42,11 @@ function sx::flux::suspend() {
     local -r selected="$(echo -e "${options}" | fzf ${SX_FZF_ARGS})"
 
     if [ -n "${selected}" ]; then
-      local -r ns="$(echo "${selected}" | awk '{ print $1 }')"
-      local -r kind="$(echo "${selected}" | awk '{ print $2 }')"
-      local -r name="$(echo "${selected}" | awk '{ print $3 }')"
+      local -r selected_ns="$(echo "${selected}" | awk '{ print $1 }')"
+      local -r selected_kind="$(echo "${selected}" | awk '{ print $2 }')"
+      local -r selected_name="$(echo "${selected}" | awk '{ print $3 }')"
 
-      sx::flux_command::suspend "${ns}" "${kind}" "${name}"
+      sx::flux_command::suspend "${selected_ns}" "${selected_kind}" "${selected_name}"
     fi
   else
     export PS3=$'\n''Please, choose the resource: '$'\n'
@@ -45,11 +61,11 @@ function sx::flux::suspend() {
     fi
 
     select selected in "${options[@]}"; do
-      local -r ns="$(echo "${selected}" | awk '{ print $1 }')"
-      local -r kind="$(echo "${selected}" | awk '{ print $2 }')"
-      local -r name="$(echo "${selected}" | awk '{ print $3 }')"
+      local -r selected_ns="$(echo "${selected}" | awk '{ print $1 }')"
+      local -r selected_kind="$(echo "${selected}" | awk '{ print $2 }')"
+      local -r selected_name="$(echo "${selected}" | awk '{ print $3 }')"
 
-      sx::flux_command::suspend "${ns}" "${kind}" "${name}"
+      sx::flux_command::suspend "${selected_ns}" "${selected_kind}" "${selected_name}"
       break
     done
   fi
