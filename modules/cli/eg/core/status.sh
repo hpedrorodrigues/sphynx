@@ -43,6 +43,8 @@ function sx::eg_command::status() {
     flags+=' --all-namespaces'
   elif [ -n "${namespace}" ]; then
     flags+=" --namespace ${namespace}"
+  else
+    flags+=" --namespace $(sx::k8s::current_namespace)"
   fi
 
   if ${verbose}; then

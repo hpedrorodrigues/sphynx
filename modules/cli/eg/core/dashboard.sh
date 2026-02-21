@@ -111,6 +111,8 @@ function sx::eg_command::dashboard_envoy_gateway() {
   local flags=''
   if [ -n "${namespace}" ]; then
     flags+=" --namespace ${namespace}"
+  else
+    flags+=" --namespace $(sx::k8s::current_namespace)"
   fi
   if [ -n "${port}" ]; then
     flags+=" --port ${port}"

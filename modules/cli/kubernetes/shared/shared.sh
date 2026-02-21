@@ -118,6 +118,7 @@ function sx::k8s::current_context() {
   sx::k8s::cli config current-context 2>/dev/null
 }
 
+# NOTE: This function is also used by eg commands
 function sx::k8s::current_namespace() {
   local -r current_context="$(sx::k8s::current_context)"
   local -r namespace="$(
