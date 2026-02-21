@@ -110,9 +110,11 @@ casks:
   # - 1password
   - appcleaner
   - bartender
+  - claude-code
   - cleanshot
   - clipy
-  - cursor
+  - codex
+  - codexbar
   - deckset
   - discord
   - docker

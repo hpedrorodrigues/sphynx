@@ -62,6 +62,15 @@ function sx::k8s_command::debug() {
 
   local -r shell='/bin/bash'
   local -r debugger_container="debugger-$(uuidgen | cut -d '-' -f 1 | tr '[:upper:]' '[:lower:]')"
+  local -r custom_profile_path="$(mktemp -t partial_container_spec || echo '/tmp/partial_container_spec.yaml')"
+
+  # https://github.com/kubernetes/enhancements/blob/c68dfb941894fc8859a951fe47a60b2161300b88/keps/sig-cli/4292-kubectl-debug-custom-profile/README.md
+  cat >"${custom_profile_path}" <<-EOF
+  securityContext:
+    runAsGroup: 0
+    runAsUser: 0
+    runAsNonRoot: false
+	EOF
 
   sx::log::info "Now you can execute commands in \"${name}(${container})/${debugger_container}\" using image \"${image}\" with \"${shell}\"\n"
 
@@ -69,6 +78,7 @@ function sx::k8s_command::debug() {
     --stdin \
     --tty \
     --profile 'sysadmin' \
+    --custom="${custom_profile_path}" \
     --namespace "${ns}" \
     --target "${container}" \
     --image "${image}" \
