@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNX_CLI_DIR}/.internal/all.sh"
+source "${SPHYNX_NAMESPACE_DIR}/shared/shared.sh"
+source "${SPHYNX_NAMESPACE_DIR}/core/resume.sh"
+
+##? Resume a Flux resource
+##?
+##? Usage:
+##?     resume [[<query>] [--namespace <name> | --all-namespaces] | <kind> <name> [--namespace <name>]]
+##?
+##? Arguments:
+##?     <kind>  The Flux resource kind (e.g., kustomization, helmrelease, gitrepository)
+##?     <name>  The Flux resource name
+##?
+##? Options:
+##?     -n --namespace <name>  The namespace scope for requests
+##?     -A --all-namespaces  All namespaces
+##?
+##? Examples:
+##?     resume
+##?     resume my-app
+##?     resume --namespace flux-system
+##?     resume --all-namespaces
+##?     resume kustomization my-app
+##?     resume kustomization my-app --namespace flux-system
+
+sx::parse_arguments "${@}"
+
+sx::flux::resume \
+  "${query:-}" \
+  "${namespace:-}" \
+  "${all_namespaces:-false}" \
+  "${kind:-}" \
+  "${name:-}"

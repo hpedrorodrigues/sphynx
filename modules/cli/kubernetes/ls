@@ -15,7 +15,7 @@ source "${SPHYNX_NAMESPACE_DIR}/core/ls.sh"
 ##?
 ##? Options:
 ##?     -n --namespace <name>  The namespace scope for requests
-##?     -a --all-namespaces  List the resources across all namespaces
+##?     -A --all-namespaces  List the resources across all namespaces
 ##?     -l --show-labels  Show all labels as the last column
 ##?     -o --output=(default | name | wide)  The output format [default: default]
 ##?

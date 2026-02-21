@@ -14,7 +14,7 @@ source "${SPHYNX_NAMESPACE_DIR}/core/topology.sh"
 ##?     topology [<query> --all-namespaces --resources --show-labels --selector <selector>]
 ##?
 ##? Options:
-##?   -a --all-namespaces  Run this command considering all pods of all namespaces
+##?   -A --all-namespaces  Run this command considering all pods of all namespaces
 ##?   -r --resources  Run this command considering resource usage
 ##?   --show-labels  Show instance labels
 ##?   -l --selector <selector>  Selector (label query) to filter on

@@ -64,10 +64,9 @@ function sx::k8s::running_pods() {
     {{end}}
   {{end}}'
 
-  # shellcheck disable=SC2086  # quote this to prevent word splitting
   local -r simple_pods_output="$(
     sx::k8s::cli get pods \
-      ${flags} 2>/dev/null \
+      --all-namespaces 2>/dev/null \
       | grep -E "${selector}" 2>/dev/null
   )"
 
@@ -83,20 +82,24 @@ function sx::k8s::running_pods() {
       | column -t -s ',' \
       | grep -E "${selector}" 2>/dev/null \
       | while read -r templated_pod_line; do
+        local pod_namespace="$(echo "${templated_pod_line}" | awk '{ print $1 }')"
         local pod_name="$(echo "${templated_pod_line}" | awk '{ print $2 }')"
 
-        local simple_pod_line="$(echo -e "${simple_pods_output}" | grep "${pod_name}")"
-        local pod_status="$(echo -e "${simple_pod_line}" | awk '{ print $3 }')"
+        local simple_pod_line="$(echo -e "${simple_pods_output}" | grep "^${pod_namespace} " | grep "${pod_name}")"
+        local pod_status="$(echo -e "${simple_pod_line}" | awk '{ print $4 }')"
 
         if echo "${pod_status}" | grep -q -v 'Running'; then
           continue
         fi
 
-        local pod_namespace="$(echo "${templated_pod_line}" | awk '{ print $1 }')"
         local container_name="$(echo "${templated_pod_line}" | awk '{ print $3 }')"
 
-        local pod_restarts_count="$(echo -e "${simple_pod_line}" | awk '{ print $4 }')"
-        local pod_age="$(echo -e "${simple_pod_line}" | awk '{ print $5 }')"
+        local pod_restarts_count="$(echo -e "${simple_pod_line}" | awk '{ print $5 }')"
+        if echo "${simple_pod_line}" | grep -q '(\|)'; then
+          local pod_age="$(echo -e "${simple_pod_line}" | awk '{ print $8 }')"
+        else
+          local pod_age="$(echo -e "${simple_pod_line}" | awk '{ print $6 }')"
+        fi
 
         echo "${pod_namespace},${pod_name},${container_name},${pod_status},${pod_restarts_count},${pod_age}"
       done
@@ -115,6 +118,7 @@ function sx::k8s::current_context() {
   sx::k8s::cli config current-context 2>/dev/null
 }
 
+# NOTE: This function is also used by eg commands
 function sx::k8s::current_namespace() {
   local -r current_context="$(sx::k8s::current_context)"
   local -r namespace="$(

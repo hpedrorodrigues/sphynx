@@ -15,7 +15,7 @@ source "${SPHYNX_NAMESPACE_DIR}/core/port-forward.sh"
 ##?
 ##? Options:
 ##?     -n --namespace <name>  The namespace scope for requests
-##?     -a --all-namespaces  All namespaces
+##?     -A --all-namespaces  All namespaces
 ##?     -r --random-port  Bind a random port locally
 ##?     -p --port <number>  Bind to the given port
 ##?

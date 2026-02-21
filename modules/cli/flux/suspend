@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNX_CLI_DIR}/.internal/all.sh"
+source "${SPHYNX_NAMESPACE_DIR}/shared/shared.sh"
+source "${SPHYNX_NAMESPACE_DIR}/core/suspend.sh"
+
+##? Suspend a Flux resource
+##?
+##? Usage:
+##?     suspend --list [[<query>] [--namespace <name> | --all-namespaces]]
+##?     suspend [[<query>] [--namespace <name> | --all-namespaces] | <kind> <name> [--namespace <name>]]
+##?
+##? Arguments:
+##?     <kind>  The Flux resource kind (e.g., kustomization, helmrelease, gitrepository)
+##?     <name>  The Flux resource name
+##?
+##? Options:
+##?     -l --list  List all suspended resources
+##?     -n --namespace <name>  The namespace scope for requests
+##?     -A --all-namespaces  All namespaces
+##?
+##? Examples:
+##?     suspend --list
+##?     suspend --list --all-namespaces
+##?     suspend --list my-app
+##?     suspend
+##?     suspend my-app
+##?     suspend --namespace flux-system
+##?     suspend --all-namespaces
+##?     suspend kustomization my-app
+##?     suspend kustomization my-app --namespace flux-system
+
+sx::parse_arguments "${@}"
+
+if ${list:-false}; then
+  sx::flux::suspend::list \
+    "${query:-}" \
+    "${namespace:-}" \
+    "${all_namespaces:-false}"
+else
+  sx::flux::suspend \
+    "${query:-}" \
+    "${namespace:-}" \
+    "${all_namespaces:-false}" \
+    "${kind:-}" \
+    "${name:-}"
+fi

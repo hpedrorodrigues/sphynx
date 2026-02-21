@@ -5,6 +5,7 @@ set -o nounset
 set -o pipefail
 
 source "${SPHYNX_CLI_DIR}/.internal/all.sh"
+source "${SPHYNX_CLI_DIR}/kubernetes/shared/shared.sh"
 source "${SPHYNX_NAMESPACE_DIR}/shared/shared.sh"
 source "${SPHYNX_NAMESPACE_DIR}/core/config.sh"
 
@@ -15,7 +16,7 @@ source "${SPHYNX_NAMESPACE_DIR}/core/config.sh"
 ##?
 ##? Options:
 ##?     -n --namespace <name>   Namespace scope for requests
-##?     -a --all-namespaces     Search all namespaces
+##?     -A --all-namespaces     Search all namespaces
 ##?     -o --output <format>    Output format (json|yaml) [default: yaml]
 ##?     -r --resource <type>    Resource type (all|bootstrap|cluster|endpoint|listener|route) [default: all]
 ##?

@@ -48,6 +48,8 @@ function sx::eg::proxy_pods() {
     flags='--all-namespaces'
   elif [ -n "${namespace}" ]; then
     flags="--namespace ${namespace}"
+  else
+    flags="--namespace $(sx::k8s::current_namespace)"
   fi
 
   if [ -n "${query}" ]; then
@@ -94,6 +96,8 @@ function sx::eg::resources() {
     flags='--all-namespaces'
   elif [ -n "${namespace}" ]; then
     flags="--namespace ${namespace}"
+  else
+    flags="--namespace $(sx::k8s::current_namespace)"
   fi
 
   if [ -n "${query}" ]; then

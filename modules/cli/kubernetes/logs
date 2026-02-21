@@ -15,7 +15,7 @@ source "${SPHYNX_NAMESPACE_DIR}/core/logs.sh"
 ##?
 ##? Options:
 ##?     -n --namespace <name>  The namespace scope for requests
-##?     -a --all-namespaces  All namespaces
+##?     -A --all-namespaces  All namespaces
 ##?     -p --pod <name>  The pod name
 ##?     -c --container <name>  The container name
 ##?     --previous  Print the logs for the previous instance of the container in a pod if it exists
