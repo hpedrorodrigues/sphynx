@@ -11,14 +11,14 @@ source "${SPHYNX_NAMESPACE_DIR}/core/debug.sh"
 ##? Debug cluster resources using interactive ephemeral containers
 ##?
 ##? Usage:
-##?     debug [[<query>] [--namespace <name> | --all-namespaces] | --namespace <name> --pod <name> --container <name>] --image <image>
+##?     debug [[<query>] [--namespace <name> | --all-namespaces] | --namespace <name> --pod <name> --container <name>] [--image <image>]
 ##?
 ##? Options:
 ##?     -n --namespace <name>  The namespace scope for requests
 ##?     -A --all-namespaces  All namespaces
 ##?     -p --pod <name>  The pod name
 ##?     -c --container <name>  The container name
-##?     --image <image>  Container image to use for debug container.
+##?     --image <image>  Container image to use for debug container. [default: ghcr.io/hpedrorodrigues/debug]
 ##?
 ##? Examples:
 ##?     debug --image busybox
