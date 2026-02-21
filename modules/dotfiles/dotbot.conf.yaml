@@ -30,7 +30,6 @@
     ${HOME}/.sphynx/common.sh: ${SPHYNX_DIR}/modules/dotfiles/common/scripts/common.sh
     ${HOME}/.sphynx/external_tools.sh: ${SPHYNX_DIR}/modules/dotfiles/common/scripts/external_tools.sh
     ${HOME}/.sphynx/filesystem.sh: ${SPHYNX_DIR}/modules/dotfiles/common/scripts/filesystem.sh
-    ${HOME}/.sphynx/flux.sh: ${SPHYNX_DIR}/modules/dotfiles/common/scripts/flux.sh
     ${HOME}/.sphynx/git.sh: ${SPHYNX_DIR}/modules/dotfiles/common/scripts/git.sh
     ${HOME}/.sphynx/kubernetes.sh: ${SPHYNX_DIR}/modules/dotfiles/common/scripts/kubernetes.sh
     ${HOME}/.sphynx/network.sh: ${SPHYNX_DIR}/modules/dotfiles/common/scripts/network.sh

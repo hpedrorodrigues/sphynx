@@ -17,14 +17,13 @@ alias watch='hwatch '
 # Shortcut to list files
 alias l='ls -lash'
 
-# Shortcut for Docker and Docker Compose
-alias d='docker'
-alias dc='docker compose'
-
 # Empty the trash
 alias empty-trash='sx system clear-trash'
 
 # Docker
+alias d='docker'
+alias dc='docker compose'
+
 alias dd='sx docker delete'
 alias ds='sx docker ls'
 alias dl='sx docker logs'
@@ -57,8 +56,14 @@ alias gd='sx git diff'
 
 alias email='sx github email'
 
+# Flux
+
+alias fr='sx flux reconcile'
+alias fxr='sx flux resume'
+alias fxs='sx flux suspend'
+
 # Kubernetes
-alias k='kubectl'
+alias k='kubectl '
 alias sk='kubectl --namespace kube-system'
 alias pk='kubectl --namespace kube-public'
 
