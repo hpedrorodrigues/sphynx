@@ -95,7 +95,11 @@ function sx::k8s::running_pods() {
         local container_name="$(echo "${templated_pod_line}" | awk '{ print $3 }')"
 
         local pod_restarts_count="$(echo -e "${simple_pod_line}" | awk '{ print $5 }')"
-        local pod_age="$(echo -e "${simple_pod_line}" | awk '{ print $6 }')"
+        if echo "${simple_pod_line}" | grep -q '(\|)'; then
+          local pod_age="$(echo -e "${simple_pod_line}" | awk '{ print $8 }')"
+        else
+          local pod_age="$(echo -e "${simple_pod_line}" | awk '{ print $6 }')"
+        fi
 
         echo "${pod_namespace},${pod_name},${container_name},${pod_status},${pod_restarts_count},${pod_age}"
       done
