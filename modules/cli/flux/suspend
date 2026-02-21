@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNX_CLI_DIR}/.internal/all.sh"
+source "${SPHYNX_NAMESPACE_DIR}/shared/shared.sh"
+source "${SPHYNX_NAMESPACE_DIR}/core/suspend.sh"
+
+##? Suspend a Flux resource
+##?
+##? Usage:
+##?     suspend [<query>] [--namespace <name> | --all-namespaces]
+##?
+##? Options:
+##?     -n --namespace <name>  The namespace scope for requests
+##?     -a --all-namespaces  All namespaces
+##?
+##? Examples:
+##?     suspend
+##?     suspend my-app
+##?     suspend --namespace flux-system
+##?     suspend --all-namespaces
+
+sx::parse_arguments "${@}"
+
+sx::flux::suspend \
+  "${query:-}" \
+  "${namespace:-}" \
+  "${all_namespaces:-false}"
