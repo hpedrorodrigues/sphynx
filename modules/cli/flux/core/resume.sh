@@ -6,8 +6,14 @@ function sx::flux::resume() {
   local -r query="${1:-}"
   local -r namespace="${2:-}"
   local -r all_namespaces="${3:-false}"
+  local -r kind="${4:-}"
+  local -r name="${5:-}"
 
-  if sx::os::is_command_available 'fzf'; then
+  if [ -n "${kind}" ] && [ -n "${name}" ]; then
+    local -r resolved_kind="$(echo "${kind}" | sx::string::lowercase)"
+
+    sx::flux_command::resume "${namespace}" "${resolved_kind}" "${name}"
+  elif sx::os::is_command_available 'fzf'; then
     local -r options="$(
       sx::flux::resources "${query}" "${namespace}" "${all_namespaces}"
     )"
@@ -56,8 +62,13 @@ function sx::flux_command::resume() {
 
   local -r flux_type="$(sx::flux::kind_to_type "${kind}")"
 
-  sx::log::info "Resuming ${kind} \"${ns}/${name}\"\n"
+  local ns_flag=''
+  if [ -n "${ns}" ]; then
+    ns_flag="--namespace ${ns}"
+  fi
+
+  sx::log::info "Resuming ${kind} \"${ns:-default}/${name}\"\n"
 
   # shellcheck disable=SC2086  # quote this to prevent word splitting
-  sx::flux::cli resume ${flux_type} "${name}" --namespace "${ns}"
+  sx::flux::cli resume ${flux_type} "${name}" ${ns_flag}
 }

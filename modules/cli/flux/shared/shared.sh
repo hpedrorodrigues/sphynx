@@ -48,19 +48,19 @@ function sx::flux::kind_to_type() {
   local -r kind="${1}"
 
   case "${kind}" in
-    gitrepository) echo 'source git' ;;
-    helmrepository) echo 'source helm' ;;
-    ocirepository) echo 'source oci' ;;
+    gitrepository | gitrepo) echo 'source git' ;;
+    helmrepository | helmrepo) echo 'source helm' ;;
+    ocirepository | ocirepo) echo 'source oci' ;;
     bucket) echo 'source bucket' ;;
     helmchart) echo 'source chart' ;;
-    kustomization) echo 'kustomization' ;;
-    helmrelease) echo 'helmrelease' ;;
+    kustomization | ks) echo 'kustomization' ;;
+    helmrelease | hr) echo 'helmrelease' ;;
     alert) echo 'alert' ;;
     provider) echo 'alert-provider' ;;
     receiver) echo 'receiver' ;;
-    imagerepository) echo 'image repository' ;;
+    imagerepository | imagerepo) echo 'image repository' ;;
     imagepolicy) echo 'image policy' ;;
-    imageupdateautomation) echo 'image update' ;;
+    imageupdateautomation | imageauto) echo 'image update' ;;
     *) sx::log::fatal "Unknown Flux kind: ${kind}" ;;
   esac
 }

@@ -11,7 +11,11 @@ source "${SPHYNX_NAMESPACE_DIR}/core/reconcile.sh"
 ##? Reconcile a Flux resource
 ##?
 ##? Usage:
-##?     reconcile [<query>] [--namespace <name> | --all-namespaces]
+##?     reconcile [[<query>] [--namespace <name> | --all-namespaces] | <kind> <name> [--namespace <name>]]
+##?
+##? Arguments:
+##?     <kind>  The Flux resource kind (e.g., kustomization, helmrelease, gitrepository)
+##?     <name>  The Flux resource name
 ##?
 ##? Options:
 ##?     -n --namespace <name>  The namespace scope for requests
@@ -22,10 +26,14 @@ source "${SPHYNX_NAMESPACE_DIR}/core/reconcile.sh"
 ##?     reconcile my-app
 ##?     reconcile --namespace flux-system
 ##?     reconcile --all-namespaces
+##?     reconcile kustomization my-app
+##?     reconcile kustomization my-app --namespace flux-system
 
 sx::parse_arguments "${@}"
 
 sx::flux::reconcile \
   "${query:-}" \
   "${namespace:-}" \
-  "${all_namespaces:-false}"
+  "${all_namespaces:-false}" \
+  "${kind:-}" \
+  "${name:-}"
