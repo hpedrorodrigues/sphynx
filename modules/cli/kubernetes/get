@@ -15,7 +15,7 @@ source "${SPHYNX_NAMESPACE_DIR}/core/get.sh"
 ##?
 ##? Options:
 ##?     -n --namespace <name>  The namespace scope for requests
-##?     -a --all-namespaces  All namespaces
+##?     -A --all-namespaces  All namespaces
 ##?     -o --output=(json | yaml)  The output format [default: yaml]
 ##?     --no-color  Do not print ANSI escape codes for colors [default: false]
 ##?

@@ -15,7 +15,7 @@ source "${SPHYNX_NAMESPACE_DIR}/core/resource-summary.sh"
 ##?
 ##? Options:
 ##?     -n --namespace <name>  The namespace scope for requests
-##?     -a --all-namespaces  All namespaces
+##?     -A --all-namespaces  All namespaces
 ##?     -l --selector <query>  Selector (label query) to filter on
 ##?
 ##? Examples:

@@ -15,7 +15,7 @@ source "${SPHYNX_NAMESPACE_DIR}/core/config.sh"
 ##?
 ##? Options:
 ##?     -n --namespace <name>   Namespace scope for requests
-##?     -a --all-namespaces     Search all namespaces
+##?     -A --all-namespaces     Search all namespaces
 ##?     -o --output <format>    Output format (json|yaml) [default: yaml]
 ##?     -r --resource <type>    Resource type (all|bootstrap|cluster|endpoint|listener|route) [default: all]
 ##?

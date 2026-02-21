@@ -19,7 +19,7 @@ source "${SPHYNX_NAMESPACE_DIR}/core/dashboard.sh"
 ##?
 ##? Options:
 ##?     -n --namespace <name>   Namespace scope for requests
-##?     -a --all-namespaces     Search all namespaces
+##?     -A --all-namespaces     Search all namespaces
 ##?     -p --port <number>      Local port to use for the dashboard
 ##?
 ##? Examples:

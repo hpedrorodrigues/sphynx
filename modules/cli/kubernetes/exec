@@ -15,7 +15,7 @@ source "${SPHYNX_NAMESPACE_DIR}/core/exec.sh"
 ##?
 ##? Options:
 ##?     -n --namespace <name>  The namespace scope for requests
-##?     -a --all-namespaces  All namespaces
+##?     -A --all-namespaces  All namespaces
 ##?     -p --pod <name>  The pod name
 ##?     -c --container <name>  The container name
 ##?     --command <command>  Command to execute in the container

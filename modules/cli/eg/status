@@ -21,7 +21,7 @@ source "${SPHYNX_NAMESPACE_DIR}/core/status.sh"
 ##?
 ##? Options:
 ##?     -n --namespace <name>   Namespace scope for requests
-##?     -a --all-namespaces     Search all namespaces
+##?     -A --all-namespaces     Search all namespaces
 ##?     -v --verbose            Verbose output
 ##?
 ##? Examples:
