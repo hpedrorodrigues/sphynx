@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 
 function sx::self::version() {
+  sx::log::info "Runtime:\n  $(sx::python --version)"
+  sx::log::info "Sphynx:\n  $(sx::self::version::internal)"
+}
+
+function sx::self::version::internal() {
   sx::require_supported_os
 
   if sx::os::is_linux; then
