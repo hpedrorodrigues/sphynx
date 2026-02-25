@@ -1,5 +1,21 @@
 #!/usr/bin/env bash
 
+function sx::flux::reconcile::list() {
+  sx::flux::check_requirements
+
+  local -r query="${1:-}"
+  local -r namespace="${2:-}"
+  local -r all_namespaces="${3:-false}"
+
+  local -r resources="$(sx::flux::resources "${query}" "${namespace}" "${all_namespaces}")"
+
+  if [ -z "${resources}" ]; then
+    sx::log::fatal 'No resources found'
+  fi
+
+  sx::log::info "${resources}"
+}
+
 function sx::flux::reconcile() {
   sx::flux::check_requirements
 
