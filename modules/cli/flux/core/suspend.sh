@@ -13,7 +13,7 @@ function sx::flux::suspend::list() {
     sx::log::fatal 'No suspended resources found'
   fi
 
-  echo "${resources}"
+  sx::log::info "${resources}"
 }
 
 function sx::flux::suspend() {

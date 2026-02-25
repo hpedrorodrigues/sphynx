@@ -11,6 +11,7 @@ source "${SPHYNX_NAMESPACE_DIR}/core/reconcile.sh"
 ##? Reconcile a Flux resource
 ##?
 ##? Usage:
+##?     reconcile --list [[<query>] [--namespace <name> | --all-namespaces]]
 ##?     reconcile [[<query>] [--namespace <name> | --all-namespaces] | <kind> <name> [--namespace <name>]]
 ##?
 ##? Arguments:
@@ -18,10 +19,14 @@ source "${SPHYNX_NAMESPACE_DIR}/core/reconcile.sh"
 ##?     <name>  The Flux resource name
 ##?
 ##? Options:
+##?     -l --list  List all resources that can be reconciled
 ##?     -n --namespace <name>  The namespace scope for requests
 ##?     -A --all-namespaces  All namespaces
 ##?
 ##? Examples:
+##?     reconcile --list
+##?     reconcile --list --all-namespaces
+##?     reconcile --list my-app
 ##?     reconcile
 ##?     reconcile my-app
 ##?     reconcile --namespace flux-system
@@ -31,9 +36,16 @@ source "${SPHYNX_NAMESPACE_DIR}/core/reconcile.sh"
 
 sx::parse_arguments "${@}"
 
-sx::flux::reconcile \
-  "${query:-}" \
-  "${namespace:-}" \
-  "${all_namespaces:-false}" \
-  "${kind:-}" \
-  "${name:-}"
+if ${list:-false}; then
+  sx::flux::reconcile::list \
+    "${query:-}" \
+    "${namespace:-}" \
+    "${all_namespaces:-false}"
+else
+  sx::flux::reconcile \
+    "${query:-}" \
+    "${namespace:-}" \
+    "${all_namespaces:-false}" \
+    "${kind:-}" \
+    "${name:-}"
+fi
