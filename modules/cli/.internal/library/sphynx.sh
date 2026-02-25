@@ -3,7 +3,6 @@
 function sx::parse_arguments() {
   local -r script_file="${0}"
   local -r help=$(grep '^##?' "${script_file}" | cut -c 5-)
-  local -r sphynxd="$(basename "${SPHYNX_CLI_DIR}")"
 
   if [[ ${*} == *'--help'* ]]; then
     eval "$(sx::docopts -h "${help}" : '--help')"
@@ -42,6 +41,7 @@ function sx::parse_arguments() {
 
     sx::log::fatal 'No such file'
   elif [[ ${*} == *'--github'* ]]; then
+    local -r sphynxd="${SPHYNX_CLI_DIR#"${SPHYNX_DIR}"/}"
     local -r file_dir="$(dirname "${script_file}")"
     local -r file_name="$(basename "${script_file}")"
     local -r branch="$(cd "${SPHYNX_DIR}" && sx::git::current_branch)"

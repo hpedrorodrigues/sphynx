@@ -11,6 +11,7 @@
 ##?
 ##? Global Options (This options can be passed to any command):
 ##?   sx --help
+##?   sx --raw
 ##?
 ##?
 ##? Find more information at: https://github.com/hpedrorodrigues/sphynx
