@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNX_CLI_DIR}/.internal/all.sh"
+source "${SPHYNX_NAMESPACE_DIR}/shared/shared.sh"
+source "${SPHYNX_NAMESPACE_DIR}/core/network.sh"
+
+##? Capture and analyze network traffic from Kubernetes pods
+##?
+##? Usage:
+##?     network dump-traffic [[<query>] [--namespace <name> | --all-namespaces] | --namespace <name> --pod <name> --container <name>] [--duration <seconds>] [--output-dir <path>] [--image <image>] [-- <flags>...]
+##?
+##? Options:
+##?     -n --namespace <name>  The namespace scope for requests
+##?     -A --all-namespaces  All namespaces
+##?     -p --pod <name>  The pod name
+##?     -c --container <name>  The container name
+##?     -d --duration <seconds>  Capture duration in seconds [default: 30]
+##?     --output-dir <path>  Local directory to store the capture file
+##?     --image <image>  Container image for the debug container [default: ghcr.io/hpedrorodrigues/debug]
+
+sx::parse_arguments "${@}"
+
+if ${dump_traffic:-false}; then
+  sx::k8s::network::dump_traffic \
+    "${query:-}" \
+    "${namespace:-}" \
+    "${pod:-}" \
+    "${container:-}" \
+    "${duration:-30}" \
+    "${output_dir:-}" \
+    "${all_namespaces:-false}" \
+    "${flags:-}" \
+    "${image:-}"
+else
+  sx::error::illegal_arguments "${*}"
+fi

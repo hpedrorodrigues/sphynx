@@ -218,3 +218,20 @@ function sx::k8s::cli() {
   # shellcheck disable=SC2086  # quote this to prevent word splitting
   ${SX_K8SCTL} "${@}"
 }
+
+function sx::k8s::copy_from_pod() {
+  local -r ns="${1}"
+  local -r name="${2}"
+  local -r container="${3}"
+  local -r remote_file="${4}"
+  local -r local_file="${5}"
+
+  if ! sx::k8s::cli cp \
+    --container "${container}" \
+    "${ns}/${name}:${remote_file}" \
+    "${local_file}" \
+    --retries 5; then
+
+    sx::log::fatal "Failed to copy file from pod \"${name}/${container}:${remote_file}\"."
+  fi
+}
