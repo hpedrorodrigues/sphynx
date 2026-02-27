@@ -155,7 +155,7 @@ function sx::k8s_command::jvm::heapdump() {
     sx::log::fatal "Failed to generate heap dump in pod \"${name}/${container}\". Tried: \"jcmd\" and \"jmap\"."
   fi
 
-  sx::k8s_command::jvm::copy_from_pod "${ns}" "${name}" "${container}" "${remote_file}" "${local_file}"
+  sx::k8s::copy_from_pod "${ns}" "${name}" "${container}" "${remote_file}" "${local_file}"
 
   sx::k8s::cli exec -n "${ns}" "${name}" -c "${container}" -- rm -f "${remote_file}" &>/dev/null || true
 
@@ -204,27 +204,10 @@ function sx::k8s_command::jvm::threaddump() {
   fi
 
   if ${thread_dump_generated}; then
-    sx::k8s_command::jvm::copy_from_pod "${ns}" "${name}" "${container}" "${remote_file}" "${local_file}"
+    sx::k8s::copy_from_pod "${ns}" "${name}" "${container}" "${remote_file}" "${local_file}"
 
     sx::k8s::cli exec -n "${ns}" "${name}" -c "${container}" -- rm -f "${remote_file}" &>/dev/null || true
 
     sx::log::info "Thread dump saved to: ${local_file}."
-  fi
-}
-
-function sx::k8s_command::jvm::copy_from_pod() {
-  local -r ns="${1}"
-  local -r name="${2}"
-  local -r container="${3}"
-  local -r remote_file="${4}"
-  local -r local_file="${5}"
-
-  if ! sx::k8s::cli cp \
-    --container "${container}" \
-    "${ns}/${name}:${remote_file}" \
-    "${local_file}" \
-    --retries 5; then
-
-    sx::log::fatal "Failed to copy dump file from pod \"${name}/${container}:${remote_file}\"."
   fi
 }
