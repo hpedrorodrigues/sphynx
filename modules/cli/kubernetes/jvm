@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNX_CLI_DIR}/.internal/all.sh"
+source "${SPHYNX_NAMESPACE_DIR}/shared/shared.sh"
+source "${SPHYNX_NAMESPACE_DIR}/core/jvm.sh"
+
+##? Generate heap dumps and thread dumps from JVM processes running in Kubernetes pods
+##?
+##? Usage:
+##?     jvm [[<query>] [--namespace <name> | --all-namespaces] | --namespace <name> --pod <name> --container <name>] [--heapdump] [--threaddump] [--output-dir <path>]
+##?
+##? Options:
+##?     -n --namespace <name>  The namespace scope for requests
+##?     -A --all-namespaces  All namespaces
+##?     -p --pod <name>  The pod name
+##?     -c --container <name>  The container name
+##?     --heapdump  Generate a heap dump
+##?     --threaddump  Generate a thread dump
+##?     --output-dir <path>  Local directory to store the dump file
+
+sx::parse_arguments "${@}"
+
+readonly generate_heapdump="$(
+  [ "${heapdump:-false}" = 'false' ] && [ "${threaddump:-false}" = 'false' ] \
+    && echo 'true' \
+    || echo "${heapdump:-false}"
+)"
+
+sx::k8s::jvm \
+  "${query:-}" \
+  "${namespace:-}" \
+  "${pod:-}" \
+  "${container:-}" \
+  "${generate_heapdump}" \
+  "${threaddump:-false}" \
+  "${output_dir:-}" \
+  "${all_namespaces:-false}"
