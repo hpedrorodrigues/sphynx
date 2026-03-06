@@ -7,6 +7,7 @@ export SX_KUBERNETES_EDITABLE_RESOURCES="$(echo "${SX_KUBERNETES_RESOURCES}" | s
 
 export SX_K8SCTL="${SX_K8SCTL:-kubectl}"
 export SX_K8S_REQUEST_TIMEOUT="${SX_K8S_REQUEST_TIMEOUT:-5s}"
+export SX_K8S_CONNECTIVITY_CHECK="${SX_K8S_CONNECTIVITY_CHECK:-true}"
 
 function sx::k8s::check_requirements() {
   sx::require_supported_os
@@ -14,19 +15,52 @@ function sx::k8s::check_requirements() {
 }
 
 function sx::k8s::can_access_api() {
+  # https://kubernetes.io/docs/reference/using-api/health-checks/
   sx::k8s::cli get \
     --raw='/readyz' \
     --request-timeout "${SX_K8S_REQUEST_TIMEOUT}" &>/dev/null
 }
 
 function sx::k8s::ensure_api_access() {
-  if ! sx::k8s::can_access_api; then
+  if ${SX_K8S_CONNECTIVITY_CHECK} && ! sx::k8s::can_access_api; then
     sx::log::fatal 'Cannot access API Server!'
   fi
 }
 
 function sx::k8s::clear_template() {
   echo -n "${*}" | tr '\n' ' ' | sed 's/}} *{{/}}{{/g' | sed 's/^ *//g'
+}
+
+function sx::k8s::age() {
+  local -r created_at="${1}"
+  local -r now="${2}"
+
+  if [ -z "${created_at}" ]; then
+    echo 'Unknown'
+    return
+  fi
+
+  if sx::os::is_macos; then
+    local -r created_at_seconds="$(TZ=UTC date -jf '%Y-%m-%dT%H:%M:%SZ' "${created_at}" '+%s' 2>/dev/null)"
+  else
+    local -r created_at_seconds="$(date -d "${created_at}" '+%s' 2>/dev/null)"
+  fi
+
+  if [ -z "${created_at_seconds}" ]; then
+    echo 'Unknown'
+    return
+  fi
+
+  local -r diff="$((now - created_at_seconds))"
+  if [ "${diff}" -ge 86400 ]; then
+    echo "$((diff / 86400))d"
+  elif [ "${diff}" -ge 3600 ]; then
+    echo "$((diff / 3600))h"
+  elif [ "${diff}" -ge 60 ]; then
+    echo "$((diff / 60))m"
+  else
+    echo "${diff}s"
+  fi
 }
 
 function sx::k8s::running_pods() {
@@ -54,60 +88,41 @@ function sx::k8s::running_pods() {
   {{range .items}}
     {{$namespace := .metadata.namespace}}
     {{$name := .metadata.name}}
-    {{range .spec.containers}}
-      {{$namespace}}{{","}}{{$name}}{{","}}{{.name}}{{"\n"}}
+    {{$created_at := .metadata.creationTimestamp}}
+    {{range .status.containerStatuses}}
+      {{if .state.running}}
+        {{$namespace}}{{","}}{{$name}}{{","}}{{.name}}{{","}}{{.restartCount}}{{","}}{{$created_at}}{{"\n"}}
+      {{end}}
     {{end}}
-    {{range .spec.initContainers}}
-      {{if eq .restartPolicy "Always"}}
-        {{$namespace}}{{","}}{{$name}}{{","}}{{.name}}{{"\n"}}
+    {{range .status.initContainerStatuses}}
+      {{if .state.running}}
+        {{$namespace}}{{","}}{{$name}}{{","}}{{.name}}{{","}}{{.restartCount}}{{","}}{{$created_at}}{{"\n"}}
       {{end}}
     {{end}}
   {{end}}'
 
-  local -r simple_pods_output="$(
-    sx::k8s::cli get pods \
-      --all-namespaces 2>/dev/null \
-      | grep -E "${selector}" 2>/dev/null
-  )"
-
-  local -r header='NAMESPACE,POD NAME,CONTAINER NAME,STATUS,RESTARTS,AGE'
+  local -r now="$(date '+%s')"
 
   # shellcheck disable=SC2086  # quote this to prevent word splitting
   local -r result="$(
     sx::k8s::cli get pods \
       ${flags} \
-      --output go-template \
+      --field-selector='status.phase=Running' \
+      --output='go-template' \
       --template="$(sx::k8s::clear_template "${template}")" 2>/dev/null \
       | sort -u \
-      | column -t -s ',' \
       | grep -E "${selector}" 2>/dev/null \
-      | while read -r templated_pod_line; do
-        local pod_namespace="$(echo "${templated_pod_line}" | awk '{ print $1 }')"
-        local pod_name="$(echo "${templated_pod_line}" | awk '{ print $2 }')"
+      | while IFS=',' read -r pod_namespace pod_name container_name restart_count created_at; do
+        local pod_age="$(sx::k8s::age "${created_at}" "${now}")"
 
-        local simple_pod_line="$(echo -e "${simple_pods_output}" | grep "^${pod_namespace} " | grep "${pod_name}")"
-        local pod_status="$(echo -e "${simple_pod_line}" | awk '{ print $4 }')"
-
-        if echo "${pod_status}" | grep -q -v 'Running'; then
-          continue
-        fi
-
-        local container_name="$(echo "${templated_pod_line}" | awk '{ print $3 }')"
-
-        local pod_restarts_count="$(echo -e "${simple_pod_line}" | awk '{ print $5 }')"
-        if echo "${simple_pod_line}" | grep -q '(\|)'; then
-          local pod_age="$(echo -e "${simple_pod_line}" | awk '{ print $8 }')"
-        else
-          local pod_age="$(echo -e "${simple_pod_line}" | awk '{ print $6 }')"
-        fi
-
-        echo "${pod_namespace},${pod_name},${container_name},${pod_status},${pod_restarts_count},${pod_age}"
+        echo "${pod_namespace},${pod_name},${container_name},Running,${restart_count},${pod_age}"
       done
   )"
 
   if [ -z "${result}" ]; then
     echo
   elif ${print_header}; then
+    local -r header='NAMESPACE,POD NAME,CONTAINER NAME,STATUS,RESTARTS,AGE'
     echo -e "${header}\n${result}" | column -t -s ','
   else
     echo -e "${result}" | column -t -s ','
@@ -120,11 +135,10 @@ function sx::k8s::current_context() {
 
 # NOTE: This function is also used by eg commands
 function sx::k8s::current_namespace() {
-  local -r current_context="$(sx::k8s::current_context)"
   local -r namespace="$(
-    sx::k8s::cli \
-      config view \
-      --output jsonpath="{.contexts[?(@.name==\"${current_context}\")].context.namespace}"
+    sx::k8s::cli config view \
+      --minify \
+      --output jsonpath='{.contexts[0].context.namespace}'
   )"
 
   if [ -z "${namespace}" ]; then
@@ -138,16 +152,18 @@ function sx::k8s::resources() {
   local -r query="${1:-}"
   local -r namespace="${2:-}"
   local -r all_namespaces="${3:-false}"
+  local -r print_header="${4:-false}"
 
-  sx::k8s::shared::resources "${SX_KUBERNETES_RESOURCES}" "${query}" "${namespace}" "${all_namespaces}"
+  sx::k8s::shared::resources "${SX_KUBERNETES_RESOURCES}" "${query}" "${namespace}" "${all_namespaces}" "${print_header}"
 }
 
 function sx::k8s::editable_resources() {
   local -r query="${1:-}"
   local -r namespace="${2:-}"
   local -r all_namespaces="${3:-false}"
+  local -r print_header="${4:-false}"
 
-  sx::k8s::shared::resources "${SX_KUBERNETES_EDITABLE_RESOURCES}" "${query}" "${namespace}" "${all_namespaces}"
+  sx::k8s::shared::resources "${SX_KUBERNETES_EDITABLE_RESOURCES}" "${query}" "${namespace}" "${all_namespaces}" "${print_header}"
 }
 
 function sx::k8s::shared::resources() {
@@ -155,6 +171,7 @@ function sx::k8s::shared::resources() {
   local -r query="${2:-}"
   local -r namespace="${3:-}"
   local -r all_namespaces="${4:-false}"
+  local -r print_header="${5:-false}"
 
   if ${all_namespaces}; then
     local -r flags='--all-namespaces'
@@ -170,13 +187,36 @@ function sx::k8s::shared::resources() {
     local -r selector='.*'
   fi
 
+  # shellcheck disable=SC2016  # Expressions don't expand in single quotes, use double quotes for that
+  local -r template='
+  {{range .items}}
+    {{$kind := .kind}}
+    {{$namespace := .metadata.namespace}}
+    {{$name := .metadata.name}}
+    {{$namespace}}{{","}}{{$kind}}{{","}}{{$name}}{{"\n"}}
+  {{end}}'
+
+  # Fetch each resource type in parallel. A single kubectl get with comma-separated
+  # types makes sequential API calls internally, so splitting them into separate
+  # processes via xargs --max-procs=0 runs all requests in parallel.
   # shellcheck disable=SC2086  # quote this to prevent word splitting
-  sx::k8s::cli get "${resources}" \
-    ${flags} \
-    --output custom-columns=NAMESPACE:.metadata.namespace,KIND:.kind,NAME:.metadata.name \
-    --no-headers \
-    | sx::string::lowercase \
-    | grep -E "${selector}" 2>/dev/null
+  local -r result="$(
+    echo "${resources}" | tr ',' '\n' \
+      | xargs --max-procs='0' --max-args='1' ${SX_K8SCTL} get \
+        ${flags} \
+        --output='go-template' \
+        --template="$(sx::k8s::clear_template "${template}")" 2>/dev/null \
+      | grep -E "${selector}" 2>/dev/null
+  )"
+
+  if [ -z "${result}" ]; then
+    echo
+  elif ${print_header}; then
+    local -r header='NAMESPACE,KIND,NAME'
+    echo -e "${header}\n${result}" | column -t -s ','
+  else
+    echo -e "${result}" | column -t -s ','
+  fi
 }
 
 function sx::k8s::nodes() {
