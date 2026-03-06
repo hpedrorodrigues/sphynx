@@ -20,10 +20,14 @@ function sx::self::prompt() {
     )"
 
     if [ -n "${selected}" ]; then
-      sx::log::info "> ${SPHYNX_EXEC_NAME} ${selected}\n"
+      # shellcheck disable=SC2086  # quote this to prevent word splitting
+      "${SPHYNX_EXEC}" ${selected} --help && echo -e '\n---\n' || true
+
+      local arguments=''
+      read -r -e -p "> ${SPHYNX_EXEC_NAME} ${selected} " arguments
 
       # shellcheck disable=SC2086  # quote this to prevent word splitting
-      exec "${SPHYNX_EXEC}" ${selected}
+      exec "${SPHYNX_EXEC}" ${selected} ${arguments}
     fi
   else
     export PS3=$'\n''Please, choose the command to be executed: '$'\n'
@@ -32,10 +36,14 @@ function sx::self::prompt() {
     readarray -t options < <(sx::self::prompt::find_available_commands)
 
     select selected in "${options[@]}"; do
-      sx::log::info "> ${SPHYNX_EXEC_NAME} ${selected}\n"
+      # shellcheck disable=SC2086  # quote this to prevent word splitting
+      "${SPHYNX_EXEC}" ${selected} --help && echo -e '\n---\n' || true
+
+      local arguments=''
+      read -r -e -p "> ${SPHYNX_EXEC_NAME} ${selected} " arguments
 
       # shellcheck disable=SC2086  # quote this to prevent word splitting
-      exec "${SPHYNX_EXEC}" ${selected}
+      exec "${SPHYNX_EXEC}" ${selected} ${arguments}
       break
     done
   fi
