@@ -7,6 +7,7 @@ export SX_KUBERNETES_EDITABLE_RESOURCES="$(echo "${SX_KUBERNETES_RESOURCES}" | s
 
 export SX_K8SCTL="${SX_K8SCTL:-kubectl}"
 export SX_K8S_REQUEST_TIMEOUT="${SX_K8S_REQUEST_TIMEOUT:-5s}"
+export SX_K8S_CONNECTIVITY_CHECK="${SX_K8S_CONNECTIVITY_CHECK:-false}"
 
 function sx::k8s::check_requirements() {
   sx::require_supported_os
@@ -14,13 +15,14 @@ function sx::k8s::check_requirements() {
 }
 
 function sx::k8s::can_access_api() {
+  # https://kubernetes.io/docs/reference/using-api/health-checks/
   sx::k8s::cli get \
     --raw='/readyz' \
     --request-timeout "${SX_K8S_REQUEST_TIMEOUT}" &>/dev/null
 }
 
 function sx::k8s::ensure_api_access() {
-  if ! sx::k8s::can_access_api; then
+  if ${SX_K8S_CONNECTIVITY_CHECK} && ! sx::k8s::can_access_api; then
     sx::log::fatal 'Cannot access API Server!'
   fi
 }
@@ -120,11 +122,10 @@ function sx::k8s::current_context() {
 
 # NOTE: This function is also used by eg commands
 function sx::k8s::current_namespace() {
-  local -r current_context="$(sx::k8s::current_context)"
   local -r namespace="$(
-    sx::k8s::cli \
-      config view \
-      --output jsonpath="{.contexts[?(@.name==\"${current_context}\")].context.namespace}"
+    sx::k8s::cli config view \
+      --minify \
+      --output jsonpath='{.contexts[0].context.namespace}'
   )"
 
   if [ -z "${namespace}" ]; then
