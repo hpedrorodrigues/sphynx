@@ -13,7 +13,7 @@ function sx::gcloud::named_configuration() {
     local -r current_named_configuration="$(sx::gcloud::named_configuration::current)"
 
     while IFS='' read -r named_configuration; do
-      if echo "${named_configuration}" | grep -q "${current_named_configuration}" 2>/dev/null; then
+      if [ -n "${current_named_configuration}" ] && [ "${named_configuration}" = "${current_named_configuration}" ]; then
         sx::color::current_item::echo "${named_configuration}"
       else
         echo "${named_configuration}"
@@ -59,8 +59,7 @@ function sx::gcloud_command::named_configuration::search() {
   local -r named_configurations="$(sx::gcloud::named_configuration::list | grep -E "${selector}")"
   local -r current_named_configuration="$(sx::gcloud::named_configuration::current)"
 
-  # shellcheck disable=SC2068  # Double quote array expansions
-  for named_configuration in ${named_configurations[@]}; do
+  for named_configuration in "${named_configurations[@]}"; do
     if [ "${current_named_configuration}" = "${named_configuration}" ]; then
       sx::color::current_item::echo "${named_configuration}"
     else

@@ -13,7 +13,7 @@ function sx::gcloud::project() {
     local -r current_project="$(sx::gcloud::project::current)"
 
     while IFS='' read -r project; do
-      if echo "${project}" | grep -q "${current_project}" 2>/dev/null; then
+      if [ -n "${current_project}" ] && echo "${project}" | grep -qF "${current_project}" 2>/dev/null; then
         sx::color::current_item::echo "${project}"
       else
         echo "${project}"
@@ -65,7 +65,7 @@ function sx::gcloud_command::project::search() {
   local -r current_project="$(sx::gcloud::project::current)"
 
   while IFS='' read -r project; do
-    if echo "${project}" | grep -q "${current_project}" 2>/dev/null; then
+    if [ -n "${current_project}" ] && echo "${project}" | grep -qF "${current_project}" 2>/dev/null; then
       sx::color::current_item::echo "${project}"
     else
       echo "${project}"

@@ -9,15 +9,17 @@ function sx::share::whatsapp() {
   local -r phone_number="${1:-}"
   local -r text="${2:-}"
 
-  sx::share::phone_number::ensure_valid "${phone_number}"
+  local -r sanitized_phone_number="${phone_number#+}"
+
+  sx::share::phone_number::ensure_valid "${sanitized_phone_number}"
 
   if [ -n "${text}" ]; then
     local -r encoded_text="$(sx::url::encode "${text}")"
-    local -r full_long_url="${WHATSAPP_LONG_URL}${phone_number}&text=${encoded_text}"
-    local -r full_short_url="${WHATSAPP_SHORT_URL}${phone_number}&text=${encoded_text}"
+    local -r full_long_url="${WHATSAPP_LONG_URL}${sanitized_phone_number}&text=${encoded_text}"
+    local -r full_short_url="${WHATSAPP_SHORT_URL}${sanitized_phone_number}&text=${encoded_text}"
   else
-    local -r full_long_url="${WHATSAPP_LONG_URL}${phone_number}"
-    local -r full_short_url="${WHATSAPP_SHORT_URL}${phone_number}"
+    local -r full_long_url="${WHATSAPP_LONG_URL}${sanitized_phone_number}"
+    local -r full_short_url="${WHATSAPP_SHORT_URL}${sanitized_phone_number}"
   fi
 
   sx::log::info 'You can use the following URLs to share this phone number.\n'
