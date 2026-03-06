@@ -7,7 +7,7 @@ function sx::share::phone_number::is_valid() {
     sx::log::fatal 'No phone number provided'
   fi
 
-  [[ "${phone_number}" =~ ^\+[0-9]{11,13}$ ]]
+  [[ "${phone_number}" =~ ^[0-9]{11,13}$ ]]
 }
 
 function sx::share::phone_number::ensure_valid() {
