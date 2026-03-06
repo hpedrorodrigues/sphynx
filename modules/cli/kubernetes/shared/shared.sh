@@ -7,7 +7,7 @@ export SX_KUBERNETES_EDITABLE_RESOURCES="$(echo "${SX_KUBERNETES_RESOURCES}" | s
 
 export SX_K8SCTL="${SX_K8SCTL:-kubectl}"
 export SX_K8S_REQUEST_TIMEOUT="${SX_K8S_REQUEST_TIMEOUT:-5s}"
-export SX_K8S_CONNECTIVITY_CHECK="${SX_K8S_CONNECTIVITY_CHECK:-false}"
+export SX_K8S_CONNECTIVITY_CHECK="${SX_K8S_CONNECTIVITY_CHECK:-true}"
 
 function sx::k8s::check_requirements() {
   sx::require_supported_os
