@@ -16,7 +16,6 @@ function sx::system::ip::public() {
   local -r commands=(
     'dig @resolver1.opendns.com ANY myip.opendns.com +short -4'
     'curl "https://api.ipify.org?format=json" --ipv4 --silent | jq ".ip" --monochrome-output --raw-output'
-    'curl "https://www.jsonip.com"            --ipv4 --silent | jq ".ip" --monochrome-output --raw-output'
     'curl "https://ipinfo.io/ip"              --ipv4 --silent'
     'curl "https://ifconfig.me/ip"            --ipv4 --silent'
   )
