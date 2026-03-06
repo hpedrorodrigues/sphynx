@@ -13,7 +13,7 @@ function sx::k8s::trace() {
 
   if sx::os::is_command_available 'fzf'; then
     local -r options="$(
-      sx::k8s::shared::resources "${traceable_resources}" "${query}" "${namespace}" "${all_namespaces}"
+      sx::k8s::shared::resources "${traceable_resources}" "${query}" "${namespace}" "${all_namespaces}" true
     )"
 
     if [ -z "${options}" ]; then
@@ -21,7 +21,7 @@ function sx::k8s::trace() {
     fi
 
     # shellcheck disable=SC2086  # quote this to prevent word splitting
-    local -r selected="$(echo -e "${options}" | fzf ${SX_FZF_ARGS})"
+    local -r selected="$(echo -e "${options}" | fzf --header-lines 1 ${SX_FZF_ARGS})"
 
     if [ -n "${selected}" ]; then
       local -r ns="$(echo "${selected}" | awk '{ print $1 }')"

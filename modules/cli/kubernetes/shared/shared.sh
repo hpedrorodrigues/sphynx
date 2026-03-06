@@ -101,7 +101,6 @@ function sx::k8s::running_pods() {
     {{end}}
   {{end}}'
 
-  local -r header='NAMESPACE,POD NAME,CONTAINER NAME,STATUS,RESTARTS,AGE'
   local -r now="$(date '+%s')"
 
   # shellcheck disable=SC2086  # quote this to prevent word splitting
@@ -123,6 +122,7 @@ function sx::k8s::running_pods() {
   if [ -z "${result}" ]; then
     echo
   elif ${print_header}; then
+    local -r header='NAMESPACE,POD NAME,CONTAINER NAME,STATUS,RESTARTS,AGE'
     echo -e "${header}\n${result}" | column -t -s ','
   else
     echo -e "${result}" | column -t -s ','
@@ -152,16 +152,18 @@ function sx::k8s::resources() {
   local -r query="${1:-}"
   local -r namespace="${2:-}"
   local -r all_namespaces="${3:-false}"
+  local -r print_header="${4:-false}"
 
-  sx::k8s::shared::resources "${SX_KUBERNETES_RESOURCES}" "${query}" "${namespace}" "${all_namespaces}"
+  sx::k8s::shared::resources "${SX_KUBERNETES_RESOURCES}" "${query}" "${namespace}" "${all_namespaces}" "${print_header}"
 }
 
 function sx::k8s::editable_resources() {
   local -r query="${1:-}"
   local -r namespace="${2:-}"
   local -r all_namespaces="${3:-false}"
+  local -r print_header="${4:-false}"
 
-  sx::k8s::shared::resources "${SX_KUBERNETES_EDITABLE_RESOURCES}" "${query}" "${namespace}" "${all_namespaces}"
+  sx::k8s::shared::resources "${SX_KUBERNETES_EDITABLE_RESOURCES}" "${query}" "${namespace}" "${all_namespaces}" "${print_header}"
 }
 
 function sx::k8s::shared::resources() {
@@ -169,6 +171,7 @@ function sx::k8s::shared::resources() {
   local -r query="${2:-}"
   local -r namespace="${3:-}"
   local -r all_namespaces="${4:-false}"
+  local -r print_header="${5:-false}"
 
   if ${all_namespaces}; then
     local -r flags='--all-namespaces'
@@ -184,13 +187,36 @@ function sx::k8s::shared::resources() {
     local -r selector='.*'
   fi
 
+  # shellcheck disable=SC2016  # Expressions don't expand in single quotes, use double quotes for that
+  local -r template='
+  {{range .items}}
+    {{$kind := .kind}}
+    {{$namespace := .metadata.namespace}}
+    {{$name := .metadata.name}}
+    {{$namespace}}{{","}}{{$kind}}{{","}}{{$name}}{{"\n"}}
+  {{end}}'
+
+  # Fetch each resource type in parallel. A single kubectl get with comma-separated
+  # types makes sequential API calls internally, so splitting them into separate
+  # processes via xargs --max-procs=0 runs all requests in parallel.
   # shellcheck disable=SC2086  # quote this to prevent word splitting
-  sx::k8s::cli get "${resources}" \
-    ${flags} \
-    --output custom-columns=NAMESPACE:.metadata.namespace,KIND:.kind,NAME:.metadata.name \
-    --no-headers \
-    | sx::string::lowercase \
-    | grep -E "${selector}" 2>/dev/null
+  local -r result="$(
+    echo "${resources}" | tr ',' '\n' \
+      | xargs --max-procs='0' --max-args='1' ${SX_K8SCTL} get \
+        ${flags} \
+        --output='go-template' \
+        --template="$(sx::k8s::clear_template "${template}")" 2>/dev/null \
+      | grep -E "${selector}" 2>/dev/null
+  )"
+
+  if [ -z "${result}" ]; then
+    echo
+  elif ${print_header}; then
+    local -r header='NAMESPACE,KIND,NAME'
+    echo -e "${header}\n${result}" | column -t -s ','
+  else
+    echo -e "${result}" | column -t -s ','
+  fi
 }
 
 function sx::k8s::nodes() {
