@@ -31,6 +31,38 @@ function sx::k8s::clear_template() {
   echo -n "${*}" | tr '\n' ' ' | sed 's/}} *{{/}}{{/g' | sed 's/^ *//g'
 }
 
+function sx::k8s::age() {
+  local -r created_at="${1}"
+  local -r now="${2}"
+
+  if [ -z "${created_at}" ]; then
+    echo 'Unknown'
+    return
+  fi
+
+  if sx::os::is_macos; then
+    local -r created_at_seconds="$(TZ=UTC date -jf '%Y-%m-%dT%H:%M:%SZ' "${created_at}" '+%s' 2>/dev/null)"
+  else
+    local -r created_at_seconds="$(date -d "${created_at}" '+%s' 2>/dev/null)"
+  fi
+
+  if [ -z "${created_at_seconds}" ]; then
+    echo 'Unknown'
+    return
+  fi
+
+  local -r diff="$((now - created_at_seconds))"
+  if [ "${diff}" -ge 86400 ]; then
+    echo "$((diff / 86400))d"
+  elif [ "${diff}" -ge 3600 ]; then
+    echo "$((diff / 3600))h"
+  elif [ "${diff}" -ge 60 ]; then
+    echo "$((diff / 60))m"
+  else
+    echo "${diff}s"
+  fi
+}
+
 function sx::k8s::running_pods() {
   local -r query="${1:-}"
   local -r namespace="${2:-}"
@@ -56,54 +88,35 @@ function sx::k8s::running_pods() {
   {{range .items}}
     {{$namespace := .metadata.namespace}}
     {{$name := .metadata.name}}
-    {{range .spec.containers}}
-      {{$namespace}}{{","}}{{$name}}{{","}}{{.name}}{{"\n"}}
+    {{$created_at := .metadata.creationTimestamp}}
+    {{range .status.containerStatuses}}
+      {{if .state.running}}
+        {{$namespace}}{{","}}{{$name}}{{","}}{{.name}}{{","}}{{.restartCount}}{{","}}{{$created_at}}{{"\n"}}
+      {{end}}
     {{end}}
-    {{range .spec.initContainers}}
-      {{if eq .restartPolicy "Always"}}
-        {{$namespace}}{{","}}{{$name}}{{","}}{{.name}}{{"\n"}}
+    {{range .status.initContainerStatuses}}
+      {{if .state.running}}
+        {{$namespace}}{{","}}{{$name}}{{","}}{{.name}}{{","}}{{.restartCount}}{{","}}{{$created_at}}{{"\n"}}
       {{end}}
     {{end}}
   {{end}}'
 
-  local -r simple_pods_output="$(
-    sx::k8s::cli get pods \
-      --all-namespaces 2>/dev/null \
-      | grep -E "${selector}" 2>/dev/null
-  )"
-
   local -r header='NAMESPACE,POD NAME,CONTAINER NAME,STATUS,RESTARTS,AGE'
+  local -r now="$(date '+%s')"
 
   # shellcheck disable=SC2086  # quote this to prevent word splitting
   local -r result="$(
     sx::k8s::cli get pods \
       ${flags} \
-      --output go-template \
+      --field-selector='status.phase=Running' \
+      --output='go-template' \
       --template="$(sx::k8s::clear_template "${template}")" 2>/dev/null \
       | sort -u \
-      | column -t -s ',' \
       | grep -E "${selector}" 2>/dev/null \
-      | while read -r templated_pod_line; do
-        local pod_namespace="$(echo "${templated_pod_line}" | awk '{ print $1 }')"
-        local pod_name="$(echo "${templated_pod_line}" | awk '{ print $2 }')"
+      | while IFS=',' read -r pod_namespace pod_name container_name restart_count created_at; do
+        local pod_age="$(sx::k8s::age "${created_at}" "${now}")"
 
-        local simple_pod_line="$(echo -e "${simple_pods_output}" | grep "^${pod_namespace} " | grep "${pod_name}")"
-        local pod_status="$(echo -e "${simple_pod_line}" | awk '{ print $4 }')"
-
-        if echo "${pod_status}" | grep -q -v 'Running'; then
-          continue
-        fi
-
-        local container_name="$(echo "${templated_pod_line}" | awk '{ print $3 }')"
-
-        local pod_restarts_count="$(echo -e "${simple_pod_line}" | awk '{ print $5 }')"
-        if echo "${simple_pod_line}" | grep -q '(\|)'; then
-          local pod_age="$(echo -e "${simple_pod_line}" | awk '{ print $8 }')"
-        else
-          local pod_age="$(echo -e "${simple_pod_line}" | awk '{ print $6 }')"
-        fi
-
-        echo "${pod_namespace},${pod_name},${container_name},${pod_status},${pod_restarts_count},${pod_age}"
+        echo "${pod_namespace},${pod_name},${container_name},Running,${restart_count},${pod_age}"
       done
   )"
 
