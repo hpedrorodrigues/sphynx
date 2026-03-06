@@ -140,15 +140,16 @@ function sx::k8s::resources_and_ports() {
     sx::k8s::cli get services \
       ${flags} \
       --output go-template \
-      --template="$(sx::k8s::clear_template "${services_template}")"
+      --template="$(sx::k8s::clear_template "${services_template}")" &
     sx::k8s::cli get deployments \
       ${flags} \
       --output go-template \
-      --template="$(sx::k8s::clear_template "${deployments_template}")"
+      --template="$(sx::k8s::clear_template "${deployments_template}")" &
     sx::k8s::cli get pods \
       ${flags} \
       --output go-template \
-      --template="$(sx::k8s::clear_template "${pods_template}")"
+      --template="$(sx::k8s::clear_template "${pods_template}")" &
+    wait
   )"
 
   echo "${output}" \
