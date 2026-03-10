@@ -68,7 +68,7 @@ function sx::k8s_command::exec() {
   )
 
   for shell in "${shells[@]}"; do
-    if sx::k8s::cli exec -n "${ns}" "${name}" -c "${container}" -- "${shell}" -c 'exit' &>/dev/null; then
+    if sx::k8s::cli exec --namespace "${ns}" "${name}" --container "${container}" -- "${shell}" -c 'exit' &>/dev/null; then
       sx::log::info "Now you can execute commands in pod \"${name}/${container}\" using \"${shell}(${command:-*})\"\n"
 
       sx::k8s::cli exec "${name}" \

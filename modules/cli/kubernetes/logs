@@ -11,9 +11,10 @@ source "${SPHYNX_NAMESPACE_DIR}/core/logs.sh"
 ##? Print the logs for a container in a pod
 ##?
 ##? Usage:
-##?     logs [[<query>] [--namespace <name> | --all-namespaces] | --namespace <name> --pod <name> --container <name>] [--previous]
+##?     logs [[<query>] [-l <selector>] [--namespace <name> | --all-namespaces] | --namespace <name> --pod <name> --container <name>] [--previous]
 ##?
 ##? Options:
+##?     -l --selector <selector>  Selector (label query) to filter on
 ##?     -n --namespace <name>  The namespace scope for requests
 ##?     -A --all-namespaces  All namespaces
 ##?     -p --pod <name>  The pod name
@@ -24,6 +25,7 @@ source "${SPHYNX_NAMESPACE_DIR}/core/logs.sh"
 ##?     logs
 ##?     logs kafka
 ##?     logs kafka --all-namespaces
+##?     logs --selector app=kafka
 ##?     logs --namespace kafka --pod kafka --container kafka
 ##?     logs --namespace kube-system
 ##?     logs --all-namespaces --previous
@@ -32,6 +34,7 @@ sx::parse_arguments "${@}"
 
 sx::k8s::logs \
   "${query:-}" \
+  "${selector:-}" \
   "${namespace:-}" \
   "${pod:-}" \
   "${container:-}" \

@@ -36,8 +36,8 @@ function sx::k8s::topology() {
 
     # shellcheck disable=SC2068  # Double quote array expansions
     for ip in ${instance_ips[@]}; do
-      sx::k8s::instance_info "${ip}" "${top_nodes}" "${top_pods}" "${instances}" "${show_labels}"
-      sx::k8s::pods_info "${ip}" "${assignments}" "${top_nodes}" "${top_pods}" "${all_namespaces}"
+      sx::k8s::topology::instance_info "${ip}" "${top_nodes}" "${top_pods}" "${instances}" "${show_labels}"
+      sx::k8s::topology::pods_info "${ip}" "${assignments}" "${top_nodes}" "${top_pods}" "${all_namespaces}"
     done
   else
     # shellcheck disable=SC2068  # Double quote array expansions
@@ -90,9 +90,9 @@ function sx::k8s::topology::assignments() {
   fi
 
   if [ -n "${query}" ]; then
-    local -r text_filter="$(echo "${query}" | sx::string::lowercase)"
+    local -r query_pattern="$(echo "${query}" | sx::string::lowercase)"
   else
-    local -r text_filter='.*'
+    local -r query_pattern='.*'
   fi
 
   # shellcheck disable=SC2086  # quote this to prevent word splitting
@@ -100,7 +100,7 @@ function sx::k8s::topology::assignments() {
     ${flags} \
     --output jsonpath='{range .items[*]}{.status.hostIP}{","}{.metadata.namespace}{","}{.metadata.name}{","}{.spec.nodeName}{","}{.status.phase}{"\n"}{end}' \
     --sort-by '{.status.hostIP}' \
-    | grep -E "${text_filter}" 2>/dev/null
+    | grep -E "${query_pattern}" 2>/dev/null
 }
 
 function sx::k8s::topology::top_pods() {
@@ -122,10 +122,10 @@ function sx::k8s::topology::top_pods() {
     --no-headers 2>/dev/null
 }
 
-function sx::k8s::instance_info() {
+function sx::k8s::topology::instance_info() {
   local -r ip="${1}"
-  local -r topn="${2}"
-  local -r topp="${3}"
+  local -r top_nodes="${2}"
+  local -r top_pods="${3}"
   local -r instances="${4}"
   local -r show_labels="${5}"
 
@@ -137,7 +137,7 @@ function sx::k8s::instance_info() {
   fi
 
   local -r instance_labels="$(echo "${instances}" | grep "${instance_name}" | awk '{ print $13 }')"
-  local -r instance_usage="$(echo -e "${topn}" | grep "${instance_name}")"
+  local -r instance_usage="$(echo -e "${top_nodes}" | grep "${instance_name}")"
 
   local -r cpu_usage="$(echo "${instance_usage}" | awk '{ print $2 }')"
   local -r cpu_percentage="$(echo "${instance_usage}" | awk '{ print $3 }')"
@@ -159,12 +159,12 @@ function sx::k8s::instance_info() {
   echo
 }
 
-function sx::k8s::pods_info() {
+function sx::k8s::topology::pods_info() {
   local -r ip="${1}"
   local -r assignments="${2}"
-  local -r topn="${3}"
-  local -r topp="${4}"
-  local -r all_ns="${5}"
+  local -r top_nodes="${3}"
+  local -r top_pods="${4}"
+  local -r all_namespaces="${5}"
 
   local pods
   readarray -t pods < <(
@@ -174,15 +174,15 @@ function sx::k8s::pods_info() {
   local resource_usage='|-- CPU,MEM,STATE,NAMESPACE,NAME\n'
   # shellcheck disable=SC2068  # Double quote array expansions
   for pod in ${pods[@]}; do
-    local pod_info="$(echo "${topp}" | grep "${pod}")"
+    local pod_info="$(echo "${top_pods}" | grep "${pod}")"
     local pod_state="$(echo "${assignments}" | grep "${pod}" | cut -d ',' -f 5)"
 
     local pod_ns="$(echo "${assignments}" | grep "${pod}" | cut -d ',' -f 2)"
 
-    local cpu_position="$(${all_ns} && echo '3' || echo '2')"
+    local cpu_position="$(${all_namespaces} && echo '3' || echo '2')"
     local cpu_usage="$(echo "${pod_info}" | awk "{ print \$${cpu_position} }")"
 
-    local memory_position="$(${all_ns} && echo '4' || echo '3')"
+    local memory_position="$(${all_namespaces} && echo '4' || echo '3')"
     local memory_usage="$(echo "${pod_info}" | awk "{ print \$${memory_position} }")"
 
     local final_cpu_usage="$([ -z "${cpu_usage}" ] && echo 'Unknown' || echo "${cpu_usage}")"

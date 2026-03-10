@@ -51,7 +51,7 @@ function sx::k8s_command::ssm() {
   local -r node_name="$(echo "${1}" | awk '{ print $1 }')"
 
   local -r provider_id="$(
-    kubectl get nodes \
+    sx::k8s::cli get nodes \
       --no-headers \
       --output 'custom-columns=NAME:.metadata.name,PROVIDER_ID:.spec.providerID' \
       | grep "${node_name}" \
