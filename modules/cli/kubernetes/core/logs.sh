@@ -5,17 +5,18 @@ function sx::k8s::logs() {
   sx::k8s::ensure_api_access
 
   local -r query="${1:-}"
-  local -r namespace="${2:-}"
-  local -r pod="${3:-}"
-  local -r container="${4:-}"
-  local -r all_namespaces="${5:-false}"
-  local -r previous_log="${6:-false}"
+  local -r selector="${2:-}"
+  local -r namespace="${3:-}"
+  local -r pod="${4:-}"
+  local -r container="${5:-}"
+  local -r all_namespaces="${6:-false}"
+  local -r previous_log="${7:-false}"
 
   if [ -n "${namespace}" ] && [ -n "${pod}" ] && [ -n "${container}" ]; then
     sx::k8s_command::logs "${namespace}" "${pod}" "${container}" "${previous_log}"
   elif sx::os::is_command_available 'fzf'; then
     local -r options="$(
-      sx::k8s_command::pod::list "${query}" "${namespace}" "${all_namespaces}" true
+      sx::k8s_command::pod::list "${query}" "${selector}" "${namespace}" "${all_namespaces}" true
     )"
 
     if [ -z "${options}" ]; then
@@ -37,7 +38,7 @@ function sx::k8s::logs() {
 
     local options
     readarray -t options < <(
-      sx::k8s_command::pod::list "${query}" "${namespace}" "${all_namespaces}"
+      sx::k8s_command::pod::list "${query}" "${selector}" "${namespace}" "${all_namespaces}"
     )
 
     if [ "${#options[@]}" -eq 0 ]; then
@@ -78,22 +79,27 @@ function sx::k8s_command::logs() {
 
 function sx::k8s_command::pod::list() {
   local -r query="${1:-}"
-  local -r namespace="${2:-}"
-  local -r all_namespaces="${3:-false}"
-  local -r print_header="${4:-false}"
+  local -r selector="${2:-}"
+  local -r namespace="${3:-}"
+  local -r all_namespaces="${4:-false}"
+  local -r print_header="${5:-false}"
 
   if ${all_namespaces}; then
-    local -r flags='--all-namespaces'
+    local flags='--all-namespaces'
   elif [ -n "${namespace}" ]; then
-    local -r flags="--namespace ${namespace}"
+    local flags="--namespace ${namespace}"
   else
-    local -r flags=''
+    local flags=''
+  fi
+
+  if [ -n "${selector}" ]; then
+    flags+=" --selector ${selector}"
   fi
 
   if [ -n "${query}" ]; then
-    local -r selector="${query}"
+    local -r query_pattern="${query}"
   else
-    local -r selector='.*'
+    local -r query_pattern='.*'
   fi
 
   # shellcheck disable=SC2016  # Expressions don't expand in single quotes, use double quotes for that
@@ -127,7 +133,7 @@ function sx::k8s_command::pod::list() {
       --template="$(sx::k8s::clear_template "${template}")" 2>/dev/null \
       | sort -u \
       | grep -vE 'Pending\|ContainerCreating\|Terminating\|CreateContainerConfigError' \
-      | grep -E "${selector}" 2>/dev/null \
+      | grep -E "${query_pattern}" 2>/dev/null \
       | while IFS=',' read -r pod_namespace pod_name container_name pod_status restart_count created_at description; do
         local pod_age="$(sx::k8s::age "${created_at}" "${now}")"
 

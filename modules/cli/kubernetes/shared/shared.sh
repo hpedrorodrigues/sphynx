@@ -65,22 +65,27 @@ function sx::k8s::age() {
 
 function sx::k8s::running_pods() {
   local -r query="${1:-}"
-  local -r namespace="${2:-}"
-  local -r all_namespaces="${3:-false}"
-  local -r print_header="${4:-false}"
+  local -r selector="${2:-}"
+  local -r namespace="${3:-}"
+  local -r all_namespaces="${4:-false}"
+  local -r print_header="${5:-false}"
 
   if ${all_namespaces}; then
-    local -r flags='--all-namespaces'
+    local flags='--all-namespaces'
   elif [ -n "${namespace}" ]; then
-    local -r flags="--namespace ${namespace}"
+    local flags="--namespace ${namespace}"
   else
-    local -r flags=''
+    local flags=''
+  fi
+
+  if [ -n "${selector}" ]; then
+    flags+=" --selector ${selector}"
   fi
 
   if [ -n "${query}" ]; then
-    local -r selector="${query}"
+    local -r query_pattern="${query}"
   else
-    local -r selector='.*'
+    local -r query_pattern='.*'
   fi
 
   # shellcheck disable=SC2016  # Expressions don't expand in single quotes, use double quotes for that
@@ -111,7 +116,7 @@ function sx::k8s::running_pods() {
       --output='go-template' \
       --template="$(sx::k8s::clear_template "${template}")" 2>/dev/null \
       | sort -u \
-      | grep -E "${selector}" 2>/dev/null \
+      | grep -E "${query_pattern}" 2>/dev/null \
       | while IFS=',' read -r pod_namespace pod_name container_name restart_count created_at; do
         local pod_age="$(sx::k8s::age "${created_at}" "${now}")"
 
@@ -182,9 +187,9 @@ function sx::k8s::shared::resources() {
   fi
 
   if [ -n "${query}" ]; then
-    local -r selector="$(echo "${query}" | sx::string::lowercase)"
+    local -r query_pattern="$(echo "${query}" | sx::string::lowercase)"
   else
-    local -r selector='.*'
+    local -r query_pattern='.*'
   fi
 
   # shellcheck disable=SC2016  # Expressions don't expand in single quotes, use double quotes for that
@@ -206,7 +211,7 @@ function sx::k8s::shared::resources() {
         ${flags} \
         --output='go-template' \
         --template="$(sx::k8s::clear_template "${template}")" 2>/dev/null \
-      | grep -E "${selector}" 2>/dev/null
+      | grep -E "${query_pattern}" 2>/dev/null
   )"
 
   if [ -z "${result}" ]; then
@@ -224,9 +229,9 @@ function sx::k8s::nodes() {
   local -r print_header="${2:-false}"
 
   if [ -n "${query}" ]; then
-    local -r selector="${query}"
+    local -r query_pattern="${query}"
   else
-    local -r selector='.*'
+    local -r query_pattern='.*'
   fi
 
   local -r header='NAME,STATUS,AGE'
@@ -235,7 +240,7 @@ function sx::k8s::nodes() {
     sx::k8s::cli get nodes \
       --no-headers \
       | sort -u \
-      | grep -E "${selector}" 2>/dev/null \
+      | grep -E "${query_pattern}" 2>/dev/null \
       | while read -r node_line; do
         local node_name="$(echo "${node_line}" | awk '{ print $1 }')"
         local node_status="$(echo "${node_line}" | awk '{ print $2 }')"

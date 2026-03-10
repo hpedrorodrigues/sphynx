@@ -11,9 +11,10 @@ source "${SPHYNX_NAMESPACE_DIR}/core/exec.sh"
 ##? Execute custom commands in a container
 ##?
 ##? Usage:
-##?     exec [[<query>] [--namespace <name> | --all-namespaces] | --namespace <name> --pod <name> --container <name>] [--command <command>]
+##?     exec [[<query>] [-l <selector>] [--namespace <name> | --all-namespaces] | --namespace <name> --pod <name> --container <name>] [--command <command>]
 ##?
 ##? Options:
+##?     -l --selector <selector>  Selector (label query) to filter on
 ##?     -n --namespace <name>  The namespace scope for requests
 ##?     -A --all-namespaces  All namespaces
 ##?     -p --pod <name>  The pod name
@@ -24,6 +25,7 @@ source "${SPHYNX_NAMESPACE_DIR}/core/exec.sh"
 ##?     exec
 ##?     exec echo-server
 ##?     exec echo-server --all-namespaces
+##?     exec --selector app=myapp
 ##?     exec --namespace echo-server --pod echo-server --container echo-server
 ##?     exec --namespace kube-system
 ##?     exec --all-namespaces
@@ -32,6 +34,7 @@ sx::parse_arguments "${@}"
 
 sx::k8s::exec \
   "${query:-}" \
+  "${selector:-}" \
   "${namespace:-}" \
   "${pod:-}" \
   "${container:-}" \

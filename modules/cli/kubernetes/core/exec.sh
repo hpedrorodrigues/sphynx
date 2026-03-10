@@ -5,17 +5,18 @@ function sx::k8s::exec() {
   sx::k8s::ensure_api_access
 
   local -r query="${1:-}"
-  local -r namespace="${2:-}"
-  local -r pod="${3:-}"
-  local -r container="${4:-}"
-  local -r command="${5:-}"
-  local -r all_namespaces="${6:-false}"
+  local -r selector="${2:-}"
+  local -r namespace="${3:-}"
+  local -r pod="${4:-}"
+  local -r container="${5:-}"
+  local -r command="${6:-}"
+  local -r all_namespaces="${7:-false}"
 
   if [ -n "${namespace}" ] && [ -n "${pod}" ] && [ -n "${container}" ]; then
     sx::k8s_command::exec "${namespace}" "${pod}" "${container}" "${command}"
   elif sx::os::is_command_available 'fzf'; then
     local -r options="$(
-      sx::k8s::running_pods "${query}" "${namespace}" "${all_namespaces}" true
+      sx::k8s::running_pods "${query}" "${selector}" "${namespace}" "${all_namespaces}" true
     )"
 
     if [ -z "${options}" ]; then
@@ -37,7 +38,7 @@ function sx::k8s::exec() {
 
     local options
     readarray -t options < <(
-      sx::k8s::running_pods "${query}" "${namespace}" "${all_namespaces}"
+      sx::k8s::running_pods "${query}" "${selector}" "${namespace}" "${all_namespaces}"
     )
 
     if [ "${#options[@]}" -eq 0 ]; then
@@ -67,7 +68,7 @@ function sx::k8s_command::exec() {
   )
 
   for shell in "${shells[@]}"; do
-    if sx::k8s::cli exec -n "${ns}" "${name}" -c "${container}" -- "${shell}" -c 'exit' &>/dev/null; then
+    if sx::k8s::cli exec --namespace "${ns}" "${name}" --container "${container}" -- "${shell}" -c 'exit' &>/dev/null; then
       sx::log::info "Now you can execute commands in pod \"${name}/${container}\" using \"${shell}(${command:-*})\"\n"
 
       sx::k8s::cli exec "${name}" \

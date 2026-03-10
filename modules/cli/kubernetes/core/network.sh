@@ -5,20 +5,21 @@ function sx::k8s::network::dump_traffic() {
   sx::k8s::ensure_api_access
 
   local -r query="${1:-}"
-  local -r namespace="${2:-}"
-  local -r pod="${3:-}"
-  local -r container="${4:-}"
-  local -r duration="${5:-30}"
-  local -r output_dir="${6:-}"
-  local -r all_namespaces="${7:-false}"
-  local -r extra_flags="${8:-}"
-  local -r image="${9:-}"
+  local -r selector="${2:-}"
+  local -r namespace="${3:-}"
+  local -r pod="${4:-}"
+  local -r container="${5:-}"
+  local -r duration="${6:-30}"
+  local -r output_dir="${7:-}"
+  local -r all_namespaces="${8:-false}"
+  local -r extra_flags="${9:-}"
+  local -r image="${10:-}"
 
   if [ -n "${namespace}" ] && [ -n "${pod}" ] && [ -n "${container}" ]; then
     sx::k8s_command::network::dump_traffic "${namespace}" "${pod}" "${container}" "${duration}" "${output_dir}" "${extra_flags}" "${image}"
   elif sx::os::is_command_available 'fzf'; then
     local -r options="$(
-      sx::k8s::running_pods "${query}" "${namespace}" "${all_namespaces}" true
+      sx::k8s::running_pods "${query}" "${selector}" "${namespace}" "${all_namespaces}" true
     )"
 
     if [ -z "${options}" ]; then
@@ -40,7 +41,7 @@ function sx::k8s::network::dump_traffic() {
 
     local options
     readarray -t options < <(
-      sx::k8s::running_pods "${query}" "${namespace}" "${all_namespaces}"
+      sx::k8s::running_pods "${query}" "${selector}" "${namespace}" "${all_namespaces}"
     )
 
     if [ "${#options[@]}" -eq 0 ]; then

@@ -7,7 +7,7 @@ function sx::k8s::pods::resource_summary() {
   local -r query="${1:-}"
   local -r namespace="${2:-}"
   local -r all_namespaces="${3:-false}"
-  local -r filter="${4:-}"
+  local -r selector="${4:-}"
 
   if ${all_namespaces}; then
     local flags='--all-namespaces'
@@ -17,14 +17,14 @@ function sx::k8s::pods::resource_summary() {
     local flags=''
   fi
 
-  if [ -n "${filter}" ]; then
-    flags+=" --selector ${filter}"
+  if [ -n "${selector}" ]; then
+    flags+=" --selector ${selector}"
   fi
 
   if [ -n "${query}" ]; then
-    local -r selector="$(echo "${query}" | sx::string::lowercase)"
+    local -r query_pattern="$(echo "${query}" | sx::string::lowercase)"
   else
-    local -r selector='.*'
+    local -r query_pattern='.*'
   fi
 
   # shellcheck disable=SC2016  # Expressions don't expand in single quotes, use double quotes for that
@@ -62,7 +62,7 @@ function sx::k8s::pods::resource_summary() {
       --template="$(sx::k8s::clear_template "${template}")" \
       | sort -u \
       | sx::string::lowercase \
-      | grep -E "${selector}" 2>/dev/null
+      | grep -E "${query_pattern}" 2>/dev/null
   )"
   # shellcheck disable=SC2086  # quote this to prevent word splitting
   local -r top_output="$(
@@ -115,9 +115,9 @@ function sx::k8s::nodes::resource_summary() {
   local -r query="${1:-}"
 
   if [ -n "${query}" ]; then
-    local -r selector="$(echo "${query}" | sx::string::lowercase)"
+    local -r query_pattern="$(echo "${query}" | sx::string::lowercase)"
   else
-    local -r selector='.*'
+    local -r query_pattern='.*'
   fi
 
   # shellcheck disable=SC2016  # Expressions don't expand in single quotes, use double quotes for that
@@ -139,7 +139,7 @@ function sx::k8s::nodes::resource_summary() {
       --template="$(sx::k8s::clear_template "${template}")" \
       | sort -u \
       | sx::string::lowercase \
-      | grep -E "${selector}" 2>/dev/null
+      | grep -E "${query_pattern}" 2>/dev/null
   )"
   local -r top_output="$(sx::k8s::cli top nodes --no-headers 2>/dev/null)"
 
