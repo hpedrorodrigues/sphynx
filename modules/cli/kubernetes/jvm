@@ -11,9 +11,10 @@ source "${SPHYNX_NAMESPACE_DIR}/core/jvm.sh"
 ##? Generate heap dumps and thread dumps from JVM processes running in Kubernetes pods
 ##?
 ##? Usage:
-##?     jvm [[<query>] [--namespace <name> | --all-namespaces] | --namespace <name> --pod <name> --container <name>] [--heapdump] [--threaddump] [--output-dir <path>]
+##?     jvm [[<query>] [-l <selector>] [--namespace <name> | --all-namespaces] | --namespace <name> --pod <name> --container <name>] [--heapdump] [--threaddump] [--output-dir <path>]
 ##?
 ##? Options:
+##?     -l --selector <selector>  Selector (label query) to filter on
 ##?     -n --namespace <name>  The namespace scope for requests
 ##?     -A --all-namespaces  All namespaces
 ##?     -p --pod <name>  The pod name
@@ -32,6 +33,7 @@ readonly generate_heapdump="$(
 
 sx::k8s::jvm \
   "${query:-}" \
+  "${selector:-}" \
   "${namespace:-}" \
   "${pod:-}" \
   "${container:-}" \

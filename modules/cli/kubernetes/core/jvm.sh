@@ -5,19 +5,20 @@ function sx::k8s::jvm() {
   sx::k8s::ensure_api_access
 
   local -r query="${1:-}"
-  local -r namespace="${2:-}"
-  local -r pod="${3:-}"
-  local -r container="${4:-}"
-  local -r heapdump="${5:-true}"
-  local -r threaddump="${6:-false}"
-  local -r output_dir="${7:-}"
-  local -r all_namespaces="${8:-false}"
+  local -r selector="${2:-}"
+  local -r namespace="${3:-}"
+  local -r pod="${4:-}"
+  local -r container="${5:-}"
+  local -r heapdump="${6:-true}"
+  local -r threaddump="${7:-false}"
+  local -r output_dir="${8:-}"
+  local -r all_namespaces="${9:-false}"
 
   if [ -n "${namespace}" ] && [ -n "${pod}" ] && [ -n "${container}" ]; then
     sx::k8s_command::jvm "${namespace}" "${pod}" "${container}" "${heapdump}" "${threaddump}" "${output_dir}"
   elif sx::os::is_command_available 'fzf'; then
     local -r options="$(
-      sx::k8s::running_pods "${query}" "${namespace}" "${all_namespaces}" true
+      sx::k8s::running_pods "${query}" "${selector}" "${namespace}" "${all_namespaces}" true
     )"
 
     if [ -z "${options}" ]; then
@@ -39,7 +40,7 @@ function sx::k8s::jvm() {
 
     local options
     readarray -t options < <(
-      sx::k8s::running_pods "${query}" "${namespace}" "${all_namespaces}"
+      sx::k8s::running_pods "${query}" "${selector}" "${namespace}" "${all_namespaces}"
     )
 
     if [ "${#options[@]}" -eq 0 ]; then

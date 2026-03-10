@@ -11,9 +11,10 @@ source "${SPHYNX_NAMESPACE_DIR}/core/network.sh"
 ##? Capture and analyze network traffic from Kubernetes pods
 ##?
 ##? Usage:
-##?     network dump-traffic [[<query>] [--namespace <name> | --all-namespaces] | --namespace <name> --pod <name> --container <name>] [--duration <seconds>] [--output-dir <path>] [--image <image>] [-- <flags>...]
+##?     network dump-traffic [[<query>] [-l <selector>] [--namespace <name> | --all-namespaces] | --namespace <name> --pod <name> --container <name>] [--duration <seconds>] [--output-dir <path>] [--image <image>] [-- <flags>...]
 ##?
 ##? Options:
+##?     -l --selector <selector>  Selector (label query) to filter on
 ##?     -n --namespace <name>  The namespace scope for requests
 ##?     -A --all-namespaces  All namespaces
 ##?     -p --pod <name>  The pod name
@@ -27,6 +28,7 @@ sx::parse_arguments "${@}"
 if ${dump_traffic:-false}; then
   sx::k8s::network::dump_traffic \
     "${query:-}" \
+    "${selector:-}" \
     "${namespace:-}" \
     "${pod:-}" \
     "${container:-}" \

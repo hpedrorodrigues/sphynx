@@ -11,26 +11,37 @@ source "${SPHYNX_NAMESPACE_DIR}/core/debug.sh"
 ##? Debug cluster resources using interactive ephemeral containers
 ##?
 ##? Usage:
-##?     debug [[<query>] [--namespace <name> | --all-namespaces] | --namespace <name> --pod <name> --container <name>] [--image <image>]
+##?     debug [<query>] [-l <selector>] [--namespace <name> | --all-namespaces] [--image <image>] [--user <uid>] [--group <gid>] [--restricted]
+##?     debug --namespace <name> --pod <name> --container <name> [--image <image>] [--user <uid>] [--group <gid>] [--restricted]
 ##?
 ##? Options:
+##?     -l --selector <selector>  Selector (label query) to filter on
 ##?     -n --namespace <name>  The namespace scope for requests
 ##?     -A --all-namespaces  All namespaces
 ##?     -p --pod <name>  The pod name
 ##?     -c --container <name>  The container name
 ##?     --image <image>  Container image to use for debug container. [default: ghcr.io/hpedrorodrigues/debug]
+##?     --user <uid>  Run debug container as this user ID
+##?     --group <gid>  Run debug container as this group ID
+##?     --restricted  Run debug container without elevated privileges (no root, no sysadmin profile)
 ##?
 ##? Examples:
 ##?     debug --image busybox
 ##?     debug keycloak --image busybox
 ##?     debug --image busybox --all-namespaces
+##?     debug --restricted
+##?     debug --user 1000 --group 1000
 
 sx::parse_arguments "${@}"
 
 sx::k8s::debug \
   "${query:-}" \
+  "${selector:-}" \
   "${namespace:-}" \
   "${pod:-}" \
   "${container:-}" \
   "${image:-}" \
-  "${all_namespaces:-false}"
+  "${all_namespaces:-false}" \
+  "${user:-}" \
+  "${group:-}" \
+  "${restricted:-false}"
