@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNX_CLI_DIR}/.internal/all.sh"
+source "${SPHYNX_NAMESPACE_DIR}/shared/shared.sh"
+source "${SPHYNX_NAMESPACE_DIR}/core/watch.sh"
+
+##? Watch one or many resources continuously
+##?
+##? Usage:
+##?     watch [<resources>] [--namespace <name> | --all-namespaces] [--selector <selector>] [--interval <seconds>] [--show-labels --output <format>]
+##?
+##? Options:
+##?     -n --namespace <name>  The namespace scope for requests
+##?     -A --all-namespaces  List the resources across all namespaces
+##?     -l --selector <selector>  Selector (label query) to filter on
+##?     -i --interval <seconds>  Refresh interval in seconds [default: 2]
+##?     --show-labels  Show all labels as the last column
+##?     -o --output=(default | name | wide)  The output format [default: default]
+##?
+##? Examples:
+##?     watch
+##?     watch hr,pods
+##?     watch hr,svc,pods --namespace gateway-internal
+##?     watch hpa,pod --selector app=haproxy-router
+##?     watch pods --all-namespaces --interval 5
+
+sx::parse_arguments "${@}"
+
+sx::k8s::watch::resources \
+  "${resources:-pods}" \
+  "${namespace:-}" \
+  "${all_namespaces:-false}" \
+  "${selector:-}" \
+  "${interval:-2}" \
+  "${output:-default}" \
+  "${show_labels:-false}"
