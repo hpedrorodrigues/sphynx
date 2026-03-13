@@ -4,9 +4,13 @@ on:
   push:
     branches:
       - main
+concurrency:
+  group: release-drafter
+  cancel-in-progress: true
 jobs:
   draft_release_notes:
     runs-on: ubuntu-latest
+    timeout-minutes: 2
     permissions:
       contents: write
       pull-requests: write

@@ -1,0 +1,48 @@
+name: Auto Label PR
+on:
+  pull_request:
+    types: [opened, edited, synchronize]
+jobs:
+  label:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/labeler@v5
+        id: labeler
+        with:
+          sync-labels: true
+
+      - if: ${{ !contains(steps.labeler.outputs.all-labels, 'no-changelog') }}
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = context.payload.pull_request.title;
+            const prefixToLabel = {
+              'feat': 'enhancement',
+              'fix': 'bug',
+              'chore': 'chore',
+              'build': 'chore',
+              'ci': 'chore',
+              'docs': 'documentation',
+              'perf': 'enhancement',
+            };
+
+            const match = title.match(/^(\w+)(\(.+\))?!?:/);
+            if (!match) return;
+
+            const prefix = match[1];
+            const label = prefixToLabel[prefix];
+            if (!label) return;
+
+            const { owner, repo } = context.repo;
+            const issue_number = context.payload.pull_request.number;
+
+            await github.rest.issues.addLabels({
+              owner,
+              repo,
+              issue_number,
+              labels: [label],
+            });
