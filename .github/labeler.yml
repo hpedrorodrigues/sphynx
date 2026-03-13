@@ -1,0 +1,6 @@
+no-changelog:
+  - all:
+      - changed-files:
+          - all-globs-to-all-files:
+              - '!modules/cli/**'
+              - '!sx'
