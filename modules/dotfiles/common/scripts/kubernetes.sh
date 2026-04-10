@@ -88,6 +88,29 @@ function king() {
     | column -t -s ','
 }
 
+## Print httproutes with their URI (host + path)
+##
+## e.g. khr
+## e.g. khr -A
+function khr() {
+  # shellcheck disable=SC2068  # Double quote array expansions
+  kubectl get httproutes \
+    ${@} \
+    --output json \
+    | jq -r '
+    .items[]
+    | .metadata.namespace as $namespace
+    | .metadata.name as $name
+    | (.spec.hostnames // ["*"]) as $hostnames
+    | .spec.rules[]
+    | (.matches // [{}])[]
+    | (.path.value // "/") as $path
+    | $hostnames[] as $host
+    | "\($namespace),\($name),\($host + $path)"
+  ' \
+    | column -t -s ','
+}
+
 ## Print nodes highlighting their status
 ##
 ## e.g. kgn
