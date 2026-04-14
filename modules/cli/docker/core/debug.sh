@@ -25,7 +25,7 @@ function sx::docker::debug() {
     # shellcheck disable=SC2086  # quote this to prevent word splitting
     local -r selected="$(echo -e "${options}" | fzf ${SX_FZF_ARGS})"
   else
-    export PS3=$'\n''Type the respective container number: '$'\n'
+    export PS3=$'\n''Type the container ID: '$'\n'
 
     local options
     readarray -t options < <(sx::docker::running_containers)
@@ -59,12 +59,12 @@ function sx::docker_command::debug() {
     sx::log::info "Debugging container \"${container_title}\" using cdebug\n"
 
     cdebug exec --privileged --image "${image}" -it "${container_id}"
-  elif docker debug --help &>/dev/null; then
-    sx::log::info "Debugging container \"${container_title}\" using docker debug\n"
+  elif sx::os::is_command_available 'docker' && docker debug --help &>/dev/null; then
+    sx::log::info "Debugging container \"${container_title}\" using \"docker debug\"\n"
 
     docker debug "${container_id}"
   else
-    sx::log::fatal 'No debug tool available (install cdebug or use Docker Desktop for docker debug)'
+    sx::log::fatal 'No debug tool available (install "cdebug" or "docker")'
   fi
 
   exit "${?}"
