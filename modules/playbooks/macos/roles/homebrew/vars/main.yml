@@ -134,10 +134,10 @@ casks:
   - rectangle
   - spotify
   - tailscale-app
-  - temurin@11 # JDK 11
-  - temurin@17 # JDK 17
-  - temurin@21 # JDK 21
+  - temurin@17
+  - temurin@21
+  - temurin@25
   - vagrant
   - wireshark
   - zed
-  - zoom
+  # - zoom

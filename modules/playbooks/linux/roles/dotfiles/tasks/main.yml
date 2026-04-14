@@ -33,6 +33,5 @@
   loop:
     - vundle.yml
     - fonts.yml
-    - terminal.yml
     - starship.yml
     - fzf.yml
