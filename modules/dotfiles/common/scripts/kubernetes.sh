@@ -58,9 +58,9 @@ function kgp() {
     ${@} \
     | GREP_COLOR='01;32' grep --color=always -E '(Running|Completed)|$' \
     | GREP_COLOR='01;33' grep --color=always -E '(ContainerCreating|PodInitializing|Pending|Terminating|NotReady|Init:[0-9]/[0-9])|$' \
-    | GREP_COLOR='01;31' grep --color=always -E 'Init:(ErrImagePull|CreateContainerConfigError|Error|CrashLoopBackOff|ImagePullBackOff)|$' \
+    | GREP_COLOR='01;31' grep --color=always -E 'Init:(ErrImagePull|CreateContainerConfigError|Error|CrashLoopBackOff|ImagePullBackOff|Unknown)|$' \
     | GREP_COLOR='01;31' grep --color=always -E '(OutOfcpu|OutOfmemory|OOMKilled)|$' \
-    | GREP_COLOR='01;31' grep --color=always -E '(CreateContainerConfigError|CreateContainerError|RunContainerError|PostStartHookError|Error)|$' \
+    | GREP_COLOR='01;31' grep --color=always -E '(CreateContainerConfigError|CreateContainerError|RunContainerError|PostStartHookError|Error|Unknown)|$' \
     | GREP_COLOR='01;31' grep --color=always -E '(CrashLoopBackOff|ImagePullBackOff)|$' \
     | GREP_COLOR='01;31' grep --color=always -E '(InvalidImageName|ErrImagePull)|$' \
     | GREP_COLOR='01;31' grep --color=always -E '(ContainerStatusUnknown|Evicted)|$'
@@ -84,6 +84,29 @@ function king() {
     | .http.paths[]
     | {namespace: $namespace, name: $name, uri: ($host + .path)}
     | "\(.namespace),\(.name),\(.uri)"
+  ' \
+    | column -t -s ','
+}
+
+## Print httproutes with their URI (host + path)
+##
+## e.g. khr
+## e.g. khr -A
+function khr() {
+  # shellcheck disable=SC2068  # Double quote array expansions
+  kubectl get httproutes \
+    ${@} \
+    --output json \
+    | jq -r '
+    .items[]
+    | .metadata.namespace as $namespace
+    | .metadata.name as $name
+    | (.spec.hostnames // ["*"]) as $hostnames
+    | .spec.rules[]
+    | (.matches // [{}])[]
+    | (.path.value // "/") as $path
+    | $hostnames[] as $host
+    | "\($namespace),\($name),\($host + $path)"
   ' \
     | column -t -s ','
 }
