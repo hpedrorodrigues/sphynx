@@ -64,7 +64,7 @@ else
     log_info 'Now, copy the public key content and configure a new SSH key on GitHub!'
     cat "${authentication_key_file}.pub"
 
-    hash 'xdg-open' 2>/dev/null && xdg-open 'https://github.com/settings/keys'
+    hash 'xdg-open' 2>/dev/null && xdg-open 'https://github.com/settings/keys' &
   fi
 fi
 
