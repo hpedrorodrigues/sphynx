@@ -11,6 +11,13 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
+for cmd in curl git; do
+  if ! hash "${cmd}" 2>/dev/null; then
+    echo >&2 "'${cmd}' is required but not installed."
+    exit 1
+  fi
+done
+
 readonly key_type='ed25519'
 readonly authentication_key_file="${HOME}/.ssh/id_ed25519"
 readonly known_hosts_file="${HOME}/.ssh/known_hosts"

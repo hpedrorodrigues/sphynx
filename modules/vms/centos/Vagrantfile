@@ -10,12 +10,12 @@
 
 Vagrant.configure("2") do |config|
 
-  config.vm.box = "centos/7"
+  # https://portal.cloud.hashicorp.com/vagrant/discover/bento/centos-stream-10
+  config.vm.box = "bento/centos-stream-10"
 
-  # https://www.vagrantup.com/docs/providers/virtualbox/configuration
-  config.vm.provider "virtualbox" do |vb|
-    vb.name = "CentOS_7"
-    vb.gui = false
+  # https://parallels.github.io/vagrant-parallels/docs/
+  config.vm.provider "parallels" do |vb|
+    vb.name = "CentOS_Stream_10"
 
     vb.memory = "2048" # 2GiB
     vb.cpus = "2" # 2vCPUs
