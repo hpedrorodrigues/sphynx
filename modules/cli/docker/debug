@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNX_CLI_DIR}/.internal/all.sh"
+source "${SPHYNX_NAMESPACE_DIR}/shared/shared.sh"
+source "${SPHYNX_NAMESPACE_DIR}/core/debug.sh"
+
+##? Open a debug shell in a running container
+##?
+##? Usage:
+##?     debug [--container <id>] [--image <image>]
+##?
+##? Options:
+##?     -c --container <id>  The container id to debug
+##?     --image <image>  Container image to use for debugging (cdebug only) [default: ghcr.io/hpedrorodrigues/debug]
+##?
+##? Examples:
+##?     debug
+##?     debug --container abc123
+##?     debug --image busybox
+
+sx::parse_arguments "${@}"
+
+sx::docker::debug "${container:-}" "${image:-}"
