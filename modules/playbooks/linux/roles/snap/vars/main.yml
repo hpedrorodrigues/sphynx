@@ -4,5 +4,6 @@ packages:
   - discord
   - slack
   - spotify
+  - telegram-desktop
   - whatsapp-for-linux
   - zoom-client

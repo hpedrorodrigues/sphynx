@@ -47,8 +47,6 @@ packages:
   - software-properties-common
   - subnetcalc
   - tmux
-  - telegram-desktop
-  - translate-shell
   - tree
   - vim
   - xclip
