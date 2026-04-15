@@ -26,7 +26,10 @@ function sx::workspace::setup() {
 
 function sx::workspace::setup_dotfiles() {
   sx::workspace::check_requirements
-  sx::require 'dotbot'
+
+  if ! sx::os::is_command_available "${SX_DOTBOT}" && ! [ -f "${SX_DOTBOT}" ]; then
+    sx::log::fatal "The command-line \"${SX_DOTBOT}\" is not available"
+  fi
 
   command "${SX_DOTBOT}" -c "${DOTBOT_CONFIG_FILE}"
 }
