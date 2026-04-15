@@ -26,6 +26,8 @@ function sx::workspace::setup() {
 
 function sx::workspace::setup_dotfiles() {
   sx::workspace::check_requirements
+  sx::workspace::require_homebrew
+  sx::workspace::install_dependencies
 
   if ! sx::os::is_command_available "${SX_DOTBOT}" && ! [ -f "${SX_DOTBOT}" ]; then
     sx::log::fatal "The command-line \"${SX_DOTBOT}\" is not available"

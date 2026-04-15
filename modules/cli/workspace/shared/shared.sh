@@ -24,4 +24,8 @@ function sx::workspace::install_dependencies() {
   if ! sx::os::is_command_available 'ansible'; then
     brew install 'ansible'
   fi
+
+  if ! sx::os::is_command_available 'dotbot'; then
+    brew install 'dotbot'
+  fi
 }
