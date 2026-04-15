@@ -3,11 +3,13 @@
 export DOTBOT_CONFIG_FILE="${DOTBOT_CONFIG_FILE:-${SPHYNX_DIR}/modules/dotfiles/dotbot.conf.yaml}"
 export PLAYBOOKS_DIRECTORY="${PLAYBOOKS_DIRECTORY:-${SPHYNX_DIR}/modules/playbooks}"
 
-function sx::workstation::setup() {
-  sx::workstation::check_requirements
+export SX_DOTBOT="${SX_DOTBOT:-dotbot}"
+
+function sx::workspace::setup() {
+  sx::workspace::check_requirements
   sx::require_network
-  sx::workstation::require_homebrew
-  sx::workstation::install_dependencies
+  sx::workspace::require_homebrew
+  sx::workspace::install_dependencies
 
   export ANSIBLE_CONFIG="${PLAYBOOKS_DIRECTORY}"
 
@@ -22,9 +24,9 @@ function sx::workstation::setup() {
     --ask-become-pass
 }
 
-function sx::workstation::setup_dotfiles() {
-  sx::workstation::check_requirements
+function sx::workspace::setup_dotfiles() {
+  sx::workspace::check_requirements
   sx::require 'dotbot'
 
-  dotbot -c "${DOTBOT_CONFIG_FILE}"
+  command "${SX_DOTBOT}" -c "${DOTBOT_CONFIG_FILE}"
 }

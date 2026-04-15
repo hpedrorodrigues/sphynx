@@ -8,7 +8,7 @@ else
   export SX_HOMEBREW_PATH="${SX_HOMEBREW_PATH}"
 fi
 
-function sx::workstation::require_homebrew() {
+function sx::workspace::require_homebrew() {
   if ! sx::os::is_command_available 'brew' && [ -f "${SX_HOMEBREW_PATH}" ]; then
     eval "$(command "${SX_HOMEBREW_PATH}" shellenv)"
   fi
@@ -16,11 +16,11 @@ function sx::workstation::require_homebrew() {
   sx::require 'brew' 'Homebrew'
 }
 
-function sx::workstation::check_requirements() {
+function sx::workspace::check_requirements() {
   sx::require_supported_os
 }
 
-function sx::workstation::install_dependencies() {
+function sx::workspace::install_dependencies() {
   if ! sx::os::is_command_available 'ansible'; then
     brew install 'ansible'
   fi

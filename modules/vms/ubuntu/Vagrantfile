@@ -24,6 +24,6 @@ Vagrant.configure("2") do |config|
   # https://www.vagrantup.com/docs/synced-folders
   # By default, Vagrant will share your project directory (the directory with the Vagrantfile) to /vagrant.
   config.vm.provision "shell", inline: <<-SHELL
-    sudo apt-get update -y
+    sudo apt update -y && sudo apt upgrade -y
   SHELL
 end

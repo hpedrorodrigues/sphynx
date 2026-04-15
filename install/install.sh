@@ -139,9 +139,9 @@ else
   (cd "${personal_directory}" && git clone git@github.com:hpedrorodrigues/secrets.git)
 fi
 
-##########|> Workstation Setup
+##########|> Workspace Setup
 
-(cd "${sphynx_directory}" && ./sx workstation setup)
+(cd "${sphynx_directory}" && ./sx workspace setup)
 
 ##########|> Finish
 
