@@ -10,12 +10,12 @@
 
 Vagrant.configure("2") do |config|
 
-  config.vm.box = "ubuntu/xenial64"
+  # https://portal.cloud.hashicorp.com/vagrant/discover/bento/ubuntu-24.04
+  config.vm.box = "bento/ubuntu-24.04"
 
-  # https://www.vagrantup.com/docs/providers/virtualbox/configuration
-  config.vm.provider "virtualbox" do |vb|
-    vb.name = "Ubuntu_Xenial64_16"
-    vb.gui = false
+  # https://parallels.github.io/vagrant-parallels/docs/
+  config.vm.provider "parallels" do |vb|
+    vb.name = "Ubuntu_24_04"
 
     vb.memory = "2048" # 2GiB
     vb.cpus = "2" # 2vCPUs
@@ -24,6 +24,6 @@ Vagrant.configure("2") do |config|
   # https://www.vagrantup.com/docs/synced-folders
   # By default, Vagrant will share your project directory (the directory with the Vagrantfile) to /vagrant.
   config.vm.provision "shell", inline: <<-SHELL
-    sudo apt-get update -y
+    sudo apt update -y && sudo apt upgrade -y
   SHELL
 end

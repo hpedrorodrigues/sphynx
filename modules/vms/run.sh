@@ -13,6 +13,13 @@ function run_action() {
   (cd "${script_directory}/${operating_system}" && vagrant "${action}")
 }
 
+function ensure_vagrant_parallels_plugin() {
+  if ! vagrant plugin list | grep -q 'vagrant-parallels'; then
+    echo "Installing vagrant-parallels plugin..."
+    vagrant plugin install vagrant-parallels
+  fi
+}
+
 function main() {
   local -r operating_system="${1:-}"
   local -r action="${2:-}"
@@ -30,6 +37,8 @@ function main() {
     exit 1
   fi
 
+  ensure_vagrant_parallels_plugin
+
   case "${action}" in
     start)
       run_action "${operating_system}" 'up'
@@ -37,7 +46,7 @@ function main() {
     stop)
       run_action "${operating_system}" 'halt'
       ;;
-    shell)
+    ssh | shell)
       run_action "${operating_system}" 'ssh'
       ;;
     destroy)

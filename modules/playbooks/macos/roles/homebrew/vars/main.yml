@@ -34,7 +34,6 @@ formulas:
   - git
   - git-delta
   - git-lfs
-  - gnu-indent
   - gnu-sed
   - gnu-tar
   - gnu-which
@@ -134,10 +133,11 @@ casks:
   - rectangle
   - spotify
   - tailscale-app
-  - temurin@11 # JDK 11
-  - temurin@17 # JDK 17
-  - temurin@21 # JDK 21
+  - temurin@17
+  - temurin@21
+  - temurin@25
   - vagrant
-  - wireshark
+  - visualvm
+  - wireshark-app
   - zed
-  - zoom
+  # - zoom

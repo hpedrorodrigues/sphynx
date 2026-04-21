@@ -11,6 +11,13 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
+for cmd in curl git; do
+  if ! hash "${cmd}" 2>/dev/null; then
+    echo >&2 "'${cmd}' is required but not installed."
+    exit 1
+  fi
+done
+
 readonly key_type='ed25519'
 readonly authentication_key_file="${HOME}/.ssh/id_ed25519"
 readonly known_hosts_file="${HOME}/.ssh/known_hosts"
@@ -64,7 +71,7 @@ else
     log_info 'Now, copy the public key content and configure a new SSH key on GitHub!'
     cat "${authentication_key_file}.pub"
 
-    hash 'xdg-open' 2>/dev/null && xdg-open 'https://github.com/settings/keys'
+    hash 'xdg-open' 2>/dev/null && xdg-open 'https://github.com/settings/keys' &
   fi
 fi
 
@@ -132,9 +139,9 @@ else
   (cd "${personal_directory}" && git clone git@github.com:hpedrorodrigues/secrets.git)
 fi
 
-##########|> Workstation Setup
+##########|> Workspace Setup
 
-(cd "${sphynx_directory}" && ./sx workstation setup)
+(cd "${sphynx_directory}" && ./sx workspace setup)
 
 ##########|> Finish
 

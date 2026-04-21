@@ -4,12 +4,12 @@
   roles:
     - role: apt
       become: true
+    - linuxbrew
     - role: snap
       become: true
     - role: docker
       become: true
     - git
-    - linuxbrew
     - go
     - dotfiles
     - vscode

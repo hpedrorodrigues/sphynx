@@ -21,11 +21,11 @@ done
 unset BASIC_PATHS
 
 #|> Java
-export JAVA11_HOME='/Library/Java/JavaVirtualMachines/temurin-11.jdk/Contents/Home'
 export JAVA17_HOME='/Library/Java/JavaVirtualMachines/temurin-17.jdk/Contents/Home'
 export JAVA21_HOME='/Library/Java/JavaVirtualMachines/temurin-21.jdk/Contents/Home'
+export JAVA25_HOME='/Library/Java/JavaVirtualMachines/temurin-25.jdk/Contents/Home'
 
-export JAVA_HOME="${JAVA21_HOME}"
+export JAVA_HOME="${JAVA25_HOME}"
 
 #|> Scala
 export SCALA2_HOME='/usr/local/opt/scala@2.13'

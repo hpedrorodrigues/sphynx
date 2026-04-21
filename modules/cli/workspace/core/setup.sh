@@ -3,11 +3,13 @@
 export DOTBOT_CONFIG_FILE="${DOTBOT_CONFIG_FILE:-${SPHYNX_DIR}/modules/dotfiles/dotbot.conf.yaml}"
 export PLAYBOOKS_DIRECTORY="${PLAYBOOKS_DIRECTORY:-${SPHYNX_DIR}/modules/playbooks}"
 
-function sx::workstation::setup() {
-  sx::workstation::check_requirements
+export SX_DOTBOT="${SX_DOTBOT:-dotbot}"
+
+function sx::workspace::setup() {
+  sx::workspace::check_requirements
   sx::require_network
-  sx::workstation::require_homebrew
-  sx::workstation::install_dependencies
+  sx::workspace::require_homebrew
+  sx::workspace::install_dependencies
 
   export ANSIBLE_CONFIG="${PLAYBOOKS_DIRECTORY}"
 
@@ -22,9 +24,14 @@ function sx::workstation::setup() {
     --ask-become-pass
 }
 
-function sx::workstation::setup_dotfiles() {
-  sx::workstation::check_requirements
-  sx::require 'dotbot'
+function sx::workspace::setup_dotfiles() {
+  sx::workspace::check_requirements
+  sx::workspace::require_homebrew
+  sx::workspace::install_dependencies
 
-  dotbot -c "${DOTBOT_CONFIG_FILE}"
+  if ! sx::os::is_command_available "${SX_DOTBOT}" && ! [ -f "${SX_DOTBOT}" ]; then
+    sx::log::fatal "The command-line \"${SX_DOTBOT}\" is not available"
+  fi
+
+  command "${SX_DOTBOT}" -c "${DOTBOT_CONFIG_FILE}"
 }

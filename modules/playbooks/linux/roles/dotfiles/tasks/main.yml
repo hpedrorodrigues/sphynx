@@ -23,7 +23,7 @@
     - lookup('env','SHELL') != '/bin/zsh'
 
 - name: Installing Dotfiles
-  command: '{{ sphynx_cli }} workstation setup --dotfiles'
+  command: '{{ sphynx_cli }} workspace setup --dotfiles'
   when:
     - zsh.stat.exists or new_zsh is success
 
@@ -33,6 +33,5 @@
   loop:
     - vundle.yml
     - fonts.yml
-    - terminal.yml
     - starship.yml
     - fzf.yml

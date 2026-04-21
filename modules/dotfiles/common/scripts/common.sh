@@ -182,7 +182,7 @@ function overload_cores() {
 ## https://github.com/paulmillr/dotfiles/blob/a26c445aea4097bb8b3c0ea95019544cd66ac9c8/home/.zshrc.sh#L232
 ##
 ## e.g. ram chrome
-## e.g. ram alacritty
+## e.g. ram firefox
 function ram() {
   local -r func_name="${FUNCNAME[0]:-${funcstack[1]}}"
   local -r application="${1}"
