@@ -16,6 +16,9 @@ export MANPAGER="${PAGER}"
 export LANG='en_US.UTF-8'
 export LC_ALL='en_US.UTF-8'
 
+# Follow's the Console Do Not Track convention
+export DO_NOT_TRACK='1'
+
 ### Loading personal scripts
 
 export DOTFILES_DIR="${HOME}/.sphynx"
@@ -75,6 +78,9 @@ fi
 
 #|> AWS CLI
 export AWS_PROFILE='sphynx'
+
+#|> GitHub CLI
+export GH_TELEMETRY='0'
 
 #|> Homebrew/Linuxbrew
 # https://docs.brew.sh/Analytics
