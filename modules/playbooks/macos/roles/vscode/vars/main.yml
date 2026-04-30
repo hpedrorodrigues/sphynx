@@ -7,8 +7,6 @@ extensions:
   - christian-kohler.path-intellisense
   - eamodio.gitlens
   - editorconfig.editorconfig
-  - github.copilot
-  - github.copilot-chat
   - github.github-vscode-theme
   - k--kato.intellij-idea-keybindings
   - mads-hartmann.bash-ide-vscode
