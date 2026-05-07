@@ -12,7 +12,7 @@ function sx::shell::run_tests() {
 
   if sx::os::is_command_available 'hyperfine'; then
     sx::log::info '> Hyperfine\n'
-    hyperfine --warmup 3 "${sh} -i -c exit"
+    hyperfine --warmup 5 "${sh} -i -c exit"
   fi
 
   if sx::os::is_command_available 'bench'; then
