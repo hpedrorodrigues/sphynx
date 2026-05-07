@@ -5,7 +5,7 @@ function sx::k8s::watch::resources() {
   sx::k8s::ensure_api_access
 
   local -r resources="${1:-pods}"
-  local -r namespace="${2:-$(sx::k8s::current_namespace)}"
+  local -r namespace="${2:-}"
   local -r all_namespaces="${3:-false}"
   local -r selector="${4:-}"
   local -r interval="${5:-2}"
