@@ -16,3 +16,5 @@
 
 nohup.out
 .uuid
+
+/.claude/settings.local.json
