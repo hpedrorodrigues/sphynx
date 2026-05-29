@@ -108,9 +108,6 @@ alias fhs='flux get helmreleases'
 alias dns='sx system dns'
 alias flush='sx system dns --flush'
 
-alias cert='sx security certificate --print'
-alias certsans='sx security certificate --print-sans'
-
 alias public_ip='sx system ip --public'
 alias private_ip='sx system ip --private'
 alias gateway_ip='sx system ip --gateway'

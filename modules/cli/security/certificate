@@ -8,25 +8,26 @@ source "${SPHYNX_CLI_DIR}/.internal/all.sh"
 source "${SPHYNX_NAMESPACE_DIR}/shared/shared.sh"
 source "${SPHYNX_NAMESPACE_DIR}/core/certificate.sh"
 
-##? Retrieve certificate information from hosts
+##? Fetch certificate information from hosts
 ##?
 ##? Usage:
-##?     certificate <host> [--print | --print-sans]
+##?     certificate <host> [--sans | --info]
 ##?
 ##? Options:
-##?     -p --print  Print the certificate
-##?     -s --print-sans  Print the Subject Alternative Name(s)
+##?     -s --sans  Print the Subject Alternative Name(s)
+##?     -i --info  Print full certificate details (subject, issuer, validity, SANs, fingerprint, ...)
 ##?
 ##? Examples:
-##?     certificate google.com --print-sans
-##?     certificate youtube.com --print
+##?     certificate google.com
+##?     certificate google.com --sans
+##?     certificate youtube.com --info
 
 sx::parse_arguments "${@}"
 
-if ${print:-false}; then
-  sx::security::certificate::print "${host:-}"
-elif ${print_sans:-false}; then
-  sx::security::certificate::print_sans "${host:-}"
+if ${sans:-false}; then
+  sx::security::certificate::sans "${host:-}"
+elif ${info:-false}; then
+  sx::security::certificate::info "${host:-}"
 else
-  sx::error::illegal_arguments "${*}"
+  sx::security::certificate::print "${host:-}"
 fi
