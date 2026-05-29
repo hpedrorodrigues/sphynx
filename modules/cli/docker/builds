@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNX_CLI_DIR}/.internal/all.sh"
+source "${SPHYNX_NAMESPACE_DIR}/shared/shared.sh"
+source "${SPHYNX_NAMESPACE_DIR}/core/builds.sh"
+
+##? Manage build records (buildx history)
+##?
+##? Usage:
+##?     builds (--ls | --inspect | --logs | --open | --delete [--all])
+##?
+##? Options:
+##?     --ls       List build records
+##?     --inspect  Inspect a build record
+##?     --logs     Show logs for a build record
+##?     --open     Open a build record in Docker Desktop
+##?     --delete   Remove a build record
+##?     --all      With --delete, remove all build records
+##?
+##? Examples:
+##?     builds --ls
+##?     builds --inspect
+##?     builds --logs
+##?     builds --open
+##?     builds --delete
+##?     builds --delete --all
+
+sx::parse_arguments "${@}"
+
+if ${ls:-false}; then
+  sx::docker::builds::ls
+elif ${inspect:-false}; then
+  sx::docker::builds::inspect
+elif ${logs:-false}; then
+  sx::docker::builds::logs
+elif ${open:-false}; then
+  sx::docker::builds::open
+elif ${delete:-false}; then
+  sx::docker::builds::delete "${all:-false}"
+else
+  sx::error::illegal_arguments "${*}"
+fi

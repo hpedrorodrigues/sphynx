@@ -67,6 +67,9 @@ function sx::docker_command::delete() {
       'network')
         docker network rm "${resource_id}"
         ;;
+      'build')
+        docker buildx history rm "${resource_id}"
+        ;;
       *)
         sx::log::fatal "Unsupported resource type (${resource_type})"
         ;;

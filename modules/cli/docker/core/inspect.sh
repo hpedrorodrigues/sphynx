@@ -15,7 +15,9 @@ function sx::docker::inspect() {
       | fzf --multi ${SX_FZF_ARGS} \
       | while read -r selected; do
         [ -n "${selected}" ] \
-          && sx::docker_command::inspect "$(echo "${selected}" | awk '{ print $2 }')"
+          && sx::docker_command::inspect \
+            "$(echo "${selected}" | awk '{ print $1 }')" \
+            "$(echo "${selected}" | awk '{ print $2 }')"
       done
   else
     export PS3=$'\n''Type the respective resource number: '$'\n'
@@ -28,14 +30,24 @@ function sx::docker::inspect() {
     fi
 
     select selected in "${options[@]}"; do
-      sx::docker_command::inspect "$(echo "${selected}" | awk '{ print $2 }')"
+      sx::docker_command::inspect \
+        "$(echo "${selected}" | awk '{ print $1 }')" \
+        "$(echo "${selected}" | awk '{ print $2 }')"
       break
     done
   fi
 }
 
 function sx::docker_command::inspect() {
-  local -r resource_id="${1}"
+  local -r resource_type="${1}"
+  local -r resource_id="${2}"
 
-  docker inspect "${resource_id}"
+  case "${resource_type}" in
+    'build')
+      docker buildx history inspect "${resource_id}"
+      ;;
+    *)
+      docker inspect "${resource_id}"
+      ;;
+  esac
 }

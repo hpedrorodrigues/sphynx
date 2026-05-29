@@ -11,13 +11,14 @@ source "${SPHYNX_NAMESPACE_DIR}/core/prune.sh"
 ##? Remove Docker objects using filters
 ##?
 ##? Usage:
-##?     prune (containers | images | volumes | networks | all)
+##?     prune (containers | images | volumes | networks | builds | all)
 ##?
 ##? Examples:
 ##?     prune containers
 ##?     prune images
 ##?     prune volumes
 ##?     prune networks
+##?     prune builds
 ##?     prune all
 
 sx::parse_arguments "${@}"
@@ -38,6 +39,8 @@ if ! "${SX_CONFIRMATION_REQUIRED:-true}" \
     sx::docker::remove_volumes
   elif ${networks:-false}; then
     sx::docker::remove_networks
+  elif ${builds:-false}; then
+    sx::docker::remove_builds
   elif ${all:-false}; then
     sx::docker::remove_all
   else
