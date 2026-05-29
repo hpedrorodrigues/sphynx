@@ -2,6 +2,8 @@
 
 readonly min_port_number='2000'
 readonly max_port_number='65535'
+readonly max_retry_attempts='10'
+readonly max_retry_backoff_seconds='30'
 
 function sx::k8s::port_forward() {
   sx::k8s::check_requirements
@@ -12,6 +14,7 @@ function sx::k8s::port_forward() {
   local -r all_namespaces="${3:-false}"
   local -r random_port="${4:-false}"
   local -r user_port="${5:-}"
+  local -r retry="${6:-false}"
 
   if [ -n "${user_port}" ] \
     && { [ "${user_port}" -lt "${min_port_number}" ] || [ "${user_port}" -gt "${max_port_number}" ]; }; then
@@ -42,7 +45,8 @@ function sx::k8s::port_forward() {
         "${name}" \
         "${port}" \
         "${random_port}" \
-        "${user_port}"
+        "${user_port}" \
+        "${retry}"
     fi
   else
     export PS3=$'\n''Please, choose the resource: '$'\n'
@@ -68,7 +72,8 @@ function sx::k8s::port_forward() {
         "${name}" \
         "${port}" \
         "${random_port}" \
-        "${user_port}"
+        "${user_port}" \
+        "${retry}"
       break
     done
   fi
@@ -166,6 +171,7 @@ function sx::k8s_command::port_forward() {
   local -r port="${4:-}"
   local -r random_port="${5:-false}"
   local -r user_port="${6:-}"
+  local -r retry="${7:-false}"
 
   if [ -n "${user_port}" ]; then
     local -r local_port="${user_port}"
@@ -181,7 +187,34 @@ function sx::k8s_command::port_forward() {
     sx::log::info "Port forwarding to a pod selected by the ${kind} (${ns}/${name})\n"
   fi
 
-  sx::k8s::cli port-forward \
-    --namespace "${ns}" \
-    "${kind}/${name}" "${local_port}:${port}"
+  if ${retry}; then
+    trap 'sx::log::info "\nNo longer retrying port-forward. Cancelled by user. Bye..."; exit 130' INT
+
+    local -r context="$(sx::k8s::cli config current-context)"
+    sx::log::info "Pinned context: \"${context}\", namespace: \"${ns}\".\n"
+
+    local attempt=1
+    local delay=1
+    while [ "${attempt}" -le "${max_retry_attempts}" ]; do
+      sx::k8s::cli port-forward \
+        --context "${context}" \
+        --namespace "${ns}" \
+        "${kind}/${name}" "${local_port}:${port}" || true
+
+      attempt=$((attempt + 1))
+
+      if [ "${attempt}" -le "${max_retry_attempts}" ]; then
+        sx::log::info "Reconnecting in ${delay}s (attempt ${attempt}/${max_retry_attempts})..."
+        sleep "${delay}"
+        delay=$((delay * 2))
+        if [ "${delay}" -gt "${max_retry_backoff_seconds}" ]; then
+          delay="${max_retry_backoff_seconds}"
+        fi
+      fi
+    done
+  else
+    sx::k8s::cli port-forward \
+      --namespace "${ns}" \
+      "${kind}/${name}" "${local_port}:${port}"
+  fi
 }

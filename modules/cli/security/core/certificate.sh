@@ -1,65 +1,64 @@
 #!/usr/bin/env bash
 
-function sx::security::certificate::print() {
+readonly fetch_timeout_seconds='10'
+readonly default_port='443'
+
+function sx::security::certificate::fetch() {
   sx::security::check_requirements
   sx::require 'openssl'
   sx::require_network
 
-  local -r host="${1:-}"
+  local -r host_port="${1:-}"
+  if [ -z "${host_port}" ]; then
+    sx::log::fatal 'This function needs a host (optionally host:port) as first argument'
+  fi
 
-  if [ -z "${host}" ]; then
-    sx::log::fatal 'This function needs a host as first argument'
+  local -r host="${host_port%%:*}"
+  local port="${default_port}"
+  if [[ "${host_port}" == *:* ]]; then
+    port="${host_port##*:}"
   fi
 
   local -r info="$(
-    echo -e 'GET / HTTP/1.0\nEOT' \
-      | openssl s_client -connect "${host}:443" -servername "${host}" 2>&1
+    timeout "${fetch_timeout_seconds}" openssl s_client \
+      -connect "${host}:${port}" \
+      -servername "${host}" \
+      </dev/null 2>&1
   )"
 
   if ! [[ ${info} == *'-----BEGIN CERTIFICATE-----'* ]]; then
-    sx::log::fatal 'No certificate found'
+    local -r reason="$(grep -v '^[[:space:]]*$' <<<"${info}" | tail -n 1)"
+    sx::log::fatal "No certificate found for ${host}:${port}: ${reason}"
   fi
 
-  echo "${info}" | openssl x509
+  echo "${info}"
 }
 
-function sx::security::certificate::print_sans() {
-  sx::security::check_requirements
-  sx::require 'openssl'
-  sx::require_network
+function sx::security::certificate::print() {
+  local info
+  info="$(sx::security::certificate::fetch "${1:-}")"
 
-  local -r host="${1:-}"
+  openssl x509 <<<"${info}"
+}
 
-  if [ -z "${host}" ]; then
-    sx::log::fatal 'This function needs a host as first argument'
-  fi
-
-  local -r info="$(
-    echo -e 'GET / HTTP/1.0\nEOT' \
-      | openssl s_client -connect "${host}:443" -servername "${host}" 2>&1
-  )"
-
-  if ! [[ ${info} == *'-----BEGIN CERTIFICATE-----'* ]]; then
-    sx::log::fatal 'No certificate found'
-  fi
-
-  local -r certificate_options="no_aux, no_header, no_issuer, \
-                                no_pubkey, no_serial, no_sigdump, \
-                                no_signame, no_validity, no_version"
-  local -r text=$(
-    echo "${info}" | openssl x509 -text -certopt "${certificate_options}"
-  )
+function sx::security::certificate::sans() {
+  local info
+  info="$(sx::security::certificate::fetch "${1:-}")"
 
   sx::log::info 'Common Name:\n'
-  echo "${text}" \
-    | grep 'Subject:' \
-    | sed -e 's/^.*CN=//' \
-    | sed -e 's/\/emailAddress=.*//'
+  openssl x509 -noout -subject -nameopt sep_multiline <<<"${info}" \
+    | sed -n 's/^[[:space:]]*CN[[:space:]]*=[[:space:]]*//p'
 
   sx::log::info '\nSubject Alternative Name(s):\n'
-  echo "${text}" \
-    | grep -A 1 'Subject Alternative Name:' \
-    | sed -e '2s/DNS://g' -e 's/ //g' \
+  openssl x509 -noout -ext subjectAltName <<<"${info}" \
+    | tail -n +2 \
     | tr ',' '\n' \
-    | tail -n +2
+    | sed -E 's/^[[:space:]]*DNS://'
+}
+
+function sx::security::certificate::info() {
+  local info
+  info="$(sx::security::certificate::fetch "${1:-}")"
+
+  openssl x509 -text -noout <<<"${info}"
 }
