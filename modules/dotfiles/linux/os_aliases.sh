@@ -17,6 +17,6 @@ alias apts='sudo apt-cache search'
 
 alias up_os='sudo apt update -y && sudo apt-get update -y && sudo apt-get upgrade -y && sudo apt autoremove -y && sudo apt autoclean -y && sudo apt clean -y'
 alias up_snap='sudo snap refresh'
-alias up_brew='brew update && brew upgrade && brew autoremove && brew cleanup -s --prune 30 && brew services cleanup'
+alias up_brew='brew update && brew upgrade --formula && brew autoremove && brew cleanup -s --prune 30 && brew services cleanup'
 
 alias up_all='up_os && up_snap && up_brew'
