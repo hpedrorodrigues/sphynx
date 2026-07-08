@@ -3,6 +3,7 @@
 
   roles:
     - homebrew
+    - krew
     - mas
     - vscode
     - karabiner
