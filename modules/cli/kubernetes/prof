@@ -11,7 +11,7 @@ source "${SPHYNX_NAMESPACE_DIR}/core/prof.sh"
 ##? Profile applications running in Kubernetes pods using `josepdcs/kubectl-prof`
 ##?
 ##? Usage:
-##?     prof [[<query>] [-l <selector>] [--namespace <name> | --all-namespaces] | --namespace <name> --pod <name> --container <name>] [-- <flags>...]
+##?     prof [[<query>] [-l <selector>] [--namespace <name> | --all-namespaces] | --namespace <name> --pod <name> --container <name>] [--timeout <duration>] [--non-root] [--keep-jobs] [--image <image>] [-- <flags>...]
 ##?
 ##? Options:
 ##?     -l --selector <selector>  Selector (label query) to filter on
@@ -19,12 +19,19 @@ source "${SPHYNX_NAMESPACE_DIR}/core/prof.sh"
 ##?     -A --all-namespaces  All namespaces
 ##?     -p --pod <name>  The pod name
 ##?     -c --container <name>  The container name
+##?     --timeout <duration>  Max wall-clock time for the whole profiling run, e.g. 30s, 5m, 1h [default: 10m]
+##?     --non-root  Make the profiler shared dir writable for non-root targets (uses a privileged ephemeral debug container)
+##?     --keep-jobs  Keep orphaned profiling jobs on failure for inspection
+##?     --image <image>  Container image for the debug container used by --non-root [default: ghcr.io/hpedrorodrigues/debug]
 ##?
 ##? Examples:
 ##?     prof -- --lang java --time 1m
+##?     prof --non-root -- -l java -t 1m
+##?     prof --timeout 30m -- -l java -t 20m
 ##?     prof workspaces-events --namespace staging -- -l java -t 1m -o flamegraph
 ##?     prof --namespace staging --pod my-pod --container my-container -- -l go -t 30s
 ##?     prof -- -l python -t 5m -o speedscope --local-path /tmp
+##?     prof piper-ai-executor -n prod --non-root -- -l java -t 30s --log-level trace
 
 sx::parse_arguments "${@}"
 
@@ -35,4 +42,8 @@ sx::k8s::prof \
   "${pod:-}" \
   "${container:-}" \
   "${all_namespaces:-false}" \
+  "${non_root:-false}" \
+  "${keep_jobs:-false}" \
+  "${timeout:-10m}" \
+  "${image:-}" \
   "${flags[*]:-}"
