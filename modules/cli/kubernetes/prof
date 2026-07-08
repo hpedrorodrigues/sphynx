@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNX_CLI_DIR}/.internal/all.sh"
+source "${SPHYNX_NAMESPACE_DIR}/shared/shared.sh"
+source "${SPHYNX_NAMESPACE_DIR}/core/prof.sh"
+
+##? Profile applications running in Kubernetes pods using `josepdcs/kubectl-prof`
+##?
+##? Usage:
+##?     prof [[<query>] [-l <selector>] [--namespace <name> | --all-namespaces] | --namespace <name> --pod <name> --container <name>] [-- <flags>...]
+##?
+##? Options:
+##?     -l --selector <selector>  Selector (label query) to filter on
+##?     -n --namespace <name>  The namespace scope for requests
+##?     -A --all-namespaces  All namespaces
+##?     -p --pod <name>  The pod name
+##?     -c --container <name>  The container name
+##?
+##? Examples:
+##?     prof -- --lang java --time 1m
+##?     prof workspaces-events --namespace staging -- -l java -t 1m -o flamegraph
+##?     prof --namespace staging --pod my-pod --container my-container -- -l go -t 30s
+##?     prof -- -l python -t 5m -o speedscope --local-path /tmp
+
+sx::parse_arguments "${@}"
+
+sx::k8s::prof \
+  "${query:-}" \
+  "${selector:-}" \
+  "${namespace:-}" \
+  "${pod:-}" \
+  "${container:-}" \
+  "${all_namespaces:-false}" \
+  "${flags[*]:-}"

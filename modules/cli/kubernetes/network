@@ -35,7 +35,7 @@ if ${dump_traffic:-false}; then
     "${duration:-30}" \
     "${output_dir:-}" \
     "${all_namespaces:-false}" \
-    "${flags:-}" \
+    "${flags[*]:-}" \
     "${image:-}"
 else
   sx::error::illegal_arguments "${*}"
