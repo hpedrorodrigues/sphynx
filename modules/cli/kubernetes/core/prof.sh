@@ -67,6 +67,44 @@ function sx::k8s::prof() {
   fi
 }
 
+function sx::k8s::prof::cleanup() {
+  sx::k8s::check_requirements
+  sx::k8s::ensure_api_access
+
+  local -r namespace="${1:-}"
+  local -r all_namespaces="${2:-false}"
+
+  if ${all_namespaces}; then
+    local -r flags='--all-namespaces'
+  elif [ -n "${namespace}" ]; then
+    local -r flags="--namespace ${namespace}"
+  else
+    local -r flags="--namespace $(sx::k8s::current_namespace)"
+  fi
+
+  # jobs created by kubectl-prof carry the "kubectl-prof/id" label
+  # shellcheck disable=SC2086  # quote this to prevent word splitting
+  local -r jobs="$(
+    sx::k8s::cli get jobs \
+      ${flags} \
+      --selector 'kubectl-prof/id' \
+      --output jsonpath='{range .items[*]}{.metadata.namespace}{" "}{.metadata.name}{"\n"}{end}' \
+      2>/dev/null
+  )"
+
+  if [ -z "${jobs}" ]; then
+    sx::log::info 'No profiling jobs found'
+    return 0
+  fi
+
+  local ns job
+  while read -r ns job; do
+    sx::k8s::cli delete job "${job}" --namespace "${ns}" --wait='false' &>/dev/null || true
+
+    sx::log::info "Deleted profiling job \"${ns}/${job}\"."
+  done <<<"${jobs}"
+}
+
 function sx::k8s_command::prof() {
   local -r ns="${1}"
   local -r name="${2}"

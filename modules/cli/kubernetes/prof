@@ -12,6 +12,7 @@ source "${SPHYNX_NAMESPACE_DIR}/core/prof.sh"
 ##?
 ##? Usage:
 ##?     prof [[<query>] [-l <selector>] [--namespace <name> | --all-namespaces] | --namespace <name> --pod <name> --container <name>] [--timeout <duration>] [--non-root] [--keep-jobs] [--image <image>] [-- <flags>...]
+##?     prof --cleanup [--namespace <name> | --all-namespaces]
 ##?
 ##? Options:
 ##?     -l --selector <selector>  Selector (label query) to filter on
@@ -23,6 +24,7 @@ source "${SPHYNX_NAMESPACE_DIR}/core/prof.sh"
 ##?     --non-root  Make the profiler shared dir writable for non-root targets (uses a privileged ephemeral debug container)
 ##?     --keep-jobs  Keep orphaned profiling jobs on failure for inspection
 ##?     --image <image>  Container image for the debug container used by --non-root [default: ghcr.io/hpedrorodrigues/debug]
+##?     --cleanup  Delete all profiling jobs created by kubectl-prof
 ##?
 ##? Examples:
 ##?     prof -- --lang java --time 1m
@@ -32,18 +34,23 @@ source "${SPHYNX_NAMESPACE_DIR}/core/prof.sh"
 ##?     prof --namespace staging --pod my-pod --container my-container -- -l go -t 30s
 ##?     prof -- -l python -t 5m -o speedscope --local-path /tmp
 ##?     prof piper-ai-executor -n prod --non-root -- -l java -t 30s --log-level trace
+##?     prof --cleanup --namespace staging
 
 sx::parse_arguments "${@}"
 
-sx::k8s::prof \
-  "${query:-}" \
-  "${selector:-}" \
-  "${namespace:-}" \
-  "${pod:-}" \
-  "${container:-}" \
-  "${all_namespaces:-false}" \
-  "${non_root:-false}" \
-  "${keep_jobs:-false}" \
-  "${timeout:-10m}" \
-  "${image:-}" \
-  "${flags[*]:-}"
+if ${cleanup:-false}; then
+  sx::k8s::prof::cleanup "${namespace:-}" "${all_namespaces:-false}"
+else
+  sx::k8s::prof \
+    "${query:-}" \
+    "${selector:-}" \
+    "${namespace:-}" \
+    "${pod:-}" \
+    "${container:-}" \
+    "${all_namespaces:-false}" \
+    "${non_root:-false}" \
+    "${keep_jobs:-false}" \
+    "${timeout:-10m}" \
+    "${image:-}" \
+    "${flags[*]:-}"
+fi
