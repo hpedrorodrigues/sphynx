@@ -59,3 +59,5 @@ Desktop.ini
 # IntelliJ
 .idea
 *.iml
+
+**/.claude/settings.local.json

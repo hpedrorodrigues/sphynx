@@ -1,0 +1,7 @@
+indexes:
+  - name: 'kubectl-prof'
+    url: 'https://github.com/josepdcs/kubectl-prof'
+
+plugins:
+  - 'tree'
+  - 'kubectl-prof/prof'

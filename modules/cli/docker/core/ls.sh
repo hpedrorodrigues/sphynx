@@ -35,5 +35,10 @@ function sx::docker::objects() {
 
     sx::log::info '\nVolumes\n'
     docker volume ls
+
+    if sx::docker::has_buildx_history; then
+      sx::log::info '\nBuilds\n'
+      docker buildx history ls
+    fi
   fi
 }

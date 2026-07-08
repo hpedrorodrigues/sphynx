@@ -70,4 +70,25 @@ function sx::docker::list_resources() {
   docker network ls \
     --filter 'type=custom' \
     --format 'network {{.ID}} {{.Name}}'
+
+  if sx::docker::has_buildx_history; then
+    docker buildx history ls \
+      --format 'build {{.Ref}} {{.Name}}' 2>/dev/null
+  fi
+}
+
+function sx::docker::has_buildx_history() {
+  docker buildx history --help &>/dev/null
+}
+
+function sx::docker::ensure_buildx_history() {
+  if ! sx::docker::has_buildx_history; then
+    sx::log::fatal '"docker buildx history" is not available (requires a recent Docker / buildx)'
+  fi
+}
+
+function sx::docker::build_records() {
+  local -r template='{{.Ref}} {{.Name}} ({{.Status}})'
+
+  docker buildx history ls --format "${template}" 2>/dev/null
 }

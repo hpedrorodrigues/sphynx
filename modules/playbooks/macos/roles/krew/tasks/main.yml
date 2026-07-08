@@ -1,0 +1,21 @@
+- name: Krew - Listing custom indexes
+  command: kubectl krew index list
+  register: krew_indexes
+  changed_when: false
+  failed_when: false
+
+- name: Krew - Adding custom indexes
+  command: 'kubectl krew index add {{ item.name }} {{ item.url }}'
+  loop: '{{ indexes }}'
+  when: item.name not in krew_indexes.stdout
+
+- name: Krew - Listing installed plugins
+  command: kubectl krew list
+  register: krew_plugins
+  changed_when: false
+  failed_when: false
+
+- name: Krew - Installing plugins
+  command: 'kubectl krew install {{ item }}'
+  loop: '{{ plugins }}'
+  when: item not in krew_plugins.stdout
