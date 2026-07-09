@@ -4,6 +4,7 @@ export SX_VERSION_SPACING='  '
 
 function sx::self::version() {
   sx::log::info 'Runtime:'
+  sx::log::info "${SX_VERSION_SPACING}Bash ${BASH_VERSION}"
   sx::log::info "${SX_VERSION_SPACING}$(sx::python --version)"
 
   sx::log::info 'Sphynx:'
