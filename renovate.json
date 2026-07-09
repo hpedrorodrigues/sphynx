@@ -1,4 +1,19 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:recommended"]
+  "extends": ["config:recommended"],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/(^|/)external_tools\\.sh$/"],
+      "matchStrings": [
+        "# renovate: datasource=(?<datasource>[a-z0-9-]+) depName=(?<depName>[^\\s]+)( versioning=(?<versioning>[^\\s]+))?\\n.*?_VERSION:-(?<currentValue>[^}]+)\\}"
+      ]
+    }
+  ],
+  "packageRules": [
+    {
+      "matchFileNames": ["modules/dotfiles/common/scripts/external_tools.sh"],
+      "automerge": true
+    }
+  ]
 }
