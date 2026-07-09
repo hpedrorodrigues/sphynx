@@ -3,7 +3,7 @@
 # External images
 
 # renovate: datasource=docker depName=confluentinc/cp-kafka
-export CONFLUENT_VERSION=${CONFLUENT_VERSION:-7.6.0}
+export CONFLUENT_VERSION=${CONFLUENT_VERSION:-8.3.0}
 
 ## Kafka CLI (https://kafka.apache.org)
 ##
