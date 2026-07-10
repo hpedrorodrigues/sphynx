@@ -9,6 +9,13 @@ function sx::gcloud::project() {
 
   if [ -n "${exact_project_id}" ]; then
     sx::gcloud::project::change "${exact_project_id}"
+  elif [ "${query}" = '-' ]; then
+    local -r last_project="$(sx::file::read "${SX_GCLOUD_PROJECT_FILE}")"
+
+    # return when there is no previous project
+    [ -z "${last_project}" ] && return
+
+    sx::gcloud::project::change "${last_project}"
   elif ${list_projects}; then
     local -r current_project="$(sx::gcloud::project::current)"
 
@@ -30,7 +37,7 @@ function sx::gcloud::project() {
     local -r selected="$(echo -e "${options}" | fzf ${SX_FZF_ARGS})"
 
     if [ -n "${selected}" ]; then
-      local -r project_id="$(echo "${selected}" | awk '{ print $1 }')"
+      local -r project_id="$(echo "${selected}" | awk '{ print $2 }')"
 
       sx::gcloud::project::change "${project_id}"
     fi
@@ -50,7 +57,7 @@ function sx::gcloud::project() {
         continue
       fi
 
-      local -r project_id="$(echo "${selected}" | awk '{ print $1 }')"
+      local -r project_id="$(echo "${selected}" | awk '{ print $2 }')"
 
       sx::gcloud::project::change "${project_id}"
       break

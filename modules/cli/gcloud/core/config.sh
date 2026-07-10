@@ -9,6 +9,13 @@ function sx::gcloud::named_configuration() {
 
   if [ -n "${exact_named_configuration}" ]; then
     sx::gcloud::named_configuration::change "${exact_named_configuration}"
+  elif [ "${query}" = '-' ]; then
+    local -r last_named_configuration="$(sx::file::read "${SX_GCLOUD_CONFIG_FILE}")"
+
+    # return when there is no previous named configuration
+    [ -z "${last_named_configuration}" ] && return
+
+    sx::gcloud::named_configuration::change "${last_named_configuration}"
   elif ${list_named_configurations}; then
     local -r current_named_configuration="$(sx::gcloud::named_configuration::current)"
 
@@ -61,14 +68,13 @@ function sx::gcloud_command::named_configuration::search() {
     local -r selector='.*'
   fi
 
-  local -r named_configurations="$(sx::gcloud::named_configuration::list | grep -E "${selector}")"
   local -r current_named_configuration="$(sx::gcloud::named_configuration::current)"
 
-  for named_configuration in "${named_configurations[@]}"; do
+  while IFS='' read -r named_configuration; do
     if [ "${current_named_configuration}" = "${named_configuration}" ]; then
       sx::color::current_item::echo "${named_configuration}"
     else
       echo "${named_configuration}"
     fi
-  done
+  done < <(sx::gcloud::named_configuration::list | grep -E "${selector}")
 }

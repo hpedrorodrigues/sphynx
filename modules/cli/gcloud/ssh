@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNX_CLI_DIR}/.internal/all.sh"
+source "${SPHYNX_NAMESPACE_DIR}/shared/shared.sh"
+source "${SPHYNX_NAMESPACE_DIR}/core/ssh.sh"
+
+##? SSH into a Google Compute Engine instance
+##?
+##? Usage:
+##?     ssh [<query> | --list] [--project <id>] [--iap]
+##?
+##? Options:
+##?     -l --list  Print all instances
+##?     -p --project <id>  The Google Cloud project ID to use instead of the current one
+##?     --iap  Tunnel through IAP instead of connecting to the internal IP address
+##?
+##? Examples:
+##?     ssh
+##?     ssh bastion
+##?     ssh --list
+##?     ssh --project my-project
+##?     ssh my-vm --iap
+
+sx::parse_arguments "${@}"
+
+sx::gcloud::ssh "${query:-}" "${list:-false}" "${project:-}" "${iap:-false}"

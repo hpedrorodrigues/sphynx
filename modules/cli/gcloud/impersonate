@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNX_CLI_DIR}/.internal/all.sh"
+source "${SPHYNX_NAMESPACE_DIR}/shared/shared.sh"
+source "${SPHYNX_NAMESPACE_DIR}/core/impersonate.sh"
+
+##? Manage service account impersonation for the Google Cloud CLI
+##?
+##? Usage:
+##?     impersonate [<query> | --current | --clear] [--project <id>]
+##?
+##? Options:
+##?     -c --current  Print the service account being impersonated
+##?     --clear  Stop impersonating a service account
+##?     -p --project <id>  The Google Cloud project ID to use instead of the current one
+##?
+##? Examples:
+##?     impersonate
+##?     impersonate deployer
+##?     impersonate --current
+##?     impersonate --clear
+##?     impersonate --project my-project
+
+sx::parse_arguments "${@}"
+
+sx::gcloud::impersonate "${query:-}" "${current:-false}" "${clear:-false}" "${project:-}"
