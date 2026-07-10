@@ -36,20 +36,23 @@ function sx::k8s::topology() {
 
     # shellcheck disable=SC2068  # Double quote array expansions
     for ip in ${instance_ips[@]}; do
-      sx::k8s::topology::instance_info "${ip}" "${top_nodes}" "${top_pods}" "${instances}" "${show_labels}"
+      local pod_count="$(echo "${assignments}" | grep -c "^${ip},")"
+
+      sx::k8s::topology::instance_info "${ip}" "${top_nodes}" "${top_pods}" "${instances}" "${show_labels}" "${pod_count}"
       sx::k8s::topology::pods_info "${ip}" "${assignments}" "${top_nodes}" "${top_pods}" "${all_namespaces}"
     done
   else
     # shellcheck disable=SC2068  # Double quote array expansions
     for ip in ${instance_ips[@]}; do
-      local instance_name="$(echo "${assignments}" | grep "${ip}" | cut -d ',' -f 4 | head -n 1)"
+      local pod_count="$(echo "${assignments}" | grep -c "^${ip},")"
+      local instance_name="$(echo "${assignments}" | grep "^${ip}," | cut -d ',' -f 4 | head -n 1)"
       local instance_labels="$(echo "${instances}" | grep "${instance_name}" | awk '{ print $13 }')"
 
       if [ -z "${instance_name}" ]; then
         instance_name='Name not available'
       fi
 
-      echo "> ${ip} (${instance_name})"
+      echo "> ${ip} (${instance_name} | ${pod_count} $([ "${pod_count}" -eq 1 ] && echo 'pod' || echo 'pods'))"
 
       if ${show_labels} && [ -n "${instance_labels}" ]; then
         echo
@@ -60,7 +63,7 @@ function sx::k8s::topology() {
       fi
 
       echo
-      echo -e "|-- STATE,NAMESPACE,NAME\n$(echo "${assignments}" | grep "${ip}" | awk -F ',' '{ print $5 "," $2 "," $3 }' | xargs -I % echo "|-- %")\n" | column -t -s ','
+      echo -e "|-- STATE,NAMESPACE,NAME\n$(echo "${assignments}" | grep "^${ip}," | awk -F ',' '{ print $5 "," $2 "," $3 }' | xargs -I % echo "|-- %")\n" | column -t -s ','
       echo
     done
   fi
@@ -128,8 +131,9 @@ function sx::k8s::topology::instance_info() {
   local -r top_pods="${3}"
   local -r instances="${4}"
   local -r show_labels="${5}"
+  local -r pod_count="${6}"
 
-  local -r current_instance_name="$(echo -e "${instances}" | grep "${ip}" | awk '{ print $1 }')"
+  local -r current_instance_name="$(echo -e "${instances}" | grep -w "${ip}" | awk '{ print $1 }')"
   if [ -z "${current_instance_name}" ]; then
     local -r instance_name='Name not available'
   else
@@ -145,7 +149,7 @@ function sx::k8s::topology::instance_info() {
   local -r memory_usage="$(echo "${instance_usage}" | awk '{ print $4 }')"
   local -r memory_percentage="$(echo "${instance_usage}" | awk '{ print $5 }')"
 
-  echo "> ${ip} (${instance_name})"
+  echo "> ${ip} (${instance_name} | ${pod_count} $([ "${pod_count}" -eq 1 ] && echo 'pod' || echo 'pods'))"
   echo "> CPU (${cpu_usage} | ${cpu_percentage}) -|- MEM (${memory_usage} | ${memory_percentage})"
 
   if ${show_labels} && [ -n "${instance_labels}" ]; then
@@ -168,7 +172,7 @@ function sx::k8s::topology::pods_info() {
 
   local pods
   readarray -t pods < <(
-    echo "${assignments}" | grep "${ip}" | cut -d ',' -f 3 | sort -u
+    echo "${assignments}" | grep "^${ip}," | cut -d ',' -f 3 | sort -u
   )
 
   local resource_usage='|-- CPU,MEM,STATE,NAMESPACE,NAME\n'
