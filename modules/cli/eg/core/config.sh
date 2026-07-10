@@ -2,6 +2,7 @@
 
 function sx::eg::config() {
   sx::eg::check_requirements
+  sx::k8s::ensure_api_access
 
   local -r query="${1:-}"
   local -r namespace="${2:-}"

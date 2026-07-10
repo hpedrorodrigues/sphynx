@@ -16,6 +16,7 @@ envoy-proxy'
 
 function sx::eg::dashboard() {
   sx::eg::check_requirements
+  sx::k8s::ensure_api_access
 
   local -r target="${1:-}"
   local -r query="${2:-}"

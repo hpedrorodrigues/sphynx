@@ -2,6 +2,7 @@
 
 function sx::flux::suspend::list() {
   sx::flux::check_requirements
+  sx::k8s::ensure_api_access
 
   local -r query="${1:-}"
   local -r namespace="${2:-}"
@@ -18,6 +19,7 @@ function sx::flux::suspend::list() {
 
 function sx::flux::suspend() {
   sx::flux::check_requirements
+  sx::k8s::ensure_api_access
 
   local -r query="${1:-}"
   local -r namespace="${2:-}"
