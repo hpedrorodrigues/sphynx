@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNX_CLI_DIR}/.internal/all.sh"
+source "${SPHYNX_NAMESPACE_DIR}/shared/shared.sh"
+source "${SPHYNX_NAMESPACE_DIR}/core/cluster.sh"
+
+##? Fetch credentials for a GKE cluster
+##?
+##? Usage:
+##?     cluster [<query> | --list] [--project <id>]
+##?
+##? Options:
+##?     -l --list  Print all clusters
+##?     -p --project <id>  The Google Cloud project ID to use instead of the current one
+##?
+##? Examples:
+##?     cluster
+##?     cluster staging
+##?     cluster --list
+##?     cluster --project my-project
+
+sx::parse_arguments "${@}"
+
+sx::gcloud::cluster "${query:-}" "${list:-false}" "${project:-}"
