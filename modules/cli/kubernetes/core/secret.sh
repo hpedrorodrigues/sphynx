@@ -6,12 +6,17 @@ function sx::k8s::secret() {
   sx::require 'base64'
 
   local -r query="${1:-}"
-  local -r namespace="${2:-}"
-  local -r all_namespaces="${3:-false}"
-  local -r list="${4:-false}"
-  local -r key="${5:-}"
+  local -r exact="${2:-}"
+  local -r namespace="${3:-}"
+  local -r all_namespaces="${4:-false}"
+  local -r list="${5:-false}"
+  local -r key="${6:-}"
 
-  if ${list}; then
+  if [ -n "${exact}" ]; then
+    local -r ns="${namespace:-$(sx::k8s::current_namespace)}"
+
+    sx::k8s_command::secret "${ns}" "${exact}" "${key}"
+  elif ${list}; then
     sx::k8s_command::secret::list "${query}" "${namespace}" "${all_namespaces}" true
   elif sx::os::is_command_available 'fzf'; then
     local -r options="$(
