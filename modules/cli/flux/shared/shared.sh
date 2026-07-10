@@ -36,7 +36,7 @@ function sx::flux::resources() {
   fi
 
   # shellcheck disable=SC2086  # quote this to prevent word splitting
-  kubectl get "${SX_FLUX_RESOURCES}" \
+  sx::k8s::cli get "${SX_FLUX_RESOURCES}" \
     ${flags} \
     --output custom-columns=NAMESPACE:.metadata.namespace,KIND:.kind,NAME:.metadata.name \
     --no-headers 2>/dev/null \
@@ -64,7 +64,7 @@ function sx::flux::suspended_resources() {
   fi
 
   # shellcheck disable=SC2086  # quote this to prevent word splitting
-  kubectl get "${SX_FLUX_RESOURCES}" \
+  sx::k8s::cli get "${SX_FLUX_RESOURCES}" \
     ${flags} \
     --output custom-columns=NAMESPACE:.metadata.namespace,KIND:.kind,NAME:.metadata.name,SUSPENDED:.spec.suspend \
     --no-headers 2>/dev/null \

@@ -2,6 +2,7 @@
 
 function sx::eg::status() {
   sx::eg::check_requirements
+  sx::k8s::ensure_api_access
 
   local -r kind="${1:-}"
   local -r namespace="${2:-}"

@@ -22,6 +22,14 @@ source "${SPHYNX_NAMESPACE_DIR}/core/network.sh"
 ##?     -d --duration <seconds>  Capture duration in seconds [default: 30]
 ##?     --output-dir <path>  Local directory to store the capture file
 ##?     --image <image>  Container image for the debug container [default: ghcr.io/hpedrorodrigues/debug]
+##?
+##? Examples:
+##?     network dump-traffic
+##?     network dump-traffic kafka --namespace kafka
+##?     network dump-traffic --selector app=kafka --duration 60
+##?     network dump-traffic --namespace kafka --pod kafka --container kafka
+##?     network dump-traffic --output-dir /tmp/captures
+##?     network dump-traffic kafka -- -i eth0 port 9092
 
 sx::parse_arguments "${@}"
 
