@@ -108,6 +108,48 @@ function sx::k8s::pods::resource_summary() {
   echo -e "${resources}" | column -t -s ','
 }
 
+function sx::k8s::resource_summary::watch() {
+  sx::k8s::check_requirements
+  sx::k8s::ensure_api_access
+
+  local -r interval="${1:-2}"
+  local -r pods="${2:-false}"
+  local -r query="${3:-}"
+  local -r namespace="${4:-}"
+  local -r all_namespaces="${5:-false}"
+  local -r selector="${6:-}"
+
+  local args=''
+  if ${pods}; then
+    args='pods'
+
+    if ${all_namespaces}; then
+      args+=' --all-namespaces'
+    elif [ -n "${namespace}" ]; then
+      args+=" --namespace ${namespace}"
+    fi
+
+    if [ -n "${selector}" ]; then
+      args+=" --selector ${selector}"
+    fi
+  else
+    args='nodes'
+  fi
+
+  if [ -n "${query}" ]; then
+    args+=" ${query}"
+  fi
+
+  if sx::os::is_command_available "${SPHYNX_EXEC_NAME}"; then
+    local -r sphynx_command="${SPHYNX_EXEC_NAME}"
+  else
+    local -r sphynx_command="${SPHYNX_EXEC}"
+  fi
+
+  # shellcheck disable=SC2086  # intentional word splitting on flags
+  sx::k8s::watcher "${interval}" "${sphynx_command}" kubernetes resource-summary ${args}
+}
+
 function sx::k8s::nodes::resource_summary() {
   sx::k8s::check_requirements
   sx::k8s::ensure_api_access
