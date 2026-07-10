@@ -50,6 +50,11 @@ function sx::k8s::context() {
     fi
 
     select selected in "${options[@]}"; do
+      if [ -z "${selected}" ]; then
+        sx::log::err "Invalid option \"${REPLY}\". Please, type the number of the desired option."
+        continue
+      fi
+
       sx::k8s_command::context::change "${selected}"
       break
     done

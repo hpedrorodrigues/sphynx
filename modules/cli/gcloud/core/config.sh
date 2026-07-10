@@ -41,6 +41,11 @@ function sx::gcloud::named_configuration() {
     fi
 
     select selected in "${options[@]}"; do
+      if [ -z "${selected}" ]; then
+        sx::log::err "Invalid option \"${REPLY}\". Please, type the number of the desired option."
+        continue
+      fi
+
       sx::gcloud::named_configuration::change "${selected}"
       break
     done

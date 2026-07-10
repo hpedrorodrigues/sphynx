@@ -31,6 +31,11 @@ function sx::docker::delete() {
     fi
 
     select selected in "${options[@]}"; do
+      if [ -z "${selected}" ]; then
+        sx::log::err "Invalid option \"${REPLY}\". Please, type the number of the desired option."
+        continue
+      fi
+
       local -r type="$(echo "${selected}" | awk '{ print $1 }')"
       local -r id="$(echo "${selected}" | awk '{ print $2 }')"
       local -r description="$(echo "${selected}" | awk '{ print $3 }')"
