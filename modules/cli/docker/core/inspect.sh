@@ -30,6 +30,11 @@ function sx::docker::inspect() {
     fi
 
     select selected in "${options[@]}"; do
+      if [ -z "${selected}" ]; then
+        sx::log::err "Invalid option \"${REPLY}\". Please, type the number of the desired option."
+        continue
+      fi
+
       sx::docker_command::inspect \
         "$(echo "${selected}" | awk '{ print $1 }')" \
         "$(echo "${selected}" | awk '{ print $2 }')"

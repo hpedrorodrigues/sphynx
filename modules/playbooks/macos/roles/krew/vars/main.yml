@@ -1,4 +1,6 @@
 indexes:
+  - name: 'default'
+    url: 'https://github.com/kubernetes-sigs/krew-index.git'
   - name: 'kubectl-prof'
     url: 'https://github.com/josepdcs/kubectl-prof'
 

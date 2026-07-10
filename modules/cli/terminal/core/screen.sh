@@ -75,6 +75,11 @@ function sx::terminal::screen::attach() {
     fi
 
     select selected in "${options[@]}"; do
+      if [ -z "${selected}" ]; then
+        sx::log::err "Invalid option \"${REPLY}\". Please, type the number of the desired option."
+        continue
+      fi
+
       sx::library::screen::attach_session "${selected}"
       break
     done
@@ -123,6 +128,11 @@ function sx::terminal::screen::kill() {
     fi
 
     select selected in "${options[@]}"; do
+      if [ -z "${selected}" ]; then
+        sx::log::err "Invalid option \"${REPLY}\". Please, type the number of the desired option."
+        continue
+      fi
+
       sx::library::screen::kill_session "${selected}"
       break
     done

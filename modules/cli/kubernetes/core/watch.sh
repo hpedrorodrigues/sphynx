@@ -32,5 +32,5 @@ function sx::k8s::watch::resources() {
   fi
 
   # shellcheck disable=SC2086  # intentional word splitting on flags
-  sx::k8s::watcher "${interval}" ${SX_K8SCTL} get ${resources} ${flags}
+  sx::os::watcher "${interval}" ${SX_K8SCTL} get ${resources} ${flags}
 }

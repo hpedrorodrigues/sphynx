@@ -36,6 +36,11 @@ function sx::self::prompt() {
     readarray -t options < <(sx::self::prompt::find_available_commands)
 
     select selected in "${options[@]}"; do
+      if [ -z "${selected}" ]; then
+        sx::log::err "Invalid option \"${REPLY}\". Please, type the number of the desired option."
+        continue
+      fi
+
       # shellcheck disable=SC2086  # quote this to prevent word splitting
       "${SPHYNX_EXEC}" ${selected} --help && echo -e '\n---\n' || true
 

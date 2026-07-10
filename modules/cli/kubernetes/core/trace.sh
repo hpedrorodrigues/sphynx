@@ -43,6 +43,11 @@ function sx::k8s::trace() {
     fi
 
     select selected in "${options[@]}"; do
+      if [ -z "${selected}" ]; then
+        sx::log::err "Invalid option \"${REPLY}\". Please, type the number of the desired option."
+        continue
+      fi
+
       local -r ns="$(echo "${selected}" | awk '{ print $1 }')"
       local -r kind="$(echo "${selected}" | awk '{ print $2 }')"
       local -r name="$(echo "${selected}" | awk '{ print $3 }')"

@@ -35,6 +35,11 @@ function sx::k8s::shell() {
     fi
 
     select selected in "${options[@]}"; do
+      if [ -z "${selected}" ]; then
+        sx::log::err "Invalid option \"${REPLY}\". Please, type the number of the desired option."
+        continue
+      fi
+
       if ${use_ssm}; then
         sx::k8s_command::ssm "${selected}"
       else

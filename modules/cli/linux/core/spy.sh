@@ -24,6 +24,11 @@ function sx::spy::namespaces() {
     readarray -t options < <(sx::spy::get_processes)
 
     select selected in "${options[@]}"; do
+      if [ -z "${selected}" ]; then
+        sx::log::err "Invalid option \"${REPLY}\". Please, type the number of the desired option."
+        continue
+      fi
+
       local -r pid="$(echo "${selected}" | awk '{ print $2 }')"
 
       sx::spy::nsenter "${pid}"
@@ -52,6 +57,11 @@ function sx::spy::syscalls() {
     readarray -t options < <(sx::spy::get_processes)
 
     select selected in "${options[@]}"; do
+      if [ -z "${selected}" ]; then
+        sx::log::err "Invalid option \"${REPLY}\". Please, type the number of the desired option."
+        continue
+      fi
+
       local -r pid="$(echo "${selected}" | awk '{ print $2 }')"
 
       sx::spy::strace "${pid}"

@@ -26,6 +26,11 @@ function sx::eg::status() {
     readarray -t options < <(sx::eg::resource_kinds false true)
 
     select selected in "${options[@]}"; do
+      if [ -z "${selected}" ]; then
+        sx::log::err "Invalid option \"${REPLY}\". Please, type the number of the desired option."
+        continue
+      fi
+
       sx::eg_command::status "${selected}" "${namespace}" "${all_namespaces}" "${verbose}"
       break
     done

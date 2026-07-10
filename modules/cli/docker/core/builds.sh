@@ -28,6 +28,11 @@ function sx::docker::builds::pick() {
     readarray -t items <<<"${options}"
 
     select selected in "${items[@]}"; do
+      if [ -z "${selected}" ]; then
+        sx::log::err "Invalid option \"${REPLY}\". Please, type the number of the desired option."
+        continue
+      fi
+
       echo "${selected}" | awk '{ print $1 }'
       break
     done

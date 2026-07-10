@@ -59,6 +59,11 @@ function sx::k8s::namespace() {
     fi
 
     select selected in "${options[@]}"; do
+      if [ -z "${selected}" ]; then
+        sx::log::err "Invalid option \"${REPLY}\". Please, type the number of the desired option."
+        continue
+      fi
+
       sx::k8s_command::namespace::change "${selected}"
       break
     done

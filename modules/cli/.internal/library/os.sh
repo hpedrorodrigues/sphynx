@@ -18,6 +18,21 @@ function sx::os::is_command_available() {
   hash "${command}" 2>/dev/null
 }
 
+function sx::os::watcher() {
+  local -r interval="${1:-2}"
+  shift
+
+  if sx::os::is_command_available 'viddy'; then
+    exec viddy -n "${interval}" -- "${@}"
+  elif sx::os::is_command_available 'hwatch'; then
+    exec hwatch -c -n "${interval}" -- "${@}"
+  elif sx::os::is_command_available 'watch'; then
+    exec watch -c -n "${interval}" -- "${@}"
+  else
+    sx::log::fatal 'No watch tool found. Install viddy (recommended), hwatch, or watch.'
+  fi
+}
+
 function sx::os::open() {
   local -r open_commands=(
     'xdg-open'

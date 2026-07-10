@@ -90,6 +90,11 @@ function sx::terminal::tmux::attach() {
     fi
 
     select selected in "${options[@]}"; do
+      if [ -z "${selected}" ]; then
+        sx::log::err "Invalid option \"${REPLY}\". Please, type the number of the desired option."
+        continue
+      fi
+
       sx::library::tmux::attach_session "${selected}"
       break
     done
@@ -138,6 +143,11 @@ function sx::terminal::tmux::kill() {
     fi
 
     select selected in "${options[@]}"; do
+      if [ -z "${selected}" ]; then
+        sx::log::err "Invalid option \"${REPLY}\". Please, type the number of the desired option."
+        continue
+      fi
+
       sx::library::tmux::kill_session "${selected}"
       break
     done

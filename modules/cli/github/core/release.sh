@@ -85,6 +85,11 @@ function sx::github::release::download_assets() {
     fi
 
     select selected in "${options[@]}"; do
+      if [ -z "${selected}" ]; then
+        sx::log::err "Invalid option \"${REPLY}\". Please, type the number of the desired option."
+        continue
+      fi
+
       local name="$(echo "${selected}" | awk '{ print $1 }')"
       local url="$(echo "${selected}" | awk '{ print $2 }')"
 
