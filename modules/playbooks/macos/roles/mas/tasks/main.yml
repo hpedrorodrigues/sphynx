@@ -1,9 +1,13 @@
+# mas 4.0.0+ requires root for install/update (installd is root-only) and
+# prompts for a sudo password when unprivileged, which fails without a TTY.
 - name: Updating all applications
   community.general.mas:
     upgrade_all: true
+  become: true
 
 - name: Installing applications
   community.general.mas:
     id: '{{ item }}'
     state: present
   loop: '{{ applications }}'
+  become: true
