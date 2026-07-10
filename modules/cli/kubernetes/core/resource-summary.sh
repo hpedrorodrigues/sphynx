@@ -147,7 +147,7 @@ function sx::k8s::resource_summary::watch() {
   fi
 
   # shellcheck disable=SC2086  # intentional word splitting on flags
-  sx::k8s::watcher "${interval}" "${sphynx_command}" kubernetes resource-summary ${args}
+  sx::os::watcher "${interval}" "${sphynx_command}" kubernetes resource-summary ${args}
 }
 
 function sx::k8s::nodes::resource_summary() {

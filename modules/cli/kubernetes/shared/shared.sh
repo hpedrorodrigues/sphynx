@@ -264,21 +264,6 @@ function sx::k8s::cli() {
   ${SX_K8SCTL} "${@}"
 }
 
-function sx::k8s::watcher() {
-  local -r interval="${1:-2}"
-  shift
-
-  if sx::os::is_command_available 'viddy'; then
-    exec viddy -n "${interval}" -- "${@}"
-  elif sx::os::is_command_available 'hwatch'; then
-    exec hwatch -c -n "${interval}" -- "${@}"
-  elif sx::os::is_command_available 'watch'; then
-    exec watch -c -n "${interval}" -- "${@}"
-  else
-    sx::log::fatal 'No watch tool found. Install viddy (recommended), hwatch, or watch.'
-  fi
-}
-
 function sx::k8s::copy_from_pod() {
   local -r ns="${1}"
   local -r name="${2}"

@@ -16,6 +16,10 @@ function sx::flux::cli() {
   ${SX_FLUXCTL} "${@}"
 }
 
+function sx::flux::clear_template() {
+  echo -n "${*}" | tr '\n' ' ' | sed 's/}} *{{/}}{{/g' | sed 's/^ *//g'
+}
+
 function sx::flux::resources() {
   local -r query="${1:-}"
   local -r namespace="${2:-}"

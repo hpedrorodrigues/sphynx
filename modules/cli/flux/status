@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNX_CLI_DIR}/.internal/all.sh"
+source "${SPHYNX_NAMESPACE_DIR}/shared/shared.sh"
+source "${SPHYNX_NAMESPACE_DIR}/core/status.sh"
+
+##? Show the status of Flux resources
+##?
+##? Usage:
+##?     status [<query>] [--kind <kind>] [--namespace <name> | --all-namespaces] [--watch] [--interval <seconds>]
+##?
+##? Options:
+##?     -k --kind <kind>  Only show resources of this kind (e.g. ks, hr, gitrepo)
+##?     -n --namespace <name>  The namespace scope for requests
+##?     -A --all-namespaces  All namespaces
+##?     -w --watch  Watch the status continuously
+##?     -i --interval <seconds>  Refresh interval in seconds [default: 2]
+##?
+##? Examples:
+##?     status
+##?     status my-app
+##?     status --kind ks
+##?     status --kind ks,hr
+##?     status --kind helmrelease --namespace flux-system
+##?     status --all-namespaces
+##?     status --kind hr --watch
+##?     status --watch --interval 5
+
+sx::parse_arguments "${@}"
+
+if ${watch:-false}; then
+  sx::flux::status::watch \
+    "${interval:-2}" \
+    "${query:-}" \
+    "${kind:-}" \
+    "${namespace:-}" \
+    "${all_namespaces:-false}"
+else
+  sx::flux::status \
+    "${query:-}" \
+    "${kind:-}" \
+    "${namespace:-}" \
+    "${all_namespaces:-false}"
+fi
