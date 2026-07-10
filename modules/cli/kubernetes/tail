@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNX_CLI_DIR}/.internal/all.sh"
+source "${SPHYNX_NAMESPACE_DIR}/shared/shared.sh"
+source "${SPHYNX_NAMESPACE_DIR}/core/tail.sh"
+
+##? Tail logs from the pods of a workload
+##?
+##? Usage:
+##?     tail [<query>] [--namespace <name> | --all-namespaces] [-- <flags>...]
+##?
+##? Options:
+##?     -n --namespace <name>  The namespace scope for requests
+##?     -A --all-namespaces  All namespaces
+##?
+##? Examples:
+##?     tail
+##?     tail kafka
+##?     tail --namespace kube-system
+##?     tail --all-namespaces
+##?     tail kafka -- --tail 100 --since 5m
+##?     tail kafka -- --only-log-lines
+
+sx::parse_arguments "${@}"
+
+sx::k8s::tail \
+  "${query:-}" \
+  "${namespace:-}" \
+  "${all_namespaces:-false}" \
+  "${flags[*]:-}"

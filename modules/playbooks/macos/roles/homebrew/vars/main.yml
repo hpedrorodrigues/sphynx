@@ -64,6 +64,7 @@ formulas:
   - krew
   - kubernetes-cli
   - kubespy
+  - kubetail
   - kustomize
   - leiningen
   - less
