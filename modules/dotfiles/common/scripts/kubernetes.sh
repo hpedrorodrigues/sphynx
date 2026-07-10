@@ -167,56 +167,6 @@ function knp() {
     | sort_by(.count)'
 }
 
-## [Kubernetes Secrets View] Print secret's data decoded
-##
-## e.g. ksv
-## e.g. ksv -A
-function ksv() {
-  if ! hash 'kubectl' 2>/dev/null; then
-    echo 'The command-line \"kubectl\" is not available in your path' >&2
-    return 1
-  fi
-
-  # shellcheck disable=SC2016  # Expressions don't expand in single quotes, use double quotes for that
-  local -r template='
-  {{"NAMESPACE"}}{{","}}{{"SECRET"}}{{","}}{{"KEY"}}{{","}}{{"VALUE"}}{{"\\n"}}
-  {{if ne .type "kubernetes.io/service-account-token"}}
-    {{$namespace := .metadata.namespace}}
-    {{$name := .metadata.name}}
-    {{ range $k, $v := .data }}
-      {{$namespace}}{{","}}{{$name}}{{","}}{{$k}}{{","}}{{ $v | base64decode}}{{"\\n"}}
-    {{end}}
-  {{end}}
-  {{range .items}}
-    {{if ne .type "kubernetes.io/service-account-token"}}
-      {{$namespace := .metadata.namespace}}
-      {{$name := .metadata.name}}
-      {{ range $k, $v := .data }}
-        {{$namespace}}{{","}}{{$name}}{{","}}{{$k}}{{","}}{{ $v | base64decode}}{{"\\n"}}
-      {{end}}
-    {{end}}
-  {{end}}'
-  local -r cleared_template="$(
-    echo -n "${template}" \
-      | tr '\n' ' ' \
-      | sed 's/}} *{{/}}{{/g' \
-      | sed 's/^ *//g'
-  )"
-
-  # shellcheck disable=SC2068  # Double quote array expansions
-  kubectl get secrets \
-    --template="${cleared_template}" \
-    ${@} \
-    | while read -r line; do
-      if [[ "${line}" == *','* ]]; then
-        echo "${line}"
-      else
-        echo "-,-,-,${line}"
-      fi
-    done \
-    | column -t -s ','
-}
-
 ## Print pods along with their IPs
 ##
 ## e.g. kpi
