@@ -11,19 +11,31 @@ source "${SPHYNX_NAMESPACE_DIR}/core/resource-summary.sh"
 ##? Print a resource summary for pods or nodes
 ##?
 ##? Usage:
-##?     resource-summary (pods [<query>] [--namespace <name> | --all-namespaces] [--selector <query>] | nodes [<query>])
+##?     resource-summary (pods [<query>] [--namespace <name> | --all-namespaces] [--selector <query>] | nodes [<query>]) [--watch] [--interval <seconds>]
 ##?
 ##? Options:
 ##?     -n --namespace <name>  The namespace scope for requests
 ##?     -A --all-namespaces  All namespaces
 ##?     -l --selector <query>  Selector (label query) to filter on
+##?     -w --watch  Watch the resource summary continuously
+##?     -i --interval <seconds>  Refresh interval in seconds [default: 2]
 ##?
 ##? Examples:
 ##?     resource-summary
+##?     resource-summary pods --watch
+##?     resource-summary nodes --watch --interval 5
 
 sx::parse_arguments "${@}"
 
-if ${pods:-false}; then
+if ${watch:-false}; then
+  sx::k8s::resource_summary::watch \
+    "${interval:-2}" \
+    "${pods:-false}" \
+    "${query:-}" \
+    "${namespace:-}" \
+    "${all_namespaces:-false}" \
+    "${selector:-}"
+elif ${pods:-false}; then
   sx::k8s::pods::resource_summary "${query:-}" "${namespace:-}" "${all_namespaces:-false}" "${selector:-}"
 elif ${nodes:-false}; then
   sx::k8s::nodes::resource_summary "${query:-}"

@@ -32,13 +32,5 @@ function sx::k8s::watch::resources() {
   fi
 
   # shellcheck disable=SC2086  # intentional word splitting on flags
-  if sx::os::is_command_available 'viddy'; then
-    exec viddy -n "${interval}" -- ${SX_K8SCTL} get ${resources} ${flags}
-  elif sx::os::is_command_available 'hwatch'; then
-    exec hwatch -c -n "${interval}" -- ${SX_K8SCTL} get ${resources} ${flags}
-  elif sx::os::is_command_available 'watch'; then
-    exec watch -c -n "${interval}" -- ${SX_K8SCTL} get ${resources} ${flags}
-  else
-    sx::log::fatal 'No watch tool found. Install viddy (recommended), hwatch, or watch.'
-  fi
+  sx::k8s::watcher "${interval}" ${SX_K8SCTL} get ${resources} ${flags}
 }
