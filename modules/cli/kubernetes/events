@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNX_CLI_DIR}/.internal/all.sh"
+source "${SPHYNX_NAMESPACE_DIR}/shared/shared.sh"
+source "${SPHYNX_NAMESPACE_DIR}/core/events.sh"
+
+##? Print events for the cluster or a selected resource
+##?
+##? Usage:
+##?     events [<query> | --list] [--namespace <name> | --all-namespaces] [--warnings] [--watch]
+##?
+##? Options:
+##?     -l --list  Print all events without selecting a resource
+##?     -n --namespace <name>  The namespace scope for requests
+##?     -A --all-namespaces  All namespaces
+##?     --warnings  Show only events of type Warning
+##?     --watch  Watch for new events after listing them
+##?
+##? Examples:
+##?     events
+##?     events kafka
+##?     events --list --namespace kube-system
+##?     events --list --all-namespaces --warnings
+##?     events --list --watch
+
+sx::parse_arguments "${@}"
+
+sx::k8s::events \
+  "${query:-}" \
+  "${namespace:-}" \
+  "${all_namespaces:-false}" \
+  "${list:-false}" \
+  "${warnings:-false}" \
+  "${watch:-false}"
