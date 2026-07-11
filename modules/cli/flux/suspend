@@ -13,7 +13,8 @@ source "${SPHYNX_NAMESPACE_DIR}/core/suspend.sh"
 ##?
 ##? Usage:
 ##?     suspend --list [[<query>] [--namespace <name> | --all-namespaces]]
-##?     suspend [[<query>] [--namespace <name> | --all-namespaces] | <kind> <name> [--namespace <name>]]
+##?     suspend [<query>] [--namespace <name> | --all-namespaces]
+##?     suspend <kind> <name> [--namespace <name>]
 ##?
 ##? Arguments:
 ##?     <kind>  The Flux resource kind (e.g., kustomization, helmrelease, gitrepository)

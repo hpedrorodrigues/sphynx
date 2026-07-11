@@ -11,7 +11,9 @@ source "${SPHYNX_NAMESPACE_DIR}/core/rollout.sh"
 ##? Manage the rollout of a resource
 ##?
 ##? Usage:
-##?     rollout (status | restart | history) [<query>] [--namespace <name> | --all-namespaces] [--context <name>]
+##?     rollout status [<query>] [--namespace <name> | --all-namespaces] [--context <name>]
+##?     rollout restart [<query>] [--namespace <name> | --all-namespaces] [--context <name>]
+##?     rollout history [<query>] [--namespace <name> | --all-namespaces] [--context <name>]
 ##?
 ##? Options:
 ##?     -n --namespace <name>  The namespace scope for requests

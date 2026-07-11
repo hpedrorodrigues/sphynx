@@ -11,7 +11,8 @@ source "${SPHYNX_NAMESPACE_DIR}/core/events.sh"
 ##? Print events for the cluster or a selected resource
 ##?
 ##? Usage:
-##?     events [<query> | --list] [--namespace <name> | --all-namespaces] [--warnings] [--watch] [--context <name>]
+##?     events [<query>] [--namespace <name> | --all-namespaces] [--warnings] [--watch] [--context <name>]
+##?     events --list [--namespace <name> | --all-namespaces] [--warnings] [--watch] [--context <name>]
 ##?
 ##? Options:
 ##?     -l --list  Print all events without selecting a resource

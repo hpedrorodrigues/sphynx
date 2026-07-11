@@ -11,7 +11,8 @@ source "${SPHYNX_NAMESPACE_DIR}/core/logs.sh"
 ##? Print the logs for a container in a pod
 ##?
 ##? Usage:
-##?     logs [[<query>] [-l <selector>] [--namespace <name> | --all-namespaces] | --namespace <name> --pod <name> --container <name>] [--previous] [--context <name>]
+##?     logs [<query>] [-l <selector>] [--namespace <name> | --all-namespaces] [--previous] [--context <name>]
+##?     logs --namespace <name> --pod <name> --container <name> [--previous] [--context <name>]
 ##?
 ##? Options:
 ##?     -l --selector <selector>  Selector (label query) to filter on

@@ -13,7 +13,8 @@ source "${SPHYNX_NAMESPACE_DIR}/core/reconcile.sh"
 ##?
 ##? Usage:
 ##?     reconcile --list [[<query>] [--namespace <name> | --all-namespaces]]
-##?     reconcile [[<query>] [--namespace <name> | --all-namespaces] | <kind> <name> [--namespace <name>]]
+##?     reconcile [<query>] [--namespace <name> | --all-namespaces]
+##?     reconcile <kind> <name> [--namespace <name>]
 ##?
 ##? Arguments:
 ##?     <kind>  The Flux resource kind (e.g., kustomization, helmrelease, gitrepository)

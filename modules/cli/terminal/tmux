@@ -12,7 +12,8 @@ source "${SPHYNX_NAMESPACE_DIR}/core/tmux.sh"
 ##? tmux utility functions
 ##?
 ##? Usage:
-##?     tmux (colors | ls | new [<session_name>] | attach [<session_name>] | force-attach [<session_name>] | kill [<session_name>] | kill-all)
+##?     tmux (colors | ls | kill-all)
+##?     tmux (new | attach | force-attach | kill) [<session_name>]
 ##?
 ##? Examples:
 ##?     tmux colors

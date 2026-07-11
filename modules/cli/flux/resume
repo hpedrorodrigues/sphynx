@@ -12,7 +12,8 @@ source "${SPHYNX_NAMESPACE_DIR}/core/resume.sh"
 ##? Resume a Flux resource
 ##?
 ##? Usage:
-##?     resume [[<query>] [--namespace <name> | --all-namespaces] | <kind> <name> [--namespace <name>]]
+##?     resume [<query>] [--namespace <name> | --all-namespaces]
+##?     resume <kind> <name> [--namespace <name>]
 ##?
 ##? Arguments:
 ##?     <kind>  The Flux resource kind (e.g., kustomization, helmrelease, gitrepository)

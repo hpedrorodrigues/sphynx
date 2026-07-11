@@ -11,7 +11,8 @@ source "${SPHYNX_NAMESPACE_DIR}/core/jvm.sh"
 ##? Generate heap dumps and thread dumps from JVM processes running in Kubernetes pods
 ##?
 ##? Usage:
-##?     jvm [[<query>] [-l <selector>] [--namespace <name> | --all-namespaces] | --namespace <name> --pod <name> --container <name>] [--heapdump] [--threaddump] [--output-dir <path>] [--context <name>]
+##?     jvm [<query>] [-l <selector>] [--namespace <name> | --all-namespaces] [--heapdump] [--threaddump] [--output-dir <path>] [--context <name>]
+##?     jvm --namespace <name> --pod <name> --container <name> [--heapdump] [--threaddump] [--output-dir <path>] [--context <name>]
 ##?
 ##? Options:
 ##?     -l --selector <selector>  Selector (label query) to filter on
