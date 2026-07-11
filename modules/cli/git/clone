@@ -13,6 +13,10 @@ source "${SPHYNX_NAMESPACE_DIR}/core/clone.sh"
 ##? Usage:
 ##?     clone <username> <project-name> (--https | --ssh)
 ##?
+##? Options:
+##?     --https  Clone the repository using the HTTPS protocol
+##?     --ssh  Clone the repository using the SSH protocol
+##?
 ##? Examples:
 ##?     clone 'Google' 'knative-gcp' --https
 ##?     clone 'kubernetes' 'kubernetes' --ssh

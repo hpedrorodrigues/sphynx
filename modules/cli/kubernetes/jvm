@@ -24,6 +24,14 @@ source "${SPHYNX_NAMESPACE_DIR}/core/jvm.sh"
 ##?     --threaddump  Generate a thread dump
 ##?     --output-dir <path>  Local directory to store the dump file
 ##?     --context <name>  The name of the kubeconfig context to use
+##?
+##? Examples:
+##?     jvm
+##?     jvm --heapdump
+##?     jvm kafka --threaddump
+##?     jvm --selector app=kafka --heapdump --output-dir /tmp/dumps
+##?     jvm --namespace kafka --pod kafka-0 --container kafka --threaddump
+##?     jvm kafka --context staging
 
 sx::parse_arguments "${@}"
 

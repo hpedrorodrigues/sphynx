@@ -9,7 +9,7 @@ source "${SPHYNX_NAMESPACE_DIR}/shared/shared.sh"
 source "${SPHYNX_NAMESPACE_DIR}/shared/tmux.sh"
 source "${SPHYNX_NAMESPACE_DIR}/core/tmux.sh"
 
-##? tmux utility functions
+##? Manage tmux sessions
 ##?
 ##? Usage:
 ##?     tmux (colors | ls | kill-all)

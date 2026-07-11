@@ -23,7 +23,8 @@ source "${SPHYNX_NAMESPACE_DIR}/core/resource-summary.sh"
 ##?     --context <name>  The name of the kubeconfig context to use
 ##?
 ##? Examples:
-##?     resource-summary
+##?     resource-summary pods
+##?     resource-summary nodes
 ##?     resource-summary pods --watch
 ##?     resource-summary nodes --watch --interval 5
 ##?     resource-summary pods --context staging

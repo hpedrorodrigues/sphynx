@@ -9,7 +9,7 @@ source "${SPHYNX_CLI_DIR}/kubernetes/shared/shared.sh"
 source "${SPHYNX_NAMESPACE_DIR}/shared/shared.sh"
 source "${SPHYNX_NAMESPACE_DIR}/core/dashboard.sh"
 
-##? Retrieve the dashboard
+##? Open Envoy Gateway and Envoy proxy dashboards
 ##?
 ##? Usage:
 ##?     dashboard [<target>] [<query>] [--namespace <name> | --all-namespaces] [--port <number>]

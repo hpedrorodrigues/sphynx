@@ -9,7 +9,7 @@ source "${SPHYNX_NAMESPACE_DIR}/shared/shared.sh"
 source "${SPHYNX_NAMESPACE_DIR}/shared/screen.sh"
 source "${SPHYNX_NAMESPACE_DIR}/core/screen.sh"
 
-##? screen utility functions
+##? Manage screen sessions
 ##?
 ##? Usage:
 ##?     screen (ls | kill-all)
