@@ -7,7 +7,6 @@ set -o pipefail
 source "${SPHYNX_CLI_DIR}/.internal/all.sh"
 source "${SPHYNX_NAMESPACE_DIR}/shared/shared.sh"
 source "${SPHYNX_NAMESPACE_DIR}/core/application.sh"
-source "${SPHYNX_NAMESPACE_DIR}/core/pull-apk.sh"
 
 ##? Manage applications installed on a device
 ##?
