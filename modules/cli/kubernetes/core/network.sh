@@ -2,7 +2,6 @@
 
 function sx::k8s::network::dump_traffic() {
   sx::k8s::check_requirements
-  sx::k8s::ensure_api_access
 
   local -r query="${1:-}"
   local -r selector="${2:-}"
@@ -14,12 +13,16 @@ function sx::k8s::network::dump_traffic() {
   local -r all_namespaces="${8:-false}"
   local -r extra_flags="${9:-}"
   local -r image="${10:-}"
+  local -r context="${11:-}"
+
+  sx::k8s::validate_context "${context}"
+  sx::k8s::ensure_api_access "${context}"
 
   if [ -n "${namespace}" ] && [ -n "${pod}" ] && [ -n "${container}" ]; then
-    sx::k8s_command::network::dump_traffic "${namespace}" "${pod}" "${container}" "${duration}" "${output_dir}" "${extra_flags}" "${image}"
+    sx::k8s_command::network::dump_traffic "${namespace}" "${pod}" "${container}" "${duration}" "${output_dir}" "${extra_flags}" "${image}" "${context}"
   elif sx::os::is_command_available 'fzf'; then
     local -r options="$(
-      sx::k8s::running_pods "${query}" "${selector}" "${namespace}" "${all_namespaces}" true
+      sx::k8s::running_pods "${query}" "${selector}" "${namespace}" "${all_namespaces}" true "${context}"
     )"
 
     if [ -z "${options}" ]; then
@@ -34,14 +37,14 @@ function sx::k8s::network::dump_traffic() {
       local -r name="$(echo "${selected}" | awk '{ print $2 }')"
       local -r container_name="$(echo "${selected}" | awk '{ print $3 }')"
 
-      sx::k8s_command::network::dump_traffic "${ns}" "${name}" "${container_name}" "${duration}" "${output_dir}" "${extra_flags}" "${image}"
+      sx::k8s_command::network::dump_traffic "${ns}" "${name}" "${container_name}" "${duration}" "${output_dir}" "${extra_flags}" "${image}" "${context}"
     fi
   else
     export PS3=$'\n''Please, choose the pod: '$'\n'
 
     local options
     readarray -t options < <(
-      sx::k8s::running_pods "${query}" "${selector}" "${namespace}" "${all_namespaces}"
+      sx::k8s::running_pods "${query}" "${selector}" "${namespace}" "${all_namespaces}" false "${context}"
     )
 
     if [ "${#options[@]}" -eq 0 ]; then
@@ -58,7 +61,7 @@ function sx::k8s::network::dump_traffic() {
       local -r name="$(echo "${selected}" | awk '{ print $2 }')"
       local -r container_name="$(echo "${selected}" | awk '{ print $3 }')"
 
-      sx::k8s_command::network::dump_traffic "${ns}" "${name}" "${container_name}" "${duration}" "${output_dir}" "${extra_flags}" "${image}"
+      sx::k8s_command::network::dump_traffic "${ns}" "${name}" "${container_name}" "${duration}" "${output_dir}" "${extra_flags}" "${image}" "${context}"
       break
     done
   fi
@@ -72,6 +75,13 @@ function sx::k8s_command::network::dump_traffic() {
   local -r output_dir="${5:-}"
   local -r extra_flags="${6:-}"
   local -r image="${7:-ghcr.io/hpedrorodrigues/debug}"
+  local -r context="${8:-}"
+
+  if [ -n "${context}" ]; then
+    local -r context_flags="--context ${context}"
+  else
+    local -r context_flags=''
+  fi
 
   local -r timestamp="$(date '+%Y%m%d-%H%M%S')"
   local -r filename="traffic-${name}-${timestamp}.pcap"
@@ -98,7 +108,8 @@ function sx::k8s_command::network::dump_traffic() {
   # Create the ephemeral debug container without attaching (--attach=false). It avoids the known issue where
   # kubectl debug's attach mechanism hangs after the container process terminates. We then use kubectl exec
   # to run the capture, which exits cleanly.
-  sx::k8s::cli debug "${name}" \
+  # shellcheck disable=SC2086  # quote this to prevent word splitting
+  sx::k8s::cli ${context_flags} debug "${name}" \
     --attach=false \
     --profile 'sysadmin' \
     --custom="${custom_profile_path}" \
@@ -114,8 +125,9 @@ function sx::k8s_command::network::dump_traffic() {
   local started_at=''
 
   for _ in $(seq 1 60); do
+    # shellcheck disable=SC2086  # quote this to prevent word splitting
     started_at="$(
-      sx::k8s::cli get pod "${name}" \
+      sx::k8s::cli ${context_flags} get pod "${name}" \
         --namespace "${ns}" \
         --output "jsonpath={.status.ephemeralContainerStatuses[?(@.name==\"${debugger_container}\")].state.running.startedAt}" \
         2>/dev/null || true
@@ -133,7 +145,8 @@ function sx::k8s_command::network::dump_traffic() {
     sx::log::fatal "Timed out waiting for debug container to start in pod \"${name}\"."
   fi
 
-  sx::k8s::cli exec "${name}" \
+  # shellcheck disable=SC2086  # quote this to prevent word splitting
+  sx::k8s::cli ${context_flags} exec "${name}" \
     --namespace "${ns}" \
     --container "${debugger_container}" \
     -- sh -c "

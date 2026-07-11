@@ -11,18 +11,20 @@ source "${SPHYNX_NAMESPACE_DIR}/core/ls.sh"
 ##? Print one or many resources
 ##?
 ##? Usage:
-##?     ls [--namespace <name> | --all-namespaces] [--show-labels --output <format>]
+##?     ls [--namespace <name> | --all-namespaces] [--show-labels --output <format>] [--context <name>]
 ##?
 ##? Options:
 ##?     -n --namespace <name>  The namespace scope for requests
 ##?     -A --all-namespaces  List the resources across all namespaces
 ##?     -l --show-labels  Show all labels as the last column
 ##?     -o --output=(default | name | wide)  The output format [default: default]
+##?     --context <name>  The name of the kubeconfig context to use
 ##?
 ##? Examples:
 ##?     ls --namespace kube-system
 ##?     ls --all-namespaces
 ##?     ls --show-labels
+##?     ls --context staging
 
 sx::parse_arguments "${@}"
 
@@ -30,4 +32,5 @@ sx::k8s::list::resources \
   "${namespace:-}" \
   "${output:-default}" \
   "${all_namespaces:-false}" \
-  "${show_labels:-false}"
+  "${show_labels:-false}" \
+  "${context:-}"

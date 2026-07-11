@@ -11,7 +11,7 @@ source "${SPHYNX_NAMESPACE_DIR}/core/resource-summary.sh"
 ##? Print a resource summary for pods or nodes
 ##?
 ##? Usage:
-##?     resource-summary (pods [<query>] [--namespace <name> | --all-namespaces] [--selector <query>] | nodes [<query>]) [--watch] [--interval <seconds>]
+##?     resource-summary (pods [<query>] [--namespace <name> | --all-namespaces] [--selector <query>] | nodes [<query>]) [--watch] [--interval <seconds>] [--context <name>]
 ##?
 ##? Options:
 ##?     -n --namespace <name>  The namespace scope for requests
@@ -19,11 +19,13 @@ source "${SPHYNX_NAMESPACE_DIR}/core/resource-summary.sh"
 ##?     -l --selector <query>  Selector (label query) to filter on
 ##?     -w --watch  Watch the resource summary continuously
 ##?     -i --interval <seconds>  Refresh interval in seconds [default: 2]
+##?     --context <name>  The name of the kubeconfig context to use
 ##?
 ##? Examples:
 ##?     resource-summary
 ##?     resource-summary pods --watch
 ##?     resource-summary nodes --watch --interval 5
+##?     resource-summary pods --context staging
 
 sx::parse_arguments "${@}"
 
@@ -34,11 +36,12 @@ if ${watch:-false}; then
     "${query:-}" \
     "${namespace:-}" \
     "${all_namespaces:-false}" \
-    "${selector:-}"
+    "${selector:-}" \
+    "${context:-}"
 elif ${pods:-false}; then
-  sx::k8s::pods::resource_summary "${query:-}" "${namespace:-}" "${all_namespaces:-false}" "${selector:-}"
+  sx::k8s::pods::resource_summary "${query:-}" "${namespace:-}" "${all_namespaces:-false}" "${selector:-}" "${context:-}"
 elif ${nodes:-false}; then
-  sx::k8s::nodes::resource_summary "${query:-}"
+  sx::k8s::nodes::resource_summary "${query:-}" "${context:-}"
 else
   sx::error::illegal_arguments "${*}"
 fi

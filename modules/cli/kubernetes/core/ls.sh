@@ -2,9 +2,13 @@
 
 function sx::k8s::list::resources() {
   sx::k8s::check_requirements
-  sx::k8s::ensure_api_access
 
-  local -r namespace="${1:-$(sx::k8s::current_namespace)}"
+  local -r context="${5:-}"
+
+  sx::k8s::validate_context "${context}"
+  sx::k8s::ensure_api_access "${context}"
+
+  local -r namespace="${1:-$(sx::k8s::current_namespace "${context}")}"
   local -r output="${2:-}"
   local -r all_namespaces="${3:-false}"
   local -r show_labels="${4:-false}"
@@ -22,6 +26,10 @@ function sx::k8s::list::resources() {
 
   if [ "${output}" != 'default' ]; then
     flags+=" --output ${output}"
+  fi
+
+  if [ -n "${context}" ]; then
+    flags+=" --context ${context}"
   fi
 
   # shellcheck disable=SC2086  # quote this to prevent word splitting

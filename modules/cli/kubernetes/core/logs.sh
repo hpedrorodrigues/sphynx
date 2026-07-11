@@ -2,7 +2,6 @@
 
 function sx::k8s::logs() {
   sx::k8s::check_requirements
-  sx::k8s::ensure_api_access
 
   local -r query="${1:-}"
   local -r selector="${2:-}"
@@ -11,12 +10,16 @@ function sx::k8s::logs() {
   local -r container="${5:-}"
   local -r all_namespaces="${6:-false}"
   local -r previous_log="${7:-false}"
+  local -r context="${8:-}"
+
+  sx::k8s::validate_context "${context}"
+  sx::k8s::ensure_api_access "${context}"
 
   if [ -n "${namespace}" ] && [ -n "${pod}" ] && [ -n "${container}" ]; then
-    sx::k8s_command::logs "${namespace}" "${pod}" "${container}" "${previous_log}"
+    sx::k8s_command::logs "${namespace}" "${pod}" "${container}" "${previous_log}" "${context}"
   elif sx::os::is_command_available 'fzf'; then
     local -r options="$(
-      sx::k8s_command::pod::list "${query}" "${selector}" "${namespace}" "${all_namespaces}" true
+      sx::k8s_command::pod::list "${query}" "${selector}" "${namespace}" "${all_namespaces}" true "${context}"
     )"
 
     if [ -z "${options}" ]; then
@@ -31,14 +34,14 @@ function sx::k8s::logs() {
       local -r name="$(echo "${selected}" | awk '{ print $2 }')"
       local -r container_name="$(echo "${selected}" | awk '{ print $3 }')"
 
-      sx::k8s_command::logs "${ns}" "${name}" "${container_name}" "${previous_log}"
+      sx::k8s_command::logs "${ns}" "${name}" "${container_name}" "${previous_log}" "${context}"
     fi
   else
     export PS3=$'\n''Please, choose the pod: '$'\n'
 
     local options
     readarray -t options < <(
-      sx::k8s_command::pod::list "${query}" "${selector}" "${namespace}" "${all_namespaces}"
+      sx::k8s_command::pod::list "${query}" "${selector}" "${namespace}" "${all_namespaces}" false "${context}"
     )
 
     if [ "${#options[@]}" -eq 0 ]; then
@@ -55,7 +58,7 @@ function sx::k8s::logs() {
       local -r name="$(echo "${selected}" | awk '{ print $2 }')"
       local -r container_name="$(echo "${selected}" | awk '{ print $3 }')"
 
-      sx::k8s_command::logs "${ns}" "${name}" "${container_name}" "${previous_log}"
+      sx::k8s_command::logs "${ns}" "${name}" "${container_name}" "${previous_log}" "${context}"
       break
     done
   fi
@@ -66,10 +69,15 @@ function sx::k8s_command::logs() {
   local -r name="${2}"
   local -r container="${3}"
   local -r previous_log="${4}"
+  local -r context="${5:-}"
 
   local flags=''
   if ${previous_log}; then
     flags+=' --previous'
+  fi
+
+  if [ -n "${context}" ]; then
+    flags+=" --context ${context}"
   fi
 
   sx::log::info "Tailing logs from pod \"${name}/${container}\"\n"
@@ -88,6 +96,7 @@ function sx::k8s_command::pod::list() {
   local -r namespace="${3:-}"
   local -r all_namespaces="${4:-false}"
   local -r print_header="${5:-false}"
+  local -r context="${6:-}"
 
   if ${all_namespaces}; then
     local flags='--all-namespaces'
@@ -99,6 +108,10 @@ function sx::k8s_command::pod::list() {
 
   if [ -n "${selector}" ]; then
     flags+=" --selector ${selector}"
+  fi
+
+  if [ -n "${context}" ]; then
+    flags+=" --context ${context}"
   fi
 
   if [ -n "${query}" ]; then

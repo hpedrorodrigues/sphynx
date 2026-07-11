@@ -11,7 +11,7 @@ source "${SPHYNX_NAMESPACE_DIR}/core/port-forward.sh"
 ##? Forward one local port to a pod
 ##?
 ##? Usage:
-##?     port-forward [<query>] [--namespace <name> | --all-namespaces] [--random-port | --port <number>] [--retry]
+##?     port-forward [<query>] [--namespace <name> | --all-namespaces] [--random-port | --port <number>] [--retry] [--context <name>]
 ##?
 ##? Options:
 ##?     -n --namespace <name>  The namespace scope for requests
@@ -19,6 +19,7 @@ source "${SPHYNX_NAMESPACE_DIR}/core/port-forward.sh"
 ##?     -r --random-port  Bind a random port locally
 ##?     -p --port <number>  Bind to the given port
 ##?     --retry  Reconnect automatically after disconnects
+##?     --context <name>  The name of the kubeconfig context to use
 ##?
 ##? Examples:
 ##?     port-forward
@@ -27,6 +28,7 @@ source "${SPHYNX_NAMESPACE_DIR}/core/port-forward.sh"
 ##?     port-forward --all-namespaces
 ##?     port-forward --port 8080
 ##?     port-forward --retry
+##?     port-forward nginx --context staging
 
 sx::parse_arguments "${@}"
 
@@ -36,4 +38,5 @@ sx::k8s::port_forward \
   "${all_namespaces:-false}" \
   "${random_port:-false}" \
   "${port:-}" \
-  "${retry:-false}"
+  "${retry:-false}" \
+  "${context:-}"

@@ -11,19 +11,21 @@ source "${SPHYNX_NAMESPACE_DIR}/core/topology.sh"
 ##? Show K8S pods distribution throughout the cluster
 ##?
 ##? Usage:
-##?     topology [<query> --all-namespaces --resources --show-labels --selector <selector>]
+##?     topology [<query> --all-namespaces --resources --show-labels --selector <selector>] [--context <name>]
 ##?
 ##? Options:
 ##?   -A --all-namespaces  Run this command considering all pods of all namespaces
 ##?   -r --resources  Run this command considering resource usage
 ##?   --show-labels  Show instance labels
 ##?   -l --selector <selector>  Selector (label query) to filter on
+##?   --context <name>  The name of the kubeconfig context to use
 ##?
 ##? Examples:
 ##?     topology --all-namespaces
 ##?     topology --resources
 ##?     topology --show-labels
 ##?     topology --selector app=app
+##?     topology --context staging
 
 sx::parse_arguments "${@}"
 
@@ -32,4 +34,5 @@ sx::k8s::topology \
   "${selector:-}" \
   "${all_namespaces:-false}" \
   "${resources:-false}" \
-  "${show_labels:-false}"
+  "${show_labels:-false}" \
+  "${context:-}"

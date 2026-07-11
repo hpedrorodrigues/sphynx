@@ -2,12 +2,15 @@
 
 function sx::k8s::pods::resource_summary() {
   sx::k8s::check_requirements
-  sx::k8s::ensure_api_access
 
   local -r query="${1:-}"
   local -r namespace="${2:-}"
   local -r all_namespaces="${3:-false}"
   local -r selector="${4:-}"
+  local -r context="${5:-}"
+
+  sx::k8s::validate_context "${context}"
+  sx::k8s::ensure_api_access "${context}"
 
   if ${all_namespaces}; then
     local flags='--all-namespaces'
@@ -19,6 +22,10 @@ function sx::k8s::pods::resource_summary() {
 
   if [ -n "${selector}" ]; then
     flags+=" --selector ${selector}"
+  fi
+
+  if [ -n "${context}" ]; then
+    flags+=" --context ${context}"
   fi
 
   if [ -n "${query}" ]; then
@@ -110,7 +117,6 @@ function sx::k8s::pods::resource_summary() {
 
 function sx::k8s::resource_summary::watch() {
   sx::k8s::check_requirements
-  sx::k8s::ensure_api_access
 
   local -r interval="${1:-2}"
   local -r pods="${2:-false}"
@@ -118,6 +124,10 @@ function sx::k8s::resource_summary::watch() {
   local -r namespace="${4:-}"
   local -r all_namespaces="${5:-false}"
   local -r selector="${6:-}"
+  local -r context="${7:-}"
+
+  sx::k8s::validate_context "${context}"
+  sx::k8s::ensure_api_access "${context}"
 
   local args=''
   if ${pods}; then
@@ -140,6 +150,10 @@ function sx::k8s::resource_summary::watch() {
     args+=" ${query}"
   fi
 
+  if [ -n "${context}" ]; then
+    args+=" --context ${context}"
+  fi
+
   if sx::os::is_command_available "${SPHYNX_EXEC_NAME}"; then
     local -r sphynx_command="${SPHYNX_EXEC_NAME}"
   else
@@ -152,9 +166,18 @@ function sx::k8s::resource_summary::watch() {
 
 function sx::k8s::nodes::resource_summary() {
   sx::k8s::check_requirements
-  sx::k8s::ensure_api_access
 
   local -r query="${1:-}"
+  local -r context="${2:-}"
+
+  sx::k8s::validate_context "${context}"
+  sx::k8s::ensure_api_access "${context}"
+
+  if [ -n "${context}" ]; then
+    local -r context_flags="--context ${context}"
+  else
+    local -r context_flags=''
+  fi
 
   if [ -n "${query}" ]; then
     local -r query_pattern="$(echo "${query}" | sx::string::lowercase)"
@@ -175,15 +198,17 @@ function sx::k8s::nodes::resource_summary() {
     {{.status.nodeInfo.kernelVersion}}{{"\n"}}
   {{end}}'
 
+  # shellcheck disable=SC2086  # quote this to prevent word splitting
   local -r raw_node_output="$(
-    sx::k8s::cli get nodes \
+    sx::k8s::cli ${context_flags} get nodes \
       --output go-template \
       --template="$(sx::k8s::clear_template "${template}")" \
       | sort -u \
       | sx::string::lowercase \
       | grep -E "${query_pattern}" 2>/dev/null
   )"
-  local -r top_output="$(sx::k8s::cli top nodes --no-headers 2>/dev/null)"
+  # shellcheck disable=SC2086  # quote this to prevent word splitting
+  local -r top_output="$(sx::k8s::cli ${context_flags} top nodes --no-headers 2>/dev/null)"
 
   local resources='NODE,CPU (USAGE),CPU (CAPACITY),MEMORY (USAGE),MEMORY (CAPACITY),RUNTIME,OS,IMAGE,ARCH,KERNEL\n\n'
   while IFS='' read -r node_output; do

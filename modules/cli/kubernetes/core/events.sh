@@ -2,7 +2,6 @@
 
 function sx::k8s::events() {
   sx::k8s::check_requirements
-  sx::k8s::ensure_api_access
 
   local -r query="${1:-}"
   local -r namespace="${2:-}"
@@ -10,12 +9,16 @@ function sx::k8s::events() {
   local -r list="${4:-false}"
   local -r warnings="${5:-false}"
   local -r watch="${6:-false}"
+  local -r context="${7:-}"
+
+  sx::k8s::validate_context "${context}"
+  sx::k8s::ensure_api_access "${context}"
 
   if ${list}; then
-    sx::k8s_command::events "${namespace}" "${all_namespaces}" '' '' "${warnings}" "${watch}"
+    sx::k8s_command::events "${namespace}" "${all_namespaces}" '' '' "${warnings}" "${watch}" "${context}"
   elif sx::os::is_command_available 'fzf'; then
     local -r options="$(
-      sx::k8s::resources "${query}" "${namespace}" "${all_namespaces}" true
+      sx::k8s::resources "${query}" "${namespace}" "${all_namespaces}" true "${context}"
     )"
 
     if [ -z "${options}" ]; then
@@ -30,14 +33,14 @@ function sx::k8s::events() {
       local -r kind="$(echo "${selected}" | awk '{ print $2 }')"
       local -r name="$(echo "${selected}" | awk '{ print $3 }')"
 
-      sx::k8s_command::events "${ns}" 'false' "${kind}" "${name}" "${warnings}" "${watch}"
+      sx::k8s_command::events "${ns}" 'false' "${kind}" "${name}" "${warnings}" "${watch}" "${context}"
     fi
   else
     export PS3=$'\n''Please, choose the resource: '$'\n'
 
     local options
     readarray -t options < <(
-      sx::k8s::resources "${query}" "${namespace}" "${all_namespaces}"
+      sx::k8s::resources "${query}" "${namespace}" "${all_namespaces}" false "${context}"
     )
 
     if [ "${#options[@]}" -eq 0 ]; then
@@ -54,7 +57,7 @@ function sx::k8s::events() {
       local -r kind="$(echo "${selected}" | awk '{ print $2 }')"
       local -r name="$(echo "${selected}" | awk '{ print $3 }')"
 
-      sx::k8s_command::events "${ns}" 'false' "${kind}" "${name}" "${warnings}" "${watch}"
+      sx::k8s_command::events "${ns}" 'false' "${kind}" "${name}" "${warnings}" "${watch}" "${context}"
       break
     done
   fi
@@ -67,12 +70,17 @@ function sx::k8s_command::events() {
   local -r name="${4:-}"
   local -r warnings="${5:-false}"
   local -r watch="${6:-false}"
+  local -r context="${7:-}"
 
   local flags=''
   if ${all_namespaces}; then
     flags+=' --all-namespaces'
   elif [ -n "${ns}" ]; then
     flags+=" --namespace ${ns}"
+  fi
+
+  if [ -n "${context}" ]; then
+    flags+=" --context ${context}"
   fi
 
   local field_selector=''

@@ -14,16 +14,18 @@ source "${SPHYNX_NAMESPACE_DIR}/core/shell.sh"
 ##?   Highly influenced by https://github.com/kvaps/kubectl-node-shell
 ##?
 ##? Usage:
-##?     shell [<query>] [--use-ssm]
+##?     shell [<query>] [--use-ssm] [--context <name>]
 ##?
 ##? Options:
 ##?     --use-ssm  Use AWS SSM Agent to connect to instance
+##?     --context <name>  The name of the kubeconfig context to use
 ##?
 ##? Examples:
 ##?     shell
 ##?     shell ip-192-168-1-1.ec2.internal
 ##?     shell --use-ssm
+##?     shell --context staging
 
 sx::parse_arguments "${@}"
 
-sx::k8s::shell "${query:-}" "${use_ssm:-false}"
+sx::k8s::shell "${query:-}" "${use_ssm:-false}" "${context:-}"

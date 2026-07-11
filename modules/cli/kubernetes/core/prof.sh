@@ -9,7 +9,6 @@ function sx::k8s::prof::check_requirements() {
 function sx::k8s::prof() {
   sx::k8s::check_requirements
   sx::k8s::prof::check_requirements
-  sx::k8s::ensure_api_access
 
   local -r query="${1:-}"
   local -r selector="${2:-}"
@@ -22,12 +21,16 @@ function sx::k8s::prof() {
   local -r timeout="${9:-10m}"
   local -r image="${10:-}"
   local -r extra_flags="${11:-}"
+  local -r context="${12:-}"
+
+  sx::k8s::validate_context "${context}"
+  sx::k8s::ensure_api_access "${context}"
 
   if [ -n "${namespace}" ] && [ -n "${pod}" ] && [ -n "${container}" ]; then
-    sx::k8s_command::prof "${namespace}" "${pod}" "${container}" "${non_root}" "${keep_jobs}" "${timeout}" "${image}" "${extra_flags}"
+    sx::k8s_command::prof "${namespace}" "${pod}" "${container}" "${non_root}" "${keep_jobs}" "${timeout}" "${image}" "${extra_flags}" "${context}"
   elif sx::os::is_command_available 'fzf'; then
     local -r options="$(
-      sx::k8s::running_pods "${query}" "${selector}" "${namespace}" "${all_namespaces}" true
+      sx::k8s::running_pods "${query}" "${selector}" "${namespace}" "${all_namespaces}" true "${context}"
     )"
 
     if [ -z "${options}" ]; then
@@ -42,14 +45,14 @@ function sx::k8s::prof() {
       local -r name="$(echo "${selected}" | awk '{ print $2 }')"
       local -r container_name="$(echo "${selected}" | awk '{ print $3 }')"
 
-      sx::k8s_command::prof "${ns}" "${name}" "${container_name}" "${non_root}" "${keep_jobs}" "${timeout}" "${image}" "${extra_flags}"
+      sx::k8s_command::prof "${ns}" "${name}" "${container_name}" "${non_root}" "${keep_jobs}" "${timeout}" "${image}" "${extra_flags}" "${context}"
     fi
   else
     export PS3=$'\n''Please, choose the pod: '$'\n'
 
     local options
     readarray -t options < <(
-      sx::k8s::running_pods "${query}" "${selector}" "${namespace}" "${all_namespaces}"
+      sx::k8s::running_pods "${query}" "${selector}" "${namespace}" "${all_namespaces}" false "${context}"
     )
 
     if [ "${#options[@]}" -eq 0 ]; then
@@ -66,7 +69,7 @@ function sx::k8s::prof() {
       local -r name="$(echo "${selected}" | awk '{ print $2 }')"
       local -r container_name="$(echo "${selected}" | awk '{ print $3 }')"
 
-      sx::k8s_command::prof "${ns}" "${name}" "${container_name}" "${non_root}" "${keep_jobs}" "${timeout}" "${image}" "${extra_flags}"
+      sx::k8s_command::prof "${ns}" "${name}" "${container_name}" "${non_root}" "${keep_jobs}" "${timeout}" "${image}" "${extra_flags}" "${context}"
       break
     done
   fi
@@ -74,17 +77,27 @@ function sx::k8s::prof() {
 
 function sx::k8s::prof::cleanup() {
   sx::k8s::check_requirements
-  sx::k8s::ensure_api_access
 
   local -r namespace="${1:-}"
   local -r all_namespaces="${2:-false}"
+  local -r context="${3:-}"
+
+  sx::k8s::validate_context "${context}"
+  sx::k8s::ensure_api_access "${context}"
 
   if ${all_namespaces}; then
-    local -r flags='--all-namespaces'
+    local flags='--all-namespaces'
   elif [ -n "${namespace}" ]; then
-    local -r flags="--namespace ${namespace}"
+    local flags="--namespace ${namespace}"
   else
-    local -r flags="--namespace $(sx::k8s::current_namespace)"
+    local flags="--namespace $(sx::k8s::current_namespace "${context}")"
+  fi
+
+  if [ -n "${context}" ]; then
+    flags+=" --context ${context}"
+    local -r context_flags="--context ${context}"
+  else
+    local -r context_flags=''
   fi
 
   # jobs created by kubectl-prof carry the "kubectl-prof/id" label
@@ -104,7 +117,8 @@ function sx::k8s::prof::cleanup() {
 
   local ns job
   while read -r ns job; do
-    sx::k8s::cli delete job "${job}" --namespace "${ns}" --wait='false' &>/dev/null || true
+    # shellcheck disable=SC2086  # quote this to prevent word splitting
+    sx::k8s::cli ${context_flags} delete job "${job}" --namespace "${ns}" --wait='false' &>/dev/null || true
 
     sx::log::info "Deleted profiling job \"${ns}/${job}\"."
   done <<<"${jobs}"
@@ -119,9 +133,10 @@ function sx::k8s_command::prof() {
   local -r timeout="${6:-10m}"
   local -r image="${7:-}"
   local -r extra_flags="${8:-}"
+  local -r context="${9:-}"
 
   if ${non_root}; then
-    sx::k8s_command::prof::fix_permissions "${ns}" "${name}" "${container}" "${image}"
+    sx::k8s_command::prof::fix_permissions "${ns}" "${name}" "${container}" "${image}" "${context}"
   fi
 
   sx::log::info "Profiling pod \"${name}/${container}\"...\n"
@@ -133,12 +148,21 @@ function sx::k8s_command::prof() {
     local -r timeout_cmd=''
   fi
 
+  # kubectl breaks plugin dispatch when global flags precede the plugin name,
+  # so the context must be passed to kubectl-prof itself
+  if [ -n "${context}" ]; then
+    local -r context_flags="--context ${context}"
+  else
+    local -r context_flags=''
+  fi
+
   local exit_code=0
 
   # shellcheck disable=SC2086  # quote this to prevent word splitting
   ${timeout_cmd} ${SX_K8SCTL} prof "${name}" \
     --namespace "${ns}" \
     --target-container-name "${container}" \
+    ${context_flags} \
     ${extra_flags} || exit_code="${?}"
 
   if [ "${exit_code}" -ne 0 ]; then
@@ -152,7 +176,7 @@ function sx::k8s_command::prof() {
     if ${keep_jobs}; then
       sx::log::info "Keeping profiling jobs. Inspect with: kubectl get jobs --namespace ${ns} | grep kubectl-prof"
     else
-      sx::k8s_command::prof::cleanup_orphaned_jobs "${ns}" "${name}"
+      sx::k8s_command::prof::cleanup_orphaned_jobs "${ns}" "${name}" "${context}"
     fi
 
     exit "${exit_code}"
@@ -162,10 +186,18 @@ function sx::k8s_command::prof() {
 function sx::k8s_command::prof::cleanup_orphaned_jobs() {
   local -r ns="${1}"
   local -r name="${2}"
+  local -r context="${3:-}"
+
+  if [ -n "${context}" ]; then
+    local -r context_flags="--context ${context}"
+  else
+    local -r context_flags=''
+  fi
 
   # kubectl-prof only deletes its job on success. This run's jobs are matched by the target pod UID
+  # shellcheck disable=SC2086  # quote this to prevent word splitting
   local -r pod_uid="$(
-    sx::k8s::cli get pod "${name}" \
+    sx::k8s::cli ${context_flags} get pod "${name}" \
       --namespace "${ns}" \
       --output jsonpath='{.metadata.uid}' 2>/dev/null
   )"
@@ -174,16 +206,18 @@ function sx::k8s_command::prof::cleanup_orphaned_jobs() {
     return 0
   fi
 
+  # shellcheck disable=SC2086  # quote this to prevent word splitting
   local -r jobs="$(
-    sx::k8s::cli get jobs --namespace "${ns}" --output name 2>/dev/null \
+    sx::k8s::cli ${context_flags} get jobs --namespace "${ns}" --output name 2>/dev/null \
       | grep 'kubectl-prof' \
       || true
   )"
 
   local job
+  # shellcheck disable=SC2086  # quote this to prevent word splitting
   for job in ${jobs}; do
-    if sx::k8s::cli get "${job}" --namespace "${ns}" --output yaml 2>/dev/null | grep -q "${pod_uid}"; then
-      sx::k8s::cli delete "${job}" --namespace "${ns}" --wait='false' &>/dev/null || true
+    if sx::k8s::cli ${context_flags} get "${job}" --namespace "${ns}" --output yaml 2>/dev/null | grep -q "${pod_uid}"; then
+      sx::k8s::cli ${context_flags} delete "${job}" --namespace "${ns}" --wait='false' &>/dev/null || true
 
       sx::log::info "Deleted orphaned profiling job \"${job#job.batch/}\"."
     fi
@@ -195,6 +229,13 @@ function sx::k8s_command::prof::fix_permissions() {
   local -r name="${2}"
   local -r container="${3}"
   local -r image="${4:-ghcr.io/hpedrorodrigues/debug}"
+  local -r context="${5:-}"
+
+  if [ -n "${context}" ]; then
+    local -r context_flags="--context ${context}"
+  else
+    local -r context_flags=''
+  fi
 
   local -r debugger_container="profiler-fix-$(uuidgen | cut -d '-' -f 1 | tr '[:upper:]' '[:lower:]')"
   local -r custom_profile_path="$(mktemp -t partial_container_spec || echo '/tmp/partial_container_spec.yaml')"
@@ -211,8 +252,8 @@ function sx::k8s_command::prof::fix_permissions() {
 
   # Pre-create the shared dir as 0777 so non-root targets can write the profiling output
   # (the agent adopts existing dirs), and drop leftovers from failed runs to avoid ETXTBSY
-  # shellcheck disable=SC2016  # expressions don't expand in single quotes
-  sx::k8s::cli debug "${name}" \
+  # shellcheck disable=SC2016,SC2086  # expressions don't expand in single quotes; quote this to prevent word splitting
+  sx::k8s::cli ${context_flags} debug "${name}" \
     --attach=false \
     --profile 'sysadmin' \
     --custom="${custom_profile_path}" \
@@ -226,8 +267,9 @@ function sx::k8s_command::prof::fix_permissions() {
   local exit_code=''
 
   for _ in $(seq 1 60); do
+    # shellcheck disable=SC2086  # quote this to prevent word splitting
     exit_code="$(
-      sx::k8s::cli get pod "${name}" \
+      sx::k8s::cli ${context_flags} get pod "${name}" \
         --namespace "${ns}" \
         --output "jsonpath={.status.ephemeralContainerStatuses[?(@.name==\"${debugger_container}\")].state.terminated.exitCode}" \
         2>/dev/null || true

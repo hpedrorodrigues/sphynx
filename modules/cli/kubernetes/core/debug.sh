@@ -2,7 +2,6 @@
 
 function sx::k8s::debug() {
   sx::k8s::check_requirements
-  sx::k8s::ensure_api_access
 
   local -r query="${1:-}"
   local -r selector="${2:-}"
@@ -14,12 +13,16 @@ function sx::k8s::debug() {
   local -r user="${8:-}"
   local -r group="${9:-}"
   local -r restricted="${10:-false}"
+  local -r context="${11:-}"
+
+  sx::k8s::validate_context "${context}"
+  sx::k8s::ensure_api_access "${context}"
 
   if [ -n "${namespace}" ] && [ -n "${pod}" ] && [ -n "${container}" ] && [ -n "${image}" ]; then
-    sx::k8s_command::debug "${namespace}" "${pod}" "${container}" "${image}" "${user}" "${group}" "${restricted}"
+    sx::k8s_command::debug "${namespace}" "${pod}" "${container}" "${image}" "${user}" "${group}" "${restricted}" "${context}"
   elif sx::os::is_command_available 'fzf'; then
     local -r options="$(
-      sx::k8s::running_pods "${query}" "${selector}" "${namespace}" "${all_namespaces}" true
+      sx::k8s::running_pods "${query}" "${selector}" "${namespace}" "${all_namespaces}" true "${context}"
     )"
 
     if [ -z "${options}" ]; then
@@ -34,14 +37,14 @@ function sx::k8s::debug() {
       local -r name="$(echo "${selected}" | awk '{ print $2 }')"
       local -r container_name="$(echo "${selected}" | awk '{ print $3 }')"
 
-      sx::k8s_command::debug "${ns}" "${name}" "${container_name}" "${image}" "${user}" "${group}" "${restricted}"
+      sx::k8s_command::debug "${ns}" "${name}" "${container_name}" "${image}" "${user}" "${group}" "${restricted}" "${context}"
     fi
   else
     export PS3=$'\n''Please, choose the pod: '$'\n'
 
     local options
     readarray -t options < <(
-      sx::k8s::running_pods "${query}" "${selector}" "${namespace}" "${all_namespaces}"
+      sx::k8s::running_pods "${query}" "${selector}" "${namespace}" "${all_namespaces}" false "${context}"
     )
 
     if [ "${#options[@]}" -eq 0 ]; then
@@ -58,7 +61,7 @@ function sx::k8s::debug() {
       local -r name="$(echo "${selected}" | awk '{ print $2 }')"
       local -r container_name="$(echo "${selected}" | awk '{ print $3 }')"
 
-      sx::k8s_command::debug "${ns}" "${name}" "${container_name}" "${image}" "${user}" "${group}" "${restricted}"
+      sx::k8s_command::debug "${ns}" "${name}" "${container_name}" "${image}" "${user}" "${group}" "${restricted}" "${context}"
     done
   fi
 }
@@ -71,6 +74,13 @@ function sx::k8s_command::debug() {
   local -r user="${5:-}"
   local -r group="${6:-}"
   local -r restricted="${7:-false}"
+  local -r context="${8:-}"
+
+  if [ -n "${context}" ]; then
+    local -r context_flags="--context ${context}"
+  else
+    local -r context_flags=''
+  fi
 
   local -r shell='/bin/bash'
   local -r debugger_container="debugger-$(uuidgen | cut -d '-' -f 1 | tr '[:upper:]' '[:lower:]')"
@@ -123,7 +133,8 @@ function sx::k8s_command::debug() {
 
   sx::log::info "Now you can execute commands in \"${name}(${container})/${debugger_container}\" using image \"${image}\" with \"${shell}\"\n"
 
-  sx::k8s::cli debug "${name}" \
+  # shellcheck disable=SC2086  # quote this to prevent word splitting
+  sx::k8s::cli ${context_flags} debug "${name}" \
     --stdin \
     --tty \
     --profile "${profile}" \

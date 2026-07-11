@@ -2,15 +2,18 @@
 
 function sx::k8s::edit() {
   sx::k8s::check_requirements
-  sx::k8s::ensure_api_access
 
   local -r query="${1:-}"
   local -r namespace="${2:-}"
   local -r all_namespaces="${3:-false}"
+  local -r context="${4:-}"
+
+  sx::k8s::validate_context "${context}"
+  sx::k8s::ensure_api_access "${context}"
 
   if sx::os::is_command_available 'fzf'; then
     local -r options="$(
-      sx::k8s::editable_resources "${query}" "${namespace}" "${all_namespaces}" true
+      sx::k8s::editable_resources "${query}" "${namespace}" "${all_namespaces}" true "${context}"
     )"
 
     if [ -z "${options}" ]; then
@@ -25,14 +28,14 @@ function sx::k8s::edit() {
       local -r kind="$(echo "${selected}" | awk '{ print $2 }')"
       local -r name="$(echo "${selected}" | awk '{ print $3 }')"
 
-      sx::k8s_command::edit "${ns}" "${kind}" "${name}"
+      sx::k8s_command::edit "${ns}" "${kind}" "${name}" "${context}"
     fi
   else
     export PS3=$'\n''Please, choose the resource: '$'\n'
 
     local options
     readarray -t options < <(
-      sx::k8s::editable_resources "${query}" "${namespace}" "${all_namespaces}"
+      sx::k8s::editable_resources "${query}" "${namespace}" "${all_namespaces}" false "${context}"
     )
 
     if [ "${#options[@]}" -eq 0 ]; then
@@ -49,7 +52,7 @@ function sx::k8s::edit() {
       local -r kind="$(echo "${selected}" | awk '{ print $2 }')"
       local -r name="$(echo "${selected}" | awk '{ print $3 }')"
 
-      sx::k8s_command::edit "${ns}" "${kind}" "${name}"
+      sx::k8s_command::edit "${ns}" "${kind}" "${name}" "${context}"
       break
     done
   fi
@@ -59,8 +62,16 @@ function sx::k8s_command::edit() {
   local -r ns="${1:-}"
   local -r kind="${2:-}"
   local -r name="${3:-}"
+  local -r context="${4:-}"
+
+  if [ -n "${context}" ]; then
+    local -r context_flags="--context ${context}"
+  else
+    local -r context_flags=''
+  fi
 
   sx::log::info "Editing ${kind} \"${ns}/${name}\"\n"
 
-  sx::k8s::cli --namespace "${ns}" edit "${kind}" "${name}"
+  # shellcheck disable=SC2086  # quote this to prevent word splitting
+  sx::k8s::cli ${context_flags} --namespace "${ns}" edit "${kind}" "${name}"
 }

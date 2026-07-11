@@ -11,11 +11,12 @@ source "${SPHYNX_NAMESPACE_DIR}/core/tail.sh"
 ##? Tail logs from the pods of a workload
 ##?
 ##? Usage:
-##?     tail [<query>] [--namespace <name> | --all-namespaces] [-- <flags>...]
+##?     tail [<query>] [--namespace <name> | --all-namespaces] [--context <name>] [-- <flags>...]
 ##?
 ##? Options:
 ##?     -n --namespace <name>  The namespace scope for requests
 ##?     -A --all-namespaces  All namespaces
+##?     --context <name>  The name of the kubeconfig context to use
 ##?
 ##? Examples:
 ##?     tail
@@ -24,6 +25,7 @@ source "${SPHYNX_NAMESPACE_DIR}/core/tail.sh"
 ##?     tail --all-namespaces
 ##?     tail kafka -- --tail 100 --since 5m
 ##?     tail kafka -- --only-log-lines
+##?     tail kafka --context staging
 
 sx::parse_arguments "${@}"
 
@@ -31,4 +33,5 @@ sx::k8s::tail \
   "${query:-}" \
   "${namespace:-}" \
   "${all_namespaces:-false}" \
-  "${flags[*]:-}"
+  "${flags[*]:-}" \
+  "${context:-}"

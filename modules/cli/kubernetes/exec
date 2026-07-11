@@ -11,7 +11,7 @@ source "${SPHYNX_NAMESPACE_DIR}/core/exec.sh"
 ##? Execute custom commands in a container
 ##?
 ##? Usage:
-##?     exec [[<query>] [-l <selector>] [--namespace <name> | --all-namespaces] | --namespace <name> --pod <name> --container <name>] [--command <command>]
+##?     exec [[<query>] [-l <selector>] [--namespace <name> | --all-namespaces] | --namespace <name> --pod <name> --container <name>] [--command <command>] [--context <name>]
 ##?
 ##? Options:
 ##?     -l --selector <selector>  Selector (label query) to filter on
@@ -20,6 +20,7 @@ source "${SPHYNX_NAMESPACE_DIR}/core/exec.sh"
 ##?     -p --pod <name>  The pod name
 ##?     -c --container <name>  The container name
 ##?     --command <command>  Command to execute in the container
+##?     --context <name>  The name of the kubeconfig context to use
 ##?
 ##? Examples:
 ##?     exec
@@ -29,6 +30,7 @@ source "${SPHYNX_NAMESPACE_DIR}/core/exec.sh"
 ##?     exec --namespace echo-server --pod echo-server --container echo-server
 ##?     exec --namespace kube-system
 ##?     exec --all-namespaces
+##?     exec echo-server --context staging
 
 sx::parse_arguments "${@}"
 
@@ -39,4 +41,5 @@ sx::k8s::exec \
   "${pod:-}" \
   "${container:-}" \
   "${command:-}" \
-  "${all_namespaces:-false}"
+  "${all_namespaces:-false}" \
+  "${context:-}"
