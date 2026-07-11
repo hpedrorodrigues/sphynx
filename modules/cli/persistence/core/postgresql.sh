@@ -62,11 +62,11 @@ function sx::postgresql::list_connected_pods() {
   sx::require 'psql'
   sx::k8s::check_requirements
 
-  readonly db_uri="${1}"
-  readonly db_query='SELECT client_addr, datname, usename, application_name, pid, backend_type, query FROM pg_stat_activity ORDER BY datname, usename, application_name;'
-  readonly empty_value='<no value>'
+  local -r db_uri="${1}"
+  local -r db_query='SELECT client_addr, datname, usename, application_name, pid, backend_type, query FROM pg_stat_activity ORDER BY datname, usename, application_name;'
+  local -r empty_value='<no value>'
 
-  readonly pods="$(
+  local -r pods="$(
     sx::k8s::cli get pods \
       --all-namespaces \
       --no-headers \

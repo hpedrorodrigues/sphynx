@@ -35,15 +35,21 @@ function sx::security::certificate::fetch() {
 }
 
 function sx::security::certificate::print() {
-  local info
-  info="$(sx::security::certificate::fetch "${1:-}")"
+  local -r info="$(sx::security::certificate::fetch "${1:-}")"
+
+  if [ -z "${info}" ]; then
+    return 1
+  fi
 
   openssl x509 <<<"${info}"
 }
 
 function sx::security::certificate::sans() {
-  local info
-  info="$(sx::security::certificate::fetch "${1:-}")"
+  local -r info="$(sx::security::certificate::fetch "${1:-}")"
+
+  if [ -z "${info}" ]; then
+    return 1
+  fi
 
   sx::log::info 'Common Name:\n'
   openssl x509 -noout -subject -nameopt sep_multiline <<<"${info}" \
@@ -57,8 +63,11 @@ function sx::security::certificate::sans() {
 }
 
 function sx::security::certificate::info() {
-  local info
-  info="$(sx::security::certificate::fetch "${1:-}")"
+  local -r info="$(sx::security::certificate::fetch "${1:-}")"
+
+  if [ -z "${info}" ]; then
+    return 1
+  fi
 
   openssl x509 -text -noout <<<"${info}"
 }
