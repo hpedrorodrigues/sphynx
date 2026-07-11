@@ -8,26 +8,28 @@ source "${SPHYNX_CLI_DIR}/.internal/all.sh"
 source "${SPHYNX_NAMESPACE_DIR}/shared/shared.sh"
 source "${SPHYNX_NAMESPACE_DIR}/core/instrumentation.sh"
 
-##? Manage instrumentation applications
+##? Manage instrumentation apps installed on a device
 ##?
 ##? Usage:
-##?     instrumentation (--ls | --uninstall <package-filter>)
+##?     instrumentation [--device <serial>]
+##?     instrumentation --uninstall [<query>] [--device <serial>]
 ##?
 ##? Options:
-##?     --ls  List all instrumentation apps available on device
-##?     -u --uninstall <package-filter>  Uninstalls an available instrumentation app
+##?     -u --uninstall  Uninstall the instrumentation app selected by the query
+##?     --device <serial>  The serial number of the device to target
+##?
+##? Arguments:
+##?     <query>  Filter matching the package name of an instrumentation app
 ##?
 ##? Examples:
+##?     instrumentation
 ##?     instrumentation -u "webview_shell"
 ##?     instrumentation --uninstall "org.chromium.webview_shell"
-##?     instrumentation --ls
 
 sx::parse_arguments "${@}"
 
-if [ -n "${uninstall:-}" ]; then
-  sx::android::instrumentation::uninstall "${uninstall}"
-elif ${ls:-}; then
-  sx::android::instrumentation::list
+if ${uninstall:-false}; then
+  sx::android::instrumentation::uninstall "${query:-}" "${device:-}"
 else
-  sx::error::illegal_arguments "${*}"
+  sx::android::instrumentation::list "${device:-}"
 fi

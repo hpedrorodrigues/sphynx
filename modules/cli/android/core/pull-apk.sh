@@ -1,15 +1,26 @@
 #!/usr/bin/env bash
 
 function sx::android::pull_apk() {
-  sx::android::check_requirements
+  sx::android::check_requirements "${2:-}"
 
-  local -r filter="${1}"
-  local -r package="$(sx::android::find_package "${filter}")"
+  local -r query="${1:-}"
+  local -r serial="$(sx::android::target_device "${2:-}")"
 
-  sx::android::ensure_package_exists "${filter}"
+  local -r package="$(sx::android::select_package "${query}" "${serial}")"
+
+  if [ -z "${package}" ]; then
+    return 1
+  fi
+
+  sx::android::pull_apk_by_package "${package}" "${serial}"
+}
+
+function sx::android::pull_apk_by_package() {
+  local -r package="${1}"
+  local -r serial="${2:-}"
 
   local apk_paths
-  readarray -t apk_paths < <(sx::android::shell pm path "${package}" | sed 's/package://g')
+  readarray -t apk_paths < <(sx::android::shell "${serial}" pm path "${package}" | sed 's/package://g')
 
   if [ "${#apk_paths[@]}" -eq 1 ]; then
     local -r apk_path="${apk_paths[0]}"
@@ -26,10 +37,17 @@ function sx::android::pull_apk() {
     fi
   fi
 
-  local -r apk_name="$(sx::android::shell basename "${apk_path}")"
+  local -r apk_name="$(sx::android::shell "${serial}" basename "${apk_path}")"
   local -r new_apk_name="$(sx::android::find_apk_name_by_package "${package}")"
 
-  sx::android::adb pull "${apk_path}" '.'
+  if [ -n "${serial}" ]; then
+    local -r serial_flags="-s ${serial}"
+  else
+    local -r serial_flags=''
+  fi
+
+  # shellcheck disable=SC2086  # quote this to prevent word splitting
+  sx::android::adb ${serial_flags} pull "${apk_path}" '.'
   mv "${apk_name}" "${new_apk_name}"
 
   sx::log::info "APK ${new_apk_name} saved"

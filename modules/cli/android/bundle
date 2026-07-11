@@ -11,11 +11,12 @@ source "${SPHYNX_NAMESPACE_DIR}/core/bundle.sh"
 ##? Handle bundle files (.aab)
 ##?
 ##? Usage:
-##?     bundle --to-apk <path> [--install]
+##?     bundle --to-apk <path> [--install] [--device <serial>]
 ##?
 ##? Options:
 ##?     --to-apk <path>  The path to bundle file [default: ./]
 ##?     --install  Install the converted APK on device
+##?     --device <serial>  The serial number of the device to target
 ##?
 ##? Examples:
 ##?     bundle --to-apk /tmp/bundle.aab
@@ -23,4 +24,4 @@ source "${SPHYNX_NAMESPACE_DIR}/core/bundle.sh"
 
 sx::parse_arguments "${@}"
 
-sx::android::bundle "${to_apk:-}" "${install:-false}"
+sx::android::bundle "${to_apk:-}" "${install:-false}" "${device:-}"

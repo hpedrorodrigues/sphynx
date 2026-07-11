@@ -11,11 +11,15 @@ source "${SPHYNX_NAMESPACE_DIR}/core/activity.sh"
 ##? Print current activity name
 ##?
 ##? Usage:
-##?     activity
+##?     activity [--device <serial>]
+##?
+##? Options:
+##?     --device <serial>  The serial number of the device to target
 ##?
 ##? Examples:
 ##?     activity
+##?     activity --device emulator-5554
 
 sx::parse_arguments "${@}"
 
-sx::android::activity::current
+sx::android::activity::current "${device:-}"

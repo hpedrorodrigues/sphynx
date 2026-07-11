@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 function sx::android::analyze::apk() {
-  sx::android::check_requirements
+  sx::require "${SX_AAPT_CMD}" 'aapt'
 
   local -r path="${1}"
 
@@ -13,18 +13,23 @@ function sx::android::analyze::apk() {
 }
 
 function sx::android::analyze::app() {
-  sx::android::check_requirements
+  sx::require "${SX_AAPT_CMD}" 'aapt'
+  sx::android::check_requirements "${2:-}"
 
-  local -r filter="${1}"
-  local -r package="$(sx::android::find_package "${filter}")"
+  local -r query="${1:-}"
+  local -r serial="$(sx::android::target_device "${2:-}")"
 
-  sx::android::ensure_package_exists "${filter}"
+  local -r package="$(sx::android::select_package "${query}" "${serial}")"
 
-  sx::android::pull_apk "${package}"
+  if [ -z "${package}" ]; then
+    return 1
+  fi
+
+  sx::android::pull_apk_by_package "${package}" "${serial}"
 
   echo
 
   local -r apk_name="$(sx::android::find_apk_name_by_package "${package}")"
 
-  sx::android::analyze_apk "${apk_name}"
+  sx::android::analyze::apk "${apk_name}"
 }

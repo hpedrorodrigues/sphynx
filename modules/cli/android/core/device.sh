@@ -2,15 +2,57 @@
 
 export ADB_TCP_PORT="${ADB_TCP_PORT:-5555}"
 
+function sx::android::device::ls() {
+  if ! sx::android::has_devices_attached; then
+    sx::log::fatal "No devices connected or they're either unauthorized or offline"
+  fi
+
+  sx::android::available_devices
+}
+
+function sx::android::service::ensure_valid_state() {
+  local -r state="${1}"
+
+  if [ "${state}" != 'enable' ] && [ "${state}" != 'disable' ]; then
+    sx::log::fatal "Invalid state provided: \"${state}\". Possible [enable|disable]."
+  fi
+}
+
+function sx::android::service::change_wifi_state() {
+  sx::android::check_requirements "${2:-}"
+
+  local -r state="${1}"
+  local -r serial="$(sx::android::target_device "${2:-}")"
+
+  sx::android::service::ensure_valid_state "${state}"
+
+  sx::android::shell "${serial}" svc wifi "${state}"
+}
+
+function sx::android::service::change_bluetooth_state() {
+  sx::android::check_requirements "${2:-}"
+
+  local -r state="${1}"
+  local -r serial="$(sx::android::target_device "${2:-}")"
+
+  sx::android::service::ensure_valid_state "${state}"
+
+  sx::android::shell "${serial}" svc bluetooth "${state}"
+}
+
 function sx::android::device::ip() {
   sx::android::check_requirements
 
-  sx::android::shell ip -4 addr show wlan0 | grep inet | awk '{ print $2 }' | sed 's/\/[0-9]*//g' # ipv4
+  local -r serial="${1:-}"
+
+  sx::android::shell "${serial}" ip -4 addr show wlan0 | grep inet | awk '{ print $2 }' | sed 's/\/[0-9]*//g' # ipv4
 }
 
 function sx::android::device::powered_by() {
+  local -r serial="${1:-}"
+
   function _check_status() {
-    sx::android::shell dumpsys battery | grep powered | grep -i "${*}" | grep 'true'
+    sx::android::shell "${serial}" dumpsys battery | grep powered | grep -i "${*}" | grep 'true'
   }
 
   local -r ac="$(_check_status 'ac')"
@@ -29,10 +71,13 @@ function sx::android::device::powered_by() {
 }
 
 function sx::android::device::connect_via_tcp() {
-  sx::android::check_requirements
-  sx::android::ensure_wifi_enabled
+  sx::android::check_requirements "${1:-}"
 
-  local -r device_ip="$(sx::android::device::ip)"
+  local -r serial="$(sx::android::target_device "${1:-}")"
+
+  sx::android::ensure_wifi_enabled "${serial}"
+
+  local -r device_ip="$(sx::android::device::ip "${serial}")"
 
   if ! sx::network::can_reach "${device_ip}"; then
     local -r network_name="$(sx::network::current::ssid)"
@@ -40,30 +85,42 @@ function sx::android::device::connect_via_tcp() {
     sx::log::fatal "The Android device ip \"${device_ip}\" is not accessible from your network (${network_name})"
   fi
 
-  sx::android::adb tcpip "${ADB_TCP_PORT}" \
+  if [ -n "${serial}" ]; then
+    local -r serial_flags="-s ${serial}"
+  else
+    local -r serial_flags=''
+  fi
+
+  # shellcheck disable=SC2086  # quote this to prevent word splitting
+  sx::android::adb ${serial_flags} tcpip "${ADB_TCP_PORT}" \
     && sleep 2 \
     && sx::android::adb connect "${device_ip}" \
     && sx::log::info 'Now you can remove USB cable!'
 }
 
 function sx::android::device::disconnect_via_tcp() {
-  sx::android::check_requirements
-  sx::android::ensure_wifi_enabled
+  sx::android::check_requirements "${1:-}"
 
-  local -r device_ip="$(sx::android::device::ip)"
+  local -r serial="$(sx::android::target_device "${1:-}")"
+
+  sx::android::ensure_wifi_enabled "${serial}"
+
+  local -r device_ip="$(sx::android::device::ip "${serial}")"
 
   sx::android::adb disconnect "${device_ip}:${ADB_TCP_PORT}"
 }
 
 function sx::android::device::battery_stats() {
-  sx::android::check_requirements
+  sx::android::check_requirements "${1:-}"
+
+  local -r serial="$(sx::android::target_device "${1:-}")"
 
   function _battery_dump_prop() {
     local -r property_name="${1}"
-    sx::android::shell dumpsys battery | grep -i "  ${property_name}" | awk '{ print $2 }'
+    sx::android::shell "${serial}" dumpsys battery | grep -i "  ${property_name}" | awk '{ print $2 }'
   }
 
-  local -r powered_by="$(sx::android::device::powered_by)"
+  local -r powered_by="$(sx::android::device::powered_by "${serial}")"
   local -r level="$(_battery_dump_prop 'level')"
   local -r scale="$(_battery_dump_prop 'scale')"
   local -r voltage="$(_battery_dump_prop 'voltage')"

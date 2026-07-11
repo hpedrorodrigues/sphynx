@@ -8,15 +8,21 @@ source "${SPHYNX_CLI_DIR}/.internal/all.sh"
 source "${SPHYNX_NAMESPACE_DIR}/shared/shared.sh"
 source "${SPHYNX_NAMESPACE_DIR}/core/backup.sh"
 
-##? Create and restore backups
+##? Create and restore backups of app data
 ##?
 ##? Usage:
-##?     backup (--app <package-filter> | --all | --restore <file-path>)
+##?     backup --app [<query>] [--device <serial>]
+##?     backup --all [--device <serial>]
+##?     backup --restore <file-path> [--device <serial>]
 ##?
 ##? Options:
-##?     --app <package-filter>  Creates a backup file of the given app data
-##?     --all  Creates a backup with all data available on device
-##?     -r --restore <file-path>  Restores a backup file in the current device
+##?     --app  Back up the data of the app selected by the query
+##?     --all  Create a backup with all data available on the device
+##?     -r --restore <file-path>  Restore a backup file onto the connected device
+##?     --device <serial>  The serial number of the device to target
+##?
+##? Arguments:
+##?     <query>  Filter matching the package name of an installed app
 ##?
 ##? Examples:
 ##?     backup --app "whatsapp"
@@ -26,12 +32,12 @@ source "${SPHYNX_NAMESPACE_DIR}/core/backup.sh"
 
 sx::parse_arguments "${@}"
 
-if [ -n "${app:-}" ]; then
-  sx::android::backup::package "${app}"
+if ${app:-false}; then
+  sx::android::backup::package "${query:-}" "${device:-}"
 elif ${all:-false}; then
-  sx::android::backup::all
+  sx::android::backup::all "${device:-}"
 elif [ -n "${restore:-}" ]; then
-  sx::android::backup::restore "${restore}"
+  sx::android::backup::restore "${restore}" "${device:-}"
 else
   sx::error::illegal_arguments "${*}"
 fi

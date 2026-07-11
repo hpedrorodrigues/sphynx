@@ -5,6 +5,7 @@ export SX_AAPT_CMD="${SX_AAPT_CMD:-aapt}"
 export SX_BUNDLETOOL_CMD="${SX_BUNDLETOOL_CMD:-bundletool}"
 
 export ANDROID_Q_VERSION='10'
+export ANDROID_S_SDK_VERSION='31'
 
 function sx::android::adb() {
   "${SX_ADB_CMD}" "${@}"
@@ -41,6 +42,8 @@ function sx::android::has_more_than_one_device_attached() {
 }
 
 function sx::android::check_requirements() {
+  local -r serial="${1:-}"
+
   if ! sx::os::is_command_available 'adb' \
     && { [ -z "${SX_ADB_CMD:-}" ] || [ "${SX_ADB_CMD:-}" = 'adb' ]; }; then
     sx::log::fatal 'ADB command not found in PATH'
@@ -50,13 +53,28 @@ function sx::android::check_requirements() {
     sx::log::fatal "No devices connected or they're either unauthorized or offline"
   fi
 
+  if [ -n "${serial}" ] \
+    && ! sx::android::available_devices | awk '{ print $1 }' | grep -q -x -- "${serial}"; then
+    sx::log::fatal "No connected device matches the serial \"${serial}\""
+  fi
+}
+
+function sx::android::target_device() {
+  local -r serial="${1:-}"
+
+  if [ -n "${serial}" ]; then
+    echo "${serial}"
+    return 0
+  fi
+
   if sx::android::has_more_than_one_device_attached; then
-    sx::log::fatal 'More than one device connected'
+    sx::android::select_device
   fi
 }
 
 function sx::android::ensure_wifi_enabled() {
-  local -r wifi_state="$(sx::android::shell dumpsys wifi | grep 'Wi-Fi is')"
+  local -r serial="${1:-}"
+  local -r wifi_state="$(sx::android::shell "${serial}" dumpsys wifi | grep 'Wi-Fi is')"
 
   if [ "${wifi_state}" = 'Wi-Fi is disabled' ]; then
     sx::log::fatal 'The WiFi connection of Android device is currently disabled'
@@ -64,14 +82,10 @@ function sx::android::ensure_wifi_enabled() {
 }
 
 function sx::android::list_packages() {
+  local -r serial="${1:-}"
+
   sx::android::has_devices_attached \
-    && sx::android::shell pm list packages | sed 's/package://g' | sort -u
-}
-
-function sx::android::find_package() {
-  local -r filter="${1}"
-
-  sx::android::list_packages | grep -i "${filter}" | head -n 1
+    && sx::android::shell "${serial}" pm list packages | sed 's/package://g' | sort -u
 }
 
 function sx::android::find_apk_name_by_package() {
@@ -80,41 +94,82 @@ function sx::android::find_apk_name_by_package() {
   echo "${package}" | sed 's/\./_/g' | awk '{ print $1".apk" }'
 }
 
-function sx::android::is_package_available() {
-  local -r filter="${1}"
-  local -r package="$(sx::android::find_package "${filter}")"
+function sx::android::select_one() {
+  local candidates
+  readarray -t candidates
 
-  if [ -z "${package}" ]; then
-    return 1
+  if [ "${#candidates[@]}" -eq 0 ]; then
+    return 0
   fi
 
-  return 0
+  if sx::os::is_command_available 'fzf'; then
+    # shellcheck disable=SC2086  # quote this to prevent word splitting
+    printf '%s\n' "${candidates[@]}" | fzf ${SX_FZF_ARGS}
+  else
+    export PS3=$'\n''Please, choose an option: '$'\n'
+
+    local selected
+    select selected in "${candidates[@]}"; do
+      if [ -z "${selected}" ]; then
+        sx::log::err "Invalid option \"${REPLY}\". Please, type the number of the desired option."
+        continue
+      fi
+
+      echo "${selected}"
+      break
+    done </dev/tty
+  fi
 }
 
-function sx::android::ensure_package_exists() {
-  local -r filter="${1}"
-  local -r package="$(sx::android::find_package "${filter}")"
+function sx::android::select_package() {
+  local -r query="${1:-}"
+  local -r serial="${2:-}"
 
-  if [ -z "${package}" ]; then
-    sx::log::err "No matches for \"${filter}\""
-    sx::log::errn "\n==> Available apps (packages):\n"
-    sx::log::errn "$(sx::android::list_packages)"
-    sx::log::fatal
+  local candidates
+  readarray -t candidates < <(sx::android::list_packages "${serial}" | grep -i -- "${query:-.*}")
+
+  if [ "${#candidates[@]}" -eq 0 ]; then
+    sx::log::fatal "No packages found matching \"${query}\""
   fi
+
+  printf '%s\n' "${candidates[@]}" | sx::android::select_one
+}
+
+function sx::android::select_device() {
+  sx::android::available_devices \
+    | awk '{ print $1 }' \
+    | sx::android::select_one
 }
 
 function sx::android::shell() {
-  sx::android::adb shell "${*}"
+  local -r serial="${1:-}"
+  shift
+
+  if [ -n "${serial}" ]; then
+    local -r serial_flags="-s ${serial}"
+  else
+    local -r serial_flags=''
+  fi
+
+  # shellcheck disable=SC2086  # quote this to prevent word splitting
+  sx::android::adb ${serial_flags} shell "${*}"
 }
 
 function sx::android::pidof() {
-  sx::android::shell pidof "${*}"
+  local -r serial="${1:-}"
+  shift
+
+  sx::android::shell "${serial}" pidof "${*}"
 }
 
-function sx::android:os_version() {
-  sx::android::shell getprop ro.build.version.release
+function sx::android::os_version() {
+  local -r serial="${1:-}"
+
+  sx::android::shell "${serial}" getprop ro.build.version.release
 }
 
 function sx::android::sdk_version() {
-  sx::android::shell getprop ro.build.version.sdk
+  local -r serial="${1:-}"
+
+  sx::android::shell "${serial}" getprop ro.build.version.sdk
 }

@@ -11,22 +11,24 @@ source "${SPHYNX_NAMESPACE_DIR}/core/input.sh"
 ##? Manage input events
 ##?
 ##? Usage:
-##?     input (--text <text> | --clear)
+##?     input (--text <text> | --clear) [--device <serial>]
 ##?
 ##? Options:
 ##?     -t --text <text>  Text to be typed
 ##?     -c --clear  Clears the edit text
+##?     --device <serial>  The serial number of the device to target
 ##?
 ##? Examples:
 ##?     input -t test
 ##?     input --text "Amazing Android"
+##?     input --clear
 
 sx::parse_arguments "${@}"
 
 if ${clear:-false}; then
-  sx::android::input::clear_text
+  sx::android::input::clear_text "${device:-}"
 elif [ -n "${text:-}" ]; then
-  sx::android::input::type_text "${text}"
+  sx::android::input::type_text "${text}" "${device:-}"
 else
   sx::error::illegal_arguments "${*}"
 fi
