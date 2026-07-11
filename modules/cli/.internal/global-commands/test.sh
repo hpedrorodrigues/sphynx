@@ -13,6 +13,10 @@ function sx::self::test() {
     test::for_all::check_unsupported_flag \
     'Commands should not return exit-code 0 when used with an unsupported flag'
 
+  sx::for_all::run_test \
+    test::for_all::check_help_template \
+    'Commands should follow the help template conventions'
+
   sx::log::info 'Done! :)'
 }
 
@@ -59,4 +63,10 @@ function test::for_all::check_unsupported_flag() {
   local -r commands="${*}"
 
   ! eval "${commands} --unsupported-flag"
+}
+
+function test::for_all::check_help_template() {
+  local -r script_file="${SPHYNX_CLI_DIR}/$(echo "${*:2}" | tr ' ' '/')"
+
+  sx::python "${SPHYNX_CLI_DIR}/.internal/docopt/docopt_lint.py" "${script_file}"
 }
