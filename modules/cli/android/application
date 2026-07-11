@@ -8,36 +8,51 @@ source "${SPHYNX_CLI_DIR}/.internal/all.sh"
 source "${SPHYNX_NAMESPACE_DIR}/shared/shared.sh"
 source "${SPHYNX_NAMESPACE_DIR}/core/application.sh"
 
-##? Manage applications
+##? Manage applications installed on a device
 ##?
 ##? Usage:
-##?     application --clear <package-filter>
-##?     application --stop <package-filter>
-##?     application --ls
-##?     application --find <package-filter>
+##?     application [--device <serial>]
+##?     application --search [<query>] [--device <serial>]
+##?     application --pull [<query>] [--device <serial>]
+##?     application --clear [<query>] [--device <serial>]
+##?     application --stop [<query>] [--device <serial>]
+##?     application --uninstall [<query>] [--device <serial>]
 ##?
 ##? Options:
-##?     -c --clear <package-filter>  Clears data of the given app
-##?     -s --stop <package-filter>  Kills the process of the given app
-##?     --ls  List all apps (packages) available on device
-##?     -f --find <package-filter>  Find package that matches the filter
+##?     -f --search  Search installed packages and print the selected one
+##?     -p --pull  Pull the APK file of the app selected by the query
+##?     -c --clear  Clear all data of the app selected by the query
+##?     -s --stop  Force-stop the app selected by the query
+##?     -u --uninstall  Uninstall the app selected by the query
+##?     --device <serial>  The serial number of the device to target
+##?
+##? Arguments:
+##?     <query>  Filter matching the package name of an installed app
 ##?
 ##? Examples:
+##?     application
+##?     application --search
+##?     application --search "google"
+##?     application --pull "telegram"
 ##?     application -c "whatsapp"
 ##?     application --clear "com.google.android.keep"
 ##?     application -s "telegram"
 ##?     application --stop "org.chromium.webview_shell"
+##?     application --uninstall "com.spotify.music"
+##?     application --pull --device emulator-5554
 
 sx::parse_arguments "${@}"
 
-if [ -n "${stop:-}" ]; then
-  sx::android::application::stop "${stop}"
-elif [ -n "${clear:-}" ]; then
-  sx::android::application::clear_data "${clear}"
-elif ${ls:-}; then
-  sx::android::application::list_packages
-elif [ -n "${find:-}" ]; then
-  sx::android::application::find "${find}"
+if ${search:-false}; then
+  sx::android::application::search "${query:-}" "${device:-}"
+elif ${pull:-false}; then
+  sx::android::pull_apk "${query:-}" "${device:-}"
+elif ${clear:-false}; then
+  sx::android::application::clear_data "${query:-}" "${device:-}"
+elif ${stop:-false}; then
+  sx::android::application::stop "${query:-}" "${device:-}"
+elif ${uninstall:-false}; then
+  sx::android::application::uninstall "${query:-}" "${device:-}"
 else
-  sx::error::illegal_arguments "${*}"
+  sx::android::application::list "${device:-}"
 fi

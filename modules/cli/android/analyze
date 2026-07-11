@@ -6,17 +6,21 @@ set -o pipefail
 
 source "${SPHYNX_CLI_DIR}/.internal/all.sh"
 source "${SPHYNX_NAMESPACE_DIR}/shared/shared.sh"
-source "${SPHYNX_NAMESPACE_DIR}/core/pull-apk.sh"
 source "${SPHYNX_NAMESPACE_DIR}/core/analyze.sh"
 
-##? Analyze applications
+##? Analyze APK files and installed applications
 ##?
 ##? Usage:
-##?     analyze (--apk <file> | --app <package-filter>)
+##?     analyze --apk <file> [--device <serial>]
+##?     analyze --app [<query>] [--device <serial>]
 ##?
 ##? Options:
-##?     --apk <file>  Analyses app in the specified directory
-##?     --app <package-filter>  Analyses app installed on device
+##?     --apk <file>  Analyze the given APK file
+##?     --app  Analyze the installed app selected by the query
+##?     --device <serial>  The serial number of the device to target
+##?
+##? Arguments:
+##?     <query>  Filter matching the package name of an installed app
 ##?
 ##? Examples:
 ##?     analyze --apk "android.apk"
@@ -28,8 +32,8 @@ sx::parse_arguments "${@}"
 
 if [ -n "${apk:-}" ]; then
   sx::android::analyze::apk "${apk}"
-elif [ -n "${app:-}" ]; then
-  sx::android::analyze::app "${app}"
+elif ${app:-false}; then
+  sx::android::analyze::app "${query:-}" "${device:-}"
 else
   sx::error::illegal_arguments "${*}"
 fi

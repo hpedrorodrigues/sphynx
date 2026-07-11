@@ -10,6 +10,9 @@ Conventions enforced (see also `sx <namespace> <command> --help`):
   long option used in usage and containing no entry that usage never uses
 - an "Examples:" section where every plain invocation parses against the
   template
+- no reserved global flag (--help/--raw/--github) redefined by the template
+- every option/argument variable exported by the template is referenced in
+  the script (no dead flags, no renames that silently break a branch)
 
 Usage: docopt_lint.py <command-file>...
 """
@@ -23,18 +26,22 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from docopt import docopt, DocoptLanguageError
+from docopt import (
+    Argument,
+    DocoptLanguageError,
+    Option,
+    docopt,
+    formal_usage,
+    parse_defaults,
+    parse_pattern,
+    parse_section,
+)
 
 HELP_PREFIX = "##?"
 SECTION_PATTERN = re.compile(r"^(\w[\w ]*):\s*$")
 LONG_OPTION_PATTERN = re.compile(r"--[a-z][a-z-]*")
 SHORT_OPTION_PATTERN = re.compile(r"(?<![-\w])-[a-zA-Z](?![\w-])")
-
-
-def help_lines(path):
-    with open(path) as stream:
-        source = stream.read()
-    return [line[4:] for line in source.splitlines() if line.startswith(HELP_PREFIX)]
+RESERVED_FLAGS = frozenset(("--help", "--raw", "--github"))
 
 
 def parse_sections(lines):
@@ -80,20 +87,20 @@ def lint_usage(problems, usage, program):
 
 
 def lint_options(problems, options, usage_options):
+    declared = set()
     if options is None:
         if usage_options:
             problems.append(
                 'usage references options but there is no "Options:" section'
             )
-        return
+        return declared
 
-    declared_longs = set()
     entries = []
     for line in options:
         if re.match(r"^    -", line):
             head = re.split(r"\s{2,}", line.strip())[0]
             aliases = option_tokens(head)
-            declared_longs.update(alias for alias in aliases if alias.startswith("--"))
+            declared.update(aliases)
             entries.append((head, aliases))
         elif not re.match(r"^     ", line):
             problems.append(
@@ -101,6 +108,7 @@ def lint_options(problems, options, usage_options):
                 " (continuation lines with 5+): %r" % line.strip()
             )
 
+    declared_longs = set(alias for alias in declared if alias.startswith("--"))
     long_usage_options = set(
         option for option in usage_options if option.startswith("--")
     )
@@ -112,6 +120,44 @@ def lint_options(problems, options, usage_options):
     for head, aliases in entries:
         if not aliases & usage_options:
             problems.append("options entry %r is never referenced in usage" % head)
+
+    return declared
+
+
+def lint_reserved_flags(problems, flags):
+    for flag in sorted(flags & RESERVED_FLAGS):
+        problems.append(
+            '%r is a reserved global flag handled by "sx::parse_arguments"' % flag
+        )
+
+
+def variable_name(element):
+    name = element.name
+    if name in ("-", "--"):
+        return None
+    if name.startswith("<"):
+        name = name[1:-1]
+    else:
+        name = name.lstrip("-")
+    return name.replace("-", "_")
+
+
+def lint_variables(problems, document, body):
+    options = parse_defaults(document)
+    usage = parse_section("usage:", document)[0]
+    pattern = parse_pattern(formal_usage(usage), options)
+
+    names = set()
+    for element in pattern.flat(Option, Argument):
+        name = variable_name(element)
+        if name:
+            names.add(name)
+
+    for name in sorted(names):
+        if not re.search(r"\$\{%s[}:\[]" % re.escape(name), body):
+            problems.append(
+                "template variable %r is never referenced in the script" % name
+            )
 
 
 def lint_examples(problems, examples, document, program):
@@ -143,7 +189,10 @@ def lint_examples(problems, examples, document, program):
 
 
 def lint(path):
-    lines = help_lines(path)
+    with open(path) as stream:
+        source = stream.read()
+
+    lines = [line[4:] for line in source.splitlines() if line.startswith(HELP_PREFIX)]
     if not lines:
         return ['no "##?" help template found']
 
@@ -152,6 +201,9 @@ def lint(path):
         problems.append("the first help line must be a meaningful title")
 
     document = "\n".join(lines)
+    body = "\n".join(
+        line for line in source.splitlines() if not line.startswith(HELP_PREFIX)
+    )
     program = os.path.basename(path)
     sections = parse_sections(lines)
 
@@ -160,7 +212,8 @@ def lint(path):
         return problems
 
     usage_options = lint_usage(problems, sections["usage"], program)
-    lint_options(problems, sections.get("options"), usage_options)
+    declared_options = lint_options(problems, sections.get("options"), usage_options)
+    lint_reserved_flags(problems, usage_options | declared_options)
 
     try:
         docopt(document, argv=["--sphynx-lint-probe"], help=False)
@@ -170,6 +223,7 @@ def lint(path):
     except SystemExit:
         pass
 
+    lint_variables(problems, document, body)
     lint_examples(problems, sections.get("examples"), document, program)
 
     return problems

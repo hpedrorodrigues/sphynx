@@ -45,7 +45,7 @@ export GRADLE_USER_HOME="${HOME}/.gradle"
 export ANDROID_HOME="${HOME}/Library/Android/sdk"
 export ANDROID_SDK_ROOT="${ANDROID_HOME}"
 
-export ANDROID_BUILD_TOOLS="${ANDROID_HOME}/build-tools/34.0.0"
+export ANDROID_BUILD_TOOLS="${ANDROID_HOME}/build-tools/37.0.0"
 export ANDROID_EMULATOR_TOOLS="${ANDROID_HOME}/emulator"
 export ANDROID_PLATFORM_TOOLS="${ANDROID_HOME}/platform-tools"
 export ANDROID_TOOLS="${ANDROID_HOME}/tools"

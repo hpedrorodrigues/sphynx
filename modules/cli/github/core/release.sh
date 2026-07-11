@@ -62,8 +62,8 @@ function sx::github::release::download_assets() {
     local -r selected="$(echo -e "${options}" | fzf ${SX_FZF_ARGS})"
 
     if [ -n "${selected}" ]; then
-      local name="$(echo "${selected}" | awk '{ print $1 }')"
-      local url="$(echo "${selected}" | awk '{ print $2 }')"
+      local -r name="$(echo "${selected}" | awk '{ print $1 }')"
+      local -r url="$(echo "${selected}" | awk '{ print $2 }')"
 
       if [ -f "${name}" ]; then
         sx::log::fatal "A file named \"${name}\" already exists"
@@ -90,8 +90,8 @@ function sx::github::release::download_assets() {
         continue
       fi
 
-      local name="$(echo "${selected}" | awk '{ print $1 }')"
-      local url="$(echo "${selected}" | awk '{ print $2 }')"
+      local -r name="$(echo "${selected}" | awk '{ print $1 }')"
+      local -r url="$(echo "${selected}" | awk '{ print $2 }')"
 
       if [ -f "${name}" ]; then
         sx::log::fatal "A file named \"${name}\" already exists"

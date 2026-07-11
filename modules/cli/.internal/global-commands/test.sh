@@ -17,6 +17,10 @@ function sx::self::test() {
     test::for_all::check_help_template \
     'Commands should follow the help template conventions'
 
+  sx::for_all::run_test \
+    test::for_all::check_function_references \
+    'Commands should only call functions that their sourced files define'
+
   sx::log::info 'Done! :)'
 }
 
@@ -69,4 +73,17 @@ function test::for_all::check_help_template() {
   local -r script_file="${SPHYNX_CLI_DIR}/$(echo "${*:2}" | tr ' ' '/')"
 
   sx::python "${SPHYNX_CLI_DIR}/.internal/docopt/docopt_lint.py" "${script_file}"
+}
+
+function test::for_all::check_function_references() {
+  local -r relative_path="$(echo "${*:2}" | tr ' ' '/')"
+  local -r script_file="${SPHYNX_CLI_DIR}/${relative_path}"
+
+  SPHYNX_NAMESPACE_DIR="${SPHYNX_CLI_DIR}/$(dirname "${relative_path}")" bash -c "
+    $(grep '^source ' "${script_file}")
+
+    while IFS='' read -r fn; do
+      declare -F \"\${fn}\" >/dev/null || exit 1
+    done < <(grep -oE 'sx::[a-z0-9_:]+' '${script_file}' | sort -u)
+  "
 }

@@ -8,29 +8,53 @@ source "${SPHYNX_CLI_DIR}/.internal/all.sh"
 source "${SPHYNX_NAMESPACE_DIR}/shared/shared.sh"
 source "${SPHYNX_NAMESPACE_DIR}/core/device.sh"
 
-##? Manage devices
+##? Manage connected devices
 ##?
 ##? Usage:
-##?     device (--connect | --disconnect | --battery)
+##?     device [--device <serial>]
+##?     device --connect [--device <serial>]
+##?     device --disconnect [--device <serial>]
+##?     device --battery [--device <serial>]
+##?     device --wifi (on | off) [--device <serial>]
+##?     device --bluetooth (on | off) [--device <serial>]
 ##?
 ##? Options:
-##?     -c --connect  Connects to the device using TCP instead of USB
-##?     -d --disconnect  Kills the TCP connection with device
-##?     -b --battery  Shows info about battery
+##?     -c --connect  Connect to the device over TCP instead of USB
+##?     -d --disconnect  Kill the TCP connection with the device
+##?     -b --battery  Show battery information
+##?     -w --wifi  Change the wifi state
+##?     --bluetooth  Change the bluetooth state
+##?     --device <serial>  The serial number of the device to target
 ##?
 ##? Examples:
+##?     device
 ##?     device --connect
 ##?     device --disconnect
 ##?     device --battery
+##?     device --wifi on
+##?     device --bluetooth off
+##?     device --battery --device emulator-5554
 
 sx::parse_arguments "${@}"
 
-if ${connect:-}; then
-  sx::android::device::connect_via_tcp
-elif ${disconnect:-}; then
-  sx::android::device::disconnect_via_tcp
-elif ${battery:-}; then
-  sx::android::device::battery_stats
+if ${connect:-false}; then
+  sx::android::device::connect_via_tcp "${device:-}"
+elif ${disconnect:-false}; then
+  sx::android::device::disconnect_via_tcp "${device:-}"
+elif ${battery:-false}; then
+  sx::android::device::battery_stats "${device:-}"
+elif ${wifi:-false}; then
+  if ${on:-false}; then
+    sx::android::service::change_wifi_state 'enable' "${device:-}"
+  else
+    sx::android::service::change_wifi_state 'disable' "${device:-}"
+  fi
+elif ${bluetooth:-false}; then
+  if ${on:-false}; then
+    sx::android::service::change_bluetooth_state 'enable' "${device:-}"
+  else
+    sx::android::service::change_bluetooth_state 'disable' "${device:-}"
+  fi
 else
-  sx::error::illegal_arguments "${*}"
+  sx::android::device::ls
 fi
