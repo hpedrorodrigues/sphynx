@@ -11,7 +11,8 @@ source "${SPHYNX_NAMESPACE_DIR}/core/network.sh"
 ##? Capture and analyze network traffic from Kubernetes pods
 ##?
 ##? Usage:
-##?     network dump-traffic [[<query>] [-l <selector>] [--namespace <name> | --all-namespaces] | --namespace <name> --pod <name> --container <name>] [--duration <seconds>] [--output-dir <path>] [--image <image>] [-- <flags>...]
+##?     network dump-traffic [<query>] [-l <selector>] [--namespace <name> | --all-namespaces] [--duration <seconds>] [--output-dir <path>] [--image <image>] [--context <name>] [-- <flags>...]
+##?     network dump-traffic --namespace <name> --pod <name> --container <name> [--duration <seconds>] [--output-dir <path>] [--image <image>] [--context <name>] [-- <flags>...]
 ##?
 ##? Options:
 ##?     -l --selector <selector>  Selector (label query) to filter on
@@ -22,6 +23,7 @@ source "${SPHYNX_NAMESPACE_DIR}/core/network.sh"
 ##?     -d --duration <seconds>  Capture duration in seconds [default: 30]
 ##?     --output-dir <path>  Local directory to store the capture file
 ##?     --image <image>  Container image for the debug container [default: ghcr.io/hpedrorodrigues/debug]
+##?     --context <name>  The name of the kubeconfig context to use
 ##?
 ##? Examples:
 ##?     network dump-traffic
@@ -30,6 +32,7 @@ source "${SPHYNX_NAMESPACE_DIR}/core/network.sh"
 ##?     network dump-traffic --namespace kafka --pod kafka --container kafka
 ##?     network dump-traffic --output-dir /tmp/captures
 ##?     network dump-traffic kafka -- -i eth0 port 9092
+##?     network dump-traffic kafka --context staging
 
 sx::parse_arguments "${@}"
 
@@ -44,7 +47,8 @@ if ${dump_traffic:-false}; then
     "${output_dir:-}" \
     "${all_namespaces:-false}" \
     "${flags[*]:-}" \
-    "${image:-}"
+    "${image:-}" \
+    "${context:-}"
 else
   sx::error::illegal_arguments "${*}"
 fi

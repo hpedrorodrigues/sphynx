@@ -3,16 +3,17 @@
 ##? Sphynx
 ##?
 ##? Usage:
-##?   sx NAMESPACE COMMAND [options]
+##?   sx <namespace> <command> [<args>...]
+##?   sx <global-command> [<args>...]
+##?   sx (--namespaces | --commands | --help)
 ##?
 ##? Options:
-##?   sx --namespaces
-##?   sx --commands
+##?   --namespaces  List available namespaces (and global commands)
+##?   --commands  List available commands for each namespace
 ##?
-##? Global Options (This options can be passed to any command):
-##?   sx --help
-##?   sx --raw
-##?
+##? Global Options (can be passed to any command):
+##?   --help  Show help for a command
+##?   --raw  Show the definition and implementation of a command
 ##?
 ##? Find more information at: https://github.com/hpedrorodrigues/sphynx
 ##?

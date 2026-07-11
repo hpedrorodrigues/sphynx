@@ -11,7 +11,8 @@ source "${SPHYNX_NAMESPACE_DIR}/core/logs.sh"
 ##? Print the logs for a container in a pod
 ##?
 ##? Usage:
-##?     logs [[<query>] [-l <selector>] [--namespace <name> | --all-namespaces] | --namespace <name> --pod <name> --container <name>] [--previous]
+##?     logs [<query>] [-l <selector>] [--namespace <name> | --all-namespaces] [--previous] [--context <name>]
+##?     logs --namespace <name> --pod <name> --container <name> [--previous] [--context <name>]
 ##?
 ##? Options:
 ##?     -l --selector <selector>  Selector (label query) to filter on
@@ -20,6 +21,7 @@ source "${SPHYNX_NAMESPACE_DIR}/core/logs.sh"
 ##?     -p --pod <name>  The pod name
 ##?     -c --container <name>  The container name
 ##?     --previous  Print the logs for the previous instance of the container in a pod if it exists
+##?     --context <name>  The name of the kubeconfig context to use
 ##?
 ##? Examples:
 ##?     logs
@@ -29,6 +31,7 @@ source "${SPHYNX_NAMESPACE_DIR}/core/logs.sh"
 ##?     logs --namespace kafka --pod kafka --container kafka
 ##?     logs --namespace kube-system
 ##?     logs --all-namespaces --previous
+##?     logs kafka --context staging
 
 sx::parse_arguments "${@}"
 
@@ -39,4 +42,5 @@ sx::k8s::logs \
   "${pod:-}" \
   "${container:-}" \
   "${all_namespaces:-false}" \
-  "${previous:-false}"
+  "${previous:-false}" \
+  "${context:-}"

@@ -9,10 +9,11 @@ source "${SPHYNX_NAMESPACE_DIR}/shared/shared.sh"
 source "${SPHYNX_NAMESPACE_DIR}/shared/screen.sh"
 source "${SPHYNX_NAMESPACE_DIR}/core/screen.sh"
 
-##? screen utility functions
+##? Manage screen sessions
 ##?
 ##? Usage:
-##?     screen (ls | new [<session_name>] | attach [<session_name>] | force-attach [<session_name>] | kill [<session_name>] | kill-all)
+##?     screen (ls | kill-all)
+##?     screen (new | attach | force-attach | kill) [<session_name>]
 ##?
 ##? Examples:
 ##?     screen ls

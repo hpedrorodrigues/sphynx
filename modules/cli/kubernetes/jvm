@@ -11,7 +11,8 @@ source "${SPHYNX_NAMESPACE_DIR}/core/jvm.sh"
 ##? Generate heap dumps and thread dumps from JVM processes running in Kubernetes pods
 ##?
 ##? Usage:
-##?     jvm [[<query>] [-l <selector>] [--namespace <name> | --all-namespaces] | --namespace <name> --pod <name> --container <name>] [--heapdump] [--threaddump] [--output-dir <path>]
+##?     jvm [<query>] [-l <selector>] [--namespace <name> | --all-namespaces] [--heapdump] [--threaddump] [--output-dir <path>] [--context <name>]
+##?     jvm --namespace <name> --pod <name> --container <name> [--heapdump] [--threaddump] [--output-dir <path>] [--context <name>]
 ##?
 ##? Options:
 ##?     -l --selector <selector>  Selector (label query) to filter on
@@ -22,6 +23,15 @@ source "${SPHYNX_NAMESPACE_DIR}/core/jvm.sh"
 ##?     --heapdump  Generate a heap dump
 ##?     --threaddump  Generate a thread dump
 ##?     --output-dir <path>  Local directory to store the dump file
+##?     --context <name>  The name of the kubeconfig context to use
+##?
+##? Examples:
+##?     jvm
+##?     jvm --heapdump
+##?     jvm kafka --threaddump
+##?     jvm --selector app=kafka --heapdump --output-dir /tmp/dumps
+##?     jvm --namespace kafka --pod kafka-0 --container kafka --threaddump
+##?     jvm kafka --context staging
 
 sx::parse_arguments "${@}"
 
@@ -40,4 +50,5 @@ sx::k8s::jvm \
   "${generate_heapdump}" \
   "${threaddump:-false}" \
   "${output_dir:-}" \
-  "${all_namespaces:-false}"
+  "${all_namespaces:-false}" \
+  "${context:-}"

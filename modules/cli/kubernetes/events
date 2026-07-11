@@ -11,7 +11,8 @@ source "${SPHYNX_NAMESPACE_DIR}/core/events.sh"
 ##? Print events for the cluster or a selected resource
 ##?
 ##? Usage:
-##?     events [<query> | --list] [--namespace <name> | --all-namespaces] [--warnings] [--watch]
+##?     events [<query>] [--namespace <name> | --all-namespaces] [--warnings] [--watch] [--context <name>]
+##?     events --list [--namespace <name> | --all-namespaces] [--warnings] [--watch] [--context <name>]
 ##?
 ##? Options:
 ##?     -l --list  Print all events without selecting a resource
@@ -19,6 +20,7 @@ source "${SPHYNX_NAMESPACE_DIR}/core/events.sh"
 ##?     -A --all-namespaces  All namespaces
 ##?     --warnings  Show only events of type Warning
 ##?     --watch  Watch for new events after listing them
+##?     --context <name>  The name of the kubeconfig context to use
 ##?
 ##? Examples:
 ##?     events
@@ -26,6 +28,7 @@ source "${SPHYNX_NAMESPACE_DIR}/core/events.sh"
 ##?     events --list --namespace kube-system
 ##?     events --list --all-namespaces --warnings
 ##?     events --list --watch
+##?     events kafka --context staging
 
 sx::parse_arguments "${@}"
 
@@ -35,4 +38,5 @@ sx::k8s::events \
   "${all_namespaces:-false}" \
   "${list:-false}" \
   "${warnings:-false}" \
-  "${watch:-false}"
+  "${watch:-false}" \
+  "${context:-}"

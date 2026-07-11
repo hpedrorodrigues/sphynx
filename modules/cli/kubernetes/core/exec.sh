@@ -2,7 +2,6 @@
 
 function sx::k8s::exec() {
   sx::k8s::check_requirements
-  sx::k8s::ensure_api_access
 
   local -r query="${1:-}"
   local -r selector="${2:-}"
@@ -11,12 +10,16 @@ function sx::k8s::exec() {
   local -r container="${5:-}"
   local -r command="${6:-}"
   local -r all_namespaces="${7:-false}"
+  local -r context="${8:-}"
+
+  sx::k8s::validate_context "${context}"
+  sx::k8s::ensure_api_access "${context}"
 
   if [ -n "${namespace}" ] && [ -n "${pod}" ] && [ -n "${container}" ]; then
-    sx::k8s_command::exec "${namespace}" "${pod}" "${container}" "${command}"
+    sx::k8s_command::exec "${namespace}" "${pod}" "${container}" "${command}" "${context}"
   elif sx::os::is_command_available 'fzf'; then
     local -r options="$(
-      sx::k8s::running_pods "${query}" "${selector}" "${namespace}" "${all_namespaces}" true
+      sx::k8s::running_pods "${query}" "${selector}" "${namespace}" "${all_namespaces}" true "${context}"
     )"
 
     if [ -z "${options}" ]; then
@@ -31,14 +34,14 @@ function sx::k8s::exec() {
       local -r name="$(echo "${selected}" | awk '{ print $2 }')"
       local -r container_name="$(echo "${selected}" | awk '{ print $3 }')"
 
-      sx::k8s_command::exec "${ns}" "${name}" "${container_name}" "${command}"
+      sx::k8s_command::exec "${ns}" "${name}" "${container_name}" "${command}" "${context}"
     fi
   else
     export PS3=$'\n''Please, choose the pod: '$'\n'
 
     local options
     readarray -t options < <(
-      sx::k8s::running_pods "${query}" "${selector}" "${namespace}" "${all_namespaces}"
+      sx::k8s::running_pods "${query}" "${selector}" "${namespace}" "${all_namespaces}" false "${context}"
     )
 
     if [ "${#options[@]}" -eq 0 ]; then
@@ -55,7 +58,7 @@ function sx::k8s::exec() {
       local -r name="$(echo "${selected}" | awk '{ print $2 }')"
       local -r container_name="$(echo "${selected}" | awk '{ print $3 }')"
 
-      sx::k8s_command::exec "${ns}" "${name}" "${container_name}" "${command}"
+      sx::k8s_command::exec "${ns}" "${name}" "${container_name}" "${command}" "${context}"
       break
     done
   fi
@@ -66,6 +69,13 @@ function sx::k8s_command::exec() {
   local -r name="${2}"
   local -r container="${3}"
   local -r command="${4}"
+  local -r context="${5:-}"
+
+  if [ -n "${context}" ]; then
+    local -r context_flags="--context ${context}"
+  else
+    local -r context_flags=''
+  fi
 
   local -r shells=(
     '/bin/bash'
@@ -73,10 +83,12 @@ function sx::k8s_command::exec() {
   )
 
   for shell in "${shells[@]}"; do
-    if sx::k8s::cli exec --namespace "${ns}" "${name}" --container "${container}" -- "${shell}" -c 'exit' &>/dev/null; then
+    # shellcheck disable=SC2086  # quote this to prevent word splitting
+    if sx::k8s::cli ${context_flags} exec --namespace "${ns}" "${name}" --container "${container}" -- "${shell}" -c 'exit' &>/dev/null; then
       sx::log::info "Now you can execute commands in pod \"${name}/${container}\" using \"${shell}(${command:-*})\"\n"
 
-      sx::k8s::cli exec "${name}" \
+      # shellcheck disable=SC2086  # quote this to prevent word splitting
+      sx::k8s::cli ${context_flags} exec "${name}" \
         --stdin \
         --tty \
         --namespace "${ns}" \

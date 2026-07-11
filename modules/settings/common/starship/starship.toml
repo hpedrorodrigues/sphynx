@@ -49,6 +49,7 @@ format = "[$symbol$context(\\($namespace\\))]($style) "
 style = "fg:#8be9fd"
 contexts = [
   { context_pattern = "^gke_[^_]+_[^_]+_(?P<cluster>[\\w-]+?)(?:-gke)?-usce1$", context_alias = "gke-$cluster" },
+  { context_pattern = "^gke_[^_]+_[^_]+_(?P<cluster>[\\w-]+)$", context_alias = "gke-$cluster" },
 ]
 
 [aws]

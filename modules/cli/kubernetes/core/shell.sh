@@ -2,13 +2,16 @@
 
 function sx::k8s::shell() {
   sx::k8s::check_requirements
-  sx::k8s::ensure_api_access
 
   local -r query="${1:-}"
   local -r use_ssm="${2:-false}"
+  local -r context="${3:-}"
+
+  sx::k8s::validate_context "${context}"
+  sx::k8s::ensure_api_access "${context}"
 
   if sx::os::is_command_available 'fzf'; then
-    local -r options="$(sx::k8s::nodes "${query}" true)"
+    local -r options="$(sx::k8s::nodes "${query}" true "${context}")"
 
     if [ -z "${options}" ]; then
       sx::log::fatal 'No nodes found'
@@ -19,16 +22,16 @@ function sx::k8s::shell() {
 
     if [ -n "${selected}" ]; then
       if ${use_ssm}; then
-        sx::k8s_command::ssm "${selected}"
+        sx::k8s_command::ssm "${selected}" "${context}"
       else
-        sx::k8s_command::shell "${selected}"
+        sx::k8s_command::shell "${selected}" "${context}"
       fi
     fi
   else
     export PS3=$'\n''Please, choose the node: '$'\n'
 
     local options
-    readarray -t options < <(sx::k8s::nodes "${query}")
+    readarray -t options < <(sx::k8s::nodes "${query}" false "${context}")
 
     if [ "${#options[@]}" -eq 0 ]; then
       sx::log::fatal 'No nodes found'
@@ -41,9 +44,9 @@ function sx::k8s::shell() {
       fi
 
       if ${use_ssm}; then
-        sx::k8s_command::ssm "${selected}"
+        sx::k8s_command::ssm "${selected}" "${context}"
       else
-        sx::k8s_command::shell "${selected}"
+        sx::k8s_command::shell "${selected}" "${context}"
       fi
       break
     done
@@ -54,9 +57,17 @@ function sx::k8s_command::ssm() {
   sx::require 'aws' 'aws-cli'
 
   local -r node_name="$(echo "${1}" | awk '{ print $1 }')"
+  local -r context="${2:-}"
 
+  if [ -n "${context}" ]; then
+    local -r context_flags="--context ${context}"
+  else
+    local -r context_flags=''
+  fi
+
+  # shellcheck disable=SC2086  # quote this to prevent word splitting
   local -r provider_id="$(
-    sx::k8s::cli get nodes \
+    sx::k8s::cli ${context_flags} get nodes \
       --no-headers \
       --output 'custom-columns=NAME:.metadata.name,PROVIDER_ID:.spec.providerID' \
       | grep "${node_name}" \
@@ -75,6 +86,13 @@ function sx::k8s_command::ssm() {
 
 function sx::k8s_command::shell() {
   local -r node_name="$(echo "${1}" | awk '{ print $1 }')"
+  local -r context="${2:-}"
+
+  if [ -n "${context}" ]; then
+    local -r context_flags="--context ${context}"
+  else
+    local -r context_flags=''
+  fi
 
   local -r image_name='alpine'
   local -r container_name='sphynx-shell'
@@ -122,7 +140,8 @@ EOF
   sx::log::info "Opening shell in node \"${node_name}\" using \"/bin/bash\".\n"
   sx::log::info "If you don't see a command prompt, try pressing enter."
 
-  sx::k8s::cli run "${pod_name}" \
+  # shellcheck disable=SC2086  # quote this to prevent word splitting
+  sx::k8s::cli ${context_flags} run "${pod_name}" \
     --rm \
     --stdin \
     --tty \
@@ -136,14 +155,16 @@ EOF
     --quiet \
     --grace-period '1'
 
+  # shellcheck disable=SC2086  # quote this to prevent word splitting
   local -r remaining_pod="$(
-    sx::k8s::cli get pods \
+    sx::k8s::cli ${context_flags} get pods \
       --namespace "${namespace}" \
       --selector "app=${container_name}" 2>/dev/null
   )"
 
   if [ -n "${remaining_pod}" ]; then
     sx::log::warn "Deleting remaining pod ${pod_name}"
-    sx::k8s::cli delete pod "${pod_name}" --namespace "${namespace}"
+    # shellcheck disable=SC2086  # quote this to prevent word splitting
+    sx::k8s::cli ${context_flags} delete pod "${pod_name}" --namespace "${namespace}"
   fi
 }

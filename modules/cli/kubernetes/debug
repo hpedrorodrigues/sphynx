@@ -11,8 +11,8 @@ source "${SPHYNX_NAMESPACE_DIR}/core/debug.sh"
 ##? Debug cluster resources using interactive ephemeral containers
 ##?
 ##? Usage:
-##?     debug [<query>] [-l <selector>] [--namespace <name> | --all-namespaces] [--image <image>] [--user <uid>] [--group <gid>] [--restricted]
-##?     debug --namespace <name> --pod <name> --container <name> [--image <image>] [--user <uid>] [--group <gid>] [--restricted]
+##?     debug [<query>] [-l <selector>] [--namespace <name> | --all-namespaces] [--image <image>] [--user <uid>] [--group <gid>] [--restricted] [--context <name>]
+##?     debug --namespace <name> --pod <name> --container <name> [--image <image>] [--user <uid>] [--group <gid>] [--restricted] [--context <name>]
 ##?
 ##? Options:
 ##?     -l --selector <selector>  Selector (label query) to filter on
@@ -24,6 +24,7 @@ source "${SPHYNX_NAMESPACE_DIR}/core/debug.sh"
 ##?     --user <uid>  Run debug container as this user ID
 ##?     --group <gid>  Run debug container as this group ID
 ##?     --restricted  Run debug container without elevated privileges (no root, no sysadmin profile)
+##?     --context <name>  The name of the kubeconfig context to use
 ##?
 ##? Examples:
 ##?     debug --image busybox
@@ -31,6 +32,7 @@ source "${SPHYNX_NAMESPACE_DIR}/core/debug.sh"
 ##?     debug --image busybox --all-namespaces
 ##?     debug --restricted
 ##?     debug --user 1000 --group 1000
+##?     debug keycloak --context staging
 
 sx::parse_arguments "${@}"
 
@@ -44,4 +46,5 @@ sx::k8s::debug \
   "${all_namespaces:-false}" \
   "${user:-}" \
   "${group:-}" \
-  "${restricted:-false}"
+  "${restricted:-false}" \
+  "${context:-}"

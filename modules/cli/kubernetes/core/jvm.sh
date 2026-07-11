@@ -2,7 +2,6 @@
 
 function sx::k8s::jvm() {
   sx::k8s::check_requirements
-  sx::k8s::ensure_api_access
 
   local -r query="${1:-}"
   local -r selector="${2:-}"
@@ -13,12 +12,16 @@ function sx::k8s::jvm() {
   local -r threaddump="${7:-false}"
   local -r output_dir="${8:-}"
   local -r all_namespaces="${9:-false}"
+  local -r context="${10:-}"
+
+  sx::k8s::validate_context "${context}"
+  sx::k8s::ensure_api_access "${context}"
 
   if [ -n "${namespace}" ] && [ -n "${pod}" ] && [ -n "${container}" ]; then
-    sx::k8s_command::jvm "${namespace}" "${pod}" "${container}" "${heapdump}" "${threaddump}" "${output_dir}"
+    sx::k8s_command::jvm "${namespace}" "${pod}" "${container}" "${heapdump}" "${threaddump}" "${output_dir}" "${context}"
   elif sx::os::is_command_available 'fzf'; then
     local -r options="$(
-      sx::k8s::running_pods "${query}" "${selector}" "${namespace}" "${all_namespaces}" true
+      sx::k8s::running_pods "${query}" "${selector}" "${namespace}" "${all_namespaces}" true "${context}"
     )"
 
     if [ -z "${options}" ]; then
@@ -33,14 +36,14 @@ function sx::k8s::jvm() {
       local -r name="$(echo "${selected}" | awk '{ print $2 }')"
       local -r container_name="$(echo "${selected}" | awk '{ print $3 }')"
 
-      sx::k8s_command::jvm "${ns}" "${name}" "${container_name}" "${heapdump}" "${threaddump}" "${output_dir}"
+      sx::k8s_command::jvm "${ns}" "${name}" "${container_name}" "${heapdump}" "${threaddump}" "${output_dir}" "${context}"
     fi
   else
     export PS3=$'\n''Please, choose the pod: '$'\n'
 
     local options
     readarray -t options < <(
-      sx::k8s::running_pods "${query}" "${selector}" "${namespace}" "${all_namespaces}"
+      sx::k8s::running_pods "${query}" "${selector}" "${namespace}" "${all_namespaces}" false "${context}"
     )
 
     if [ "${#options[@]}" -eq 0 ]; then
@@ -57,7 +60,7 @@ function sx::k8s::jvm() {
       local -r name="$(echo "${selected}" | awk '{ print $2 }')"
       local -r container_name="$(echo "${selected}" | awk '{ print $3 }')"
 
-      sx::k8s_command::jvm "${ns}" "${name}" "${container_name}" "${heapdump}" "${threaddump}" "${output_dir}"
+      sx::k8s_command::jvm "${ns}" "${name}" "${container_name}" "${heapdump}" "${threaddump}" "${output_dir}" "${context}"
       break
     done
   fi
@@ -70,8 +73,9 @@ function sx::k8s_command::jvm() {
   local -r heapdump="${4}"
   local -r threaddump="${5}"
   local -r output_dir="${6:-}"
+  local -r context="${7:-}"
 
-  local -r pid="$(sx::k8s_command::jvm::detect_pid "${ns}" "${name}" "${container}")"
+  local -r pid="$(sx::k8s_command::jvm::detect_pid "${ns}" "${name}" "${container}" "${context}")"
 
   if [ -z "${pid}" ]; then
     sx::log::fatal "No JVM process found in pod \"${name}/${container}\""
@@ -80,11 +84,11 @@ function sx::k8s_command::jvm() {
   local -r timestamp="$(date '+%Y%m%d-%H%M%S')"
 
   if ${heapdump}; then
-    sx::k8s_command::jvm::heapdump "${ns}" "${name}" "${container}" "${pid}" "${timestamp}" "${output_dir}"
+    sx::k8s_command::jvm::heapdump "${ns}" "${name}" "${container}" "${pid}" "${timestamp}" "${output_dir}" "${context}"
   fi
 
   if ${threaddump}; then
-    sx::k8s_command::jvm::threaddump "${ns}" "${name}" "${container}" "${pid}" "${timestamp}" "${output_dir}"
+    sx::k8s_command::jvm::threaddump "${ns}" "${name}" "${container}" "${pid}" "${timestamp}" "${output_dir}" "${context}"
   fi
 }
 
@@ -92,10 +96,17 @@ function sx::k8s_command::jvm::detect_pid() {
   local -r ns="${1}"
   local -r name="${2}"
   local -r container="${3}"
+  local -r context="${4:-}"
 
-  # shellcheck disable=SC2016  # expressions don't expand in single quotes
+  if [ -n "${context}" ]; then
+    local -r context_flags="--context ${context}"
+  else
+    local -r context_flags=''
+  fi
+
+  # shellcheck disable=SC2016,SC2086  # expressions don't expand in single quotes; quote this to prevent word splitting
   local -r jcmd_pid="$(
-    sx::k8s::cli exec --namespace "${ns}" "${name}" --container "${container}" -- \
+    sx::k8s::cli ${context_flags} exec --namespace "${ns}" "${name}" --container "${container}" -- \
       sh -c 'jcmd 2>/dev/null | grep -v "jdk.jcmd" | head -1 | awk "{ print \$1 }"' 2>/dev/null \
       || true
   )"
@@ -105,8 +116,9 @@ function sx::k8s_command::jvm::detect_pid() {
     return
   fi
 
+  # shellcheck disable=SC2086  # quote this to prevent word splitting
   local -r pgrep_pid="$(
-    sx::k8s::cli exec --namespace "${ns}" "${name}" --container "${container}" -- \
+    sx::k8s::cli ${context_flags} exec --namespace "${ns}" "${name}" --container "${container}" -- \
       pgrep -x java 2>/dev/null | head -1 \
       || true
   )"
@@ -116,8 +128,9 @@ function sx::k8s_command::jvm::detect_pid() {
     return
   fi
 
+  # shellcheck disable=SC2086  # quote this to prevent word splitting
   local -r ps_pid="$(
-    sx::k8s::cli exec --namespace "${ns}" "${name}" --container "${container}" -- \
+    sx::k8s::cli ${context_flags} exec --namespace "${ns}" "${name}" --container "${container}" -- \
       sh -c "ps aux 2>/dev/null | grep '[j]ava' | head -1 | awk '{ print \$2 }'" 2>/dev/null \
       || true
   )"
@@ -137,6 +150,13 @@ function sx::k8s_command::jvm::heapdump() {
   local -r pid="${4}"
   local -r timestamp="${5}"
   local -r output_dir="${6:-}"
+  local -r context="${7:-}"
+
+  if [ -n "${context}" ]; then
+    local -r context_flags="--context ${context}"
+  else
+    local -r context_flags=''
+  fi
 
   local -r filename="heapdump-${name}-${timestamp}.hprof"
   local -r remote_file="/tmp/${filename}"
@@ -149,11 +169,12 @@ function sx::k8s_command::jvm::heapdump() {
 
   sx::log::info "Generating heap dump for pod \"${name}/${container}\" (PID: ${pid})..."
 
-  if sx::k8s::cli exec --namespace "${ns}" "${name}" --container "${container}" -- \
+  # shellcheck disable=SC2086  # quote this to prevent word splitting
+  if sx::k8s::cli ${context_flags} exec --namespace "${ns}" "${name}" --container "${container}" -- \
     jcmd "${pid}" 'GC.heap_dump' "${remote_file}" &>/dev/null; then
 
     sx::log::info "Heap dump generated in \"${remote_file}\" using \"jcmd\"."
-  elif sx::k8s::cli exec --namespace "${ns}" "${name}" --container "${container}" -- \
+  elif sx::k8s::cli ${context_flags} exec --namespace "${ns}" "${name}" --container "${container}" -- \
     jmap -dump:format=b,file="${remote_file}" "${pid}" &>/dev/null; then
 
     sx::log::info "Heap dump generated in \"${remote_file}\" using \"jmap\"."
@@ -161,9 +182,10 @@ function sx::k8s_command::jvm::heapdump() {
     sx::log::fatal "Failed to generate heap dump in pod \"${name}/${container}\". Tried: \"jcmd\" and \"jmap\"."
   fi
 
-  sx::k8s::copy_from_pod "${ns}" "${name}" "${container}" "${remote_file}" "${local_file}"
+  sx::k8s::copy_from_pod "${ns}" "${name}" "${container}" "${remote_file}" "${local_file}" "${context}"
 
-  sx::k8s::cli exec --namespace "${ns}" "${name}" --container "${container}" -- rm -f "${remote_file}" &>/dev/null || true
+  # shellcheck disable=SC2086  # quote this to prevent word splitting
+  sx::k8s::cli ${context_flags} exec --namespace "${ns}" "${name}" --container "${container}" -- rm -f "${remote_file}" &>/dev/null || true
 
   sx::log::info "Heap dump saved to: ${local_file}."
 }
@@ -175,6 +197,13 @@ function sx::k8s_command::jvm::threaddump() {
   local -r pid="${4}"
   local -r timestamp="${5}"
   local -r output_dir="${6:-}"
+  local -r context="${7:-}"
+
+  if [ -n "${context}" ]; then
+    local -r context_flags="--context ${context}"
+  else
+    local -r context_flags=''
+  fi
 
   local -r filename="threaddump-${name}-${timestamp}.txt"
   local -r remote_file="/tmp/${filename}"
@@ -187,19 +216,20 @@ function sx::k8s_command::jvm::threaddump() {
 
   sx::log::info "Generating thread dump for pod \"${name}/${container}\" (PID: ${pid})..."
 
-  if sx::k8s::cli exec --namespace "${ns}" "${name}" --container "${container}" -- \
+  # shellcheck disable=SC2086  # quote this to prevent word splitting
+  if sx::k8s::cli ${context_flags} exec --namespace "${ns}" "${name}" --container "${container}" -- \
     sh -c "jcmd ${pid} 'Thread.print' > ${remote_file} 2>/dev/null" &>/dev/null; then
 
     sx::log::info "Thread dump generated in \"${remote_file}\" using \"jcmd\"."
 
     local -r thread_dump_generated='true'
-  elif sx::k8s::cli exec --namespace "${ns}" "${name}" --container "${container}" -- \
+  elif sx::k8s::cli ${context_flags} exec --namespace "${ns}" "${name}" --container "${container}" -- \
     sh -c "jstack ${pid} > ${remote_file} 2>/dev/null" &>/dev/null; then
 
     sx::log::info "Thread dump generated in \"${remote_file}\" using \"jstack\"."
 
     local -r thread_dump_generated='true'
-  elif sx::k8s::cli exec --namespace "${ns}" "${name}" --container "${container}" -- \
+  elif sx::k8s::cli ${context_flags} exec --namespace "${ns}" "${name}" --container "${container}" -- \
     kill -3 "${pid}" &>/dev/null; then
 
     sx::log::info 'Thread dump triggered using "kill -3". Output will be in the JVM stdout/logs, not in a file.'
@@ -210,9 +240,10 @@ function sx::k8s_command::jvm::threaddump() {
   fi
 
   if ${thread_dump_generated}; then
-    sx::k8s::copy_from_pod "${ns}" "${name}" "${container}" "${remote_file}" "${local_file}"
+    sx::k8s::copy_from_pod "${ns}" "${name}" "${container}" "${remote_file}" "${local_file}" "${context}"
 
-    sx::k8s::cli exec --namespace "${ns}" "${name}" --container "${container}" -- rm -f "${remote_file}" &>/dev/null || true
+    # shellcheck disable=SC2086  # quote this to prevent word splitting
+    sx::k8s::cli ${context_flags} exec --namespace "${ns}" "${name}" --container "${container}" -- rm -f "${remote_file}" &>/dev/null || true
 
     sx::log::info "Thread dump saved to: ${local_file}."
   fi

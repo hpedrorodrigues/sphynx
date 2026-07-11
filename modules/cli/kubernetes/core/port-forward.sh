@@ -7,7 +7,6 @@ readonly max_retry_backoff_seconds='30'
 
 function sx::k8s::port_forward() {
   sx::k8s::check_requirements
-  sx::k8s::ensure_api_access
 
   local -r query="${1:-}"
   local -r namespace="${2:-}"
@@ -15,6 +14,10 @@ function sx::k8s::port_forward() {
   local -r random_port="${4:-false}"
   local -r user_port="${5:-}"
   local -r retry="${6:-false}"
+  local -r context="${7:-}"
+
+  sx::k8s::validate_context "${context}"
+  sx::k8s::ensure_api_access "${context}"
 
   if [ -n "${user_port}" ] \
     && { [ "${user_port}" -lt "${min_port_number}" ] || [ "${user_port}" -gt "${max_port_number}" ]; }; then
@@ -23,7 +26,7 @@ function sx::k8s::port_forward() {
 
   if sx::os::is_command_available 'fzf'; then
     local -r options="$(
-      sx::k8s::resources_and_ports "${query}" "${namespace}" "${all_namespaces}"
+      sx::k8s::resources_and_ports "${query}" "${namespace}" "${all_namespaces}" "${context}"
     )"
 
     if [ -z "${options}" ]; then
@@ -46,14 +49,15 @@ function sx::k8s::port_forward() {
         "${port}" \
         "${random_port}" \
         "${user_port}" \
-        "${retry}"
+        "${retry}" \
+        "${context}"
     fi
   else
     export PS3=$'\n''Please, choose the resource: '$'\n'
 
     local options
     readarray -t options < <(
-      sx::k8s::resources_and_ports "${query}" "${namespace}" "${all_namespaces}"
+      sx::k8s::resources_and_ports "${query}" "${namespace}" "${all_namespaces}" "${context}"
     )
 
     if [ "${#options[@]}" -eq 0 ]; then
@@ -78,7 +82,8 @@ function sx::k8s::port_forward() {
         "${port}" \
         "${random_port}" \
         "${user_port}" \
-        "${retry}"
+        "${retry}" \
+        "${context}"
       break
     done
   fi
@@ -88,13 +93,18 @@ function sx::k8s::resources_and_ports() {
   local -r query="${1:-}"
   local -r namespace="${2:-}"
   local -r all_namespaces="${3:-false}"
+  local -r context="${4:-}"
 
   if ${all_namespaces}; then
-    local -r flags='--all-namespaces'
+    local flags='--all-namespaces'
   elif [ -n "${namespace}" ]; then
-    local -r flags="--namespace ${namespace}"
+    local flags="--namespace ${namespace}"
   else
-    local -r flags=''
+    local flags=''
+  fi
+
+  if [ -n "${context}" ]; then
+    flags+=" --context ${context}"
   fi
 
   if [ -n "${query}" ]; then
@@ -177,6 +187,7 @@ function sx::k8s_command::port_forward() {
   local -r random_port="${5:-false}"
   local -r user_port="${6:-}"
   local -r retry="${7:-false}"
+  local -r context="${8:-}"
 
   if [ -n "${user_port}" ]; then
     local -r local_port="${user_port}"
@@ -195,14 +206,14 @@ function sx::k8s_command::port_forward() {
   if ${retry}; then
     trap 'sx::log::info "\nNo longer retrying port-forward. Cancelled by user. Bye..."; exit 130' INT
 
-    local -r context="$(sx::k8s::cli config current-context)"
-    sx::log::info "Pinned context: \"${context}\", namespace: \"${ns}\".\n"
+    local -r pinned_context="${context:-$(sx::k8s::current_context)}"
+    sx::log::info "Pinned context: \"${pinned_context}\", namespace: \"${ns}\".\n"
 
     local attempt=1
     local delay=1
     while [ "${attempt}" -le "${max_retry_attempts}" ]; do
       sx::k8s::cli port-forward \
-        --context "${context}" \
+        --context "${pinned_context}" \
         --namespace "${ns}" \
         "${kind}/${name}" "${local_port}:${port}" || true
 
@@ -218,7 +229,14 @@ function sx::k8s_command::port_forward() {
       fi
     done
   else
-    sx::k8s::cli port-forward \
+    if [ -n "${context}" ]; then
+      local -r context_flags="--context ${context}"
+    else
+      local -r context_flags=''
+    fi
+
+    # shellcheck disable=SC2086  # quote this to prevent word splitting
+    sx::k8s::cli ${context_flags} port-forward \
       --namespace "${ns}" \
       "${kind}/${name}" "${local_port}:${port}"
   fi

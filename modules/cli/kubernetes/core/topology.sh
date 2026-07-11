@@ -2,24 +2,34 @@
 
 function sx::k8s::topology() {
   sx::k8s::check_requirements
-  sx::k8s::ensure_api_access
 
   local -r query="${1:-}"
   local -r selector="${2:-}"
   local -r all_namespaces="${3:-false}"
   local -r show_resource_usage="${4:-false}"
   local -r show_labels="${5:-false}"
+  local -r context="${6:-}"
+
+  sx::k8s::validate_context "${context}"
+  sx::k8s::ensure_api_access "${context}"
+
+  if [ -n "${context}" ]; then
+    local -r context_flags="--context ${context}"
+  else
+    local -r context_flags=''
+  fi
 
   # shellcheck disable=SC2086  # Double quote to prevent globbing and word splitting
   local -r assignments="$(
-    sx::k8s::topology::assignments "${query}" "${selector}" "${all_namespaces}"
+    sx::k8s::topology::assignments "${query}" "${selector}" "${all_namespaces}" "${context}"
   )"
 
   if [ -z "${assignments}" ]; then
     sx::log::fatal 'No resources found'
   fi
 
-  local -r instances="$(sx::k8s::cli get nodes --output wide --no-headers --show-labels)"
+  # shellcheck disable=SC2086  # quote this to prevent word splitting
+  local -r instances="$(sx::k8s::cli ${context_flags} get nodes --output wide --no-headers --show-labels)"
   local -r n_instances="$(echo "${instances}" | wc -l | tr -d ' ')"
 
   local instance_ips
@@ -30,9 +40,10 @@ function sx::k8s::topology() {
   )
 
   if ${show_resource_usage}; then
-    local -r top_nodes="$(sx::k8s::cli top nodes --no-headers 2>/dev/null)"
+    # shellcheck disable=SC2086  # quote this to prevent word splitting
+    local -r top_nodes="$(sx::k8s::cli ${context_flags} top nodes --no-headers 2>/dev/null)"
     # shellcheck disable=SC2086  # Double quote to prevent globbing and word splitting
-    local -r top_pods="$(sx::k8s::topology::top_pods "${all_namespaces}" "${selector}")"
+    local -r top_pods="$(sx::k8s::topology::top_pods "${all_namespaces}" "${selector}" "${context}")"
 
     # shellcheck disable=SC2068  # Double quote array expansions
     for ip in ${instance_ips[@]}; do
@@ -82,6 +93,7 @@ function sx::k8s::topology::assignments() {
   local -r query="${1:-}"
   local -r selector="${2:-}"
   local -r all_namespaces="${3:-false}"
+  local -r context="${4:-}"
 
   local flags=''
   if ${all_namespaces}; then
@@ -90,6 +102,10 @@ function sx::k8s::topology::assignments() {
 
   if [ -n "${selector}" ]; then
     flags+=" --selector ${selector}"
+  fi
+
+  if [ -n "${context}" ]; then
+    flags+=" --context ${context}"
   fi
 
   if [ -n "${query}" ]; then
@@ -109,6 +125,7 @@ function sx::k8s::topology::assignments() {
 function sx::k8s::topology::top_pods() {
   local -r all_namespaces="${1:-false}"
   local -r selector="${2:-}"
+  local -r context="${3:-}"
 
   local flags=''
   if ${all_namespaces}; then
@@ -117,6 +134,10 @@ function sx::k8s::topology::top_pods() {
 
   if [ -n "${selector}" ]; then
     flags+=" --selector ${selector}"
+  fi
+
+  if [ -n "${context}" ]; then
+    flags+=" --context ${context}"
   fi
 
   # shellcheck disable=SC2086  # quote this to prevent word splitting

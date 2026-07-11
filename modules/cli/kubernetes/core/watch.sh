@@ -2,7 +2,6 @@
 
 function sx::k8s::watch::resources() {
   sx::k8s::check_requirements
-  sx::k8s::ensure_api_access
 
   local -r resources="${1:-pods}"
   local -r namespace="${2:-}"
@@ -11,6 +10,10 @@ function sx::k8s::watch::resources() {
   local -r interval="${5:-2}"
   local -r output="${6:-default}"
   local -r show_labels="${7:-false}"
+  local -r context="${8:-}"
+
+  sx::k8s::validate_context "${context}"
+  sx::k8s::ensure_api_access "${context}"
 
   local flags=''
   if ${all_namespaces}; then
@@ -29,6 +32,10 @@ function sx::k8s::watch::resources() {
 
   if [ "${output}" != 'default' ]; then
     flags+=" --output ${output}"
+  fi
+
+  if [ -n "${context}" ]; then
+    flags+=" --context ${context}"
   fi
 
   # shellcheck disable=SC2086  # intentional word splitting on flags

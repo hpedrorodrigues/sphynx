@@ -8,7 +8,7 @@ source "${SPHYNX_CLI_DIR}/.internal/all.sh"
 source "${SPHYNX_NAMESPACE_DIR}/shared/shared.sh"
 source "${SPHYNX_NAMESPACE_DIR}/core/spy.sh"
 
-##? Spy processes
+##? Inspect running processes using namespaces or system calls
 ##?
 ##? Usage:
 ##?     spy (--namespaces | --syscalls)

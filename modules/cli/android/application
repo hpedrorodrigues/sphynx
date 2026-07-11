@@ -11,7 +11,10 @@ source "${SPHYNX_NAMESPACE_DIR}/core/application.sh"
 ##? Manage applications
 ##?
 ##? Usage:
-##?     application (--clear <package-filter> | --stop <package-filter> | --ls | --find <package-filter>)
+##?     application --clear <package-filter>
+##?     application --stop <package-filter>
+##?     application --ls
+##?     application --find <package-filter>
 ##?
 ##? Options:
 ##?     -c --clear <package-filter>  Clears data of the given app

@@ -2,7 +2,6 @@
 
 function sx::k8s::secret() {
   sx::k8s::check_requirements
-  sx::k8s::ensure_api_access
   sx::require 'base64'
 
   local -r query="${1:-}"
@@ -11,16 +10,20 @@ function sx::k8s::secret() {
   local -r all_namespaces="${4:-false}"
   local -r list="${5:-false}"
   local -r key="${6:-}"
+  local -r context="${7:-}"
+
+  sx::k8s::validate_context "${context}"
+  sx::k8s::ensure_api_access "${context}"
 
   if [ -n "${exact}" ]; then
-    local -r ns="${namespace:-$(sx::k8s::current_namespace)}"
+    local -r ns="${namespace:-$(sx::k8s::current_namespace "${context}")}"
 
-    sx::k8s_command::secret "${ns}" "${exact}" "${key}"
+    sx::k8s_command::secret "${ns}" "${exact}" "${key}" "${context}"
   elif ${list}; then
-    sx::k8s_command::secret::list "${query}" "${namespace}" "${all_namespaces}" true
+    sx::k8s_command::secret::list "${query}" "${namespace}" "${all_namespaces}" true "${context}"
   elif sx::os::is_command_available 'fzf'; then
     local -r options="$(
-      sx::k8s_command::secret::list "${query}" "${namespace}" "${all_namespaces}" true
+      sx::k8s_command::secret::list "${query}" "${namespace}" "${all_namespaces}" true "${context}"
     )"
 
     if [ -z "${options}" ]; then
@@ -34,14 +37,14 @@ function sx::k8s::secret() {
       local -r ns="$(echo "${selected}" | awk '{ print $1 }')"
       local -r name="$(echo "${selected}" | awk '{ print $2 }')"
 
-      sx::k8s_command::secret "${ns}" "${name}" "${key}"
+      sx::k8s_command::secret "${ns}" "${name}" "${key}" "${context}"
     fi
   else
     export PS3=$'\n''Please, choose the resource: '$'\n'
 
     local options
     readarray -t options < <(
-      sx::k8s_command::secret::list "${query}" "${namespace}" "${all_namespaces}"
+      sx::k8s_command::secret::list "${query}" "${namespace}" "${all_namespaces}" false "${context}"
     )
 
     if [ "${#options[@]}" -eq 0 ]; then
@@ -57,7 +60,7 @@ function sx::k8s::secret() {
       local -r ns="$(echo "${selected}" | awk '{ print $1 }')"
       local -r name="$(echo "${selected}" | awk '{ print $2 }')"
 
-      sx::k8s_command::secret "${ns}" "${name}" "${key}"
+      sx::k8s_command::secret "${ns}" "${name}" "${key}" "${context}"
       break
     done
   fi
@@ -68,6 +71,7 @@ function sx::k8s_command::secret::list() {
   local -r namespace="${2:-}"
   local -r all_namespaces="${3:-false}"
   local -r print_header="${4:-false}"
+  local -r context="${5:-}"
 
   if ${all_namespaces}; then
     local -r flags='--all-namespaces'
@@ -75,6 +79,12 @@ function sx::k8s_command::secret::list() {
     local -r flags="--namespace ${namespace}"
   else
     local -r flags=''
+  fi
+
+  if [ -n "${context}" ]; then
+    local -r context_flags="--context ${context}"
+  else
+    local -r context_flags=''
   fi
 
   if [ -n "${query}" ]; then
@@ -93,7 +103,7 @@ function sx::k8s_command::secret::list() {
 
   # shellcheck disable=SC2086  # quote this to prevent word splitting
   local -r result="$(
-    sx::k8s::cli get secrets \
+    sx::k8s::cli ${context_flags} get secrets \
       ${flags} \
       --output='go-template' \
       --template="$(sx::k8s::clear_template "${template}")" 2>/dev/null \
@@ -120,6 +130,13 @@ function sx::k8s_command::secret() {
   local -r ns="${1:-}"
   local -r name="${2:-}"
   local -r key="${3:-}"
+  local -r context="${4:-}"
+
+  if [ -n "${context}" ]; then
+    local -r context_flags="--context ${context}"
+  else
+    local -r context_flags=''
+  fi
 
   # shellcheck disable=SC2016  # Expressions don't expand in single quotes, use double quotes for that
   local -r template='
@@ -127,8 +144,9 @@ function sx::k8s_command::secret() {
     {{$k}}{{"\t"}}{{$v}}{{"\n"}}
   {{end}}'
 
+  # shellcheck disable=SC2086  # quote this to prevent word splitting
   local -r data="$(
-    sx::k8s::cli get secret "${name}" \
+    sx::k8s::cli ${context_flags} get secret "${name}" \
       --namespace "${ns}" \
       --output='go-template' \
       --template="$(sx::k8s::clear_template "${template}")"

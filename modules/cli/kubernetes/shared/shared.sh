@@ -15,14 +15,25 @@ function sx::k8s::check_requirements() {
 }
 
 function sx::k8s::can_access_api() {
+  local -r context="${1:-}"
+
+  if [ -n "${context}" ]; then
+    local -r context_flags="--context ${context}"
+  else
+    local -r context_flags=''
+  fi
+
   # https://kubernetes.io/docs/reference/using-api/health-checks/
-  sx::k8s::cli get \
+  # shellcheck disable=SC2086  # quote this to prevent word splitting
+  sx::k8s::cli ${context_flags} get \
     --raw='/readyz' \
     --request-timeout "${SX_K8S_REQUEST_TIMEOUT}" &>/dev/null
 }
 
 function sx::k8s::ensure_api_access() {
-  if ${SX_K8S_CONNECTIVITY_CHECK} && ! sx::k8s::can_access_api; then
+  local -r context="${1:-}"
+
+  if ${SX_K8S_CONNECTIVITY_CHECK} && ! sx::k8s::can_access_api "${context}"; then
     sx::log::fatal 'Cannot access API Server!'
   fi
 }
@@ -69,6 +80,7 @@ function sx::k8s::running_pods() {
   local -r namespace="${3:-}"
   local -r all_namespaces="${4:-false}"
   local -r print_header="${5:-false}"
+  local -r context="${6:-}"
 
   if ${all_namespaces}; then
     local flags='--all-namespaces'
@@ -80,6 +92,10 @@ function sx::k8s::running_pods() {
 
   if [ -n "${selector}" ]; then
     flags+=" --selector ${selector}"
+  fi
+
+  if [ -n "${context}" ]; then
+    flags+=" --context ${context}"
   fi
 
   if [ -n "${query}" ]; then
@@ -134,14 +150,37 @@ function sx::k8s::running_pods() {
   fi
 }
 
+function sx::k8s::validate_context() {
+  local -r context="${1:-}"
+
+  if [ -z "${context}" ]; then
+    return 0
+  fi
+
+  local -r available_contexts="$(sx::k8s::cli config get-contexts --output name 2>/dev/null)"
+
+  if ! echo "${available_contexts}" | grep -q -F -x -- "${context}"; then
+    sx::log::fatal "No context found with name \"${context}\"!\n\nAvailable contexts:\n${available_contexts}"
+  fi
+}
+
 function sx::k8s::current_context() {
   sx::k8s::cli config current-context 2>/dev/null
 }
 
 # NOTE: This function is also used by eg commands
 function sx::k8s::current_namespace() {
+  local -r context="${1:-}"
+
+  if [ -n "${context}" ]; then
+    local -r context_flags="--context ${context}"
+  else
+    local -r context_flags=''
+  fi
+
+  # shellcheck disable=SC2086  # quote this to prevent word splitting
   local -r namespace="$(
-    sx::k8s::cli config view \
+    sx::k8s::cli ${context_flags} config view \
       --minify \
       --output jsonpath='{.contexts[0].context.namespace}'
   )"
@@ -158,8 +197,9 @@ function sx::k8s::resources() {
   local -r namespace="${2:-}"
   local -r all_namespaces="${3:-false}"
   local -r print_header="${4:-false}"
+  local -r context="${5:-}"
 
-  sx::k8s::shared::resources "${SX_KUBERNETES_RESOURCES}" "${query}" "${namespace}" "${all_namespaces}" "${print_header}"
+  sx::k8s::shared::resources "${SX_KUBERNETES_RESOURCES}" "${query}" "${namespace}" "${all_namespaces}" "${print_header}" "${context}"
 }
 
 function sx::k8s::editable_resources() {
@@ -167,8 +207,9 @@ function sx::k8s::editable_resources() {
   local -r namespace="${2:-}"
   local -r all_namespaces="${3:-false}"
   local -r print_header="${4:-false}"
+  local -r context="${5:-}"
 
-  sx::k8s::shared::resources "${SX_KUBERNETES_EDITABLE_RESOURCES}" "${query}" "${namespace}" "${all_namespaces}" "${print_header}"
+  sx::k8s::shared::resources "${SX_KUBERNETES_EDITABLE_RESOURCES}" "${query}" "${namespace}" "${all_namespaces}" "${print_header}" "${context}"
 }
 
 function sx::k8s::shared::resources() {
@@ -177,6 +218,7 @@ function sx::k8s::shared::resources() {
   local -r namespace="${3:-}"
   local -r all_namespaces="${4:-false}"
   local -r print_header="${5:-false}"
+  local -r context="${6:-}"
 
   if ${all_namespaces}; then
     local -r flags='--all-namespaces'
@@ -201,13 +243,19 @@ function sx::k8s::shared::resources() {
     {{$namespace}}{{","}}{{$kind}}{{","}}{{$name}}{{"\n"}}
   {{end}}'
 
+  if [ -n "${context}" ]; then
+    local -r context_flags="--context ${context}"
+  else
+    local -r context_flags=''
+  fi
+
   # Fetch each resource type in parallel. A single kubectl get with comma-separated
   # types makes sequential API calls internally, so splitting them into separate
   # processes via xargs --max-procs=0 runs all requests in parallel.
   # shellcheck disable=SC2086  # quote this to prevent word splitting
   local -r result="$(
     echo "${resources}" | tr ',' '\n' \
-      | xargs --max-procs='0' --max-args='1' ${SX_K8SCTL} get \
+      | xargs --max-procs='0' --max-args='1' ${SX_K8SCTL} ${context_flags} get \
         ${flags} \
         --output='go-template' \
         --template="$(sx::k8s::clear_template "${template}")" 2>/dev/null \
@@ -227,6 +275,13 @@ function sx::k8s::shared::resources() {
 function sx::k8s::nodes() {
   local -r query="${1:-}"
   local -r print_header="${2:-false}"
+  local -r context="${3:-}"
+
+  if [ -n "${context}" ]; then
+    local -r context_flags="--context ${context}"
+  else
+    local -r context_flags=''
+  fi
 
   if [ -n "${query}" ]; then
     local -r query_pattern="${query}"
@@ -236,8 +291,9 @@ function sx::k8s::nodes() {
 
   local -r header='NAME,STATUS,AGE'
 
+  # shellcheck disable=SC2086  # quote this to prevent word splitting
   local -r result="$(
-    sx::k8s::cli get nodes \
+    sx::k8s::cli ${context_flags} get nodes \
       --no-headers \
       | sort -u \
       | grep -E "${query_pattern}" 2>/dev/null \
@@ -270,8 +326,16 @@ function sx::k8s::copy_from_pod() {
   local -r container="${3}"
   local -r remote_file="${4}"
   local -r local_file="${5}"
+  local -r context="${6:-}"
 
-  if ! sx::k8s::cli cp \
+  if [ -n "${context}" ]; then
+    local -r context_flags="--context ${context}"
+  else
+    local -r context_flags=''
+  fi
+
+  # shellcheck disable=SC2086  # quote this to prevent word splitting
+  if ! sx::k8s::cli ${context_flags} cp \
     --container "${container}" \
     "${ns}/${name}:${remote_file}" \
     "${local_file}" \
