@@ -4,11 +4,10 @@ function sx::flow::history() {
   sx::flow::check_requirements
 
   local -r query="${1:-}"
-  local -r models="${2:-false}"
-  local -r captures="${3:-false}"
-  local -r collections="${4:-false}"
-  local -r materializations="${5:-false}"
-  local -r tests="${6:-false}"
+  local -r captures="${2:-false}"
+  local -r collections="${3:-false}"
+  local -r materializations="${4:-false}"
+  local -r tests="${5:-false}"
 
   local type_flags=''
   if ${captures}; then
@@ -34,7 +33,7 @@ function sx::flow::history() {
     if [ -n "${selected}" ]; then
       local -r spec="$(echo "${selected}" | awk '{ print $1 }')"
 
-      sx::flow_command::history "${spec}" "${models}"
+      sx::flow_command::history "${spec}"
     fi
   else
     export PS3=$'\n''Please, choose the specification: '$'\n'
@@ -56,7 +55,7 @@ function sx::flow::history() {
 
       local -r spec="$(echo "${selected}" | awk '{ print $1 }')"
 
-      sx::flow_command::history "${spec}" "${models}"
+      sx::flow_command::history "${spec}"
       break
     done
   fi
@@ -64,14 +63,6 @@ function sx::flow::history() {
 
 function sx::flow_command::history() {
   local -r name="${1}"
-  local -r models="${2:-false}"
-
-  if ${models}; then
-    # "--models" requires a JSON or YAML output
-    sx::flow::cli catalog history --name "${name}" --models --output json \
-      | jq -sc 'sort_by(.publication.publishedAt) | reverse | .[]'
-    return
-  fi
 
   local -r result="$(
     sx::flow::cli catalog history --name "${name}" --output json \

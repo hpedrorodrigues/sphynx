@@ -11,7 +11,7 @@ source "${SPHYNX_NAMESPACE_DIR}/core/ls.sh"
 ##? List catalog specifications
 ##?
 ##? Usage:
-##?     ls [--name <name>] [--prefix <prefix>] [--captures | --collections | --materializations | --tests] [--flows] [--models]
+##?     ls [--name <name>] [--prefix <prefix>] [--captures | --collections | --materializations | --tests] [--flows]
 ##?
 ##? Options:
 ##?     --name <name>  Only include the specification with this exact name
@@ -21,7 +21,6 @@ source "${SPHYNX_NAMESPACE_DIR}/core/ls.sh"
 ##?     --materializations  Only include materializations
 ##?     --tests  Only include tests
 ##?     -f --flows  Include the data-flows of each specification
-##?     --models  Print the raw specification models as JSON
 ##?
 ##? Examples:
 ##?     ls
@@ -29,7 +28,7 @@ source "${SPHYNX_NAMESPACE_DIR}/core/ls.sh"
 ##?     ls --prefix acme/
 ##?     ls --name acme/anvils/orders
 ##?     ls --collections --flows
-##?     ls --materializations --models
+##?     ls --materializations
 
 sx::parse_arguments "${@}"
 
@@ -40,5 +39,4 @@ sx::flow::ls \
   "${collections:-false}" \
   "${materializations:-false}" \
   "${tests:-false}" \
-  "${flows:-false}" \
-  "${models:-false}"
+  "${flows:-false}"

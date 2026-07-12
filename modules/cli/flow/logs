@@ -11,9 +11,12 @@ source "${SPHYNX_NAMESPACE_DIR}/core/logs.sh"
 ##? Print logs from a task (capture, derivation or materialization)
 ##?
 ##? Usage:
-##?     logs [<query>] [--follow] [--since <duration> | --not-before <timestamp>] [-- <flags>...]
+##?     logs [<query>] [--captures | --derivations | --materializations] [--follow] [--since <duration> | --not-before <timestamp>] [-- <flags>...]
 ##?
 ##? Options:
+##?     -c --captures  Only include captures in the picker
+##?     --derivations  Only include derivations in the picker
+##?     --materializations  Only include materializations in the picker
 ##?     -f --follow  Continue reading logs until the command is interrupted
 ##?     --since <duration>  Read logs starting this far in the past (e.g. 1h, 30m, 10s)
 ##?     --not-before <timestamp>  Read logs published at or after this RFC3339 timestamp
@@ -21,6 +24,8 @@ source "${SPHYNX_NAMESPACE_DIR}/core/logs.sh"
 ##? Examples:
 ##?     logs
 ##?     logs acme
+##?     logs --captures
+##?     logs acme --materializations
 ##?     logs --follow
 ##?     logs acme --since 1h
 ##?     logs --not-before 2024-01-01T00:00:00Z
@@ -33,4 +38,7 @@ sx::flow::logs \
   "${follow:-false}" \
   "${since:-}" \
   "${not_before:-}" \
-  "${flags[*]:-}"
+  "${flags[*]:-}" \
+  "${captures:-false}" \
+  "${derivations:-false}" \
+  "${materializations:-false}"

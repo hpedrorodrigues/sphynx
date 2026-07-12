@@ -14,10 +14,10 @@ source "${SPHYNX_NAMESPACE_DIR}/core/status.sh"
 ##?     status [<query>] [--captures | --collections | --materializations | --tests] [--connected]
 ##?
 ##? Options:
-##?     -c --captures  Only include captures in the picker
-##?     --collections  Only include collections in the picker
-##?     --materializations  Only include materializations in the picker
-##?     --tests  Only include tests in the picker
+##?     -c --captures  Only include captures
+##?     --collections  Only include collections
+##?     --materializations  Only include materializations
+##?     --tests  Only include tests
 ##?     -c --connected  Include the status of connected specifications
 ##?
 ##? Examples:

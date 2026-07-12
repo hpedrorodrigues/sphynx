@@ -8,6 +8,18 @@ function sx::flow::logs() {
   local -r since="${3:-}"
   local -r not_before="${4:-}"
   local -r extra_flags="${5:-}"
+  local -r captures="${6:-false}"
+  local -r derivations="${7:-false}"
+  local -r materializations="${8:-false}"
+
+  local task_type=''
+  if ${captures}; then
+    task_type='capture'
+  elif ${derivations}; then
+    task_type='derivation'
+  elif ${materializations}; then
+    task_type='materialization'
+  fi
 
   local flags=''
   if ${follow}; then
@@ -23,7 +35,7 @@ function sx::flow::logs() {
   fi
 
   if sx::os::is_command_available 'fzf'; then
-    local -r options="$(sx::flow::tasks "${query}" true)"
+    local -r options="$(sx::flow::tasks "${query}" true "${task_type}")"
 
     if [ -z "${options}" ]; then
       sx::log::fatal 'No tasks found'
@@ -42,7 +54,7 @@ function sx::flow::logs() {
 
     local options
     readarray -t options < <(
-      sx::flow::tasks "${query}" false
+      sx::flow::tasks "${query}" false "${task_type}"
     )
 
     if [ "${#options[@]}" -eq 0 ]; then

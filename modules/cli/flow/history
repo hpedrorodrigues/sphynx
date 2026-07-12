@@ -11,27 +11,25 @@ source "${SPHYNX_NAMESPACE_DIR}/core/history.sh"
 ##? Print the publication history of a catalog specification
 ##?
 ##? Usage:
-##?     history [<query>] [--captures | --collections | --materializations | --tests] [--models]
+##?     history [<query>] [--captures | --collections | --materializations | --tests]
 ##?
 ##? Options:
-##?     -c --captures  Only include captures in the picker
-##?     --collections  Only include collections in the picker
-##?     --materializations  Only include materializations in the picker
-##?     --tests  Only include tests in the picker
-##?     --models  Print the specification model of each publication as JSON
+##?     -c --captures  Only include captures
+##?     --collections  Only include collections
+##?     --materializations  Only include materializations
+##?     --tests  Only include tests
 ##?
 ##? Examples:
 ##?     history
 ##?     history acme
 ##?     history --captures
 ##?     history acme --tests
-##?     history --collections --models
+##?     history --collections
 
 sx::parse_arguments "${@}"
 
 sx::flow::history \
   "${query:-}" \
-  "${models:-false}" \
   "${captures:-false}" \
   "${collections:-false}" \
   "${materializations:-false}" \

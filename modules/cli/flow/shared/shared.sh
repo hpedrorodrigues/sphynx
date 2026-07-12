@@ -45,13 +45,10 @@ function sx::flow::specs() {
   fi
 }
 
-# Tasks are captures, derivations and materializations. A single
-# "catalog list --flows" call covers all of them because the flowctl type
-# flags are mutually exclusive, and "--flows" populates "readsFrom", which
-# identifies derivations (collections that read from other collections)
 function sx::flow::tasks() {
   local -r query="${1:-}"
   local -r print_header="${2:-false}"
+  local -r task_type="${3:-}"
 
   if [ -n "${query}" ]; then
     local -r query_pattern="${query}"
@@ -61,11 +58,11 @@ function sx::flow::tasks() {
 
   local -r result="$(
     sx::flow::cli catalog list --flows --output json \
-      | jq -r '
+      | jq -r --arg task_type "${task_type}" '
           select(
-            (.liveSpec.catalogType == "capture")
-            or (.liveSpec.catalogType == "materialization")
-            or (.liveSpec.catalogType == "collection" and .liveSpec.readsFrom != null)
+            (($task_type == "" or $task_type == "capture") and .liveSpec.catalogType == "capture")
+            or (($task_type == "" or $task_type == "materialization") and .liveSpec.catalogType == "materialization")
+            or (($task_type == "" or $task_type == "derivation") and .liveSpec.catalogType == "collection" and .liveSpec.readsFrom != null)
           )
           | [
               .catalogName,

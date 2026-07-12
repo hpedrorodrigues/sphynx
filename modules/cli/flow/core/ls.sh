@@ -10,7 +10,6 @@ function sx::flow::ls() {
   local -r materializations="${5:-false}"
   local -r tests="${6:-false}"
   local -r flows="${7:-false}"
-  local -r models="${8:-false}"
 
   local flags=''
   if [ -n "${name}" ]; then
@@ -39,13 +38,6 @@ function sx::flow::ls() {
 
   if ${flows}; then
     flags+=' --flows'
-  fi
-
-  if ${models}; then
-    # "--models" requires a JSON or YAML output
-    # shellcheck disable=SC2086  # quote this to prevent word splitting
-    sx::flow::cli catalog list ${flags} --models --output json
-    return
   fi
 
   if ${flows}; then
