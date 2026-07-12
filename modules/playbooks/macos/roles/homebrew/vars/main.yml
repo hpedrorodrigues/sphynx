@@ -2,6 +2,7 @@ repositories:
   - hpedrorodrigues/tools
   - fluxcd/tap
   - homeport/tap
+  - estuary/flowctl
 
 formulas:
   - apktool
@@ -22,6 +23,7 @@ formulas:
   - duf
   - ed
   - egctl
+  - estuary/flowctl/flowctl
   - ffmpeg
   - file-formula
   - findutils

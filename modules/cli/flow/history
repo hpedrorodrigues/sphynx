@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNX_CLI_DIR}/.internal/all.sh"
+source "${SPHYNX_NAMESPACE_DIR}/shared/shared.sh"
+source "${SPHYNX_NAMESPACE_DIR}/core/history.sh"
+
+##? Print the publication history of a catalog specification
+##?
+##? Usage:
+##?     history [<query>] [--captures | --collections | --materializations | --tests]
+##?
+##? Options:
+##?     -c --captures  Only include captures
+##?     --collections  Only include collections
+##?     --materializations  Only include materializations
+##?     --tests  Only include tests
+##?
+##? Examples:
+##?     history
+##?     history acme
+##?     history --captures
+##?     history acme --tests
+##?     history --collections
+
+sx::parse_arguments "${@}"
+
+sx::flow::history \
+  "${query:-}" \
+  "${captures:-false}" \
+  "${collections:-false}" \
+  "${materializations:-false}" \
+  "${tests:-false}"
