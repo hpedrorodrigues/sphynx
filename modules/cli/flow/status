@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNX_CLI_DIR}/.internal/all.sh"
+source "${SPHYNX_NAMESPACE_DIR}/shared/shared.sh"
+source "${SPHYNX_NAMESPACE_DIR}/core/status.sh"
+
+##? Print the current status of a catalog specification
+##?
+##? Usage:
+##?     status [<query>] [--captures | --collections | --materializations | --tests] [--connected]
+##?
+##? Options:
+##?     -c --captures  Only include captures in the picker
+##?     --collections  Only include collections in the picker
+##?     --materializations  Only include materializations in the picker
+##?     --tests  Only include tests in the picker
+##?     -c --connected  Include the status of connected specifications
+##?
+##? Examples:
+##?     status
+##?     status acme
+##?     status --captures
+##?     status acme --collections
+##?     status --connected
+
+sx::parse_arguments "${@}"
+
+sx::flow::status \
+  "${query:-}" \
+  "${connected:-false}" \
+  "${captures:-false}" \
+  "${collections:-false}" \
+  "${materializations:-false}" \
+  "${tests:-false}"

@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNX_CLI_DIR}/.internal/all.sh"
+source "${SPHYNX_NAMESPACE_DIR}/shared/shared.sh"
+source "${SPHYNX_NAMESPACE_DIR}/core/logs.sh"
+
+##? Print logs from a task (capture, derivation or materialization)
+##?
+##? Usage:
+##?     logs [<query>] [--follow] [--since <duration> | --not-before <timestamp>] [-- <flags>...]
+##?
+##? Options:
+##?     -f --follow  Continue reading logs until the command is interrupted
+##?     --since <duration>  Read logs starting this far in the past (e.g. 1h, 30m, 10s)
+##?     --not-before <timestamp>  Read logs published at or after this RFC3339 timestamp
+##?
+##? Examples:
+##?     logs
+##?     logs acme
+##?     logs --follow
+##?     logs acme --since 1h
+##?     logs --not-before 2024-01-01T00:00:00Z
+##?     logs acme -- --output json
+
+sx::parse_arguments "${@}"
+
+sx::flow::logs \
+  "${query:-}" \
+  "${follow:-false}" \
+  "${since:-}" \
+  "${not_before:-}" \
+  "${flags[*]:-}"
