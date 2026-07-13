@@ -13,6 +13,7 @@ formulas:
   - bench
   - binutils
   - cloud-sql-proxy
+  - cmctl
   - coreutils
   - crane
   - dex2jar

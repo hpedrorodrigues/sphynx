@@ -1,0 +1,64 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNX_CLI_DIR}/.internal/all.sh"
+source "${SPHYNX_NAMESPACE_DIR}/shared/shared.sh"
+source "${SPHYNX_NAMESPACE_DIR}/core/cert.sh"
+
+##? Inspect, check status, and renew cert-manager certificates
+##?
+##? Usage:
+##?     cert inspect [<query>] [--namespace <name> | --all-namespaces] [--context <name>]
+##?     cert inspect --exact <name> [--namespace <name>] [--context <name>]
+##?     cert status [<query>] [--namespace <name> | --all-namespaces] [--context <name>]
+##?     cert status --exact <name> [--namespace <name>] [--context <name>]
+##?     cert renew [<query>] [--namespace <name> | --all-namespaces] [--context <name>]
+##?     cert renew --exact <name> [--namespace <name>] [--context <name>]
+##?
+##? Options:
+##?     -e --exact <name>  Name to be used without checking for it
+##?     -n --namespace <name>  The namespace scope for requests
+##?     -A --all-namespaces  All namespaces
+##?     --context <name>  The name of the kubeconfig context to use
+##?
+##? Examples:
+##?     cert inspect
+##?     cert inspect my-tls
+##?     cert inspect my-tls --namespace istio-system
+##?     cert inspect --all-namespaces
+##?     cert inspect --exact my-tls-secret --namespace istio-system
+##?     cert status
+##?     cert status my-cert
+##?     cert status my-cert --namespace istio-system
+##?     cert status --exact my-cert --context staging
+##?     cert renew
+##?     cert renew my-cert
+##?     cert renew --exact my-cert --namespace istio-system
+
+sx::parse_arguments "${@}"
+
+if ${inspect:-false}; then
+  sx::k8s::cert::inspect \
+    "${query:-}" \
+    "${exact:-}" \
+    "${namespace:-}" \
+    "${all_namespaces:-false}" \
+    "${context:-}"
+elif ${status:-false}; then
+  sx::k8s::cert::status \
+    "${query:-}" \
+    "${exact:-}" \
+    "${namespace:-}" \
+    "${all_namespaces:-false}" \
+    "${context:-}"
+elif ${renew:-false}; then
+  sx::k8s::cert::renew \
+    "${query:-}" \
+    "${exact:-}" \
+    "${namespace:-}" \
+    "${all_namespaces:-false}" \
+    "${context:-}"
+fi
