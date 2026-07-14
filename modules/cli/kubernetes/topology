@@ -11,9 +11,10 @@ source "${SPHYNX_NAMESPACE_DIR}/core/topology.sh"
 ##? Show K8S pods distribution throughout the cluster
 ##?
 ##? Usage:
-##?     topology [<query> --all-namespaces --resources --show-labels --selector <selector>] [--context <name>]
+##?     topology [<query>] [--selector <selector>] [--resources] [--show-labels] [--namespace <name> | --all-namespaces] [--context <name>]
 ##?
 ##? Options:
+##?     -n --namespace <name>  The namespace scope for requests
 ##?     -A --all-namespaces  Run this command considering all pods of all namespaces
 ##?     -r --resources  Run this command considering resource usage
 ##?     --show-labels  Show instance labels
@@ -21,6 +22,7 @@ source "${SPHYNX_NAMESPACE_DIR}/core/topology.sh"
 ##?     --context <name>  The name of the kubeconfig context to use
 ##?
 ##? Examples:
+##?     topology --namespace kube-system
 ##?     topology --all-namespaces
 ##?     topology --resources
 ##?     topology --show-labels
@@ -35,4 +37,5 @@ sx::k8s::topology \
   "${all_namespaces:-false}" \
   "${resources:-false}" \
   "${show_labels:-false}" \
-  "${context:-}"
+  "${context:-}" \
+  "${namespace:-}"

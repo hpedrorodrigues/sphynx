@@ -198,8 +198,9 @@ function sx::k8s::resources() {
   local -r all_namespaces="${3:-false}"
   local -r print_header="${4:-false}"
   local -r context="${5:-}"
+  local -r selector="${6:-}"
 
-  sx::k8s::shared::resources "${SX_KUBERNETES_RESOURCES}" "${query}" "${namespace}" "${all_namespaces}" "${print_header}" "${context}"
+  sx::k8s::shared::resources "${SX_KUBERNETES_RESOURCES}" "${query}" "${namespace}" "${all_namespaces}" "${print_header}" "${context}" "${selector}"
 }
 
 function sx::k8s::editable_resources() {
@@ -208,8 +209,9 @@ function sx::k8s::editable_resources() {
   local -r all_namespaces="${3:-false}"
   local -r print_header="${4:-false}"
   local -r context="${5:-}"
+  local -r selector="${6:-}"
 
-  sx::k8s::shared::resources "${SX_KUBERNETES_EDITABLE_RESOURCES}" "${query}" "${namespace}" "${all_namespaces}" "${print_header}" "${context}"
+  sx::k8s::shared::resources "${SX_KUBERNETES_EDITABLE_RESOURCES}" "${query}" "${namespace}" "${all_namespaces}" "${print_header}" "${context}" "${selector}"
 }
 
 function sx::k8s::shared::resources() {
@@ -219,13 +221,18 @@ function sx::k8s::shared::resources() {
   local -r all_namespaces="${4:-false}"
   local -r print_header="${5:-false}"
   local -r context="${6:-}"
+  local -r selector="${7:-}"
 
   if ${all_namespaces}; then
-    local -r flags='--all-namespaces'
+    local flags='--all-namespaces'
   elif [ -n "${namespace}" ]; then
-    local -r flags="--namespace ${namespace}"
+    local flags="--namespace ${namespace}"
   else
-    local -r flags=''
+    local flags=''
+  fi
+
+  if [ -n "${selector}" ]; then
+    flags+=" --selector ${selector}"
   fi
 
   if [ -n "${query}" ]; then
@@ -276,11 +283,15 @@ function sx::k8s::nodes() {
   local -r query="${1:-}"
   local -r print_header="${2:-false}"
   local -r context="${3:-}"
+  local -r selector="${4:-}"
 
+  local flags=''
   if [ -n "${context}" ]; then
-    local -r context_flags="--context ${context}"
-  else
-    local -r context_flags=''
+    flags+=" --context ${context}"
+  fi
+
+  if [ -n "${selector}" ]; then
+    flags+=" --selector ${selector}"
   fi
 
   if [ -n "${query}" ]; then
@@ -293,7 +304,7 @@ function sx::k8s::nodes() {
 
   # shellcheck disable=SC2086  # quote this to prevent word splitting
   local -r result="$(
-    sx::k8s::cli ${context_flags} get nodes \
+    sx::k8s::cli ${flags} get nodes \
       --no-headers \
       | sort -u \
       | grep -E "${query_pattern}" 2>/dev/null \

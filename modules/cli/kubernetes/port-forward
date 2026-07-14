@@ -11,9 +11,10 @@ source "${SPHYNX_NAMESPACE_DIR}/core/port-forward.sh"
 ##? Forward one local port to a pod
 ##?
 ##? Usage:
-##?     port-forward [<query>] [--namespace <name> | --all-namespaces] [--random-port | --port <number>] [--retry] [--context <name>]
+##?     port-forward [<query>] [--selector <selector>] [--random-port | --port <number>] [--retry] [--namespace <name> | --all-namespaces] [--context <name>]
 ##?
 ##? Options:
+##?     -l --selector <selector>  Selector (label query) to filter on
 ##?     -n --namespace <name>  The namespace scope for requests
 ##?     -A --all-namespaces  All namespaces
 ##?     -r --random-port  Bind a random port locally
@@ -24,6 +25,7 @@ source "${SPHYNX_NAMESPACE_DIR}/core/port-forward.sh"
 ##? Examples:
 ##?     port-forward
 ##?     port-forward nginx
+##?     port-forward --selector app=nginx
 ##?     port-forward --namespace kube-system --random-port
 ##?     port-forward --all-namespaces
 ##?     port-forward --port 8080
@@ -34,6 +36,7 @@ sx::parse_arguments "${@}"
 
 sx::k8s::port_forward \
   "${query:-}" \
+  "${selector:-}" \
   "${namespace:-}" \
   "${all_namespaces:-false}" \
   "${random_port:-false}" \

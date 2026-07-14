@@ -9,12 +9,13 @@ function sx::k8s::port_forward() {
   sx::k8s::check_requirements
 
   local -r query="${1:-}"
-  local -r namespace="${2:-}"
-  local -r all_namespaces="${3:-false}"
-  local -r random_port="${4:-false}"
-  local -r user_port="${5:-}"
-  local -r retry="${6:-false}"
-  local -r context="${7:-}"
+  local -r selector="${2:-}"
+  local -r namespace="${3:-}"
+  local -r all_namespaces="${4:-false}"
+  local -r random_port="${5:-false}"
+  local -r user_port="${6:-}"
+  local -r retry="${7:-false}"
+  local -r context="${8:-}"
 
   sx::k8s::validate_context "${context}"
   sx::k8s::ensure_api_access "${context}"
@@ -26,7 +27,7 @@ function sx::k8s::port_forward() {
 
   if sx::os::is_command_available 'fzf'; then
     local -r options="$(
-      sx::k8s::resources_and_ports "${query}" "${namespace}" "${all_namespaces}" "${context}"
+      sx::k8s::resources_and_ports "${query}" "${selector}" "${namespace}" "${all_namespaces}" "${context}"
     )"
 
     if [ -z "${options}" ]; then
@@ -57,7 +58,7 @@ function sx::k8s::port_forward() {
 
     local options
     readarray -t options < <(
-      sx::k8s::resources_and_ports "${query}" "${namespace}" "${all_namespaces}" "${context}"
+      sx::k8s::resources_and_ports "${query}" "${selector}" "${namespace}" "${all_namespaces}" "${context}"
     )
 
     if [ "${#options[@]}" -eq 0 ]; then
@@ -91,9 +92,10 @@ function sx::k8s::port_forward() {
 
 function sx::k8s::resources_and_ports() {
   local -r query="${1:-}"
-  local -r namespace="${2:-}"
-  local -r all_namespaces="${3:-false}"
-  local -r context="${4:-}"
+  local -r selector="${2:-}"
+  local -r namespace="${3:-}"
+  local -r all_namespaces="${4:-false}"
+  local -r context="${5:-}"
 
   if ${all_namespaces}; then
     local flags='--all-namespaces'
@@ -103,14 +105,18 @@ function sx::k8s::resources_and_ports() {
     local flags=''
   fi
 
+  if [ -n "${selector}" ]; then
+    flags+=" --selector ${selector}"
+  fi
+
   if [ -n "${context}" ]; then
     flags+=" --context ${context}"
   fi
 
   if [ -n "${query}" ]; then
-    local -r selector="${query}"
+    local -r query_pattern="${query}"
   else
-    local -r selector='.*'
+    local -r query_pattern='.*'
   fi
 
   # shellcheck disable=SC2016  # expressions don't expand in single quotes
@@ -176,7 +182,7 @@ function sx::k8s::resources_and_ports() {
     | sx::string::lowercase \
     | sort -u \
     | column -t -s ',' \
-    | grep -E "${selector}" 2>/dev/null
+    | grep -E "${query_pattern}" 2>/dev/null
 }
 
 function sx::k8s_command::port_forward() {

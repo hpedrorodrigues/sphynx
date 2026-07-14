@@ -11,7 +11,7 @@ source "${SPHYNX_NAMESPACE_DIR}/core/prof.sh"
 ##? Profile applications running in Kubernetes pods using `josepdcs/kubectl-prof`
 ##?
 ##? Usage:
-##?     prof [<query>] [-l <selector>] [--namespace <name> | --all-namespaces] [--timeout <duration>] [--non-root] [--keep-jobs] [--image <image>] [--context <name>] [-- <flags>...]
+##?     prof [<query>] [--selector <selector>] [--namespace <name> | --all-namespaces] [--timeout <duration>] [--non-root] [--keep-jobs] [--image <image>] [--context <name>] [-- <flags>...]
 ##?     prof --namespace <name> --pod <name> --container <name> [--timeout <duration>] [--non-root] [--keep-jobs] [--image <image>] [--context <name>] [-- <flags>...]
 ##?     prof --cleanup [--namespace <name> | --all-namespaces] [--context <name>]
 ##?

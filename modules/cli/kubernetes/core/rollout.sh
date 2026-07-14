@@ -8,13 +8,14 @@ function sx::k8s::rollout() {
   local -r namespace="${3:-}"
   local -r all_namespaces="${4:-false}"
   local -r context="${5:-}"
+  local -r selector="${6:-}"
 
   sx::k8s::validate_context "${context}"
   sx::k8s::ensure_api_access "${context}"
 
   if sx::os::is_command_available 'fzf'; then
     local -r options="$(
-      sx::k8s::rollout::resources "${query}" "${namespace}" "${all_namespaces}" true "${context}"
+      sx::k8s::rollout::resources "${query}" "${namespace}" "${all_namespaces}" true "${context}" "${selector}"
     )"
 
     if [ -z "${options}" ]; then
@@ -36,7 +37,7 @@ function sx::k8s::rollout() {
 
     local options
     readarray -t options < <(
-      sx::k8s::rollout::resources "${query}" "${namespace}" "${all_namespaces}" false "${context}"
+      sx::k8s::rollout::resources "${query}" "${namespace}" "${all_namespaces}" false "${context}" "${selector}"
     )
 
     if [ "${#options[@]}" -eq 0 ]; then
@@ -65,6 +66,7 @@ function sx::k8s::rollout::resources() {
   local -r all_namespaces="${3:-false}"
   local -r print_header="${4:-false}"
   local -r context="${5:-}"
+  local -r selector="${6:-}"
   local -r resources='deployments,daemonsets,statefulsets'
 
   sx::k8s::shared::resources \
@@ -73,7 +75,8 @@ function sx::k8s::rollout::resources() {
     "${namespace}" \
     "${all_namespaces}" \
     "${print_header}" \
-    "${context}"
+    "${context}" \
+    "${selector}"
 }
 
 function sx::k8s_command::rollout() {
@@ -98,12 +101,14 @@ function sx::k8s::rollout::restart() {
   local -r namespace="${2:-}"
   local -r all_namespaces="${3:-false}"
   local -r context="${4:-}"
+  local -r selector="${5:-}"
 
   sx::k8s::rollout 'restart' \
     "${query:-}" \
     "${namespace:-}" \
     "${all_namespaces:-false}" \
-    "${context:-}"
+    "${context:-}" \
+    "${selector:-}"
 }
 
 function sx::k8s::rollout::status() {
@@ -111,12 +116,14 @@ function sx::k8s::rollout::status() {
   local -r namespace="${2:-}"
   local -r all_namespaces="${3:-false}"
   local -r context="${4:-}"
+  local -r selector="${5:-}"
 
   sx::k8s::rollout 'status' \
     "${query:-}" \
     "${namespace:-}" \
     "${all_namespaces:-false}" \
-    "${context:-}"
+    "${context:-}" \
+    "${selector:-}"
 }
 
 function sx::k8s::rollout::history() {
@@ -124,10 +131,12 @@ function sx::k8s::rollout::history() {
   local -r namespace="${2:-}"
   local -r all_namespaces="${3:-false}"
   local -r context="${4:-}"
+  local -r selector="${5:-}"
 
   sx::k8s::rollout 'history' \
     "${query:-}" \
     "${namespace:-}" \
     "${all_namespaces:-false}" \
-    "${context:-}"
+    "${context:-}" \
+    "${selector:-}"
 }

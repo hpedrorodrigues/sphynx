@@ -11,9 +11,10 @@ source "${SPHYNX_NAMESPACE_DIR}/core/ls.sh"
 ##? Print one or many resources
 ##?
 ##? Usage:
-##?     ls [--namespace <name> | --all-namespaces] [--show-labels --output <format>] [--context <name>]
+##?     ls [--selector <selector>] [--show-labels] [--output <format>] [--namespace <name> | --all-namespaces] [--context <name>]
 ##?
 ##? Options:
+##?     --selector <selector>  Selector (label query) to filter on
 ##?     -n --namespace <name>  The namespace scope for requests
 ##?     -A --all-namespaces  List the resources across all namespaces
 ##?     -l --show-labels  Show all labels as the last column
@@ -23,6 +24,7 @@ source "${SPHYNX_NAMESPACE_DIR}/core/ls.sh"
 ##? Examples:
 ##?     ls --namespace kube-system
 ##?     ls --all-namespaces
+##?     ls --selector app=prometheus
 ##?     ls --show-labels
 ##?     ls --context staging
 
@@ -33,4 +35,5 @@ sx::k8s::list::resources \
   "${output:-default}" \
   "${all_namespaces:-false}" \
   "${show_labels:-false}" \
-  "${context:-}"
+  "${context:-}" \
+  "${selector:-}"

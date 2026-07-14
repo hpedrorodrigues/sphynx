@@ -6,12 +6,13 @@ function sx::k8s::shell() {
   local -r query="${1:-}"
   local -r use_ssm="${2:-false}"
   local -r context="${3:-}"
+  local -r selector="${4:-}"
 
   sx::k8s::validate_context "${context}"
   sx::k8s::ensure_api_access "${context}"
 
   if sx::os::is_command_available 'fzf'; then
-    local -r options="$(sx::k8s::nodes "${query}" true "${context}")"
+    local -r options="$(sx::k8s::nodes "${query}" true "${context}" "${selector}")"
 
     if [ -z "${options}" ]; then
       sx::log::fatal 'No nodes found'
@@ -31,7 +32,7 @@ function sx::k8s::shell() {
     export PS3=$'\n''Please, choose the node: '$'\n'
 
     local options
-    readarray -t options < <(sx::k8s::nodes "${query}" false "${context}")
+    readarray -t options < <(sx::k8s::nodes "${query}" false "${context}" "${selector}")
 
     if [ "${#options[@]}" -eq 0 ]; then
       sx::log::fatal 'No nodes found'

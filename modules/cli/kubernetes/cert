@@ -11,14 +11,15 @@ source "${SPHYNX_NAMESPACE_DIR}/core/cert.sh"
 ##? Inspect, check status, and renew cert-manager certificates
 ##?
 ##? Usage:
-##?     cert inspect [<query>] [--namespace <name> | --all-namespaces] [--context <name>]
+##?     cert inspect [<query>] [--selector <selector>] [--namespace <name> | --all-namespaces] [--context <name>]
 ##?     cert inspect --exact <name> [--namespace <name>] [--context <name>]
-##?     cert status [<query>] [--namespace <name> | --all-namespaces] [--context <name>]
+##?     cert status [<query>] [--selector <selector>] [--namespace <name> | --all-namespaces] [--context <name>]
 ##?     cert status --exact <name> [--namespace <name>] [--context <name>]
-##?     cert renew [<query>] [--namespace <name> | --all-namespaces] [--context <name>]
+##?     cert renew [<query>] [--selector <selector>] [--namespace <name> | --all-namespaces] [--context <name>]
 ##?     cert renew --exact <name> [--namespace <name>] [--context <name>]
 ##?
 ##? Options:
+##?     -l --selector <selector>  Selector (label query) to filter on
 ##?     -e --exact <name>  Name to be used without checking for it
 ##?     -n --namespace <name>  The namespace scope for requests
 ##?     -A --all-namespaces  All namespaces
@@ -27,6 +28,7 @@ source "${SPHYNX_NAMESPACE_DIR}/core/cert.sh"
 ##? Examples:
 ##?     cert inspect
 ##?     cert inspect my-tls
+##?     cert inspect --selector app=my-tls
 ##?     cert inspect my-tls --namespace istio-system
 ##?     cert inspect --all-namespaces
 ##?     cert inspect --exact my-tls-secret --namespace istio-system
@@ -46,19 +48,22 @@ if ${inspect:-false}; then
     "${exact:-}" \
     "${namespace:-}" \
     "${all_namespaces:-false}" \
-    "${context:-}"
+    "${context:-}" \
+    "${selector:-}"
 elif ${status:-false}; then
   sx::k8s::cert::status \
     "${query:-}" \
     "${exact:-}" \
     "${namespace:-}" \
     "${all_namespaces:-false}" \
-    "${context:-}"
+    "${context:-}" \
+    "${selector:-}"
 elif ${renew:-false}; then
   sx::k8s::cert::renew \
     "${query:-}" \
     "${exact:-}" \
     "${namespace:-}" \
     "${all_namespaces:-false}" \
-    "${context:-}"
+    "${context:-}" \
+    "${selector:-}"
 fi

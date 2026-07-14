@@ -4,6 +4,7 @@ function sx::k8s::list::resources() {
   sx::k8s::check_requirements
 
   local -r context="${5:-}"
+  local -r selector="${6:-}"
 
   sx::k8s::validate_context "${context}"
   sx::k8s::ensure_api_access "${context}"
@@ -18,6 +19,10 @@ function sx::k8s::list::resources() {
     flags+=' --all-namespaces'
   elif [ -n "${namespace}" ]; then
     flags+=" --namespace ${namespace}"
+  fi
+
+  if [ -n "${selector}" ]; then
+    flags+=" --selector ${selector}"
   fi
 
   if ${show_labels}; then

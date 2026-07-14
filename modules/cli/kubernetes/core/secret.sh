@@ -11,6 +11,7 @@ function sx::k8s::secret() {
   local -r list="${5:-false}"
   local -r key="${6:-}"
   local -r context="${7:-}"
+  local -r selector="${8:-}"
 
   sx::k8s::validate_context "${context}"
   sx::k8s::ensure_api_access "${context}"
@@ -20,10 +21,10 @@ function sx::k8s::secret() {
 
     sx::k8s_command::secret "${ns}" "${exact}" "${key}" "${context}"
   elif ${list}; then
-    sx::k8s_command::secret::list "${query}" "${namespace}" "${all_namespaces}" true "${context}"
+    sx::k8s_command::secret::list "${query}" "${namespace}" "${all_namespaces}" true "${context}" "${selector}"
   elif sx::os::is_command_available 'fzf'; then
     local -r options="$(
-      sx::k8s_command::secret::list "${query}" "${namespace}" "${all_namespaces}" true "${context}"
+      sx::k8s_command::secret::list "${query}" "${namespace}" "${all_namespaces}" true "${context}" "${selector}"
     )"
 
     if [ -z "${options}" ]; then
@@ -44,7 +45,7 @@ function sx::k8s::secret() {
 
     local options
     readarray -t options < <(
-      sx::k8s_command::secret::list "${query}" "${namespace}" "${all_namespaces}" false "${context}"
+      sx::k8s_command::secret::list "${query}" "${namespace}" "${all_namespaces}" false "${context}" "${selector}"
     )
 
     if [ "${#options[@]}" -eq 0 ]; then
@@ -72,13 +73,18 @@ function sx::k8s_command::secret::list() {
   local -r all_namespaces="${3:-false}"
   local -r print_header="${4:-false}"
   local -r context="${5:-}"
+  local -r selector="${6:-}"
 
   if ${all_namespaces}; then
-    local -r flags='--all-namespaces'
+    local flags='--all-namespaces'
   elif [ -n "${namespace}" ]; then
-    local -r flags="--namespace ${namespace}"
+    local flags="--namespace ${namespace}"
   else
-    local -r flags=''
+    local flags=''
+  fi
+
+  if [ -n "${selector}" ]; then
+    flags+=" --selector ${selector}"
   fi
 
   if [ -n "${context}" ]; then

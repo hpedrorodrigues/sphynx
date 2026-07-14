@@ -11,17 +11,19 @@ source "${SPHYNX_NAMESPACE_DIR}/core/rollout.sh"
 ##? Manage the rollout of a resource
 ##?
 ##? Usage:
-##?     rollout status [<query>] [--namespace <name> | --all-namespaces] [--context <name>]
-##?     rollout restart [<query>] [--namespace <name> | --all-namespaces] [--context <name>]
-##?     rollout history [<query>] [--namespace <name> | --all-namespaces] [--context <name>]
+##?     rollout status [<query>] [--selector <selector>] [--namespace <name> | --all-namespaces] [--context <name>]
+##?     rollout restart [<query>] [--selector <selector>] [--namespace <name> | --all-namespaces] [--context <name>]
+##?     rollout history [<query>] [--selector <selector>] [--namespace <name> | --all-namespaces] [--context <name>]
 ##?
 ##? Options:
+##?     -l --selector <selector>  Selector (label query) to filter on
 ##?     -n --namespace <name>  The namespace scope for requests
 ##?     -A --all-namespaces  All namespaces
 ##?     --context <name>  The name of the kubeconfig context to use
 ##?
 ##? Examples:
 ##?     rollout status
+##?     rollout status --selector app=ingress-controller
 ##?     rollout history --all-namespaces
 ##?     rollout restart --namespace ingress-controller
 ##?     rollout status --context staging
@@ -29,11 +31,11 @@ source "${SPHYNX_NAMESPACE_DIR}/core/rollout.sh"
 sx::parse_arguments "${@}"
 
 if ${status:-false}; then
-  sx::k8s::rollout::status "${query:-}" "${namespace:-}" "${all_namespaces:-false}" "${context:-}"
+  sx::k8s::rollout::status "${query:-}" "${namespace:-}" "${all_namespaces:-false}" "${context:-}" "${selector:-}"
 elif ${restart:-false}; then
-  sx::k8s::rollout::restart "${query:-}" "${namespace:-}" "${all_namespaces:-false}" "${context:-}"
+  sx::k8s::rollout::restart "${query:-}" "${namespace:-}" "${all_namespaces:-false}" "${context:-}" "${selector:-}"
 elif ${history:-false}; then
-  sx::k8s::rollout::history "${query:-}" "${namespace:-}" "${all_namespaces:-false}" "${context:-}"
+  sx::k8s::rollout::history "${query:-}" "${namespace:-}" "${all_namespaces:-false}" "${context:-}" "${selector:-}"
 else
   sx::error::illegal_arguments "${*}"
 fi

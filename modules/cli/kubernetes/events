@@ -11,11 +11,12 @@ source "${SPHYNX_NAMESPACE_DIR}/core/events.sh"
 ##? Print events for the cluster or a selected resource
 ##?
 ##? Usage:
-##?     events [<query>] [--namespace <name> | --all-namespaces] [--warnings] [--watch] [--context <name>]
+##?     events [<query>] [--selector <selector>] [--namespace <name> | --all-namespaces] [--warnings] [--watch] [--context <name>]
 ##?     events --list [--namespace <name> | --all-namespaces] [--warnings] [--watch] [--context <name>]
 ##?
 ##? Options:
 ##?     -l --list  Print all events without selecting a resource
+##?     --selector <selector>  Selector (label query) to filter the resource picker on
 ##?     -n --namespace <name>  The namespace scope for requests
 ##?     -A --all-namespaces  All namespaces
 ##?     --warnings  Show only events of type Warning
@@ -25,6 +26,7 @@ source "${SPHYNX_NAMESPACE_DIR}/core/events.sh"
 ##? Examples:
 ##?     events
 ##?     events kafka
+##?     events --selector app=kafka
 ##?     events --list --namespace kube-system
 ##?     events --list --all-namespaces --warnings
 ##?     events --list --watch
@@ -39,4 +41,5 @@ sx::k8s::events \
   "${list:-false}" \
   "${warnings:-false}" \
   "${watch:-false}" \
-  "${context:-}"
+  "${context:-}" \
+  "${selector:-}"
