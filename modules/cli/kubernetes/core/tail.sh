@@ -10,6 +10,7 @@ function sx::k8s::tail() {
   local -r all_namespaces="${3:-false}"
   local -r extra_flags="${4:-}"
   local -r context="${5:-}"
+  local -r selector="${6:-}"
 
   sx::k8s::validate_context "${context}"
   sx::k8s::ensure_api_access "${context}"
@@ -24,7 +25,7 @@ function sx::k8s::tail() {
 
   if sx::os::is_command_available 'fzf'; then
     local -r options="$(
-      sx::k8s::shared::resources "${SX_KUBERNETES_TAIL_RESOURCES}" "${query}" "${namespace}" "${all_namespaces}" true "${context}"
+      sx::k8s::shared::resources "${SX_KUBERNETES_TAIL_RESOURCES}" "${query}" "${namespace}" "${all_namespaces}" true "${context}" "${selector}"
     )"
 
     if [ -z "${options}" ]; then
@@ -46,7 +47,7 @@ function sx::k8s::tail() {
 
     local options
     readarray -t options < <(
-      sx::k8s::shared::resources "${SX_KUBERNETES_TAIL_RESOURCES}" "${query}" "${namespace}" "${all_namespaces}" false "${context}"
+      sx::k8s::shared::resources "${SX_KUBERNETES_TAIL_RESOURCES}" "${query}" "${namespace}" "${all_namespaces}" false "${context}" "${selector}"
     )
 
     if [ "${#options[@]}" -eq 0 ]; then

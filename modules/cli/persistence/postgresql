@@ -13,17 +13,18 @@ source "${SPHYNX_NAMESPACE_DIR}/core/postgresql.sh"
 ##?
 ##? Usage:
 ##?     postgresql connect --dburi <uri>
-##?     postgresql list_connected_pods --dburi <uri>
+##?     postgresql list_connected_pods --dburi <uri> [--wide]
 ##?     postgresql (dump | restore) --dburi <uri> --file <filename>
 ##?
 ##? Options:
 ##?     --dburi <uri>  Database URI to connect/dump/restore
 ##?                    Format: postgresql://<username>:<password>@<host>:<port>/<database-name>
 ##?     -f --file <filename>  Input/output file name
+##?     --wide  Print "backend type" and "query" columns
 ##?
 ##? Examples:
 ##?     postgresql connect --dburi 'postgresql://postgres:postgres@localhost:5432/postgres'
-##?     postgresql list_connected_pods --dburi 'postgresql://postgres:postgres@localhost:5432/postgres'
+##?     postgresql list_connected_pods --dburi 'postgresql://postgres:postgres@localhost:5432/postgres' --wide
 ##?     postgresql dump --dburi 'postgresql://qa:qa@localhost:5432/qa' --file qa.dump
 ##?     postgresql restore --file test.dump --dburi 'postgresql://test:test@localhost:5432/test'
 
@@ -32,7 +33,7 @@ sx::parse_arguments "${@}"
 if ${connect:-false}; then
   sx::postgresql::connect "${dburi:-}"
 elif ${list_connected_pods:-false}; then
-  sx::postgresql::list_connected_pods "${dburi:-}"
+  sx::postgresql::list_connected_pods "${dburi:-}" "${wide:-false}"
 elif ${dump:-false}; then
   sx::postgresql::dump "${dburi:-}" "${file:-}"
 elif ${restore:-false}; then

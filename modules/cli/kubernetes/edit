@@ -11,9 +11,10 @@ source "${SPHYNX_NAMESPACE_DIR}/core/edit.sh"
 ##? Edit a resource using the default editor
 ##?
 ##? Usage:
-##?     edit [<query>] [--namespace <name> | --all-namespaces] [--context <name>]
+##?     edit [<query>] [--selector <selector>] [--namespace <name> | --all-namespaces] [--context <name>]
 ##?
 ##? Options:
+##?     -l --selector <selector>  Selector (label query) to filter on
 ##?     -n --namespace <name>  The namespace scope for requests
 ##?     -A --all-namespaces  All namespaces
 ##?     --context <name>  The name of the kubeconfig context to use
@@ -21,10 +22,11 @@ source "${SPHYNX_NAMESPACE_DIR}/core/edit.sh"
 ##? Examples:
 ##?     edit
 ##?     edit state-metrics
+##?     edit --selector app=state-metrics
 ##?     edit --namespace kube-system
 ##?     edit --all-namespaces
 ##?     edit state-metrics --context staging
 
 sx::parse_arguments "${@}"
 
-sx::k8s::edit "${query:-}" "${namespace:-}" "${all_namespaces:-false}" "${context:-}"
+sx::k8s::edit "${query:-}" "${namespace:-}" "${all_namespaces:-false}" "${context:-}" "${selector:-}"

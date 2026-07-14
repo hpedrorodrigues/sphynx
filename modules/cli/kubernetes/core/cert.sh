@@ -50,6 +50,7 @@ function sx::k8s::cert::pick() {
   local -r namespace="${6:-}"
   local -r all_namespaces="${7:-false}"
   local -r context="${8:-}"
+  local -r selector="${9:-}"
 
   sx::k8s::validate_context "${context}"
   sx::k8s::ensure_api_access "${context}"
@@ -60,7 +61,7 @@ function sx::k8s::cert::pick() {
     "${exec_fn}" "${ns}" "${exact}" "${context}"
   elif sx::os::is_command_available 'fzf'; then
     local -r options="$(
-      sx::k8s::cert::list "${resource}" "${template}" "${query}" "${namespace}" "${all_namespaces}" true "${context}"
+      sx::k8s::cert::list "${resource}" "${template}" "${query}" "${namespace}" "${all_namespaces}" true "${context}" "${selector}"
     )"
 
     if [ -z "${options}" ]; then
@@ -81,7 +82,7 @@ function sx::k8s::cert::pick() {
 
     local options
     readarray -t options < <(
-      sx::k8s::cert::list "${resource}" "${template}" "${query}" "${namespace}" "${all_namespaces}" false "${context}"
+      sx::k8s::cert::list "${resource}" "${template}" "${query}" "${namespace}" "${all_namespaces}" false "${context}" "${selector}"
     )
 
     if [ "${#options[@]}" -eq 0 ]; then
@@ -111,13 +112,18 @@ function sx::k8s::cert::list() {
   local -r all_namespaces="${5:-false}"
   local -r print_header="${6:-false}"
   local -r context="${7:-}"
+  local -r selector="${8:-}"
 
   if ${all_namespaces}; then
-    local -r flags='--all-namespaces'
+    local flags='--all-namespaces'
   elif [ -n "${namespace}" ]; then
-    local -r flags="--namespace ${namespace}"
+    local flags="--namespace ${namespace}"
   else
-    local -r flags=''
+    local flags=''
+  fi
+
+  if [ -n "${selector}" ]; then
+    flags+=" --selector ${selector}"
   fi
 
   if [ -n "${context}" ]; then

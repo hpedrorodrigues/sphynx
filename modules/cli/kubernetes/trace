@@ -11,18 +11,22 @@ source "${SPHYNX_NAMESPACE_DIR}/core/trace.sh"
 ##? Traces status of services and deployments
 ##?
 ##? Usage:
-##?     trace [<query>] [--namespace <name> | --all-namespaces]
+##?     trace [<query>] [--selector <selector>] [--namespace <name> | --all-namespaces] [--context <name>]
 ##?
 ##? Options:
+##?     -l --selector <selector>  Selector (label query) to filter on
 ##?     -n --namespace <name>  The namespace scope for requests
 ##?     -A --all-namespaces  All namespaces
+##?     --context <name>  The name of the kubeconfig context to use
 ##?
 ##? Examples:
 ##?     trace
 ##?     trace prometheus
+##?     trace --selector app=prometheus
 ##?     trace --namespace kube-system
 ##?     trace --all-namespaces
+##?     trace prometheus --context staging
 
 sx::parse_arguments "${@}"
 
-sx::k8s::trace "${query:-}" "${namespace:-}" "${all_namespaces:-false}"
+sx::k8s::trace "${query:-}" "${namespace:-}" "${all_namespaces:-false}" "${context:-}" "${selector:-}"

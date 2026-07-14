@@ -10,6 +10,7 @@ function sx::k8s::events() {
   local -r warnings="${5:-false}"
   local -r watch="${6:-false}"
   local -r context="${7:-}"
+  local -r selector="${8:-}"
 
   sx::k8s::validate_context "${context}"
   sx::k8s::ensure_api_access "${context}"
@@ -18,7 +19,7 @@ function sx::k8s::events() {
     sx::k8s_command::events "${namespace}" "${all_namespaces}" '' '' "${warnings}" "${watch}" "${context}"
   elif sx::os::is_command_available 'fzf'; then
     local -r options="$(
-      sx::k8s::resources "${query}" "${namespace}" "${all_namespaces}" true "${context}"
+      sx::k8s::resources "${query}" "${namespace}" "${all_namespaces}" true "${context}" "${selector}"
     )"
 
     if [ -z "${options}" ]; then
@@ -40,7 +41,7 @@ function sx::k8s::events() {
 
     local options
     readarray -t options < <(
-      sx::k8s::resources "${query}" "${namespace}" "${all_namespaces}" false "${context}"
+      sx::k8s::resources "${query}" "${namespace}" "${all_namespaces}" false "${context}" "${selector}"
     )
 
     if [ "${#options[@]}" -eq 0 ]; then

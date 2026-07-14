@@ -7,13 +7,14 @@ function sx::k8s::edit() {
   local -r namespace="${2:-}"
   local -r all_namespaces="${3:-false}"
   local -r context="${4:-}"
+  local -r selector="${5:-}"
 
   sx::k8s::validate_context "${context}"
   sx::k8s::ensure_api_access "${context}"
 
   if sx::os::is_command_available 'fzf'; then
     local -r options="$(
-      sx::k8s::editable_resources "${query}" "${namespace}" "${all_namespaces}" true "${context}"
+      sx::k8s::editable_resources "${query}" "${namespace}" "${all_namespaces}" true "${context}" "${selector}"
     )"
 
     if [ -z "${options}" ]; then
@@ -35,7 +36,7 @@ function sx::k8s::edit() {
 
     local options
     readarray -t options < <(
-      sx::k8s::editable_resources "${query}" "${namespace}" "${all_namespaces}" false "${context}"
+      sx::k8s::editable_resources "${query}" "${namespace}" "${all_namespaces}" false "${context}" "${selector}"
     )
 
     if [ "${#options[@]}" -eq 0 ]; then

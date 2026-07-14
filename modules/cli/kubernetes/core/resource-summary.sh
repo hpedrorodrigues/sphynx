@@ -144,6 +144,10 @@ function sx::k8s::resource_summary::watch() {
     fi
   else
     args='nodes'
+
+    if [ -n "${selector}" ]; then
+      args+=" --selector ${selector}"
+    fi
   fi
 
   if [ -n "${query}" ]; then
@@ -169,14 +173,18 @@ function sx::k8s::nodes::resource_summary() {
 
   local -r query="${1:-}"
   local -r context="${2:-}"
+  local -r selector="${3:-}"
 
   sx::k8s::validate_context "${context}"
   sx::k8s::ensure_api_access "${context}"
 
+  local flags=''
   if [ -n "${context}" ]; then
-    local -r context_flags="--context ${context}"
-  else
-    local -r context_flags=''
+    flags+=" --context ${context}"
+  fi
+
+  if [ -n "${selector}" ]; then
+    flags+=" --selector ${selector}"
   fi
 
   if [ -n "${query}" ]; then
@@ -200,7 +208,7 @@ function sx::k8s::nodes::resource_summary() {
 
   # shellcheck disable=SC2086  # quote this to prevent word splitting
   local -r raw_node_output="$(
-    sx::k8s::cli ${context_flags} get nodes \
+    sx::k8s::cli ${flags} get nodes \
       --output go-template \
       --template="$(sx::k8s::clear_template "${template}")" \
       | sort -u \
@@ -208,7 +216,7 @@ function sx::k8s::nodes::resource_summary() {
       | grep -E "${query_pattern}" 2>/dev/null
   )"
   # shellcheck disable=SC2086  # quote this to prevent word splitting
-  local -r top_output="$(sx::k8s::cli ${context_flags} top nodes --no-headers 2>/dev/null)"
+  local -r top_output="$(sx::k8s::cli ${flags} top nodes --no-headers 2>/dev/null)"
 
   local resources='NODE,CPU (USAGE),CPU (CAPACITY),MEMORY (USAGE),MEMORY (CAPACITY),RUNTIME,OS,IMAGE,ARCH,KERNEL\n\n'
   while IFS='' read -r node_output; do

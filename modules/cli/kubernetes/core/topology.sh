@@ -9,6 +9,7 @@ function sx::k8s::topology() {
   local -r show_resource_usage="${4:-false}"
   local -r show_labels="${5:-false}"
   local -r context="${6:-}"
+  local -r namespace="${7:-}"
 
   sx::k8s::validate_context "${context}"
   sx::k8s::ensure_api_access "${context}"
@@ -21,7 +22,7 @@ function sx::k8s::topology() {
 
   # shellcheck disable=SC2086  # Double quote to prevent globbing and word splitting
   local -r assignments="$(
-    sx::k8s::topology::assignments "${query}" "${selector}" "${all_namespaces}" "${context}"
+    sx::k8s::topology::assignments "${query}" "${selector}" "${all_namespaces}" "${context}" "${namespace}"
   )"
 
   if [ -z "${assignments}" ]; then
@@ -43,7 +44,7 @@ function sx::k8s::topology() {
     # shellcheck disable=SC2086  # quote this to prevent word splitting
     local -r top_nodes="$(sx::k8s::cli ${context_flags} top nodes --no-headers 2>/dev/null)"
     # shellcheck disable=SC2086  # Double quote to prevent globbing and word splitting
-    local -r top_pods="$(sx::k8s::topology::top_pods "${all_namespaces}" "${selector}" "${context}")"
+    local -r top_pods="$(sx::k8s::topology::top_pods "${all_namespaces}" "${selector}" "${context}" "${namespace}")"
 
     # shellcheck disable=SC2068  # Double quote array expansions
     for ip in ${instance_ips[@]}; do
@@ -94,10 +95,13 @@ function sx::k8s::topology::assignments() {
   local -r selector="${2:-}"
   local -r all_namespaces="${3:-false}"
   local -r context="${4:-}"
+  local -r namespace="${5:-}"
 
   local flags=''
   if ${all_namespaces}; then
     flags+=' --all-namespaces'
+  elif [ -n "${namespace}" ]; then
+    flags+=" --namespace ${namespace}"
   fi
 
   if [ -n "${selector}" ]; then
@@ -126,10 +130,13 @@ function sx::k8s::topology::top_pods() {
   local -r all_namespaces="${1:-false}"
   local -r selector="${2:-}"
   local -r context="${3:-}"
+  local -r namespace="${4:-}"
 
   local flags=''
   if ${all_namespaces}; then
     flags+=' --all-namespaces'
+  elif [ -n "${namespace}" ]; then
+    flags+=" --namespace ${namespace}"
   fi
 
   if [ -n "${selector}" ]; then

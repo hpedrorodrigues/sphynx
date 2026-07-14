@@ -11,9 +11,10 @@ source "${SPHYNX_NAMESPACE_DIR}/core/describe.sh"
 ##? Show details of a specific resource
 ##?
 ##? Usage:
-##?     describe [<query>] [--namespace <name> | --all-namespaces] [--context <name>]
+##?     describe [<query>] [--selector <selector>] [--namespace <name> | --all-namespaces] [--context <name>]
 ##?
 ##? Options:
+##?     -l --selector <selector>  Selector (label query) to filter on
 ##?     -n --namespace <name>  The namespace scope for requests
 ##?     -A --all-namespaces  All namespaces
 ##?     --context <name>  The name of the kubeconfig context to use
@@ -21,10 +22,11 @@ source "${SPHYNX_NAMESPACE_DIR}/core/describe.sh"
 ##? Examples:
 ##?     describe
 ##?     describe prometheus
+##?     describe --selector app=prometheus
 ##?     describe --namespace kube-system
 ##?     describe --all-namespaces
 ##?     describe prometheus --context staging
 
 sx::parse_arguments "${@}"
 
-sx::k8s::describe "${query:-}" "${namespace:-}" "${all_namespaces:-false}" "${context:-}"
+sx::k8s::describe "${query:-}" "${namespace:-}" "${all_namespaces:-false}" "${context:-}" "${selector:-}"

@@ -11,7 +11,7 @@ source "${SPHYNX_NAMESPACE_DIR}/core/debug.sh"
 ##? Debug cluster resources using interactive ephemeral containers
 ##?
 ##? Usage:
-##?     debug [<query>] [-l <selector>] [--namespace <name> | --all-namespaces] [--image <image>] [--user <uid>] [--group <gid>] [--restricted] [--context <name>]
+##?     debug [<query>] [--selector <selector>] [--namespace <name> | --all-namespaces] [--image <image>] [--user <uid>] [--group <gid>] [--restricted] [--context <name>]
 ##?     debug --namespace <name> --pod <name> --container <name> [--image <image>] [--user <uid>] [--group <gid>] [--restricted] [--context <name>]
 ##?
 ##? Options:

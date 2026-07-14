@@ -11,7 +11,7 @@ source "${SPHYNX_NAMESPACE_DIR}/core/network.sh"
 ##? Capture and analyze network traffic from Kubernetes pods
 ##?
 ##? Usage:
-##?     network dump-traffic [<query>] [-l <selector>] [--namespace <name> | --all-namespaces] [--duration <seconds>] [--output-dir <path>] [--image <image>] [--context <name>] [-- <flags>...]
+##?     network dump-traffic [<query>] [--selector <selector>] [--namespace <name> | --all-namespaces] [--duration <seconds>] [--output-dir <path>] [--image <image>] [--context <name>] [-- <flags>...]
 ##?     network dump-traffic --namespace <name> --pod <name> --container <name> [--duration <seconds>] [--output-dir <path>] [--image <image>] [--context <name>] [-- <flags>...]
 ##?
 ##? Options:

@@ -11,7 +11,7 @@ source "${SPHYNX_NAMESPACE_DIR}/core/exec.sh"
 ##? Execute custom commands in a container
 ##?
 ##? Usage:
-##?     exec [<query>] [-l <selector>] [--namespace <name> | --all-namespaces] [--command <command>] [--context <name>]
+##?     exec [<query>] [--selector <selector>] [--namespace <name> | --all-namespaces] [--command <command>] [--context <name>]
 ##?     exec --namespace <name> --pod <name> --container <name> [--command <command>] [--context <name>]
 ##?
 ##? Options:
