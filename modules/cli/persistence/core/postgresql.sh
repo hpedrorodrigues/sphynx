@@ -63,8 +63,18 @@ function sx::postgresql::list_connected_pods() {
   sx::k8s::check_requirements
 
   local -r db_uri="${1}"
-  local -r db_query='SELECT client_addr, datname, usename, application_name, pid, backend_type, query FROM pg_stat_activity ORDER BY datname, usename, application_name;'
+  local -r wide="${2:-false}"
   local -r empty_value='<no value>'
+  # It's necessary to ensure commas/quotes/spaces in result rows don't split across columns
+  local -r sep=$'\x1f'
+
+  local db_columns="client_addr, datname, usename, NULLIF(application_name, '') AS application_name, pid"
+  local result_header="POD${sep}ADDRESS${sep}DATABASE${sep}USER${sep}APPLICATION${sep}PID"
+  if ${wide}; then
+    db_columns+=", backend_type, query"
+    result_header+="${sep}BACKEND TYPE${sep}QUERY"
+  fi
+  local -r db_query="SELECT ${db_columns} FROM pg_stat_activity ORDER BY datname, usename, application_name;"
 
   local -r pods="$(
     sx::k8s::cli get pods \
@@ -73,33 +83,24 @@ function sx::postgresql::list_connected_pods() {
       --output custom-columns=NAME:.metadata.name,ADDRESS:.status.podIP
   )"
 
-  local result='POD,ADDRESS,DATABASE,USER,APPLICATION,PID,BACKEND TYPE,QUERY\n'
-  while IFS='' read -r csv_row; do
-    local truncated_csv_row="${csv_row:0:100}"
-    local addr="$(echo "${csv_row}" | awk -F, '{ print $1 }')"
-    if [ "${addr}" == '' ]; then
-      result+="${empty_value},${truncated_csv_row}\n"
-      continue
-    fi
-    local pod_name="$(echo "${pods}" | grep "${addr}" | awk '{ print $1 }')"
-
-    if [ "${pod_name}" == '' ]; then
-      result+="${empty_value},${truncated_csv_row}\n"
-    else
-      result+="${pod_name},${truncated_csv_row}\n"
-    fi
+  local result="${result_header}"$'\n'
+  while IFS='' read -r row; do
+    local client_address="${row%%"${sep}"*}"
+    local pod_name="$(
+      echo "${pods}" \
+        | awk -v client_address="${client_address}" '$2 == client_address { print $1; exit }'
+    )"
+    result+="${pod_name:-${empty_value}}${sep}${row}"$'\n'
   done < <(
     PGAPPNAME="${SX_APPLICATION_NAME}" psql \
+      --no-psqlrc \
       --command "${db_query}" \
       --tuples-only \
       --no-align \
-      --csv \
-      "${db_uri}" \
-      | sed "s/^,/${empty_value},/" \
-      | sed "s/,,/,${empty_value},/g" \
-      | sed "s/,,/,${empty_value},/g" \
-      | sed "s/,$/,${empty_value}/"
+      --field-separator="${sep}" \
+      --pset="null=${empty_value}" \
+      "${db_uri}"
   )
 
-  echo -e "${result}" | column -t -s ','
+  printf '%s' "${result}" | column -t -s "${sep}"
 }
