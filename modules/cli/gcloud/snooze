@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNX_CLI_DIR}/.internal/all.sh"
+source "${SPHYNX_NAMESPACE_DIR}/shared/shared.sh"
+source "${SPHYNX_NAMESPACE_DIR}/core/snooze.sh"
+
+##? Manage Cloud Monitoring snoozes
+##?
+##? Usage:
+##?     snooze create [<query>] --name <name> (--duration <duration> | --start <start> --end <end>) [--filter <filter>] [--project <id>]
+##?     snooze list [--active] [--project <id>]
+##?
+##? Options:
+##?     -f --filter <filter>  Label filter scoping the snooze within the policy (e.g. metric.labels.app="x")
+##?     -d --duration <duration>  Window length from now: 30m, 2h, 7d, 1w
+##?     --start <start>  RFC3339 start time (use together with --end)
+##?     --end <end>  RFC3339 end time (use together with --start)
+##?     -n --name <name>  Display name for the snooze
+##?     -a --active  Only show snoozes that are active right now
+##?     -p --project <id>  The Google Cloud project ID to use instead of the current one
+##?
+##? Examples:
+##?     snooze create 892367867758867042 --name maintenance --duration 2h
+##?     snooze create jvm --name "silence oom" --filter metric.labels.app="my-app" --duration 7d
+##?     snooze create --name window --start 2026-07-20T00:00:00Z --end 2026-07-27T00:00:00Z
+##?     snooze list
+##?     snooze list --active
+
+sx::parse_arguments "${@}"
+
+if ${create:-false}; then
+  sx::gcloud::snooze::create \
+    "${query:-}" \
+    "${filter:-}" \
+    "${duration:-}" \
+    "${start:-}" \
+    "${end:-}" \
+    "${name:-}" \
+    "${project:-}"
+elif ${list:-false}; then
+  sx::gcloud::snooze::list \
+    "${active:-false}" \
+    "${project:-}"
+else
+  sx::error::illegal_arguments "${*}"
+fi

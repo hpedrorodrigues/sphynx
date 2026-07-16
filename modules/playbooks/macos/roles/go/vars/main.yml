@@ -1,0 +1,5 @@
+workspace: '{{ ansible_facts["user_dir"] }}/.go' # GOPATH
+
+packages:
+  - name: amtool
+    repository: 'github.com/prometheus/alertmanager/cmd/amtool@latest'

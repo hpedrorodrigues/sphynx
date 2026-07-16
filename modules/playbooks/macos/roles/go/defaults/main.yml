@@ -1,0 +1,1 @@
+go_bin: '{{ "/opt/homebrew/bin/go" if ansible_architecture == "arm64" else "/usr/local/bin/go" }}'
