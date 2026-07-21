@@ -10,7 +10,7 @@ jobs:
       contents: read
       pull-requests: write
     steps:
-      - uses: actions/labeler@v6
+      - uses: actions/labeler@v7
         id: labeler
         with:
           sync-labels: true
