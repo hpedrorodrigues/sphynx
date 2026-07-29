@@ -8,11 +8,11 @@ source "${SPHYNX_CLI_DIR}/.internal/all.sh"
 source "${SPHYNX_NAMESPACE_DIR}/shared/shared.sh"
 source "${SPHYNX_NAMESPACE_DIR}/core/jvm.sh"
 
-##? Generate heap dumps and thread dumps from JVM processes running in Kubernetes pods
+##? Generate heap dumps, thread dumps and fiber dumps from JVM processes running in Kubernetes pods
 ##?
 ##? Usage:
-##?     jvm [<query>] [--selector <selector>] [--namespace <name> | --all-namespaces] [--heapdump] [--threaddump] [--output-dir <path>] [--context <name>]
-##?     jvm --namespace <name> --pod <name> --container <name> [--heapdump] [--threaddump] [--output-dir <path>] [--context <name>]
+##?     jvm [<query>] [--selector <selector>] [--namespace <name> | --all-namespaces] [--heapdump] [--threaddump] [--fiberdump] [--force] [--output-dir <path>] [--context <name>]
+##?     jvm --namespace <name> --pod <name> --container <name> [--heapdump] [--threaddump] [--fiberdump] [--force] [--output-dir <path>] [--context <name>]
 ##?
 ##? Options:
 ##?     -l --selector <selector>  Selector (label query) to filter on
@@ -22,6 +22,8 @@ source "${SPHYNX_NAMESPACE_DIR}/core/jvm.sh"
 ##?     -c --container <name>  The container name
 ##?     --heapdump  Generate a heap dump
 ##?     --threaddump  Generate a thread dump
+##?     --fiberdump  Generate a Cats Effect 3 fiber dump (via SIGUSR1)
+##?     --force  Send SIGUSR1 even if the JVM does not appear to handle it (--fiberdump)
 ##?     --output-dir <path>  Local directory to store the dump file
 ##?     --context <name>  The name of the kubeconfig context to use
 ##?
@@ -29,6 +31,7 @@ source "${SPHYNX_NAMESPACE_DIR}/core/jvm.sh"
 ##?     jvm
 ##?     jvm --heapdump
 ##?     jvm kafka --threaddump
+##?     jvm distro-setup --fiberdump
 ##?     jvm --selector app=kafka --heapdump --output-dir /tmp/dumps
 ##?     jvm --namespace kafka --pod kafka-0 --container kafka --threaddump
 ##?     jvm kafka --context staging
@@ -36,7 +39,7 @@ source "${SPHYNX_NAMESPACE_DIR}/core/jvm.sh"
 sx::parse_arguments "${@}"
 
 readonly generate_heapdump="$(
-  [ "${heapdump:-false}" = 'false' ] && [ "${threaddump:-false}" = 'false' ] \
+  [ "${heapdump:-false}" = 'false' ] && [ "${threaddump:-false}" = 'false' ] && [ "${fiberdump:-false}" = 'false' ] \
     && echo 'true' \
     || echo "${heapdump:-false}"
 )"
@@ -49,6 +52,8 @@ sx::k8s::jvm \
   "${container:-}" \
   "${generate_heapdump}" \
   "${threaddump:-false}" \
+  "${fiberdump:-false}" \
   "${output_dir:-}" \
   "${all_namespaces:-false}" \
-  "${context:-}"
+  "${context:-}" \
+  "${force:-false}"

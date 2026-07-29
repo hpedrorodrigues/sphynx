@@ -10,15 +10,17 @@ function sx::k8s::jvm() {
   local -r container="${5:-}"
   local -r heapdump="${6:-true}"
   local -r threaddump="${7:-false}"
-  local -r output_dir="${8:-}"
-  local -r all_namespaces="${9:-false}"
-  local -r context="${10:-}"
+  local -r fiberdump="${8:-false}"
+  local -r output_dir="${9:-}"
+  local -r all_namespaces="${10:-false}"
+  local -r context="${11:-}"
+  local -r force="${12:-false}"
 
   sx::k8s::validate_context "${context}"
   sx::k8s::ensure_api_access "${context}"
 
   if [ -n "${namespace}" ] && [ -n "${pod}" ] && [ -n "${container}" ]; then
-    sx::k8s_command::jvm "${namespace}" "${pod}" "${container}" "${heapdump}" "${threaddump}" "${output_dir}" "${context}"
+    sx::k8s_command::jvm "${namespace}" "${pod}" "${container}" "${heapdump}" "${threaddump}" "${fiberdump}" "${output_dir}" "${context}" "${force}"
   elif sx::os::is_command_available 'fzf'; then
     local -r options="$(
       sx::k8s::running_pods "${query}" "${selector}" "${namespace}" "${all_namespaces}" true "${context}"
@@ -36,7 +38,7 @@ function sx::k8s::jvm() {
       local -r name="$(echo "${selected}" | awk '{ print $2 }')"
       local -r container_name="$(echo "${selected}" | awk '{ print $3 }')"
 
-      sx::k8s_command::jvm "${ns}" "${name}" "${container_name}" "${heapdump}" "${threaddump}" "${output_dir}" "${context}"
+      sx::k8s_command::jvm "${ns}" "${name}" "${container_name}" "${heapdump}" "${threaddump}" "${fiberdump}" "${output_dir}" "${context}" "${force}"
     fi
   else
     export PS3=$'\n''Please, choose the pod: '$'\n'
@@ -60,7 +62,7 @@ function sx::k8s::jvm() {
       local -r name="$(echo "${selected}" | awk '{ print $2 }')"
       local -r container_name="$(echo "${selected}" | awk '{ print $3 }')"
 
-      sx::k8s_command::jvm "${ns}" "${name}" "${container_name}" "${heapdump}" "${threaddump}" "${output_dir}" "${context}"
+      sx::k8s_command::jvm "${ns}" "${name}" "${container_name}" "${heapdump}" "${threaddump}" "${fiberdump}" "${output_dir}" "${context}" "${force}"
       break
     done
   fi
@@ -72,8 +74,10 @@ function sx::k8s_command::jvm() {
   local -r container="${3}"
   local -r heapdump="${4}"
   local -r threaddump="${5}"
-  local -r output_dir="${6:-}"
-  local -r context="${7:-}"
+  local -r fiberdump="${6}"
+  local -r output_dir="${7:-}"
+  local -r context="${8:-}"
+  local -r force="${9:-false}"
 
   local -r pid="$(sx::k8s_command::jvm::detect_pid "${ns}" "${name}" "${container}" "${context}")"
 
@@ -89,6 +93,10 @@ function sx::k8s_command::jvm() {
 
   if ${threaddump}; then
     sx::k8s_command::jvm::threaddump "${ns}" "${name}" "${container}" "${pid}" "${timestamp}" "${output_dir}" "${context}"
+  fi
+
+  if ${fiberdump}; then
+    sx::k8s_command::jvm::fiberdump "${ns}" "${name}" "${container}" "${pid}" "${timestamp}" "${output_dir}" "${context}" "${force}"
   fi
 }
 
@@ -245,7 +253,7 @@ function sx::k8s_command::jvm::threaddump() {
   elif sx::k8s::cli ${context_flags} exec --namespace "${ns}" "${name}" --container "${container}" -- \
     sh -c "kill -3 ${pid}" &>/dev/null; then
 
-    if sx::k8s_command::jvm::threaddump::capture_from_logs "${ns}" "${name}" "${container}" "${local_file}" "${context}"; then
+    if sx::k8s_command::jvm::capture_dump_from_logs "${ns}" "${name}" "${container}" "${local_file}" "${context}" 'Full thread dump' '^JNI global refs:'; then
       sx::log::info "Thread dump triggered using \"kill -3\", captured from the pod logs and saved to: ${local_file}."
     else
       sx::log::info 'Thread dump triggered using "kill -3". Output is in the JVM stdout/logs; it could not be auto-captured to a file.'
@@ -266,12 +274,14 @@ function sx::k8s_command::jvm::threaddump() {
   fi
 }
 
-function sx::k8s_command::jvm::threaddump::capture_from_logs() {
+function sx::k8s_command::jvm::capture_dump_from_logs() {
   local -r ns="${1}"
   local -r name="${2}"
   local -r container="${3}"
   local -r local_file="${4}"
   local -r context="${5:-}"
+  local -r start_re="${6}"
+  local -r end_re="${7}"
 
   if [ -n "${context}" ]; then
     local -r context_flags="--context ${context}"
@@ -279,20 +289,22 @@ function sx::k8s_command::jvm::threaddump::capture_from_logs() {
     local -r context_flags=''
   fi
 
-  # SIGQUIT prints the thread dump to the JVM's stdout (the pod logs), not a file.
-  # awk keeps the LAST complete "Full thread dump ... JNI global refs:" block; our
-  # just-triggered dump is the newest, so it is the block captured once it flushes.
+  # Signal-triggered dumps (kill -3 / SIGUSR1) print to the JVM's stdout/stderr, i.e.
+  # the pod logs, not a file. awk keeps the LAST complete "start_re ... end_re" block;
+  # our just-triggered dump is the newest, so it is the block captured once it flushes.
+  # The buffer resets only when not already capturing, so this works whether the start
+  # marker appears once per dump (thread dump) or many times (fiber dump).
   # shellcheck disable=SC2016  # awk uses its own field vars ($0), not shell expansion
   local -r extractor='
-    /Full thread dump/ { cap = 1; buf = $0 ORS; next }
+    $0 ~ start_re { if (!cap) { cap = 1; buf = "" } buf = buf $0 ORS; next }
     cap { buf = buf $0 ORS }
-    cap && /^JNI global refs:/ { result = buf; cap = 0 }
+    cap && $0 ~ end_re { result = buf; cap = 0 }
     END { if (cap) result = buf; printf "%s", result }
   '
 
   local dump=''
   for _ in 1 2 3 4 5 6; do
-    sleep 1 # let the JVM flush the dump to stdout before reading
+    sleep 1 # let the JVM flush the dump to the logs before reading
 
     # shellcheck disable=SC2086  # quote this to prevent word splitting
     dump="$(
@@ -300,11 +312,11 @@ function sx::k8s_command::jvm::threaddump::capture_from_logs() {
         --namespace "${ns}" \
         --container "${container}" \
         --since '30s' 2>/dev/null \
-        | awk "${extractor}" \
+        | awk -v start_re="${start_re}" -v end_re="${end_re}" "${extractor}" \
         || true
     )"
 
-    printf '%s' "${dump}" | grep -q '^JNI global refs:' && break
+    printf '%s' "${dump}" | grep -qE "${end_re}" && break
   done
 
   if [ -z "${dump}" ]; then
@@ -312,4 +324,61 @@ function sx::k8s_command::jvm::threaddump::capture_from_logs() {
   fi
 
   printf '%s\n' "${dump}" >"${local_file}"
+}
+
+function sx::k8s_command::jvm::fiberdump() {
+  local -r ns="${1}"
+  local -r name="${2}"
+  local -r container="${3}"
+  local -r pid="${4}"
+  local -r timestamp="${5}"
+  local -r output_dir="${6:-}"
+  local -r context="${7:-}"
+  local -r force="${8:-false}"
+
+  if [ -n "${context}" ]; then
+    local -r context_flags="--context ${context}"
+  else
+    local -r context_flags=''
+  fi
+
+  local -r filename="fiberdump-${name}-${timestamp}.txt"
+
+  if [ -n "${output_dir}" ]; then
+    local -r local_file="${output_dir}/${filename}"
+  else
+    local -r local_file="./${filename}"
+  fi
+
+  # Safety gate: SIGUSR1's default disposition is to terminate the process, so it is
+  # only safe to send when the JVM has registered a USR1 handler (as Cats Effect 3
+  # does). /proc/<pid>/status "SigCgt" is the caught-signals bitmask; USR1 is signal
+  # 10, i.e. bit 9 (0x200). Refuse unless the bit is set, or --force is given.
+  if ! ${force}; then
+    # shellcheck disable=SC2086  # quote this to prevent word splitting
+    local -r sigcgt="$(
+      sx::k8s::cli ${context_flags} exec --namespace "${ns}" "${name}" --container "${container}" -- \
+        sh -c "grep '^SigCgt' /proc/${pid}/status" 2>/dev/null | awk '{ print $2 }' \
+        || true
+    )"
+
+    if [ -z "${sigcgt}" ] || ! ((0x${sigcgt} & 0x200)); then
+      sx::log::fatal "Refusing to send SIGUSR1 to pod \"${name}/${container}\": the JVM does not appear to handle USR1 (SigCgt=${sigcgt:-unknown}), so the signal could terminate it.\nFiber dumps require a Cats Effect 3 application. Re-run with \"--force\" to override."
+    fi
+  fi
+
+  sx::log::info "Generating fiber dump for pod \"${name}/${container}\" (PID: ${pid})..."
+
+  # shellcheck disable=SC2086  # quote this to prevent word splitting
+  if ! sx::k8s::cli ${context_flags} exec --namespace "${ns}" "${name}" --container "${container}" -- \
+    sh -c "kill -s USR1 ${pid}" &>/dev/null; then
+
+    sx::log::fatal "Failed to trigger fiber dump (SIGUSR1) in pod \"${name}/${container}\"."
+  fi
+
+  if sx::k8s_command::jvm::capture_dump_from_logs "${ns}" "${name}" "${container}" "${local_file}" "${context}" '^cats.effect.IOFiber@' '^Global: enqueued'; then
+    sx::log::info "Fiber dump triggered using SIGUSR1, captured from the pod logs and saved to: ${local_file}."
+  else
+    sx::log::info 'Fiber dump triggered using SIGUSR1. Output is in the JVM stderr/logs; it could not be auto-captured to a file (is this a Cats Effect 3 app with active fibers?).'
+  fi
 }
