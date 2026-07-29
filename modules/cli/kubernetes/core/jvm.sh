@@ -140,6 +140,19 @@ function sx::k8s_command::jvm::detect_pid() {
     return
   fi
 
+  # Last resort: scan /proc for a process whose comm is "java". Works on minimal JRE images that ship none of "jcmd", "pgrep" or "ps".
+  # shellcheck disable=SC2016,SC2086  # expressions don't expand in single quotes; quote this to prevent word splitting
+  local -r proc_pid="$(
+    sx::k8s::cli ${context_flags} exec --namespace "${ns}" "${name}" --container "${container}" -- \
+      sh -c 'for process in /proc/[0-9]*; do [ -r "${process}/comm" ] && [ "$(cat "${process}/comm" 2>/dev/null)" = java ] && { echo "${process##*/}"; break; }; done' 2>/dev/null \
+      || true
+  )"
+
+  if [ -n "${proc_pid}" ]; then
+    echo "${proc_pid}"
+    return
+  fi
+
   echo ''
 }
 
@@ -179,7 +192,7 @@ function sx::k8s_command::jvm::heapdump() {
 
     sx::log::info "Heap dump generated in \"${remote_file}\" using \"jmap\"."
   else
-    sx::log::fatal "Failed to generate heap dump in pod \"${name}/${container}\". Tried: \"jcmd\" and \"jmap\"."
+    sx::log::fatal "Failed to generate heap dump in pod \"${name}/${container}\": neither \"jcmd\" nor \"jmap\" is available (common on JRE-only/distroless images). Heap dumps require JDK tooling inside the container."
   fi
 
   sx::k8s::copy_from_pod "${ns}" "${name}" "${container}" "${remote_file}" "${local_file}" "${context}"
@@ -230,9 +243,13 @@ function sx::k8s_command::jvm::threaddump() {
 
     local -r thread_dump_generated='true'
   elif sx::k8s::cli ${context_flags} exec --namespace "${ns}" "${name}" --container "${container}" -- \
-    kill -3 "${pid}" &>/dev/null; then
+    sh -c "kill -3 ${pid}" &>/dev/null; then
 
-    sx::log::info 'Thread dump triggered using "kill -3". Output will be in the JVM stdout/logs, not in a file.'
+    if sx::k8s_command::jvm::threaddump::capture_from_logs "${ns}" "${name}" "${container}" "${local_file}" "${context}"; then
+      sx::log::info "Thread dump triggered using \"kill -3\", captured from the pod logs and saved to: ${local_file}."
+    else
+      sx::log::info 'Thread dump triggered using "kill -3". Output is in the JVM stdout/logs; it could not be auto-captured to a file.'
+    fi
 
     local -r thread_dump_generated='false'
   else
@@ -247,4 +264,52 @@ function sx::k8s_command::jvm::threaddump() {
 
     sx::log::info "Thread dump saved to: ${local_file}."
   fi
+}
+
+function sx::k8s_command::jvm::threaddump::capture_from_logs() {
+  local -r ns="${1}"
+  local -r name="${2}"
+  local -r container="${3}"
+  local -r local_file="${4}"
+  local -r context="${5:-}"
+
+  if [ -n "${context}" ]; then
+    local -r context_flags="--context ${context}"
+  else
+    local -r context_flags=''
+  fi
+
+  # SIGQUIT prints the thread dump to the JVM's stdout (the pod logs), not a file.
+  # awk keeps the LAST complete "Full thread dump ... JNI global refs:" block; our
+  # just-triggered dump is the newest, so it is the block captured once it flushes.
+  # shellcheck disable=SC2016  # awk uses its own field vars ($0), not shell expansion
+  local -r extractor='
+    /Full thread dump/ { cap = 1; buf = $0 ORS; next }
+    cap { buf = buf $0 ORS }
+    cap && /^JNI global refs:/ { result = buf; cap = 0 }
+    END { if (cap) result = buf; printf "%s", result }
+  '
+
+  local dump=''
+  for _ in 1 2 3 4 5 6; do
+    sleep 1 # let the JVM flush the dump to stdout before reading
+
+    # shellcheck disable=SC2086  # quote this to prevent word splitting
+    dump="$(
+      sx::k8s::cli ${context_flags} logs "${name}" \
+        --namespace "${ns}" \
+        --container "${container}" \
+        --since '30s' 2>/dev/null \
+        | awk "${extractor}" \
+        || true
+    )"
+
+    printf '%s' "${dump}" | grep -q '^JNI global refs:' && break
+  done
+
+  if [ -z "${dump}" ]; then
+    return 1
+  fi
+
+  printf '%s\n' "${dump}" >"${local_file}"
 }
