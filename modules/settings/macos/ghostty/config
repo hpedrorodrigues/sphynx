@@ -48,3 +48,16 @@ cursor-style = "underline"
 ### Keyboard (ghostty +list-actions)
 
 keybind = "cmd+shift+r=reload_config"
+
+# Switch tmux windows like Chrome tabs.
+#
+# macOS never passes the cmd key into the terminal byte stream, so tmux can't bind it
+# directly. The closest Ghostty can get is "csi:" — send a raw CSI control sequence —
+# so we send the sequence a keyboard would produce for shift+alt+left/right, and
+# .tmux.conf binds those (S-M-Left/S-M-Right) to previous/next window.
+#
+# Anatomy of "1;4D" (standard xterm arrow-key encoding):
+#   1;4   modifier code: 1 + shift (1) + alt (2) = 4, so "shift+alt"
+#   D / C the arrow key itself: D = left, C = right
+keybind = "cmd+opt+left=csi:1;4D"
+keybind = "cmd+opt+right=csi:1;4C"
