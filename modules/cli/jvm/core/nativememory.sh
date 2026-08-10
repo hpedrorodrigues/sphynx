@@ -10,9 +10,20 @@ function sx::jvm::nativememory() {
   local -r all_namespaces="${7:-false}"
   local -r context="${8:-}"
   local -r image="${9:-}"
+  local -r malloc="${10:-false}"
+  local -r malloc_info="${11:-false}"
 
   sx::k8s::check_requirements
-  sx::jvm_command::nativememory::validate_level "${level}"
+
+  if ${malloc_info} && ! ${malloc}; then
+    sx::log::fatal '"--malloc-info" only works together with "--malloc".'
+  fi
+
+  # "--level" drives the Native Memory Tracking report, which "--malloc" replaces entirely.
+  if ! ${malloc}; then
+    sx::jvm_command::nativememory::validate_level "${level}"
+  fi
+
   sx::k8s::validate_context "${context}"
   sx::k8s::ensure_api_access "${context}"
 
@@ -29,8 +40,10 @@ function sx::jvm::nativememory() {
   IFS=',' read -r ns name container_name <<<"${target}"
   readonly ns name container_name
 
+  # The "--malloc" report reads "/proc" from the target container, so it only needs a helper
+  # container for "--malloc-info", where "gdb" has to attach to the JVM.
   local jdk_container=''
-  if [ -n "${image}" ]; then
+  if [ -n "${image}" ] && { ! ${malloc} || ${malloc_info}; }; then
     jdk_container="$(sx::jvm::jdk_container_name)"
 
     # shellcheck disable=SC2064  # expand the arguments now so the trap stops the right container
@@ -40,13 +53,295 @@ function sx::jvm::nativememory() {
   fi
   readonly jdk_container
 
+  if ${malloc_info} && [ -z "${jdk_container}" ]; then
+    sx::log::fatal '"--malloc-info" runs "gdb" from an ephemeral container. Re-run with an image shipping it, e.g. "--image nixery.dev/shell/gdb".'
+  fi
+
+  # The preflight of "resolve_pid" checks the attach handshake of the JVM, which only the Native
+  # Memory Tracking report needs. "--malloc" reads "/proc" instead, so the helper container it may
+  # have started is left out of the resolution: it would only demand tooling ("grep", "mount",
+  # "setpriv") that an image shipping "gdb" has no reason to carry.
   local pid
-  pid="$(sx::jvm::resolve_pid "${ns}" "${name}" "${container_name}" "${context}" "${jdk_container}")"
+  if ${malloc}; then
+    pid="$(sx::jvm::resolve_pid "${ns}" "${name}" "${container_name}" "${context}")"
+  else
+    pid="$(sx::jvm::resolve_pid "${ns}" "${name}" "${container_name}" "${context}" "${jdk_container}")"
+  fi
   readonly pid
 
   local -r timestamp="$(date '+%Y%m%d-%H%M%S')"
 
-  sx::jvm_command::nativememory "${ns}" "${name}" "${container_name}" "${pid}" "${timestamp}" "${context}" "${jdk_container}" "${level}"
+  if ${malloc}; then
+    sx::jvm_command::nativememory::malloc "${ns}" "${name}" "${container_name}" "${pid}" "${context}" "${jdk_container}" "${malloc_info}"
+  else
+    sx::jvm_command::nativememory "${ns}" "${name}" "${container_name}" "${pid}" "${timestamp}" "${context}" "${jdk_container}" "${level}"
+  fi
+}
+
+# Reports what the operating system holds, which is what Native Memory Tracking cannot show:
+# NMT only accounts for allocations made through the own "os::malloc" wrappers of the JVM, so
+# everything a JNI library allocates, and everything glibc keeps after a "free", is invisible to
+# it. glibc caps its malloc arenas at "8 x cores" (NARENAS_FROM_NCORES in malloc/malloc.c) reading
+# the cores of the *node*, never the CPU limit of the container, and it destroys no arena and
+# returns almost nothing to the kernel. So the resident memory of a JVM converges on the sum of the
+# high-water mark of every arena instead of the peak it actually needed.
+function sx::jvm_command::nativememory::malloc() {
+  local -r ns="${1}"
+  local -r name="${2}"
+  local -r container="${3}"
+  local -r pid="${4}"
+  local -r context="${5:-}"
+  local -r gdb_container="${6:-}"
+  local -r malloc_info="${7:-false}"
+
+  sx::log::info "Reading the native memory usage of pod \"${name}/${container}\" (PID: ${pid})..."
+
+  local report
+  report="$(sx::jvm_command::nativememory::malloc::collect "${ns}" "${name}" "${container}" "${pid}" "${context}")"
+  readonly report
+
+  if [ -z "${report}" ]; then
+    sx::log::fatal "Failed to read \"/proc/${pid}\" in pod \"${name}/${container}\"."
+  fi
+
+  local rows
+  rows="$(printf '%s\n' "${report}" | sx::jvm_command::nativememory::malloc::render)"
+
+  if ${malloc_info}; then
+    # Logged from here, not from the function: its stdout is captured as rows of the table, and a
+    # line holding no separator would stretch the first column to its own width.
+    sx::log::info "Attaching \"gdb\" to PID ${pid} to call \"malloc_info\". Every thread of the JVM stops while it runs."
+
+    rows+=$'\n'"$(sx::jvm_command::nativememory::malloc::info "${ns}" "${name}" "${container}" "${pid}" "${context}" "${gdb_container}")"
+  fi
+
+  printf 'SECTION,METRIC,VALUE\n%s\n' "${rows}" | column -t -s ','
+}
+
+# Everything is read in a single exec and parsed on this side: a JRE-only image ships almost no
+# tooling, and the "awk" of busybox has no "strtonum" to turn the addresses of smaps into numbers.
+function sx::jvm_command::nativememory::malloc::collect() {
+  local -r ns="${1}"
+  local -r name="${2}"
+  local -r container="${3}"
+  local -r pid="${4}"
+  local -r context="${5:-}"
+
+  local -r context_flags="$(sx::jvm::context_flags "${context}")"
+
+  # shellcheck disable=SC2016  # expressions don't expand in single quotes
+  local -r payload='
+    pid="${1}"
+
+    echo "===status==="
+    cat "/proc/${pid}/status" 2>/dev/null
+
+    echo "===tasks==="
+    ls "/proc/${pid}/task" 2>/dev/null
+
+    echo "===env==="
+    tr "\0" "\n" <"/proc/${pid}/environ" 2>/dev/null | grep "^MALLOC_" || true
+
+    echo "===nproc==="
+    nproc 2>/dev/null || grep -c "^processor" /proc/cpuinfo 2>/dev/null || true
+
+    echo "===libc==="
+    # "ldd" names the implementation and the version on both glibc ("Debian GLIBC 2.36") and musl
+    # ("musl libc"). Running the library itself prints the same banner and covers the images that
+    # ship no "ldd".
+    ldd --version 2>&1 | head -1 || true
+    libc="$(sed -n "s#.* \(/[^ ]*/libc[.-][^ ]*\)\$#\1#p" "/proc/${pid}/maps" 2>/dev/null | head -1)"
+    if [ -n "${libc}" ]; then
+      echo "path ${libc}"
+      "${libc}" 2>/dev/null | head -1 || true
+    fi
+
+    echo "===uptime==="
+    # Arenas only grow to their high-water mark over time, so the age of the process says whether
+    # the numbers below mean anything yet. Field 22 of "stat" is the start time in clock ticks, and
+    # the name of the process is stripped first because it may itself hold spaces or brackets.
+    cut -d " " -f 1 /proc/uptime 2>/dev/null || echo -
+    sed "s/^.*) //" "/proc/${pid}/stat" 2>/dev/null | cut -d " " -f 20 || echo -
+    getconf CLK_TCK 2>/dev/null || echo 100
+
+    echo "===cgroup==="
+    cat /sys/fs/cgroup/memory.current 2>/dev/null || cat /sys/fs/cgroup/memory/memory.usage_in_bytes 2>/dev/null || echo -
+    cat /sys/fs/cgroup/memory.max 2>/dev/null || cat /sys/fs/cgroup/memory/memory.limit_in_bytes 2>/dev/null || echo -
+
+    echo "===smaps==="
+    cat "/proc/${pid}/smaps" 2>/dev/null
+  '
+
+  # shellcheck disable=SC2086  # quote this to prevent word splitting
+  sx::k8s::cli ${context_flags} exec --namespace "${ns}" "${name}" --container "${container}" -- \
+    sh -c "${payload}" 'sx-jvm' "${pid}" 2>/dev/null || true
+}
+
+function sx::jvm_command::nativememory::malloc::render() {
+  # A non-main arena is an mmap of exactly HEAP_MAX_SIZE, which is "2 x DEFAULT_MMAP_THRESHOLD_MAX"
+  # = 64 MiB on 64-bit, and has to be a power of two so glibc can find the arena of any address by
+  # masking it (malloc/arena.c). Grouping the anonymous mappings by that alignment and keeping the
+  # groups that add up to exactly 64 MiB counts them, whether or not glibc has split a group into a
+  # committed and an uncommitted part.
+  awk '
+    function hex2dec(value,   i, char, digit, result) {
+      result = 0
+      value = tolower(value)
+      for (i = 1; i <= length(value); i++) {
+        char = substr(value, i, 1)
+        digit = index("0123456789abcdef", char) - 1
+        if (digit < 0) { return -1 }
+        result = result * 16 + digit
+      }
+      return result
+    }
+    function mib(bytes) { return sprintf("%.0f MiB", bytes / 1048576) }
+    function duration(seconds,   days, hours, minutes) {
+      days = int(seconds / 86400)
+      hours = int((seconds % 86400) / 3600)
+      minutes = int((seconds % 3600) / 60)
+      if (days > 0) { return sprintf("%dd%dh", days, hours) }
+      if (hours > 0) { return sprintf("%dh%dm", hours, minutes) }
+      return sprintf("%dm", minutes)
+    }
+    BEGIN { arena = 67108864; bucket = -1; highest_tid = 0 }
+    /^===/ { section = substr($0, 4, length($0) - 6); next }
+    section == "libc" { libc = libc " " $0 }
+    section == "uptime" { uptime[++uptimes] = $1 }
+    section == "status" && /^VmRSS:/ { rss = $2 * 1024 }
+    section == "status" && /^VmHWM:/ { peak = $2 * 1024 }
+    section == "status" && /^VmSwap:/ { swap = $2 * 1024 }
+    section == "status" && /^Threads:/ { threads = $2 }
+    section == "tasks" && /^[0-9]+$/ { if ($1 > highest_tid) { highest_tid = $1 } }
+    section == "env" && /^MALLOC_ARENA_MAX=/ { split($0, kv, "="); arena_max = kv[2] }
+    section == "nproc" && /^[0-9]+$/ { cores = $1 }
+    section == "cgroup" { cgroup[++cgroups] = $1 }
+    section == "smaps" && /^[0-9a-f]+-[0-9a-f]+ / {
+      split($1, range, "-")
+      if (NF == 5) {
+        bucket = int(hex2dec(range[1]) / arena)
+        size[bucket] += hex2dec(range[2]) - hex2dec(range[1])
+        anonymous = 1
+      } else {
+        bucket = -1
+        anonymous = 0
+      }
+      next
+    }
+    section == "smaps" && /^Rss:/ {
+      if (bucket >= 0) { resident[bucket] += $2 * 1024 }
+      if (anonymous) { anon_rss += $2 * 1024 } else { file_rss += $2 * 1024 }
+    }
+    END {
+      for (key in size) {
+        if (size[key] == arena) { arenas++; arena_rss += resident[key] }
+      }
+
+      if (libc ~ /musl/) { implementation = "musl" }
+      else if (libc ~ /GLIBC|GNU libc/) { implementation = "glibc" }
+      else { implementation = "unknown" }
+
+      if (match(libc, /[0-9]+\.[0-9]+(\.[0-9]+)?/)) {
+        version = substr(libc, RSTART, RLENGTH)
+      } else {
+        version = "n/a"
+      }
+
+      if (uptime[1] ~ /^[0-9.]+$/ && uptime[2] ~ /^[0-9]+$/ && uptime[3] > 0) {
+        age = duration(uptime[1] - (uptime[2] / uptime[3]))
+      } else {
+        age = "n/a"
+      }
+
+      printf "process,uptime,%s\n", age
+      printf "process,rss,%s\n", mib(rss)
+      printf "process,rss_peak,%s\n", mib(peak)
+      printf "process,swap,%s\n", mib(swap)
+      printf "process,threads_live,%d\n", threads
+      printf "process,highest_tid,%d\n", highest_tid
+      printf "cgroup,usage,%s\n", (cgroup[1] ~ /^[0-9]+$/ ? mib(cgroup[1]) : "n/a")
+      printf "cgroup,limit,%s\n", (cgroup[2] ~ /^[0-9]+$/ ? mib(cgroup[2]) : "none")
+      printf "libc,implementation,%s\n", implementation
+      printf "libc,version,%s\n", version
+      printf "memory,anonymous,%s\n", mib(anon_rss)
+      printf "memory,file_backed,%s\n", mib(file_rss)
+      printf "arenas,blocks,%d\n", arenas
+      printf "arenas,resident,%s\n", mib(arena_rss)
+      # Whatever is anonymous and not an arena: the Java heap, metaspace, the code cache, the
+      # thread stacks and the main arena.
+      printf "arenas,other_anonymous,%s\n", mib(anon_rss - arena_rss)
+      printf "arenas,malloc_arena_max,%s\n", (arena_max == "" ? "unset" : arena_max)
+      printf "arenas,glibc_default,%s\n", (cores == "" ? "n/a" : cores * 8)
+    }
+  '
+}
+
+# "malloc_info" is only reachable as a C call, so "gdb" has to attach to the JVM to make it. That
+# stops every thread of the process for the duration, which is under a second in practice, but a
+# pod whose liveness probe has little slack can still be restarted by the kubelet because of it.
+function sx::jvm_command::nativememory::malloc::info() {
+  local -r ns="${1}"
+  local -r name="${2}"
+  local -r container="${3}"
+  local -r pid="${4}"
+  local -r context="${5:-}"
+  local -r gdb_container="${6}"
+
+  local -r context_flags="$(sx::jvm::context_flags "${context}")"
+  local -r remote_file="/tmp/malloc_info-${pid}.xml"
+
+  # The sysroot has to be set before the attach: with "gdb -p <pid>" the attach happens before the
+  # "-ex" flags run, no symbol of libc resolves, and every call fails with "No symbol table is
+  # loaded". The file is written by the JVM itself, so it lands in the mount namespace of the
+  # target container, not in the one of the container running "gdb".
+  # shellcheck disable=SC2016,SC2086  # "$f" is a convenience variable of gdb, not of the shell; quote this to prevent word splitting
+  if ! sx::k8s::cli ${context_flags} exec --namespace "${ns}" "${name}" --container "${gdb_container}" -- \
+    gdb -batch \
+    -ex 'set confirm off' \
+    -ex "set sysroot /proc/${pid}/root" \
+    -ex "attach ${pid}" \
+    -ex "set \$f = (void *) fopen(\"${remote_file}\", \"w\")" \
+    -ex 'call (int) malloc_info(0, $f)' \
+    -ex 'call (int) fclose($f)' \
+    -ex 'detach' &>/dev/null; then
+
+    sx::log::fatal "Failed to run \"malloc_info\" in pod \"${name}/${container}\". Does the image of the ephemeral container ship \"gdb\"?"
+  fi
+
+  local xml
+  # shellcheck disable=SC2086  # quote this to prevent word splitting
+  xml="$(
+    sx::k8s::cli ${context_flags} exec --namespace "${ns}" "${name}" --container "${container}" -- \
+      cat "${remote_file}" 2>/dev/null || true
+  )"
+  readonly xml
+
+  # shellcheck disable=SC2086  # quote this to prevent word splitting
+  sx::k8s::cli ${context_flags} exec --namespace "${ns}" "${name}" --container "${container}" -- \
+    rm -f "${remote_file}" &>/dev/null || true
+
+  if [ -z "${xml}" ]; then
+    sx::log::fatal "\"malloc_info\" wrote no report in pod \"${name}/${container}\"."
+  fi
+
+  # Only the totals of the trailing <malloc> element are reported: the per-heap elements repeat for
+  # every arena and say little on their own.
+  printf '%s\n' "${xml}" | awk '
+    function mib(bytes) { return sprintf("%.0f MiB", bytes / 1048576) }
+    function value(line,   parts) { split(line, parts, "size=\""); split(parts[2], parts, "\""); return parts[1] }
+    /<heap nr=/ { arenas++ }
+    /<total type="rest"/ { free = value($0) }
+    /<total type="fast"/ { fast = value($0) }
+    /<system type="current"/ { held = value($0) }
+    /<system type="max"/ { peak = value($0) }
+    END {
+      printf "malloc_info,arenas,%d\n", arenas
+      printf "malloc_info,held,%s\n", mib(held)
+      printf "malloc_info,free,%s\n", mib(free + fast)
+      printf "malloc_info,retained,%.1f%%\n", (held > 0 ? (free + fast) * 100 / held : 0)
+      printf "malloc_info,peak_held,%s\n", mib(peak)
+    }
+  '
 }
 
 function sx::jvm_command::nativememory::validate_level() {
