@@ -32,7 +32,7 @@ source "${SPHYNX_NAMESPACE_DIR}/core/prof.sh"
 ##?     prof -- --lang java --time 1m
 ##?     prof --non-root -- -l java -t 1m
 ##?     prof --timeout 30m -- -l java -t 20m
-##?     prof workspaces-events --namespace staging -- -l java -t 1m -o flamegraph
+##?     prof keycloak --namespace staging -- -l java -t 1m -o flamegraph
 ##?     prof --namespace staging --pod my-pod --container my-container -- -l go -t 30s
 ##?     prof -- -l python -t 5m -o speedscope --local-path /tmp
 ##?     prof piper-ai-executor -n prod --non-root -- -l java -t 30s --log-level trace
