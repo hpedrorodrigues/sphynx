@@ -54,7 +54,7 @@ function sx::jvm::nativememory() {
   readonly jdk_container
 
   if ${malloc_info} && [ -z "${jdk_container}" ]; then
-    sx::log::fatal '"--malloc-info" runs "gdb" from an ephemeral container. Re-run with an image shipping it, e.g. "--image nixery.dev/shell/gdb".'
+    sx::log::fatal '"--malloc-info" runs "gdb" from an ephemeral container. Re-run with an image shipping it, e.g. "--image ghcr.io/hpedrorodrigues/gdb".'
   fi
 
   # The preflight of "resolve_pid" checks the attach handshake of the JVM, which only the Native
@@ -294,18 +294,31 @@ function sx::jvm_command::nativememory::malloc::info() {
   # "-ex" flags run, no symbol of libc resolves, and every call fails with "No symbol table is
   # loaded". The file is written by the JVM itself, so it lands in the mount namespace of the
   # target container, not in the one of the container running "gdb".
-  # shellcheck disable=SC2016,SC2086  # "$f" is a convenience variable of gdb, not of the shell; quote this to prevent word splitting
+  # Checked apart from the attach below, so a missing tool and a refused attach stop looking like
+  # the same failure.
+  # shellcheck disable=SC2086  # quote this to prevent word splitting
   if ! sx::k8s::cli ${context_flags} exec --namespace "${ns}" "${name}" --container "${gdb_container}" -- \
-    gdb -batch \
-    -ex 'set confirm off' \
-    -ex "set sysroot /proc/${pid}/root" \
-    -ex "attach ${pid}" \
-    -ex "set \$f = (void *) fopen(\"${remote_file}\", \"w\")" \
-    -ex 'call (int) malloc_info(0, $f)' \
-    -ex 'call (int) fclose($f)' \
-    -ex 'detach' &>/dev/null; then
+    sh -c 'command -v gdb' &>/dev/null; then
 
-    sx::log::fatal "Failed to run \"malloc_info\" in pod \"${name}/${container}\". Does the image of the ephemeral container ship \"gdb\"?"
+    sx::log::fatal "The image of the ephemeral container \"${gdb_container}\" ships no \"gdb\". Re-run with one that does, e.g. \"--image ghcr.io/hpedrorodrigues/gdb\"."
+  fi
+
+  local output=''
+
+  # shellcheck disable=SC2016,SC2086  # "$f" is a convenience variable of gdb, not of the shell; quote this to prevent word splitting
+  if ! output="$(
+    sx::k8s::cli ${context_flags} exec --namespace "${ns}" "${name}" --container "${gdb_container}" -- \
+      gdb -batch \
+      -ex 'set confirm off' \
+      -ex "set sysroot /proc/${pid}/root" \
+      -ex "attach ${pid}" \
+      -ex "set \$f = (void *) fopen(\"${remote_file}\", \"w\")" \
+      -ex 'call (int) malloc_info(0, $f)' \
+      -ex 'call (int) fclose($f)' \
+      -ex 'detach' 2>&1
+  )"; then
+
+    sx::log::fatal "\"gdb\" failed to run \"malloc_info\" against PID ${pid} of pod \"${name}/${container}\":\n\n${output}"
   fi
 
   local xml

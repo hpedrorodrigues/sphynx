@@ -18,7 +18,7 @@ source "${SPHYNX_NAMESPACE_DIR}/core/nativememory.sh"
 ##? Options:
 ##?     --level <level>  Report level: summary or detail (requires -XX:NativeMemoryTracking) [default: summary]
 ##?     --malloc  Report the memory the OS holds (glibc arenas, RSS, threads) instead of Native Memory Tracking. Needs no -XX:NativeMemoryTracking and no privileges
-##?     --malloc-info  With --malloc, add the exact held/free split per arena using "gdb". Needs --image with an image shipping "gdb", e.g. nixery.dev/shell/gdb, and briefly pauses every thread of the JVM
+##?     --malloc-info  With --malloc, add the exact held/free split per arena using "gdb". Needs --image with an image shipping "gdb", e.g. ghcr.io/hpedrorodrigues/gdb, and briefly pauses every thread of the JVM
 ##?     -l --selector <selector>  Selector (label query) to filter on
 ##?     -n --namespace <name>  The namespace scope for requests
 ##?     -A --all-namespaces  All namespaces
@@ -35,7 +35,7 @@ source "${SPHYNX_NAMESPACE_DIR}/core/nativememory.sh"
 ##?     nativememory --namespace kafka --pod kafka-0 --container kafka --level summary
 ##?     nativememory keycloak --level detail --image eclipse-temurin:21-jdk
 ##?     nativememory keycloak --malloc
-##?     nativememory keycloak --malloc --malloc-info --image nixery.dev/shell/gdb
+##?     nativememory keycloak --malloc --malloc-info --image ghcr.io/hpedrorodrigues/gdb
 ##?     nativememory kafka --context staging
 
 sx::parse_arguments "${@}"
