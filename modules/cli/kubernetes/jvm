@@ -11,8 +11,8 @@ source "${SPHYNX_NAMESPACE_DIR}/core/jvm.sh"
 ##? Generate heap dumps, thread dumps and fiber dumps from JVM processes running in Kubernetes pods
 ##?
 ##? Usage:
-##?     jvm [<query>] [--selector <selector>] [--namespace <name> | --all-namespaces] [--heapdump] [--threaddump] [--fiberdump] [--force] [--output-dir <path>] [--context <name>]
-##?     jvm --namespace <name> --pod <name> --container <name> [--heapdump] [--threaddump] [--fiberdump] [--force] [--output-dir <path>] [--context <name>]
+##?     jvm [<query>] [--selector <selector>] [--namespace <name> | --all-namespaces] [--heapdump] [--threaddump] [--fiberdump] [--force] [--jdk] [--jdk-image <image>] [--output-dir <path>] [--context <name>]
+##?     jvm --namespace <name> --pod <name> --container <name> [--heapdump] [--threaddump] [--fiberdump] [--force] [--jdk] [--jdk-image <image>] [--output-dir <path>] [--context <name>]
 ##?
 ##? Options:
 ##?     -l --selector <selector>  Selector (label query) to filter on
@@ -24,6 +24,8 @@ source "${SPHYNX_NAMESPACE_DIR}/core/jvm.sh"
 ##?     --threaddump  Generate a thread dump
 ##?     --fiberdump  Generate a Cats Effect 3 fiber dump (via SIGUSR1)
 ##?     --force  Send SIGUSR1 even if the JVM does not appear to handle it (--fiberdump)
+##?     --jdk  Run the JDK tooling from an ephemeral container instead of the target container (for JRE-only/distroless images)
+##?     --jdk-image <image>  Container image with a full JDK, used by --jdk. Prefer a version equal to or newer than the target JVM [default: eclipse-temurin:21-jdk]
 ##?     --output-dir <path>  Local directory to store the dump file
 ##?     --context <name>  The name of the kubeconfig context to use
 ##?
@@ -34,6 +36,8 @@ source "${SPHYNX_NAMESPACE_DIR}/core/jvm.sh"
 ##?     jvm distro-setup --fiberdump
 ##?     jvm --selector app=kafka --heapdump --output-dir /tmp/dumps
 ##?     jvm --namespace kafka --pod kafka-0 --container kafka --threaddump
+##?     jvm workspaces --heapdump --jdk
+##?     jvm workspaces --threaddump --jdk --jdk-image bellsoft/liberica-openjdk-debian:21
 ##?     jvm kafka --context staging
 
 sx::parse_arguments "${@}"
@@ -56,4 +60,6 @@ sx::k8s::jvm \
   "${output_dir:-}" \
   "${all_namespaces:-false}" \
   "${context:-}" \
-  "${force:-false}"
+  "${force:-false}" \
+  "${jdk:-false}" \
+  "${jdk_image:-}"
