@@ -11,18 +11,20 @@ function sx::k8s::jvm() {
   local -r heapdump="${6:-true}"
   local -r threaddump="${7:-false}"
   local -r fiberdump="${8:-false}"
-  local -r output_dir="${9:-}"
-  local -r all_namespaces="${10:-false}"
-  local -r context="${11:-}"
-  local -r force="${12:-false}"
-  local -r jdk="${13:-false}"
-  local -r jdk_image="${14:-}"
+  local -r nativememory="${9:-}"
+  local -r output_dir="${10:-}"
+  local -r all_namespaces="${11:-false}"
+  local -r context="${12:-}"
+  local -r force="${13:-false}"
+  local -r jdk="${14:-false}"
+  local -r jdk_image="${15:-}"
 
+  sx::k8s_command::jvm::validate_nmt_level "${nativememory}"
   sx::k8s::validate_context "${context}"
   sx::k8s::ensure_api_access "${context}"
 
   if [ -n "${namespace}" ] && [ -n "${pod}" ] && [ -n "${container}" ]; then
-    sx::k8s_command::jvm "${namespace}" "${pod}" "${container}" "${heapdump}" "${threaddump}" "${fiberdump}" "${output_dir}" "${context}" "${force}" "${jdk}" "${jdk_image}"
+    sx::k8s_command::jvm "${namespace}" "${pod}" "${container}" "${heapdump}" "${threaddump}" "${fiberdump}" "${nativememory}" "${output_dir}" "${context}" "${force}" "${jdk}" "${jdk_image}"
   elif sx::os::is_command_available 'fzf'; then
     local -r options="$(
       sx::k8s::running_pods "${query}" "${selector}" "${namespace}" "${all_namespaces}" true "${context}"
@@ -40,7 +42,7 @@ function sx::k8s::jvm() {
       local -r name="$(echo "${selected}" | awk '{ print $2 }')"
       local -r container_name="$(echo "${selected}" | awk '{ print $3 }')"
 
-      sx::k8s_command::jvm "${ns}" "${name}" "${container_name}" "${heapdump}" "${threaddump}" "${fiberdump}" "${output_dir}" "${context}" "${force}" "${jdk}" "${jdk_image}"
+      sx::k8s_command::jvm "${ns}" "${name}" "${container_name}" "${heapdump}" "${threaddump}" "${fiberdump}" "${nativememory}" "${output_dir}" "${context}" "${force}" "${jdk}" "${jdk_image}"
     fi
   else
     export PS3=$'\n''Please, choose the pod: '$'\n'
@@ -64,9 +66,23 @@ function sx::k8s::jvm() {
       local -r name="$(echo "${selected}" | awk '{ print $2 }')"
       local -r container_name="$(echo "${selected}" | awk '{ print $3 }')"
 
-      sx::k8s_command::jvm "${ns}" "${name}" "${container_name}" "${heapdump}" "${threaddump}" "${fiberdump}" "${output_dir}" "${context}" "${force}" "${jdk}" "${jdk_image}"
+      sx::k8s_command::jvm "${ns}" "${name}" "${container_name}" "${heapdump}" "${threaddump}" "${fiberdump}" "${nativememory}" "${output_dir}" "${context}" "${force}" "${jdk}" "${jdk_image}"
       break
     done
+  fi
+}
+
+function sx::k8s_command::jvm::validate_nmt_level() {
+  local -r level="${1:-}"
+
+  if [ -z "${level}" ]; then
+    return 0
+  fi
+
+  # "jcmd" takes more Native Memory Tracking arguments than these two (baseline, summary.diff),
+  # but they need a second invocation to be of any use, so only the report levels are accepted.
+  if [ "${level}" != 'summary' ] && [ "${level}" != 'detail' ]; then
+    sx::log::fatal "Invalid native memory tracking level \"${level}\"!\n\nAvailable levels:\nsummary\ndetail"
   fi
 }
 
@@ -77,15 +93,16 @@ function sx::k8s_command::jvm() {
   local -r heapdump="${4}"
   local -r threaddump="${5}"
   local -r fiberdump="${6}"
-  local -r output_dir="${7:-}"
-  local -r context="${8:-}"
-  local -r force="${9:-false}"
-  local -r jdk="${10:-false}"
-  local -r jdk_image="${11:-}"
+  local -r nativememory="${7:-}"
+  local -r output_dir="${8:-}"
+  local -r context="${9:-}"
+  local -r force="${10:-false}"
+  local -r jdk="${11:-false}"
+  local -r jdk_image="${12:-}"
 
   local jdk_container=''
   if ${jdk}; then
-    if ${heapdump} || ${threaddump}; then
+    if ${heapdump} || ${threaddump} || [ -n "${nativememory}" ]; then
       jdk_container="jdk-$(uuidgen | cut -d '-' -f 1 | tr '[:upper:]' '[:lower:]')"
 
       # shellcheck disable=SC2064  # expand the arguments now so the trap stops the right container
@@ -132,6 +149,10 @@ function sx::k8s_command::jvm() {
 
   if ${fiberdump}; then
     sx::k8s_command::jvm::fiberdump "${ns}" "${name}" "${container}" "${pid}" "${timestamp}" "${output_dir}" "${context}" "${force}"
+  fi
+
+  if [ -n "${nativememory}" ]; then
+    sx::k8s_command::jvm::nativememory "${ns}" "${name}" "${container}" "${pid}" "${timestamp}" "${output_dir}" "${context}" "${jdk_container}" "${nativememory}"
   fi
 }
 
@@ -719,4 +740,75 @@ function sx::k8s_command::jvm::fiberdump() {
   else
     sx::log::info 'Fiber dump triggered using SIGUSR1. Output is in the JVM stderr/logs; it could not be auto-captured to a file (is this a Cats Effect 3 app with active fibers?).'
   fi
+}
+
+function sx::k8s_command::jvm::nativememory() {
+  local -r ns="${1}"
+  local -r name="${2}"
+  local -r container="${3}"
+  local -r pid="${4}"
+  local -r timestamp="${5}"
+  local -r output_dir="${6:-}"
+  local -r context="${7:-}"
+  local -r jdk_container="${8:-}"
+  local -r level="${9}"
+
+  if [ -n "${context}" ]; then
+    local -r context_flags="--context ${context}"
+  else
+    local -r context_flags=''
+  fi
+
+  local -r filename="nativememory-${name}-${timestamp}.txt"
+
+  if [ -n "${output_dir}" ]; then
+    local -r local_file="${output_dir}/${filename}"
+  else
+    local -r local_file="./${filename}"
+  fi
+
+  sx::log::info "Generating native memory report (${level}) for pod \"${name}/${container}\" (PID: ${pid})..."
+
+  # Native Memory Tracking is only reachable through the attach mechanism, so "jcmd" is the
+  # only tool that can produce it, with no "jmap"/"jstack"-style alternative to fall back to.
+  # It answers on the stdout of the attaching process, as "Thread.print" does, so the report
+  # streams straight into the local file and nothing is written in the pod.
+  if [ -n "${jdk_container}" ]; then
+    if ! sx::k8s_command::jvm::jdk_exec "${ns}" "${name}" "${jdk_container}" "${pid}" "${context}" \
+      jcmd "${pid}" 'VM.native_memory' "${level}" 'scale=MB' 2>/dev/null >"${local_file}" \
+      || [ ! -s "${local_file}" ]; then
+
+      rm -f "${local_file}"
+
+      sx::log::fatal "Failed to generate the native memory report in pod \"${name}/${container}\" from the JDK container \"${jdk_container}\". Does the image ship \"jcmd\", and is it as new as the target JVM?"
+    fi
+
+    sx::log::info 'Native memory report generated using "jcmd" from the JDK container.'
+  else
+    # shellcheck disable=SC2086  # quote this to prevent word splitting
+    if ! sx::k8s::cli ${context_flags} exec --namespace "${ns}" "${name}" --container "${container}" -- \
+      jcmd "${pid}" 'VM.native_memory' "${level}" 'scale=MB' 2>/dev/null >"${local_file}" \
+      || [ ! -s "${local_file}" ]; then
+
+      rm -f "${local_file}"
+
+      sx::log::fatal "Failed to generate the native memory report in pod \"${name}/${container}\": \"jcmd\" is not available (common on JRE-only/distroless images). Re-run with \"--jdk\" to run the JDK tooling from an ephemeral container."
+    fi
+
+    sx::log::info 'Native memory report generated using "jcmd".'
+  fi
+
+  # "jcmd" exits 0 and still prints the PID line even when the JVM refuses the command, so a
+  # run against a JVM started without "-XX:NativeMemoryTracking" writes a two-line file and
+  # looks successful ("Native memory tracking is not enabled"). The same match covers a JVM
+  # that only tracks a summary refusing "detail" ("Detail tracking is not enabled").
+  if grep -qi 'not enabled' "${local_file}"; then
+    local -r refusal="$(grep -i -m 1 'not enabled' "${local_file}")"
+
+    rm -f "${local_file}"
+
+    sx::log::fatal "The JVM of pod \"${name}/${container}\" refused the native memory report: ${refusal}\nStart it with \"-XX:NativeMemoryTracking=${level}\" to enable it."
+  fi
+
+  sx::log::info "Native memory report saved to: ${local_file}."
 }
