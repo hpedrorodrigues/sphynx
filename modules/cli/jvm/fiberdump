@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNX_CLI_DIR}/.internal/all.sh"
+source "${SPHYNX_CLI_DIR}/kubernetes/shared/shared.sh"
+source "${SPHYNX_NAMESPACE_DIR}/shared/shared.sh"
+source "${SPHYNX_NAMESPACE_DIR}/core/fiberdump.sh"
+
+##? Generate a Cats Effect 3 fiber dump from a JVM process running in a Kubernetes pod
+##?
+##? Usage:
+##?     fiberdump [<query>] [--selector <selector>] [--namespace <name> | --all-namespaces] [--force] [--context <name>]
+##?     fiberdump --namespace <name> --pod <name> --container <name> [--force] [--context <name>]
+##?
+##? Options:
+##?     -l --selector <selector>  Selector (label query) to filter on
+##?     -n --namespace <name>  The namespace scope for requests
+##?     -A --all-namespaces  All namespaces
+##?     -p --pod <name>  The pod name
+##?     -c --container <name>  The container name
+##?     --force  Send SIGUSR1 even if the JVM does not appear to handle it
+##?     --context <name>  The name of the kubeconfig context to use
+##?
+##? Examples:
+##?     fiberdump
+##?     fiberdump my-app
+##?     fiberdump my-app --force
+##?     fiberdump --selector app=my-app
+##?     fiberdump --namespace apps --pod my-app-0 --container my-app
+##?     fiberdump my-app --context staging
+
+sx::parse_arguments "${@}"
+
+sx::jvm::fiberdump \
+  "${query:-}" \
+  "${selector:-}" \
+  "${namespace:-}" \
+  "${pod:-}" \
+  "${container:-}" \
+  "${all_namespaces:-false}" \
+  "${context:-}" \
+  "${force:-false}"

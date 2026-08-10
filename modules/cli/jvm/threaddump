@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNX_CLI_DIR}/.internal/all.sh"
+source "${SPHYNX_CLI_DIR}/kubernetes/shared/shared.sh"
+source "${SPHYNX_NAMESPACE_DIR}/shared/shared.sh"
+source "${SPHYNX_NAMESPACE_DIR}/core/threaddump.sh"
+
+##? Generate a thread dump from a JVM process running in a Kubernetes pod
+##?
+##? Usage:
+##?     threaddump [<query>] [--selector <selector>] [--namespace <name> | --all-namespaces] [--image <image>] [--context <name>]
+##?     threaddump --namespace <name> --pod <name> --container <name> [--image <image>] [--context <name>]
+##?
+##? Options:
+##?     -l --selector <selector>  Selector (label query) to filter on
+##?     -n --namespace <name>  The namespace scope for requests
+##?     -A --all-namespaces  All namespaces
+##?     -p --pod <name>  The pod name
+##?     -c --container <name>  The container name
+##?     --image <image>  Run the JDK tooling from an ephemeral container with this image, instead of from the target container (for JRE-only/distroless images). Prefer a version equal to or newer than the target JVM, e.g. eclipse-temurin:21-jdk
+##?     --context <name>  The name of the kubeconfig context to use
+##?
+##? Examples:
+##?     threaddump
+##?     threaddump kafka
+##?     threaddump --selector app=kafka
+##?     threaddump --namespace kafka --pod kafka-0 --container kafka
+##?     threaddump keycloak --image eclipse-temurin:21-jdk
+##?     threaddump keycloak --image bellsoft/liberica-openjdk-debian:21
+##?     threaddump kafka --context staging
+
+sx::parse_arguments "${@}"
+
+sx::jvm::threaddump \
+  "${query:-}" \
+  "${selector:-}" \
+  "${namespace:-}" \
+  "${pod:-}" \
+  "${container:-}" \
+  "${all_namespaces:-false}" \
+  "${context:-}" \
+  "${image:-}"
