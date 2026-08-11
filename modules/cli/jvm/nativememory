@@ -12,18 +12,17 @@ source "${SPHYNX_NAMESPACE_DIR}/core/nativememory.sh"
 ##? Report the native memory usage of a JVM process running in a Kubernetes pod
 ##?
 ##? Usage:
-##?     nativememory [<query>] [--level <level>] [--glibc-alloc-info] [--selector <selector>] [--namespace <name> | --all-namespaces] [--image <image>] [--context <name>]
-##?     nativememory --namespace <name> --pod <name> --container <name> [--level <level>] [--glibc-alloc-info] [--image <image>] [--context <name>]
+##?     nativememory [<query>] [--level <level>] [--selector <selector>] [--namespace <name> | --all-namespaces] [--image <image>] [--context <name>]
+##?     nativememory --namespace <name> --pod <name> --container <name> [--level <level>] [--image <image>] [--context <name>]
 ##?
 ##? Options:
 ##?     --level <level>  Report level: summary or detail (requires -XX:NativeMemoryTracking) [default: summary]
-##?     --glibc-alloc-info  Report the memory the OS holds (glibc arenas, RSS, threads) instead of Native Memory Tracking. Needs no -XX:NativeMemoryTracking, but runs "gdb" from --image, e.g. ghcr.io/hpedrorodrigues/gdb, and briefly pauses every thread of the JVM
 ##?     -l --selector <selector>  Selector (label query) to filter on
 ##?     -n --namespace <name>  The namespace scope for requests
 ##?     -A --all-namespaces  All namespaces
 ##?     -p --pod <name>  The pod name
 ##?     -c --container <name>  The container name
-##?     --image <image>  Run the tooling from an ephemeral container with this image, instead of from the target container (for JRE-only/distroless images). Prefer a version equal to or newer than the target JVM, e.g. eclipse-temurin:21-jdk
+##?     --image <image>  Run the JDK tooling from an ephemeral container with this image, instead of from the target container (for JRE-only/distroless images). Prefer a version equal to or newer than the target JVM, e.g. eclipse-temurin:21-jdk
 ##?     --context <name>  The name of the kubeconfig context to use
 ##?
 ##? Examples:
@@ -33,7 +32,6 @@ source "${SPHYNX_NAMESPACE_DIR}/core/nativememory.sh"
 ##?     nativememory --selector app=kafka
 ##?     nativememory --namespace kafka --pod kafka-0 --container kafka --level summary
 ##?     nativememory keycloak --level detail --image eclipse-temurin:21-jdk
-##?     nativememory keycloak --glibc-alloc-info --image ghcr.io/hpedrorodrigues/gdb
 ##?     nativememory kafka --context staging
 
 sx::parse_arguments "${@}"
@@ -47,5 +45,4 @@ sx::jvm::nativememory \
   "${level:-summary}" \
   "${all_namespaces:-false}" \
   "${context:-}" \
-  "${image:-}" \
-  "${glibc_alloc_info:-false}"
+  "${image:-}"
