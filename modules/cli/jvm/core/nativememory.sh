@@ -178,6 +178,11 @@ function sx::jvm_command::nativememory::glibc_alloc_info::collect() {
     # already been killed. Neither is visible from the process itself.
     cat /sys/fs/cgroup/memory.events 2>/dev/null || true
 
+    echo "===jcmd==="
+    # What the JVM itself committed, which is the only way to tell its memory apart from the rest
+    # of the resident set. Absent from JRE-only images, where the report falls back to "n/a".
+    command -v jcmd >/dev/null 2>&1 && jcmd "${pid}" GC.heap_info 2>/dev/null || true
+
     echo "===smaps==="
     cat "/proc/${pid}/smaps" 2>/dev/null
   '
@@ -206,6 +211,25 @@ function sx::jvm_command::nativememory::glibc_alloc_info::render() {
       return result
     }
     function mib(bytes) { return sprintf("%.0f MiB", bytes / 1048576) }
+    # A shared object that belongs neither to the JDK nor to the base system, so what is left is
+    # what the application brought: the JNI libraries that allocate outside every JVM counter.
+    # A name list, so it ages with the JDK, but nothing else tells the two apart.
+    function is_foreign(name) {
+      if (name !~ /\.so/) { return 0 }
+      # The separator matters: it keeps "libnetty_transport_native_epoll" out of "libnet", while
+      # still catching the "libawt_headless" and "libmanagement_ext" of the JDK.
+      if (name ~ /^lib(jvm|java|nio|net|zip|jimage|management|awt|jsvml|jli|extnet|verify|instrument|attach)[._-]/) { return 0 }
+      if (name ~ /^lib(c|m|dl|pthread|rt|resolv|util|crypt|nss)[._-]/) { return 0 }
+      if (name ~ /^ld-(linux|musl)/) { return 0 }
+      return 1
+    }
+    # Reads the "<label> <n>K" that "jcmd" prints, in bytes.
+    function kb_after(line, label) {
+      if (match(line, label " [0-9]+K")) {
+        return substr(line, RSTART + length(label) + 1, RLENGTH - length(label) - 2) * 1024
+      }
+      return 0
+    }
     function duration(seconds,   days, hours, minutes) {
       days = int(seconds / 86400)
       hours = int((seconds % 86400) / 3600)
@@ -227,6 +251,11 @@ function sx::jvm_command::nativememory::glibc_alloc_info::render() {
     section == "env" && /^MALLOC_ARENA_MAX=/ { split($0, kv, "="); arena_max = kv[2] }
     section == "nproc" && /^[0-9]+$/ { cores = $1 }
     section == "cgroup" { cgroup[++cgroups] = $1 }
+    # "GC.heap_info" prints "total <n>K" for the committed heap and "committed <n>K" for the two
+    # metaspace lines. Written for G1, the collector every workload here runs.
+    section == "jcmd" && /heap  *total [0-9]+K/ { heap_committed = kb_after($0, "total") }
+    section == "jcmd" && /^ *Metaspace/ { metaspace = kb_after($0, "committed") }
+    section == "jcmd" && /^ *class space/ { class_space = kb_after($0, "committed") }
     section == "smaps" && /^[0-9a-f]+-[0-9a-f]+ / {
       split($1, range, "-")
       if (NF == 5) {
@@ -236,23 +265,20 @@ function sx::jvm_command::nativememory::glibc_alloc_info::render() {
         size[bucket] += end - start
         anonymous = 1
 
-        # A reservation is one mmap that the kernel reports as several lines whenever parts of it
-        # differ in permissions, which is exactly what an uncommitted Java heap looks like. Joining
-        # the lines that continue the previous one measures the reservation instead of its pieces.
-        if (start == reservation_end) {
-          reservation += end - start
-        } else {
-          reservation = end - start
-          reservation_rss = 0
-        }
-        reservation_end = end
-        if (reservation > largest) { largest = reservation; largest_is_current = 1 }
-        else { largest_is_current = 0 }
+        # Kept for a second pass: whether a mapping belongs to an arena is only known once every
+        # bucket has been summed, and joining arenas into a "reservation" would invent one, since
+        # they sit next to each other in the address space.
+        mappings++
+        map_start[mappings] = start
+        map_end[mappings] = end
+        map_bucket[mappings] = bucket
+        current = mappings
       } else {
         bucket = -1
         anonymous = 0
-        reservation_end = -1
-        largest_is_current = 0
+        current = 0
+        parts = split($6, path, "/")
+        library = path[parts]
       }
       next
     }
@@ -260,15 +286,36 @@ function sx::jvm_command::nativememory::glibc_alloc_info::render() {
       if (bucket >= 0) { resident[bucket] += $2 * 1024 }
       if (anonymous) {
         anon_rss += $2 * 1024
-        reservation_rss += $2 * 1024
-        if (largest_is_current) { largest_rss = reservation_rss }
+        if (current > 0) { map_rss[current] += $2 * 1024 }
       } else {
         file_rss += $2 * 1024
+        if (library != "" && is_foreign(library)) { lib_rss[library] += $2 * 1024 }
       }
     }
     END {
       for (key in size) {
-        if (size[key] == arena) { arenas++; arena_rss += resident[key] }
+        if (size[key] == arena) { arenas++; arena_rss += resident[key]; is_arena[key] = 1 }
+      }
+
+      # Second pass for the biggest reservation. The kernel reports one mmap as several lines when
+      # parts of it differ in permissions, which is what an uncommitted Java heap looks like, so the
+      # lines that continue the previous one are joined. Arenas are left out: they are separate
+      # mmaps that merely sit side by side, and joining them invents a reservation that never
+      # existed.
+      previous_end = -1
+      for (i = 1; i <= mappings; i++) {
+        if (is_arena[map_bucket[i]]) { previous_end = -1; continue }
+
+        if (map_start[i] == previous_end) {
+          run += map_end[i] - map_start[i]
+          run_rss += map_rss[i]
+        } else {
+          run = map_end[i] - map_start[i]
+          run_rss = map_rss[i]
+        }
+        previous_end = map_end[i]
+
+        if (run > largest) { largest = run; largest_rss = run_rss }
       }
 
       if (libc ~ /musl/) { implementation = "musl" }
@@ -300,12 +347,27 @@ function sx::jvm_command::nativememory::glibc_alloc_info::render() {
       printf "cgroup\toom_kills\t%s\tTimes the kernel killed a process in here\n", (("oom_kill" in event) ? event["oom_kill"] : "n/a")
       printf "libc\timplementation\t%s\tArenas only exist on glibc\n", implementation
       printf "libc\tversion\t%s\tVersion of the C library of the container\n", version
+      # Only the JVM knows what it committed, so without "jcmd" its share of the resident set
+      # cannot be told apart from everything else and no "native" figure is possible.
+      if (heap_committed > 0) {
+        printf "jvm\tcommitted_heap\t%s\tHeap the JVM has committed, not what it may reserve\n", mib(heap_committed)
+        printf "jvm\tmetaspace\t%s\tMetaspace the JVM has committed\n", mib(metaspace)
+        printf "jvm\tclass_space\t%s\tCompressed class space the JVM has committed\n", mib(class_space)
+      } else {
+        printf "jvm\tcommitted_heap\tn/a\tNeeds \"jcmd\", which JRE-only images do not ship\n"
+      }
+
       printf "memory\tanonymous\t%s\tResident memory backed by no file\n", mib(anon_rss)
       printf "memory\tfile_backed\t%s\tResident memory of mapped files\n", mib(file_rss)
       # The biggest anonymous reservation of a JVM is its heap, mapped whole at startup and
       # committed into as it grows, so this is the allowance to compare against the cgroup limit.
       printf "memory\tlargest_reservation\t%s\tBiggest single mapping, usually the Java heap\n", mib(largest)
       printf "memory\tlargest_reservation_resident\t%s\tHow much of that mapping is resident\n", mib(largest_rss)
+      # The figure the whole report exists for: resident memory the JVM does not account for. The
+      # code cache is not in "GC.heap_info", so it lands in here too.
+      if (heap_committed > 0) {
+        printf "memory\tnative\t%s\tRSS minus what the JVM committed, code cache included\n", mib(rss - heap_committed - metaspace - class_space)
+      }
       printf "arenas\tblocks\t%d\t64 MiB blocks, the arenas plus a few JVM regions\n", arenas
       printf "arenas\tresident\t%s\tResident memory inside those blocks\n", mib(arena_rss)
       # Whatever is anonymous and not an arena: the Java heap, metaspace, the code cache, the
@@ -313,6 +375,22 @@ function sx::jvm_command::nativememory::glibc_alloc_info::render() {
       printf "arenas\tother_anonymous\t%s\tAnonymous memory outside them: heap, stacks, JIT\n", mib(anon_rss - arena_rss)
       printf "arenas\tmalloc_arena_max\t%s\tCap in effect, empty when glibc chooses it\n", (arena_max == "" ? "unset" : arena_max)
       printf "arenas\tglibc_default\t%s\tCap glibc picks on its own: 8 x cores of the node\n", (cores == "" ? "n/a" : cores * 8)
+
+      # Their own resident memory is small, a few hundred KiB of code. They are listed because each
+      # one is a candidate for the memory above: what they allocate is invisible to every JVM
+      # counter, and naming them is where an investigation starts.
+      for (name in lib_rss) {
+        biggest = ""
+        for (candidate in lib_rss) {
+          if (lib_rss[candidate] > -1 && (biggest == "" || lib_rss[candidate] > lib_rss[biggest])) { biggest = candidate }
+        }
+        if (biggest == "" || ++listed > 6) { break }
+        # A JNI library is unpacked to a temporary file with a random suffix, so the tail of the
+        # name carries nothing and only the head identifies it.
+        display = (length(biggest) > 34 ? substr(biggest, 1, 32) ".." : biggest)
+        printf "libraries\t%s\t%s\tNative library of the application, allocates outside the JVM\n", display, mib(lib_rss[biggest])
+        lib_rss[biggest] = -1
+      }
     }
   '
 }
