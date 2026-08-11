@@ -19,7 +19,10 @@ jobs:
         uses: actions/github-script@v9
         with:
           script: |
-            const title = context.payload.pull_request.title;
+            const pullRequest = context.payload.pull_request;
+            const { owner, repo } = context.repo;
+            const issue_number = pullRequest.number;
+
             const prefixToLabel = {
               'feat': 'enhancement',
               'fix': 'bug',
@@ -30,19 +33,54 @@ jobs:
               'perf': 'enhancement',
             };
 
-            const match = title.match(/^(\w+)(\(.+\))?!?:/);
-            if (!match) return;
+            // Conventional Commits marks a breaking change with `!` before the
+            // colon, or with a `BREAKING CHANGE:` footer.
+            const breakingHeader = /^\w+(\([^)]*\))?!:/;
+            const breakingFooter = /^BREAKING[ -]CHANGE:/m;
 
-            const prefix = match[1];
-            const label = prefixToLabel[prefix];
-            if (!label) return;
-
-            const { owner, repo } = context.repo;
-            const issue_number = context.payload.pull_request.number;
-
-            await github.rest.issues.addLabels({
+            const commits = await github.paginate(github.rest.pulls.listCommits, {
               owner,
               repo,
-              issue_number,
-              labels: [label],
+              pull_number: issue_number,
+              per_page: 100,
             });
+
+            const isBreaking =
+              breakingHeader.test(pullRequest.title) ||
+              commits.some(
+                (commit) =>
+                  breakingHeader.test(commit.commit.message) ||
+                  breakingFooter.test(commit.commit.message),
+              );
+
+            const labels = [];
+
+            const match = pullRequest.title.match(/^(\w+)(\(.+\))?!?:/);
+            if (match && prefixToLabel[match[1]]) {
+              labels.push(prefixToLabel[match[1]]);
+            }
+
+            if (isBreaking) {
+              labels.push('breaking');
+            }
+
+            if (labels.length > 0) {
+              await github.rest.issues.addLabels({ owner, repo, issue_number, labels });
+            }
+
+            const hasBreakingLabel = pullRequest.labels.some(
+              (label) => label.name === 'breaking',
+            );
+
+            if (!isBreaking && hasBreakingLabel) {
+              try {
+                await github.rest.issues.removeLabel({
+                  owner,
+                  repo,
+                  issue_number,
+                  name: 'breaking',
+                });
+              } catch (error) {
+                if (error.status !== 404) throw error;
+              }
+            }
