@@ -116,6 +116,7 @@ function sx::jvm_command::nativememory::glibc_alloc_info() {
   sx::log::info "Attaching \"gdb\" to PID ${pid} to call \"malloc_info\". Every thread of the JVM stops while it runs."
 
   rows+=$'\n'"$(sx::jvm_command::nativememory::glibc_alloc_info::arenas "${ns}" "${name}" "${container}" "${pid}" "${context}" "${gdb_container}")"
+  rows+=$'\n'"$(printf '%s\n' "${report}" | sx::jvm_command::nativememory::glibc_alloc_info::libraries)"
 
   # Tab separated, because the descriptions hold commas.
   printf 'SECTION\tMETRIC\tVALUE\tDESCRIPTION\n%s\n' "${rows}" | column -t -s $'\t'
@@ -211,18 +212,6 @@ function sx::jvm_command::nativememory::glibc_alloc_info::render() {
       return result
     }
     function mib(bytes) { return sprintf("%.0f MiB", bytes / 1048576) }
-    # A shared object that belongs neither to the JDK nor to the base system, so what is left is
-    # what the application brought: the JNI libraries that allocate outside every JVM counter.
-    # A name list, so it ages with the JDK, but nothing else tells the two apart.
-    function is_foreign(name) {
-      if (name !~ /\.so/) { return 0 }
-      # The separator matters: it keeps "libnetty_transport_native_epoll" out of "libnet", while
-      # still catching the "libawt_headless" and "libmanagement_ext" of the JDK.
-      if (name ~ /^lib(jvm|java|nio|net|zip|jimage|management|awt|jsvml|jli|extnet|verify|instrument|attach)[._-]/) { return 0 }
-      if (name ~ /^lib(c|m|dl|pthread|rt|resolv|util|crypt|nss)[._-]/) { return 0 }
-      if (name ~ /^ld-(linux|musl)/) { return 0 }
-      return 1
-    }
     # Reads the "<label> <n>K" that "jcmd" prints, in bytes.
     function kb_after(line, label) {
       if (match(line, label " [0-9]+K")) {
@@ -277,8 +266,6 @@ function sx::jvm_command::nativememory::glibc_alloc_info::render() {
         bucket = -1
         anonymous = 0
         current = 0
-        parts = split($6, path, "/")
-        library = path[parts]
       }
       next
     }
@@ -289,7 +276,6 @@ function sx::jvm_command::nativememory::glibc_alloc_info::render() {
         if (current > 0) { map_rss[current] += $2 * 1024 }
       } else {
         file_rss += $2 * 1024
-        if (library != "" && is_foreign(library)) { lib_rss[library] += $2 * 1024 }
       }
     }
     END {
@@ -376,9 +362,38 @@ function sx::jvm_command::nativememory::glibc_alloc_info::render() {
       printf "arenas\tmalloc_arena_max\t%s\tCap in effect, empty when glibc chooses it\n", (arena_max == "" ? "unset" : arena_max)
       printf "arenas\tglibc_default\t%s\tCap glibc picks on its own: 8 x cores of the node\n", (cores == "" ? "n/a" : cores * 8)
 
-      # Their own resident memory is small, a few hundred KiB of code. They are listed because each
-      # one is a candidate for the memory above: what they allocate is invisible to every JVM
-      # counter, and naming them is where an investigation starts.
+    }
+  '
+}
+
+# Listed last, and from a pass of their own, because they close the report rather than measure it:
+# every other section is a quantity, this one is a list of suspects for the memory those quantities
+# leave unexplained.
+function sx::jvm_command::nativememory::glibc_alloc_info::libraries() {
+  awk '
+    function mib(bytes) { return sprintf("%.0f MiB", bytes / 1048576) }
+    # A shared object belonging to neither the JDK nor the base system, so what is left is what the
+    # application brought: the JNI libraries that allocate outside every JVM counter. A name list,
+    # so it ages with the JDK, but nothing else tells the two apart.
+    function is_foreign(name) {
+      if (name !~ /\.so/) { return 0 }
+      # The separator matters: it keeps "libnetty_transport_native_epoll" out of "libnet", while
+      # still catching the "libawt_headless" and "libmanagement_ext" of the JDK.
+      if (name ~ /^lib(jvm|java|nio|net|zip|jimage|management|awt|jsvml|jli|extnet|verify|instrument|attach)[._-]/) { return 0 }
+      if (name ~ /^lib(c|m|dl|pthread|rt|resolv|util|crypt|nss)[._-]/) { return 0 }
+      if (name ~ /^ld-(linux|musl)/) { return 0 }
+      return 1
+    }
+    /^===/ { section = substr($0, 4, length($0) - 6); next }
+    section == "smaps" && /^[0-9a-f]+-[0-9a-f]+ / {
+      library = ""
+      if (NF > 5) { parts = split($6, path, "/"); library = path[parts] }
+      next
+    }
+    section == "smaps" && /^Rss:/ {
+      if (library != "" && is_foreign(library)) { lib_rss[library] += $2 * 1024 }
+    }
+    END {
       for (name in lib_rss) {
         biggest = ""
         for (candidate in lib_rss) {
