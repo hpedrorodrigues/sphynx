@@ -12,8 +12,8 @@ source "${SPHYNX_NAMESPACE_DIR}/core/arenas.sh"
 ##? Report the memory glibc holds for a JVM process running in a Kubernetes pod
 ##?
 ##? Usage:
-##?     arenas [<query>] [--image <image>] [--selector <selector>] [--namespace <name> | --all-namespaces] [--context <name>]
-##?     arenas --namespace <name> --pod <name> --container <name> [--image <image>] [--context <name>]
+##?     arenas [<query>] [--image <image>] [--trim] [--selector <selector>] [--namespace <name> | --all-namespaces] [--context <name>]
+##?     arenas --namespace <name> --pod <name> --container <name> [--image <image>] [--trim] [--context <name>]
 ##?
 ##? Options:
 ##?     -l --selector <selector>  Selector (label query) to filter on
@@ -22,11 +22,13 @@ source "${SPHYNX_NAMESPACE_DIR}/core/arenas.sh"
 ##?     -p --pod <name>  The pod name
 ##?     -c --container <name>  The container name
 ##?     --image <image>  Image of the ephemeral container running "gdb", e.g. ghcr.io/hpedrorodrigues/gdb. Required, and every thread of the JVM stops while it runs
+##?     --trim  Also call "malloc_trim(0)" and print the metrics it bears on, before and after. Runs inside the same "gdb" attach, so it adds no second pause. The arenas keep their free lists, so what "malloc_info" reports barely moves while the resident set drops. A measurement and not a fix: the arenas fill again
 ##?     --context <name>  The name of the kubeconfig context to use
 ##?
 ##? Examples:
 ##?     arenas --image ghcr.io/hpedrorodrigues/gdb
 ##?     arenas keycloak --image ghcr.io/hpedrorodrigues/gdb
+##?     arenas keycloak --image ghcr.io/hpedrorodrigues/gdb --trim
 ##?     arenas --selector app=kafka --image ghcr.io/hpedrorodrigues/gdb
 ##?     arenas --namespace kafka --pod kafka-0 --container kafka --image ghcr.io/hpedrorodrigues/gdb
 ##?     arenas kafka --image ghcr.io/hpedrorodrigues/gdb --context staging
@@ -41,4 +43,5 @@ sx::jvm::arenas \
   "${container:-}" \
   "${all_namespaces:-false}" \
   "${context:-}" \
-  "${image:-}"
+  "${image:-}" \
+  "${trim:-false}"
