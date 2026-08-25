@@ -9,6 +9,7 @@ function sx::jvm::arenas() {
   local -r all_namespaces="${6:-false}"
   local -r context="${7:-}"
   local -r image="${8:-}"
+  local -r trim="${9:-false}"
 
   sx::k8s::check_requirements
 
@@ -48,7 +49,7 @@ function sx::jvm::arenas() {
   pid="$(sx::jvm::resolve_pid "${ns}" "${name}" "${container_name}" "${context}")"
   readonly pid
 
-  sx::jvm_command::arenas "${ns}" "${name}" "${container_name}" "${pid}" "${context}" "${gdb_container}"
+  sx::jvm_command::arenas "${ns}" "${name}" "${container_name}" "${pid}" "${context}" "${gdb_container}" "${trim}"
 }
 
 function sx::jvm_command::arenas() {
@@ -58,6 +59,7 @@ function sx::jvm_command::arenas() {
   local -r pid="${4}"
   local -r context="${5:-}"
   local -r gdb_container="${6}"
+  local -r trim="${7:-false}"
 
   sx::log::info "Reading the native memory usage of pod \"${name}/${container}\" (PID: ${pid})..."
 
@@ -84,13 +86,85 @@ function sx::jvm_command::arenas() {
 
   # Logged from here, not from the function: its stdout is captured as rows of the table, and a
   # line holding no separator would stretch the first column to its own width.
-  sx::log::info "Attaching \"gdb\" to PID ${pid} to call \"malloc_info\". Every thread of the JVM stops while it runs."
+  if ${trim}; then
+    sx::log::info "Attaching \"gdb\" to PID ${pid} to call \"malloc_info\", then \"malloc_trim\", then \"malloc_info\" again. Every thread of the JVM stops while these run, and interrupting the command before it detaches can crash the JVM."
+  else
+    sx::log::info "Attaching \"gdb\" to PID ${pid} to call \"malloc_info\". Every thread of the JVM stops while it runs."
+  fi
 
-  rows+=$'\n'"$(sx::jvm_command::arenas::malloc_info "${ns}" "${name}" "${container}" "${pid}" "${context}" "${gdb_container}")"
+  local released
+  released="$(
+    sx::jvm_command::arenas::attach "${ns}" "${name}" "${container}" "${pid}" "${context}" "${gdb_container}" "${trim}"
+  )"
+  readonly released
+
+  rows+=$'\n'"$(sx::jvm_command::arenas::malloc_info "${ns}" "${name}" "${container}" "${pid}" "${context}" 'before')"
+
+  # Read here and not where the second table needs it: a report does not change once it is written,
+  # so reading both in the same breath costs nothing, and a failure in between would otherwise leave
+  # a file behind in a container this command cannot come back to.
+  local after_malloc_info=''
+  if ${trim}; then
+    after_malloc_info="$(
+      sx::jvm_command::arenas::malloc_info "${ns}" "${name}" "${container}" "${pid}" "${context}" 'after'
+    )"
+  fi
+  readonly after_malloc_info
+
+  # Kept before the library rows are appended: those are a list of suspects rather than metrics, and
+  # the second table pairs rows by their section and metric.
+  local -r before_rows="${rows}"
+
   rows+=$'\n'"$(printf '%s\n' "${report}" | sx::jvm_command::arenas::libraries)"
 
+  # "BEFORE" whenever a second table follows to be compared against it. The values were read before
+  # the trim even though the table is printed after it ran: one attach does both calls, so the report
+  # cannot be printed until the trim it precedes is already done.
+  local value_header='VALUE'
+  if ${trim}; then
+    value_header='BEFORE'
+  fi
+  readonly value_header
+
   # Tab separated, because the descriptions hold commas.
-  printf 'SECTION\tMETRIC\tVALUE\tDESCRIPTION\n%s\n' "${rows}" | column -t -s $'\t'
+  echo
+  printf 'SECTION\tMETRIC\t%s\tDESCRIPTION\n%s\n' "${value_header}" "${rows}" | column -t -s $'\t'
+
+  if ! ${trim}; then
+    return 0
+  fi
+
+  # Read after the detach, over a round trip of its own, so the JVM has been allocating again for a
+  # second or two and the second column carries that drift. Reading it from inside the attach would
+  # remove the drift and lengthen the pause instead, which is the worse trade for a report whose
+  # whole point is that the pause is short. The cgroup counters lag further still, because the kernel
+  # charges them in per-CPU batches, so "cgroup usage" is expected to trail "process rss" rather than
+  # match it. What the table shows is the size of the change, not its exact value: the other replica
+  # of the same deployment is what tells a trim apart from ordinary growth.
+  local after_report
+  after_report="$(sx::jvm_command::arenas::collect "${ns}" "${name}" "${container}" "${pid}" "${context}")"
+  readonly after_report
+
+  if [ -z "${after_report}" ]; then
+    sx::log::fatal "Failed to read \"/proc/${pid}\" in pod \"${name}/${container}\" after \"malloc_trim(0)\". The trim itself already ran, so re-running without \"--trim\" reports the state it left behind."
+  fi
+
+  local after_rows
+  after_rows="$(printf '%s\n' "${after_report}" | sx::jvm_command::arenas::render)"
+  after_rows+=$'\n'"${after_malloc_info}"
+  readonly after_rows
+
+  # Reported only when glibc found nothing at all to hand back, which is the case worth a sentence:
+  # no free chunk of any arena covered a whole page, so the table below is expected to be flat. The
+  # other answer says only that some page-aligned free space existed, not that it was resident, so a
+  # "1" beside an unchanged resident set is ordinary and saying so would read as a contradiction.
+  if [ "${released}" = '0' ]; then
+    sx::log::info "\n\"malloc_trim(0)\" returned nothing to the kernel: no free chunk of any arena covered a whole page, so this JVM has nothing to gain from a trim."
+  fi
+
+  echo
+  printf 'SECTION\tMETRIC\tBEFORE\tAFTER\tDESCRIPTION\n%s\n' \
+    "$(sx::jvm_command::arenas::compare "${before_rows}" "${after_rows}")" | column -t -s $'\t'
 }
 
 # Everything is read in a single exec and parsed on this side: a JRE-only image ships almost no
@@ -381,24 +455,49 @@ function sx::jvm_command::arenas::libraries() {
   '
 }
 
-# "malloc_info" is only reachable as a C call, so "gdb" has to attach to the JVM to make it. That
-# stops every thread of the process for the duration, which is under a second in practice, but a
-# pod whose liveness probe has little slack can still be restarted by the kubelet because of it.
-function sx::jvm_command::arenas::malloc_info() {
+# The two reports of one attach are told apart by the phase in their name. Built here because the
+# attach writes the files and the parser reads them, and a path spelled out in both is a contract
+# nothing checks.
+function sx::jvm_command::arenas::dump_path() {
+  local -r pid="${1}"
+  local -r phase="${2}"
+
+  echo "/tmp/malloc_info-${pid}-${phase}.xml"
+}
+
+# "malloc_info" is only reachable as a C call, so "gdb" has to attach to the JVM to make it, and with
+# "trim" so is "malloc_trim". Both go in one batch: an attach stops every thread of the process, and
+# a second one would double that and let the JVM allocate between the two reports, which is the one
+# thing the comparison exists to measure. The pause is under a second in practice, but a pod whose
+# liveness probe has little slack can still be restarted by the kubelet because of it.
+#
+# Every thread runs again during each call, though, because "gdb" makes an inferior call by letting
+# the process go. So the JVM meets its own signals while a call is in flight, and HotSpot raises
+# SIGSEGV as a matter of routine: implicit null checks and the safepoint polling page both work that
+# way. Left at its default "gdb" stops everything on the first of them and runs the rest of the batch
+# against a half-finished call, so the signals the JVM handles itself are passed straight through.
+# "malloc_trim" is the call here that lasts long enough for one to be likely.
+#
+# The call is given a deadline as well, because an inferior call has none. If "gdb" picks a thread
+# that was stopped inside "malloc" holding its own arena lock, "malloc_trim" waits on a lock it
+# already owns and no other thread can break the tie. On a timeout "gdb" unwinds its dummy frame and
+# detaches, which a "timeout" around the whole command could never do: killing "gdb" mid-call leaves
+# the breakpoint of that frame in the process, and the JVM then takes a SIGTRAP it does not handle.
+#
+# Prints what "malloc_trim" returned, and nothing at all without "trim".
+function sx::jvm_command::arenas::attach() {
   local -r ns="${1}"
   local -r name="${2}"
   local -r container="${3}"
   local -r pid="${4}"
   local -r context="${5:-}"
   local -r gdb_container="${6}"
+  local -r trim="${7:-false}"
 
   local -r context_flags="$(sx::jvm::context_flags "${context}")"
-  local -r remote_file="/tmp/malloc_info-${pid}.xml"
+  local -r before_file="$(sx::jvm_command::arenas::dump_path "${pid}" 'before')"
+  local -r after_file="$(sx::jvm_command::arenas::dump_path "${pid}" 'after')"
 
-  # The sysroot has to be set before the attach: with "gdb -p <pid>" the attach happens before the
-  # "-ex" flags run, no symbol of libc resolves, and every call fails with "No symbol table is
-  # loaded". The file is written by the JVM itself, so it lands in the mount namespace of the
-  # target container, not in the one of the container running "gdb".
   # Checked apart from the attach below, so a missing tool and a refused attach stop looking like
   # the same failure.
   # shellcheck disable=SC2086  # quote this to prevent word splitting
@@ -408,23 +507,96 @@ function sx::jvm_command::arenas::malloc_info() {
     sx::log::fatal "The image of the ephemeral container \"${gdb_container}\" ships no \"gdb\". Re-run with one that does, e.g. \"--image ghcr.io/hpedrorodrigues/gdb\"."
   fi
 
+  # "malloc_info" writes its first line to the stream before it ever looks at it, so a "fopen" that
+  # returns NULL is a null dereference inside the JVM and not a failure this command gets to report.
+  # A read-only root filesystem and a "/tmp" the JVM may not write are both ordinary, so the write is
+  # tried from the target container first, where the user is the one the JVM runs as. Checking it
+  # inside the batch is not an option: "gdb" reads every "-ex" as a command of its own, and an "if"
+  # spread over several of them runs both of its branches.
+  # shellcheck disable=SC2086  # quote this to prevent word splitting
+  if ! sx::k8s::cli ${context_flags} exec --namespace "${ns}" "${name}" --container "${container}" -- \
+    sh -c "touch \"${before_file}\" && rm -f \"${before_file}\"" &>/dev/null; then
+
+    sx::log::fatal "The JVM of pod \"${name}/${container}\" cannot write \"${before_file}\", and \"malloc_info\" writes to the stream before it checks it, so calling it would crash the JVM. Is the root filesystem read-only, or \"/tmp\" not writable by the user the container runs as?"
+  fi
+
+  # The sysroot has to be set before the attach: with "gdb -p <pid>" the attach happens before the
+  # "-ex" flags run, no symbol of libc resolves, and every call fails with "No symbol table is
+  # loaded". The files are written by the JVM itself, so they land in the mount namespace of the
+  # target container, not in the one of the container running "gdb".
+  # shellcheck disable=SC2016  # "$f" is a convenience variable of gdb, not of the shell
+  local -a commands=(
+    -batch
+    -ex 'set confirm off'
+    -ex 'set unwind-on-signal on'
+    -ex 'set unwind-on-timeout on'
+    -ex 'set direct-call-timeout 20'
+    -ex "set sysroot /proc/${pid}/root"
+    -ex "attach ${pid}"
+    -ex 'handle SIGSEGV SIGBUS SIGFPE SIGILL SIGPIPE SIGQUIT SIG32 SIG33 SIG34 nostop noprint pass'
+    -ex "set \$f = (void *) fopen(\"${before_file}\", \"w\")"
+    -ex 'call (int) malloc_info(0, $f)'
+    -ex 'call (int) fclose($f)'
+  )
+
+  if ${trim}; then
+    # Behind a marker of ours rather than read out of the value history of "gdb", which numbers every
+    # call: a batch carries on after a failed "-ex", so a libc exporting no "malloc_trim" would still
+    # write a second report and leave that numbering shifted, and every metric would read as flat.
+    # Flat is the answer this flag looks for, so it must not also be what failure looks like.
+    # "malloc_trim" takes a "size_t", a typedef that does not resolve in a libc without debug
+    # symbols, so the argument is cast to the type behind it. A wrong width there is silent: it
+    # becomes padding glibc keeps, and the trim quietly does less.
+    # shellcheck disable=SC2016  # "$g" is a convenience variable of gdb, not of the shell
+    commands+=(
+      -ex 'printf "sx-malloc-trim %d\n", (int) malloc_trim((unsigned long) 0)'
+      -ex "set \$g = (void *) fopen(\"${after_file}\", \"w\")"
+      -ex 'call (int) malloc_info(0, $g)'
+      -ex 'call (int) fclose($g)'
+    )
+  fi
+
+  commands+=(-ex 'detach')
+
   local output=''
 
-  # shellcheck disable=SC2016,SC2086  # "$f" is a convenience variable of gdb, not of the shell; quote this to prevent word splitting
+  # shellcheck disable=SC2086  # quote this to prevent word splitting
   if ! output="$(
     sx::k8s::cli ${context_flags} exec --namespace "${ns}" "${name}" --container "${gdb_container}" -- \
-      gdb -batch \
-      -ex 'set confirm off' \
-      -ex "set sysroot /proc/${pid}/root" \
-      -ex "attach ${pid}" \
-      -ex "set \$f = (void *) fopen(\"${remote_file}\", \"w\")" \
-      -ex 'call (int) malloc_info(0, $f)' \
-      -ex 'call (int) fclose($f)' \
-      -ex 'detach' 2>&1
+      gdb "${commands[@]}" 2>&1
   )"; then
+
+    if ${trim}; then
+      sx::log::fatal "\"gdb\" failed to run \"malloc_info\" and \"malloc_trim(0)\" against PID ${pid} of pod \"${name}/${container}\". Re-run without \"--trim\" for the report on its own:\n\n${output}"
+    fi
 
     sx::log::fatal "\"gdb\" failed to run \"malloc_info\" against PID ${pid} of pod \"${name}/${container}\":\n\n${output}"
   fi
+
+  if ! ${trim}; then
+    return 0
+  fi
+
+  local -r released="$(printf '%s\n' "${output}" | awk '$1 == "sx-malloc-trim" { print $2 }')"
+
+  if [ -z "${released}" ]; then
+    sx::log::fatal "\"gdb\" attached to PID ${pid} of pod \"${name}/${container}\" but never ran \"malloc_trim(0)\": either the libc of that container exports no such symbol, or the call hit its deadline and was unwound. Re-run without \"--trim\" for the report on its own:\n\n${output}"
+  fi
+
+  echo "${released}"
+}
+
+# Turns one report of "malloc_info" into rows and takes it off the pod.
+function sx::jvm_command::arenas::malloc_info() {
+  local -r ns="${1}"
+  local -r name="${2}"
+  local -r container="${3}"
+  local -r pid="${4}"
+  local -r context="${5:-}"
+  local -r phase="${6}"
+
+  local -r context_flags="$(sx::jvm::context_flags "${context}")"
+  local -r remote_file="$(sx::jvm_command::arenas::dump_path "${pid}" "${phase}")"
 
   local xml
   # shellcheck disable=SC2086  # quote this to prevent word splitting
@@ -439,6 +611,12 @@ function sx::jvm_command::arenas::malloc_info() {
     rm -f "${remote_file}" &>/dev/null || true
 
   if [ -z "${xml}" ]; then
+    # A trim cannot be undone, so failing after it has run is a failure to report and not one to
+    # recover from. Said here, or the next run is another trim for nothing.
+    if [ "${phase}" = 'after' ]; then
+      sx::log::fatal "\"malloc_info\" wrote no second report in pod \"${name}/${container}\", so there is nothing to compare against. The trim itself already ran, so re-running without \"--trim\" reports the state it left behind."
+    fi
+
     sx::log::fatal "\"malloc_info\" wrote no report in pod \"${name}/${container}\"."
   fi
 
@@ -485,6 +663,60 @@ function sx::jvm_command::arenas::malloc_info() {
       printf "malloc_info\tarenas_over_90pct_free\t%d\tArenas at least 90%% free, that memory is stranded there\n", stranded + 0
       printf "malloc_info\tarena_free_median\t%.1f%%\tHalf of the arenas are at least this free\n", (samples > 0 ? shares[int((samples + 1) / 2)] : 0)
       printf "malloc_info\tarena_free_max\t%.1f%%\tHow free the emptiest arena is\n", widest + 0
+    }
+  '
+}
+
+# Pairs the rows of the two reports by their section and metric. Both values are printed as the report
+# already formatted them and no difference is taken: subtracting them would mean either inheriting the
+# whole-MiB rounding of the report or carrying a raw byte count through every "printf" of it, and the
+# second reading has already spent more precision than either would buy back.
+function sx::jvm_command::arenas::compare() {
+  local -r before="${1}"
+  local -r after="${2}"
+
+  # The same marker "collect" uses to separate its own sections, for the same reason: the rows are
+  # tab separated, so a line holding no tab cannot be one of them.
+  printf '%s\n===after===\n%s\n' "${before}" "${after}" | awk -F '\t' '
+    BEGIN {
+      # Named rather than computed from what changed, because a computed table would be a diff of the
+      # last two seconds: threads, thread ids and every library move on their own in a live JVM, and
+      # sitting next to a trim they would read as its work. It would also drop the rows that carry
+      # the answer, which are the ones that do not move.
+      #
+      # Those are here on purpose. "arenas blocks" is the clearest: "madvise(MADV_DONTNEED)" empties
+      # pages without unmapping them or splitting the mapping, so the count of 64 MiB blocks is the
+      # same afterwards, and the whole of a trim is that same mapping holding less. "held", "free"
+      # and "retained" stay put because a trim leaves every chunk on its free list and never lowers
+      # what the arena counts as its own, so a flat "held" beside a fallen "rss" is the finding and
+      # not a disappointment. "rss_peak" and "cgroup peak" are high-water marks nothing can lower, so
+      # one that moved means the JVM, not the trim.
+      total = split("process/rss process/rss_peak process/swap" \
+        " cgroup/usage cgroup/peak" \
+        " memory/anonymous" \
+        " arenas/blocks arenas/resident arenas/other_anonymous" \
+        " malloc_info/held malloc_info/peak_held malloc_info/free malloc_info/retained" \
+        " malloc_info/arenas_over_90pct_free malloc_info/arena_free_median" \
+        " malloc_info/arena_free_max", wanted, " ")
+    }
+    NF == 1 { second = 1; next }
+    {
+      key = $1 "/" $2
+      if (second) { after[key] = $3; next }
+      before[key] = $3
+      description[key] = $4
+    }
+    END {
+      for (i = 1; i <= total; i++) {
+        key = wanted[i]
+        # Skipped rather than printed empty. A metric the report only prints under a condition would
+        # otherwise land as a blank cell, and "column" folds neighbouring separators into one and
+        # shifts every column after it along.
+        if (!(key in before) || !(key in after)) { continue }
+
+        split(key, parts, "/")
+        printf "%s\t%s\t%s\t%s\t%s\n", parts[1], parts[2], before[key], after[key], description[key]
+      }
     }
   '
 }
