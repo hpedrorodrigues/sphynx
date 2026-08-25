@@ -14,7 +14,7 @@
 
 This is a personal project containing everything I use on a daily basis and how
 I set up my machine. It has aliases, functions, CLI, workspace configuration,
-applications' settings, docker images, and more.
+applications' settings, and more.
 
 ### CLI
 
@@ -25,6 +25,7 @@ automate boring/repetitive tasks and helps me manage the other parts of this
 project.
 
 e.g.
+
 ```bash
 $ sx docker logs
 $ sx android device --connect
@@ -49,6 +50,7 @@ aliases, functions, and configuration files that I use daily.
 #### Shell startup performance
 
 **zsh**
+
 ```
 ♪ sx shell benchmark zsh
 ProductName:            macOS
@@ -79,6 +81,7 @@ std dev              430.2 μs   (251.9 μs .. 635.6 μs)
 ```
 
 **bash**
+
 ```
 ♪ sx shell benchmark bash
 ProductName:            macOS
@@ -113,8 +116,9 @@ std dev              155.3 μs   (46.41 μs .. 291.6 μs)
 [External tools][external-tools] are tools that you don't want to install
 on your machine but you'd like to use them.
 
-They are basically shell functions calling Docker behind the scenes, but
-not all functions use the dockerfiles available in this project (e.g. Kafka).
+They are basically shell functions calling Docker behind the scenes. Every
+function runs a published image, either one under `ghcr.io/hpedrorodrigues` or
+a vendor image (e.g. Kafka).
 
 ### Workspace configuration
 
@@ -122,19 +126,13 @@ I use [Ansible][ansible-website] to configure my machine. It automates tedious
 tasks [installing packages and applications][playbooks-folder] that I use almost
 daily.
 
-
-
 [cli-folder]: ./modules/cli
 [fzf]: https://github.com/junegunn/fzf
 [homebrew]: https://brew.sh
 [linuxbrew]: https://docs.brew.sh/Homebrew-on-Linux
-
 [dotfiles-folder]: ./modules/dotfiles
-
 [external-tools]: ./modules/dotfiles/common/scripts/external_tools.sh
-
 [ansible-website]: https://www.ansible.com
 [playbooks-folder]: ./modules/playbooks
-
 [checks-badge]: https://github.com/hpedrorodrigues/sphynx/actions/workflows/checks.yml/badge.svg
 [checks-workflow]: https://github.com/hpedrorodrigues/sphynx/actions/workflows/checks.yml

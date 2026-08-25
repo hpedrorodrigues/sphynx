@@ -5,7 +5,7 @@
 ##? Usage:
 ##?   sx <namespace> <command> [<args>...]
 ##?   sx <global-command> [<args>...]
-##?   sx (--namespaces | --commands | --help)
+##?   sx (--namespaces | --commands | --raw | --help)
 ##?
 ##? Options:
 ##?   --namespaces  List available namespaces (and global commands)
