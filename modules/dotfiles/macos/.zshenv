@@ -27,17 +27,26 @@ export JAVA25_HOME='/Library/Java/JavaVirtualMachines/temurin-25.jdk/Contents/Ho
 
 export JAVA_HOME="${JAVA25_HOME}"
 
+# Keep -Xmx: the sbt runner looks for that literal string, not -XX:MaxHeapSize.
+export JDK_OPTS='-Xmx8G -Xss6M -XX:ReservedCodeCacheSize=512M -XX:MaxMetaspaceSize=1G'
+
 #|> Scala
 export SCALA2_HOME='/usr/local/opt/scala@2.13'
 export SCALA3_HOME='/usr/local/opt/scala'
 
 export SCALA_HOME="${SCALA2_HOME}"
 
+#|> SBT
+export SBT_OPTS="${JDK_OPTS}"
+
 #|> Maven
-# https://github.com/adoptium/jdk17u/blob/master/src/java.base/share/classes/sun/launcher/resources/launcher.properties#L153-L154
-export MAVEN_OPTS='-Xms512m -Xmx2G'
+export MAVEN_OPTS="${JDK_OPTS}"
 
 #|> Gradle
+# GRADLE_OPTS sizes only the client JVM. The build runs in the daemon, which
+# reads org.gradle.jvmargs.
+# Reference: https://docs.gradle.org/current/userguide/build_environment.html
+export GRADLE_OPTS="-Dorg.gradle.jvmargs='${JDK_OPTS}'"
 export GRADLE_USER_HOME="${HOME}/.gradle"
 
 #|> Android
