@@ -31,7 +31,7 @@
   include_tasks:
     file: '{{ item }}'
   loop:
-    - vundle.yml
+    - vim.yml
     - fonts.yml
     - starship.yml
     - fzf.yml

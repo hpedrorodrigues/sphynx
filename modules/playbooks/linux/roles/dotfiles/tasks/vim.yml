@@ -1,0 +1,28 @@
+- name: Vim - Creating configuration directories
+  file:
+    path: '{{ directory_item }}'
+    mode: '0755'
+    state: directory
+  loop:
+    - '{{ ansible_facts["user_dir"] }}/.vim/backups'
+    - '{{ ansible_facts["user_dir"] }}/.vim/swaps'
+    - '{{ ansible_facts["user_dir"] }}/.vim/undo'
+    - '{{ ansible_facts["user_dir"] }}/.vim/pack/sphynx/start'
+  loop_control:
+    loop_var: directory_item
+
+- name: Vim - Installing plugins (native packages)
+  git:
+    repo: 'https://github.com/{{ plugin_item.repo }}.git'
+    dest: '{{ ansible_facts["user_dir"] }}/.vim/pack/sphynx/start/{{ plugin_item.name }}'
+  loop:
+    - { repo: 'preservim/nerdtree', name: 'nerdtree' }
+    - { repo: 'semibran/vim-colors-synthetic', name: 'vim-colors-synthetic' }
+    - { repo: 'vim-airline/vim-airline', name: 'vim-airline' }
+    - { repo: 'junegunn/fzf.vim', name: 'fzf.vim' }
+  loop_control:
+    loop_var: plugin_item
+
+- name: Vim - Generating help tags
+  command: vim -es -N -u NONE -c 'packloadall' -c 'silent! helptags ALL' -c 'quitall!'
+  changed_when: false
