@@ -26,5 +26,4 @@
 - name: Installing extensions
   command: 'code --install-extension {{ item }}'
   loop: '{{ extensions }}'
-  when:
-    - item not in installed_extensions.stdout.split('\n')
+  when: item not in installed_extensions.stdout_lines

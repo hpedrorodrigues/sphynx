@@ -1,2 +1,2 @@
 - name: Restart Visual Studio Code
-  shell: kill -9 $(pgrep Electron) && open -a 'Visual Studio Code' || echo
+  shell: pgrep -f 'Visual Studio Code.app' > /dev/null && osascript -e 'quit app "Visual Studio Code"' && open -a 'Visual Studio Code' || echo

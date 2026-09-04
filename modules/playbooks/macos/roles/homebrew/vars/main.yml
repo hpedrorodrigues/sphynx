@@ -3,8 +3,12 @@ repositories:
   - fluxcd/tap
   - homeport/tap
   - estuary/flowctl
+  - stefanprodan/tap
 
 formulas:
+  - actionlint
+  - ansible
+  - apko
   - apktool
   - atuin
   - awscli
@@ -44,6 +48,8 @@ formulas:
   - gnutls
   - go
   - go-task
+  - golangci-lint
+  - goreleaser
   - gpatch
   - gradle
   - grep
@@ -75,6 +81,7 @@ formulas:
   - make
   - mas
   - maven
+  - melange
   - mise
   - mtr
   - ncdu
@@ -84,6 +91,7 @@ formulas:
   - poetry
   - postgresql@18
   - redis
+  - renovate
   - rsync
   - sbt
   - scala # Scala 3
@@ -94,6 +102,7 @@ formulas:
   - sipcalc
   - sqlite
   - starship
+  - stefanprodan/tap/cctop
   - stern
   - subnetcalc
   - telnet
@@ -110,7 +119,7 @@ formulas:
   - hpedrorodrigues/tools/zsh-defer
 
 casks:
-  # - 1password
+  - 1password-cli
   - appcleaner
   - bartender
   - claude-code
@@ -118,11 +127,11 @@ casks:
   - clipy
   - deckset
   - discord
-  - docker
+  - docker-desktop
+  - gcloud-cli
   - ghostty
   - github
   - google-chrome
-  - google-cloud-sdk
   - grammarly-desktop
   - iina
   - istat-menus
