@@ -6,16 +6,17 @@ readonly domain='com.apple.dock'
 
 
 # Possible values:
-#  0: no-op
+#  1: no-op (what System Settings writes for "off")
 #  2: Mission Control (all windows)
 #  3: Show application windows
 #  4: Desktop
 #  5: Start screen saver
 #  6: Disable screen saver
-#  7: Dashboard
 # 10: Put display to sleep
-# 11: Launchpad
+# 11: Launchpad (app removed in macOS 26, value is stale there)
 # 12: Notification Center
+# 13: Lock screen
+# 14: Quick Note
 
 
 # Top left screen corner — start screen saver
@@ -34,7 +35,11 @@ defaults write ${domain} wvous-bl-modifier -int 0
 defaults write ${domain} wvous-br-corner -int 5
 defaults write ${domain} wvous-br-modifier -int 0
 
-# Ask for password immediately after screen saver begins
-readonly screensaver_domain='com.apple.screensaver'
-defaults write "${screensaver_domain}" askForPassword -int 1
-defaults write "${screensaver_domain}" askForPasswordDelay -int 0
+# Ask for password immediately after screen saver begins.
+if ! sysadminctl -screenLock status 2>&1 | grep --quiet 'immediate'; then
+  if [ -t 0 ]; then
+    sysadminctl -screenLock immediate -password -
+  else
+    echo '!!! Screen lock is not immediate. Run: sysadminctl -screenLock immediate -password -' >&2
+  fi
+fi

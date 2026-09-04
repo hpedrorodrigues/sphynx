@@ -42,6 +42,3 @@ defaults write ${domain} tilesize -integer 45
 
 # Make all animations faster that are used by Mission Control
 defaults write ${domain} expose-animation-duration -float 0.1
-
-# Make Dock more transparent
-defaults write ${domain} hide-mirror -bool true
