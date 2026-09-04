@@ -65,7 +65,6 @@
       ]
     }
   },
-  "vsintellicode.modify.editor.suggestSelection": "choseToUpdateConfiguration",
   "window.zoomLevel": 0,
   "workbench.colorTheme": "GitHub Dark",
   "workbench.editor.highlightModifiedTabs": true,
@@ -79,5 +78,5 @@
     "vs-kubernetes.crd-code-completion": "disabled"
   },
   "chat.viewSessions.orientation": "stacked",
-  "docker.extension.enableComposeLanguageServer": false
+  "containers.enableComposeLanguageService": false
 }

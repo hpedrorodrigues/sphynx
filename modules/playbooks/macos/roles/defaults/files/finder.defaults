@@ -20,9 +20,6 @@ defaults write ${domain} FXEnableExtensionChangeWarning -bool false
 # Show the ~/Library folder
 chflags nohidden "${HOME}/Library"
 
-# Enable text selection in QuickLook
-defaults write ${domain} QLEnableTextSelection -bool true
-
 # Always open everything in Finder's list view
 defaults write ${domain} FXPreferredViewStyle Nlsv
 
@@ -47,9 +44,6 @@ defaults write ${domain} ShowMountedServersOnDesktop -bool false
 
 # Disable the warning before emptying the Trash
 defaults write ${domain} WarnOnEmptyTrash -bool false
-
-# Empty Trash securely by default
-defaults write ${domain} EmptyTrashSecurely -bool true
 
 # Do not write .DS_Store files on network or USB volumes
 defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true
