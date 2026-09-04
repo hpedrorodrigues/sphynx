@@ -18,10 +18,10 @@ defaults write ${domain} AutomaticDownload -int 1
 # Turn on app auto-update
 defaults write ${commerce_domain} AutoUpdate -bool true
 
-# Install System data files & security updates
+# Install security updates
 defaults write ${domain} CriticalUpdateInstall -int 1
 
-# Automatically download apps purchased on other Macs
+# Install system data files
 defaults write ${domain} ConfigDataInstall -int 1
 
 # Allow the App Store to reboot machine on macOS updates

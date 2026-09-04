@@ -39,5 +39,16 @@ defaults write -g ApplePressAndHoldEnabled -bool false
 # Set a really fast key repeat
 defaults write NSGlobalDomain KeyRepeat -int 1
 
+# Keep the default delay until key repeat starts (25 = 375 ms)
+defaults write NSGlobalDomain InitialKeyRepeat -int 25
+
+# Disable smart text substitution (quotes, dashes, period, capitalization,
+# and spelling autocorrection)
+defaults write NSGlobalDomain NSAutomaticQuoteSubstitutionEnabled -bool false
+defaults write NSGlobalDomain NSAutomaticDashSubstitutionEnabled -bool false
+defaults write NSGlobalDomain NSAutomaticPeriodSubstitutionEnabled -bool false
+defaults write NSGlobalDomain NSAutomaticCapitalizationEnabled -bool false
+defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false
+
 # Enable Tab/Cancel in Mac dialogs
 defaults write NSGlobalDomain AppleKeyboardUIMode -int 3

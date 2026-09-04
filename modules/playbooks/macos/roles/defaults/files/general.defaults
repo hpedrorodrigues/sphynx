@@ -39,8 +39,8 @@ defaults write com.apple.LaunchServices LSQuarantine -bool false
   # sudo nvram SystemAudioVolume=' '
 # fi
 
-# Menu bar: enable transparency
-defaults write NSGlobalDomain AppleEnableMenuBarTransparency -bool true
+# Liquid Glass appearance: 0 = Clear (transparent), 1 = Tinted (macOS 26.1+)
+defaults write NSGlobalDomain NSGlassDiffusionSetting -int 0
 
 # Restart automatically if the computer freezes
 # sudo systemsetup -setrestartfreeze on

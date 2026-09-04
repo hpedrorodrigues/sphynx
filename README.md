@@ -54,31 +54,31 @@ aliases, functions, and configuration files that I use daily.
 ```
 ♪ sx shell benchmark zsh
 ProductName:		macOS
-ProductVersion:		26.6.1
-BuildVersion:		25G76
+ProductVersion:		26.6.2
+BuildVersion:		25G83
 
 > Hyperfine
 
 Benchmark 1: zsh -i -c exit
-  Time (mean ± σ):      80.3 ms ±   2.4 ms    [User: 40.5 ms, System: 29.8 ms]
-  Range (min … max):    78.2 ms …  89.7 ms    36 runs
+  Time (mean ± σ):      77.0 ms ±   1.9 ms    [User: 39.9 ms, System: 28.1 ms]
+  Range (min … max):    74.8 ms …  82.6 ms    37 runs
 
 > Bench
 
 benchmarking zsh -i -c exit
-time                 84.04 ms   (80.66 ms .. 86.94 ms)
-                     0.998 R²   (0.996 R² .. 1.000 R²)
-mean                 81.79 ms   (81.07 ms .. 83.03 ms)
-std dev              1.511 ms   (473.3 μs .. 2.179 ms)
+time                 77.15 ms   (74.90 ms .. 78.24 ms)
+                     0.999 R²   (0.998 R² .. 1.000 R²)
+mean                 79.17 ms   (78.30 ms .. 81.43 ms)
+std dev              2.319 ms   (573.0 μs .. 3.878 ms)
 
 > Time
 
 /usr/bin/time zsh -i -c exit (5x)
-        0.08 real         0.04 user         0.03 sys
-        0.09 real         0.04 user         0.03 sys
-        0.08 real         0.04 user         0.03 sys
-        0.08 real         0.03 user         0.03 sys
-        0.07 real         0.03 user         0.03 sys
+        0.07 real         0.04 user         0.02 sys
+        0.07 real         0.03 user         0.02 sys
+        0.07 real         0.03 user         0.02 sys
+        0.07 real         0.03 user         0.02 sys
+        0.07 real         0.03 user         0.02 sys
 ```
 
 **bash**
@@ -86,22 +86,22 @@ std dev              1.511 ms   (473.3 μs .. 2.179 ms)
 ```
 ♪ sx shell benchmark bash
 ProductName:		macOS
-ProductVersion:		26.6.1
-BuildVersion:		25G76
+ProductVersion:		26.6.2
+BuildVersion:		25G83
 
 > Hyperfine
 
 Benchmark 1: bash -i -c exit
-  Time (mean ± σ):      88.3 ms ±   1.7 ms    [User: 44.2 ms, System: 33.9 ms]
-  Range (min … max):    85.9 ms …  94.1 ms    33 runs
+  Time (mean ± σ):      84.1 ms ±   1.9 ms    [User: 43.9 ms, System: 32.3 ms]
+  Range (min … max):    82.2 ms …  90.9 ms    33 runs
 
 > Bench
 
 benchmarking bash -i -c exit
-time                 91.66 ms   (88.18 ms .. 98.71 ms)
-                     0.991 R²   (0.977 R² .. 1.000 R²)
-mean                 89.75 ms   (88.54 ms .. 94.14 ms)
-std dev              3.458 ms   (676.6 μs .. 5.720 ms)
+time                 86.27 ms   (84.74 ms .. 90.17 ms)
+                     0.997 R²   (0.989 R² .. 1.000 R²)
+mean                 86.85 ms   (85.82 ms .. 88.70 ms)
+std dev              2.294 ms   (1.155 ms .. 3.799 ms)
 
 > Time
 

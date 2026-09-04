@@ -10,9 +10,9 @@
   when:
     - inventory.stat.exists
 
-- name: Closing System Preferences
+- name: Closing System Settings
   shell: |
-    osascript -e 'tell application "System Preferences" to quit'
+    osascript -e 'tell application "System Settings" to quit'
 
 - name: Applying defaults
   script: '{{ item }}'

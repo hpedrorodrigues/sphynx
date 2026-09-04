@@ -7,6 +7,18 @@
 // custom settings, run the `open default settings` command
 // from the command palette or from `Zed` application menu.
 {
+  "project_panel": {
+    "dock": "left"
+  },
+  "outline_panel": {
+    "dock": "left"
+  },
+  "collaboration_panel": {
+    "dock": "left"
+  },
+  "git_panel": {
+    "dock": "left"
+  },
   "theme": "One Dark",
   "icon_theme": "Catppuccin Macchiato",
   "ui_font_family": "Fira Code",
@@ -26,10 +38,11 @@
     "toml": true
   },
   "agent": {
+    "dock": "right",
     "model_parameters": [],
     "default_model": {
       "provider": "anthropic",
-      "model": "claude-sonnet-4-thinking-latest"
+      "model": "claude-sonnet-5"
     }
   },
   "preview_tabs": {

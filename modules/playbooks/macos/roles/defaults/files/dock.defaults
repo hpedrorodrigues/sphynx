@@ -10,6 +10,9 @@ defaults write ${domain} orientation -string bottom
 # Automatically hide the Dock
 defaults write ${domain} autohide -bool true
 
+# Remove the delay before the hidden Dock shows
+defaults write ${domain} autohide-delay -float 0
+
 # Change the opening and closing animation times
 defaults write ${domain} autohide-time-modifier -float 0.8
 
@@ -42,6 +45,3 @@ defaults write ${domain} tilesize -integer 45
 
 # Make all animations faster that are used by Mission Control
 defaults write ${domain} expose-animation-duration -float 0.1
-
-# Make Dock more transparent
-defaults write ${domain} hide-mirror -bool true

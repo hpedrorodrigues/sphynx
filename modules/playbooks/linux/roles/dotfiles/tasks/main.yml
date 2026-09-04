@@ -16,7 +16,7 @@
 - name: Making Zsh the default shell
   become: true
   user:
-    name: '{{ ansible_env.USER }}'
+    name: '{{ ansible_facts["env"]["USER"] }}'
     shell: '/bin/zsh'
   when:
     - zsh.stat.exists or new_zsh is success
@@ -31,7 +31,7 @@
   include_tasks:
     file: '{{ item }}'
   loop:
-    - vundle.yml
+    - vim.yml
     - fonts.yml
     - starship.yml
     - fzf.yml

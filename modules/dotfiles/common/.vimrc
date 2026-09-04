@@ -1,23 +1,18 @@
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Plugin Manager (Vundle)
+" => Plugins (Vim native packages)
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 
-" Set the runtime path to include Vundle and initialize
-set rtp+=~/.vim/bundle/Vundle.vim
+" Plugins live in ~/.vim/pack/sphynx/start, cloned by the vim playbook task
+" (modules/playbooks/<os>/roles/dotfiles/tasks/vim.yml). Vim loads them
+" after this file, so settings such as mapleader are in place first.
 
 " Set the runtime path to include fuzzy finder
-set rtp+=/usr/local/opt/fzf
+set rtp+=/opt/homebrew/opt/fzf
+set rtp+=/home/linuxbrew/.linuxbrew/opt/fzf
 
-call vundle#begin()
-  Plugin 'VundleVim/Vundle.vim'
-  Plugin 'scrooloose/nerdtree'
-  Plugin 'semibran/vim-colors-synthetic'
-  Plugin 'vim-airline/vim-airline'
-  Plugin 'vim-airline/vim-airline-themes'
-  Plugin 'junegunn/fzf.vim'
-  Plugin 'vimwiki/vimwiki'
-call vundle#end()
+" Honor .editorconfig files (plugin bundled with Vim 9)
+silent! packadd! editorconfig
 
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -154,9 +149,12 @@ set showmatch
 " How many tenths of a second to blink when matching brackets
 set mat=2
 
-if s:hasColorScheme('synthetic')
-  colorscheme synthetic
-endif
+" Keep the terminal's own (translucent) background instead of the solid one
+autocmd ColorScheme synthetic highlight Normal ctermbg=NONE guibg=NONE
+
+" Native packages join the runtime path only after this file is sourced, so
+" apply the colorscheme once startup finishes.
+autocmd VimEnter * ++nested if s:hasColorScheme('synthetic') | colorscheme synthetic | endif
 
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""

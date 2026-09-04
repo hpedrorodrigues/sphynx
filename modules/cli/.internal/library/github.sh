@@ -10,8 +10,9 @@ function sx::github::api() {
   curl \
     --silent \
     --location \
-    --header "Authorization: token ${GITHUB_TOKEN}" \
-    --header "Accept: application/vnd.github.v3+json" \
+    --header "Authorization: Bearer ${GITHUB_TOKEN}" \
+    --header "Accept: application/vnd.github+json" \
+    --header "X-GitHub-Api-Version: 2022-11-28" \
     "${GITHUB_API_URL}${parameters}"
 }
 
@@ -21,8 +22,8 @@ function sx::github::browser_api() {
   curl \
     --silent \
     --location \
-    --header "Authorization: token ${GITHUB_TOKEN}" \
-    --header "Accept: application/vnd.github.v3+json" \
+    --header "Authorization: Bearer ${GITHUB_TOKEN}" \
+    --header "Accept: application/vnd.github+json" \
     "${GITHUB_BROWSER_API_URL}${parameters}"
 }
 
@@ -32,7 +33,7 @@ function sx::github::content_api() {
   curl \
     --silent \
     --location \
-    --header "Authorization: token ${GITHUB_TOKEN}" \
+    --header "Authorization: Bearer ${GITHUB_TOKEN}" \
     "${GITHUB_CONTENT_API_URL}${parameters}"
 }
 

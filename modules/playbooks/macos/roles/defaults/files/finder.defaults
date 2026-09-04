@@ -11,14 +11,24 @@ defaults write ${domain} NewWindowTargetPath -string "file://${HOME}/"
 # Show dotfiles
 defaults write ${domain} AppleShowAllFiles -string 'YES'
 
+# Show all filename extensions
+defaults write NSGlobalDomain AppleShowAllExtensions -bool true
+
+# Do not warn when changing a filename extension
+defaults write ${domain} FXEnableExtensionChangeWarning -bool false
+
 # Show the ~/Library folder
 chflags nohidden "${HOME}/Library"
 
-# Enable text selection in QuickLook
-defaults write ${domain} QLEnableTextSelection -bool true
-
 # Always open everything in Finder's list view
 defaults write ${domain} FXPreferredViewStyle Nlsv
+
+# Keep folders on top when sorting by name
+defaults write ${domain} _FXSortFoldersFirst -bool true
+
+# Show the path bar and the status bar
+defaults write ${domain} ShowPathbar -bool true
+defaults write ${domain} ShowStatusBar -bool true
 
 ## Desktop
 
@@ -30,21 +40,11 @@ defaults write ${domain} ShowRemovableMediaOnDesktop -bool true
 defaults write ${domain} ShowHardDrivesOnDesktop -bool false
 defaults write ${domain} ShowMountedServersOnDesktop -bool false
 
-# Sidebar
-
-# System items
-# Show ejectables, removables, servers
-defaults write com.apple.sidebarlists systemitems -dict-add ShowEjectables -bool true
-defaults write com.apple.sidebarlists systemitems -dict-add ShowRemovable -bool true
-defaults write com.apple.sidebarlists systemitems -dict-add ShowServers -bool true
-
-# Do not show hard disks
-defaults write com.apple.sidebarlists systemitems -dict-add ShowHardDisks -bool false
-
 # Trash
 
 # Disable the warning before emptying the Trash
 defaults write ${domain} WarnOnEmptyTrash -bool false
 
-# Empty Trash securely by default
-defaults write ${domain} EmptyTrashSecurely -bool true
+# Do not write .DS_Store files on network or USB volumes
+defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true
+defaults write com.apple.desktopservices DSDontWriteUSBStores -bool true
