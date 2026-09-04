@@ -4,6 +4,5 @@
 defaults write com.apple.menuextra.clock FlashDateSeparator -bool false
 defaults write com.apple.menuextra.clock IsAnalog -bool false
 
-# Show battery percent and time
-defaults write com.apple.menuextra.battery ShowPercent -string 'YES'
-defaults write com.apple.menuextra.battery ShowTime -string 'YES'
+# Show battery percent
+defaults write com.apple.controlcenter BatteryShowPercentage -bool true

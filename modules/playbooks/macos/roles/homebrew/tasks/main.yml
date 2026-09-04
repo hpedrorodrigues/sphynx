@@ -8,8 +8,8 @@
   become: true
   when:
     - local_bin.stat.islnk is not defined
-    - ansible_architecture == 'arm64'
-    - ansible_os_family == 'Darwin'
+    - ansible_facts["architecture"] == 'arm64'
+    - ansible_facts["os_family"] == 'Darwin'
 
 - name: Creating symbolic link from /usr/local/bin to /opt/homebrew/bin
   file:
@@ -20,8 +20,8 @@
   become: true
   when:
     - local_bin.stat.islnk is not defined
-    - ansible_architecture == 'arm64'
-    - ansible_os_family == 'Darwin'
+    - ansible_facts["architecture"] == 'arm64'
+    - ansible_facts["os_family"] == 'Darwin'
 
 - name: Tapping repositories
   community.general.homebrew_tap:

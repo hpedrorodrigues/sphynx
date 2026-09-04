@@ -30,17 +30,6 @@ defaults write ${domain} ShowRemovableMediaOnDesktop -bool true
 defaults write ${domain} ShowHardDrivesOnDesktop -bool false
 defaults write ${domain} ShowMountedServersOnDesktop -bool false
 
-# Sidebar
-
-# System items
-# Show ejectables, removables, servers
-defaults write com.apple.sidebarlists systemitems -dict-add ShowEjectables -bool true
-defaults write com.apple.sidebarlists systemitems -dict-add ShowRemovable -bool true
-defaults write com.apple.sidebarlists systemitems -dict-add ShowServers -bool true
-
-# Do not show hard disks
-defaults write com.apple.sidebarlists systemitems -dict-add ShowHardDisks -bool false
-
 # Trash
 
 # Disable the warning before emptying the Trash

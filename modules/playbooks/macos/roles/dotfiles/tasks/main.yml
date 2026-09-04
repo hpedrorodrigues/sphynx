@@ -13,7 +13,7 @@
     - lookup('env','SHELL') != '/usr/local/bin/zsh'
 
 - name: Setting default shell
-  shell: 'chsh -s /usr/local/bin/zsh {{ ansible_env.USER }}'
+  shell: 'chsh -s /usr/local/bin/zsh {{ ansible_facts["env"]["USER"] }}'
   become: true
   when:
     - lookup('env','SHELL') != '/usr/local/bin/zsh'

@@ -23,7 +23,6 @@
   "editor.wordWrap": "on",
   "explorer.confirmDelete": false,
   "explorer.confirmDragAndDrop": false,
-  "explorer.openEditors.visible": 0,
   "files.associations": {
     ".gitsecrets": "properties",
     "*_zshrc": "shellscript",
@@ -54,13 +53,18 @@
   },
   "telemetry.telemetryLevel": "off",
   "terminal.integrated.cursorStyle": "line",
-  "terminal.integrated.shell.osx": "/usr/local/bin/zsh",
-  "terminal.integrated.shellArgs.osx": [
-    "--login",
-    "--interactive",
-    "-c",
-    "sx terminal tmux force-attach 'vscode'"
-  ],
+  "terminal.integrated.defaultProfile.osx": "zsh (tmux)",
+  "terminal.integrated.profiles.osx": {
+    "zsh (tmux)": {
+      "path": "/usr/local/bin/zsh",
+      "args": [
+        "--login",
+        "--interactive",
+        "-c",
+        "sx terminal tmux force-attach 'vscode'"
+      ]
+    }
+  },
   "vsintellicode.modify.editor.suggestSelection": "choseToUpdateConfiguration",
   "window.zoomLevel": 0,
   "workbench.colorTheme": "GitHub Dark",
@@ -69,7 +73,6 @@
   "workbench.iconTheme": "vscode-icons",
   "workbench.settings.enableNaturalLanguageSearch": false,
   "workbench.startupEditor": "none",
-  "workbench.welcome.enabled": false,
   "markdown.extension.toc.updateOnSave": false,
   "vsicons.dontShowNewVersionMessage": true,
   "vs-kubernetes": {

@@ -29,7 +29,7 @@
     "model_parameters": [],
     "default_model": {
       "provider": "anthropic",
-      "model": "claude-sonnet-4-thinking-latest"
+      "model": "claude-sonnet-5"
     }
   },
   "preview_tabs": {

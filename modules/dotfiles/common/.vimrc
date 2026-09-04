@@ -7,7 +7,8 @@
 set rtp+=~/.vim/bundle/Vundle.vim
 
 " Set the runtime path to include fuzzy finder
-set rtp+=/usr/local/opt/fzf
+set rtp+=/opt/homebrew/opt/fzf
+set rtp+=/home/linuxbrew/.linuxbrew/opt/fzf
 
 call vundle#begin()
   Plugin 'VundleVim/Vundle.vim'
