@@ -78,6 +78,6 @@
   "vs-kubernetes": {
     "vs-kubernetes.crd-code-completion": "disabled"
   },
-  "docker.extension.enableComposeLanguageServer": false,
-  "chat.viewSessions.orientation": "stacked"
+  "chat.viewSessions.orientation": "stacked",
+  "docker.extension.enableComposeLanguageServer": false
 }

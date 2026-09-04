@@ -79,9 +79,6 @@ fi
 #|> AWS CLI
 export AWS_PROFILE='sphynx'
 
-#|> GitHub CLI
-export GH_TELEMETRY='0'
-
 #|> Homebrew/Linuxbrew
 # https://docs.brew.sh/Analytics
 export HOMEBREW_NO_ANALYTICS='1'

@@ -71,7 +71,7 @@ fi
 # Disable CTRL+R shortcut to prevent conflicts with Atuin.
 hash fzf 2>/dev/null && FZF_CTRL_R_COMMAND='' eval "$(fzf --zsh)"
 
-#|> Startship
+#|> Starship
 hash starship 2>/dev/null && eval "$(starship init zsh --print-full-init)"
 
 #|> zoxide
