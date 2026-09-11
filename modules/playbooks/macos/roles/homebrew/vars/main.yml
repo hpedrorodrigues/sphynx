@@ -122,7 +122,7 @@ casks:
   - 1password-cli
   - appcleaner
   - bartender
-  - claude-code
+  - claude-code@latest
   - cleanshot
   - clipy
   - deckset
