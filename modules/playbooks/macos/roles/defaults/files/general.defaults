@@ -47,11 +47,12 @@ defaults write NSGlobalDomain NSGlassDiffusionSetting -int 0
 
 # Network
 
-# TODO: look for a better way to check personal computer
-if [ "$(sysctl -n machdep.cpu.brand_string)" = 'Apple M1' ]; then
-  readonly computer_name='sparrow'
+if [ -n "${SX_COMPUTER_NAME:-}" ]; then
+  readonly computer_name="${SX_COMPUTER_NAME}"
+elif profiles status -type enrollment 2>/dev/null | grep --quiet '^MDM enrollment: Yes'; then
+  readonly computer_name='avalon'
 else
-  readonly computer_name='parrot'
+  readonly computer_name='hyrule'
 fi
 
 if [ "$(scutil --get ComputerName)" != "${computer_name}" ]; then
