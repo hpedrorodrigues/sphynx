@@ -2,8 +2,6 @@
   "breadcrumbs.enabled": true,
   "cSpell.language": "en,pt-BR",
   "cSpell.userWords": ["kubernetes", "sphynx"],
-  "containers.enableComposeLanguageService": false,
-  "docker.lsp.telemetry": "off",
   "editor.bracketPairColorization.enabled": true,
   "editor.cursorBlinking": "phase",
   "editor.cursorSmoothCaretAnimation": "on",
@@ -76,18 +74,5 @@
   "workbench.startupEditor": "none",
   "markdown.extension.toc.updateOnSave": false,
   "vsicons.dontShowNewVersionMessage": true,
-  "vs-kubernetes": {
-    "vs-kubernetes.crd-code-completion": "disabled"
-  },
-  "chat.viewSessions.orientation": "stacked",
-  "yaml.disableSchemaDetection": [
-    "**/docker-compose.yml",
-    "**/docker-compose.yaml",
-    "**/docker-compose.*.yml",
-    "**/docker-compose.*.yaml",
-    "**/compose.yml",
-    "**/compose.yaml",
-    "**/compose.*.yml",
-    "**/compose.*.yaml"
-  ]
+  "chat.viewSessions.orientation": "stacked"
 }
