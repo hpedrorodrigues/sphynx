@@ -1,9 +1,12 @@
+"$schema" = 'https://starship.rs/config-schema.json'
+
 format = """
 $username\
 $hostname\
 $directory\
 $git_branch\
 $git_commit\
+$git_state\
 $git_status\
 $kubernetes\
 $aws\
@@ -13,6 +16,14 @@ $line_break\
 $jobs\
 $character
 """
+
+palette = "dracula-like"
+
+[palettes.dracula-like]
+green = "#50fa7b"
+cyan = "#8be9fd"
+orange = "#ffb86c"
+purple = "#bd93f9"
 
 [username]
 show_always = true
@@ -32,35 +43,34 @@ style = "bold white"
 
 [git_branch]
 format = "[$symbol$branch]($style) "
-style = "fg:#50fa7b"
+style = "green"
 
 [git_commit]
 commit_hash_length = 5
 only_detached = false
-style = "fg:#50fa7b"
+style = "green"
 
 [git_status]
-style = "fg:#50fa7b"
+style = "green"
 
 [kubernetes]
 disabled = false
-symbol = "☀ "
+symbol = "☸ "
 format = "[$symbol$context(\\($namespace\\))]($style) "
-style = "fg:#8be9fd"
+style = "cyan"
 contexts = [
-  { context_pattern = "^gke_[^_]+_[^_]+_(?P<cluster>[\\w-]+?)(?:-gke)?-usce1$", context_alias = "gke-$cluster" },
   { context_pattern = "^gke_[^_]+_[^_]+_(?P<cluster>[\\w-]+)$", context_alias = "gke-$cluster" },
 ]
 
 [aws]
 symbol = "❄ "
 format = "[$symbol$profile(\\($region\\))]($style) "
-style = "fg:#ffb86c"
+style = "orange"
 
 [gcloud]
-symbol = "☸ "
+symbol = "☀ "
 format = "[$symbol$project(\\($region\\))]($style) "
-style = "fg:#bd93f9"
+style = "purple"
 
 [cmd_duration]
 min_time = 5_000
