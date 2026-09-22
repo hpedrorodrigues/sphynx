@@ -5,6 +5,7 @@ configuration_files:
 # code --list-extensions | sort -uf | xargs -I {} echo '  - {}'
 extensions:
   - christian-kohler.path-intellisense
+  - docker.docker
   - eamodio.gitlens
   - editorconfig.editorconfig
   - github.github-vscode-theme

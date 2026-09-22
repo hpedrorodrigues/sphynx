@@ -81,6 +81,7 @@ formulas:
   - make
   - mas
   - maven
+  - mcp-grafana
   - melange
   - mise
   - mtr

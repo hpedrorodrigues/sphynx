@@ -135,6 +135,6 @@ daily.
 [dotfiles-folder]: ./modules/dotfiles
 [external-tools]: ./modules/dotfiles/common/scripts/external_tools.sh
 [ansible-website]: https://www.ansible.com
-[playbooks-folder]: ./modules/playbooks
+[playbooks-folder]: ./modules/workspace
 [checks-badge]: https://github.com/hpedrorodrigues/sphynx/actions/workflows/checks.yml/badge.svg
 [checks-workflow]: https://github.com/hpedrorodrigues/sphynx/actions/workflows/checks.yml

@@ -2,6 +2,8 @@
   "breadcrumbs.enabled": true,
   "cSpell.language": "en,pt-BR",
   "cSpell.userWords": ["kubernetes", "sphynx"],
+  "containers.enableComposeLanguageService": false,
+  "docker.lsp.telemetry": "off",
   "editor.bracketPairColorization.enabled": true,
   "editor.cursorBlinking": "phase",
   "editor.cursorSmoothCaretAnimation": "on",
@@ -69,5 +71,15 @@
   "workbench.iconTheme": "deepdark-material-icons",
   "workbench.settings.enableNaturalLanguageSearch": false,
   "workbench.startupEditor": "none",
-  "workbench.welcome.enabled": false
+  "workbench.welcome.enabled": false,
+  "yaml.disableSchemaDetection": [
+    "**/docker-compose.yml",
+    "**/docker-compose.yaml",
+    "**/docker-compose.*.yml",
+    "**/docker-compose.*.yaml",
+    "**/compose.yml",
+    "**/compose.yaml",
+    "**/compose.*.yml",
+    "**/compose.*.yaml"
+  ]
 }
