@@ -4,7 +4,7 @@
 
 
 " Plugins live in ~/.vim/pack/sphynx/start, cloned by the vim playbook task
-" (modules/playbooks/<os>/roles/dotfiles/tasks/vim.yml). Vim loads them
+" (modules/workspace/<os>/roles/dotfiles/tasks/vim.yml). Vim loads them
 " after this file, so settings such as mapleader are in place first.
 
 " Set the runtime path to include fuzzy finder

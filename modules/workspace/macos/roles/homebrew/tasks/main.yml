@@ -43,11 +43,20 @@
 
 - name: Installing Homebrew formulas
   community.general.homebrew:
-    name: '{{ item }}'
+    name: '{{ formulas }}'
     state: present
-  loop: '{{ formulas }}'
 
 - name: Installing Homebrew casks
   community.general.homebrew_cask:
-    name: '{{ item }}'
-  loop: '{{ casks }}'
+    name: '{{ casks }}'
+    state: present
+
+- name: Removing formulas that are no longer needed as dependencies
+  command: brew autoremove
+  register: brew_autoremove
+  changed_when: '"Autoremoving" in brew_autoremove.stdout'
+
+- name: Cleaning up old versions, caches, and broken symbolic links
+  command: brew cleanup
+  register: brew_cleanup
+  changed_when: brew_cleanup.stdout | length > 0

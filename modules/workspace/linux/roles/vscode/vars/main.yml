@@ -2,24 +2,19 @@ configuration_files:
   - settings.json
   - keybindings.json
 
-# code --list-extensions | sort -uf | xargs -I {} echo '  - {}'
+# code --list-extensions | sort -uf | xargs -I {} echo '- {}'
 extensions:
   - christian-kohler.path-intellisense
   - eamodio.gitlens
   - editorconfig.editorconfig
   - github.github-vscode-theme
   - k--kato.intellij-idea-keybindings
-  - mads-hartmann.bash-ide-vscode
   - mechatroner.rainbow-csv
   - ms-azuretools.vscode-containers
-  - ms-kubernetes-tools.vscode-kubernetes-tools
   - naumovs.color-highlight
-  - patricklee.vsnotes
-  - qezhu.gitlink
   - redhat.vscode-yaml
   - streetsidesoftware.code-spell-checker
   - streetsidesoftware.code-spell-checker-portuguese-brazilian
-  - svsool.markdown-memo
   - tamasfe.even-better-toml
   - vscode-icons-team.vscode-icons
   - yzhang.markdown-all-in-one

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 export DOTBOT_CONFIG_FILE="${DOTBOT_CONFIG_FILE:-${SPHYNX_DIR}/modules/dotfiles/dotbot.conf.yaml}"
-export PLAYBOOKS_DIRECTORY="${PLAYBOOKS_DIRECTORY:-${SPHYNX_DIR}/modules/playbooks}"
+export PLAYBOOKS_DIRECTORY="${PLAYBOOKS_DIRECTORY:-${SPHYNX_DIR}/modules/workspace}"
 
 export SX_DOTBOT="${SX_DOTBOT:-dotbot}"
 
@@ -14,9 +14,9 @@ function sx::workspace::setup() {
   export ANSIBLE_CONFIG="${PLAYBOOKS_DIRECTORY}"
 
   if sx::os::is_macos; then
-    local -r playbook_path="${ANSIBLE_CONFIG}/macos/main.yml"
+    local -r playbook_path="${ANSIBLE_CONFIG}/macos/playbook.yml"
   else
-    local -r playbook_path="${ANSIBLE_CONFIG}/linux/main.yml"
+    local -r playbook_path="${ANSIBLE_CONFIG}/linux/playbook.yml"
   fi
 
   ansible-playbook "${playbook_path}" \

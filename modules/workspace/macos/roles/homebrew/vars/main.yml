@@ -1,6 +1,7 @@
 repositories:
   - hpedrorodrigues/tools
   - fluxcd/tap
+  - controlplaneio-fluxcd/tap
   - homeport/tap
   - estuary/flowctl
   - stefanprodan/tap
@@ -18,6 +19,7 @@ formulas:
   - binutils
   - cloud-sql-proxy
   - cmctl
+  - controlplaneio-fluxcd/tap/flux-operator
   - coreutils
   - crane
   - dex2jar
@@ -81,6 +83,7 @@ formulas:
   - make
   - mas
   - maven
+  - mcp-grafana
   - melange
   - mise
   - mtr
@@ -93,6 +96,7 @@ formulas:
   - redis
   - renovate
   - rsync
+  - rtk
   - sbt
   - scala # Scala 3
   - scala@2.13
@@ -125,6 +129,7 @@ casks:
   - claude-code@latest
   - cleanshot
   - clipy
+  - codex
   - deckset
   - discord
   - docker-desktop
@@ -141,6 +146,7 @@ casks:
   - memoryanalyzer
   - monitorcontrol
   - obsidian
+  - parallels
   - postman
   - spotify
   - tailscale-app

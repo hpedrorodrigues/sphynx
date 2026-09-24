@@ -74,9 +74,5 @@
   "workbench.startupEditor": "none",
   "markdown.extension.toc.updateOnSave": false,
   "vsicons.dontShowNewVersionMessage": true,
-  "vs-kubernetes": {
-    "vs-kubernetes.crd-code-completion": "disabled"
-  },
-  "chat.viewSessions.orientation": "stacked",
-  "containers.enableComposeLanguageService": false
+  "chat.viewSessions.orientation": "stacked"
 }

@@ -7,6 +7,7 @@
 // custom settings, run the `open default settings` command
 // from the command palette or from `Zed` application menu.
 {
+  "cli_default_open_behavior": "new_window",
   "project_panel": {
     "dock": "left"
   },
@@ -19,21 +20,76 @@
   "git_panel": {
     "dock": "left"
   },
-  "theme": "One Dark",
+  "theme": {
+    "mode": "dark",
+    "light": "GitHub Light",
+    "dark": "GitHub Dark"
+  },
   "icon_theme": "Catppuccin Macchiato",
   "ui_font_family": "Fira Code",
   "ui_font_size": 16,
   "buffer_font_family": "Fira Code",
   "buffer_font_size": 16,
+  "base_keymap": "JetBrains",
   "restore_on_startup": "none",
   "scroll_beyond_last_line": "off",
+  "current_line_highlight": "gutter",
+  "show_whitespaces": "all",
+  "wrap_guides": [80, 100, 120],
+  "soft_wrap": "editor_width",
+  "tab_size": 2,
+  "hard_tabs": false,
   // https://github.com/huacnlee/color-lsp/tree/main/zed-color-highlight
   "lsp_document_colors": "background",
-  "base_keymap": "JetBrains",
+  "file_types": {
+    "Shell Script": ["*_zshrc", "*_bashrc"]
+  },
+  // Zed defaults first, then the same directories VS Code hides.
+  "file_scan_exclusions": [
+    "**/.git",
+    "**/.svn",
+    "**/.hg",
+    "**/.jj",
+    "**/.sl",
+    "**/.repo",
+    "**/CVS",
+    "**/.DS_Store",
+    "**/Thumbs.db",
+    "**/.classpath",
+    "**/.settings",
+    "**/.idea",
+    "**/build",
+    "**/node_modules",
+    "**/target",
+    "**/vendor",
+    "**/__pycache__"
+  ],
+  "telemetry": {
+    "diagnostics": false,
+    "metrics": false
+  },
+  "terminal": {
+    "cursor_shape": "bar",
+    "shell": {
+      "with_arguments": {
+        "program": "/usr/local/bin/zsh",
+        "args": [
+          "--login",
+          "--interactive",
+          "-c",
+          "sx terminal tmux force-attach 'zed'"
+        ]
+      }
+    }
+  },
   "auto_install_extensions": {
     "catppuccin-icons": true,
     "color-highlight": true,
+    "docker-compose": true,
+    "dockerfile": true,
     "git-firefly": true,
+    "github-theme": true,
+    "rainbow-csv": true,
     "terraform": true,
     "toml": true
   },
