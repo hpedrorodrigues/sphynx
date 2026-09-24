@@ -97,18 +97,25 @@ function sx::docker::build_records() {
 # "running" only when all its nodes are: buildx cannot prune a builder that
 # has a node whose driver is not running.
 function sx::docker::buildx_builders() {
-  local -r template='{{.Builder.Name}}|{{.Status}}|{{.Error}}'
+  local -r template='{{.Builder.Name}}|{{.Builder.Driver}}|{{.Status}}|{{.Error}}'
+  local -r context="$(docker context show)"
 
-  local builder status error
+  local builder driver status error
   local -A statuses=()
 
-  while IFS='|' read -r builder status error; do
+  while IFS='|' read -r builder driver status error; do
     if [ -z "${status}" ] && [ -n "${error}" ]; then
       status='error'
     fi
 
     if [ -z "${status}" ]; then
       continue # builder rows have no status, node rows do
+    fi
+
+    # Every docker context has a docker driver builder with the same name, and
+    # buildx only accepts the one of the current context
+    if [ "${driver}" = 'docker' ] && [ "${builder}" != "${context}" ]; then
+      status='in another docker context'
     fi
 
     # The first node sets the status, a node that is not running overrides it
