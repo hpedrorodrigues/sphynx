@@ -42,6 +42,9 @@ alias tfa='sx terminal tmux force-attach'
 alias pbcopy='sx system clipboard copy'
 alias pbpaste='sx system clipboard paste'
 
+# Claude Code
+alias cc='claude'
+
 # Git & Github
 alias g='git'
 alias gs='git status'
