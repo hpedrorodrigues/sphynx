@@ -2,6 +2,7 @@
 
 .idea
 .vagrant
+/modules/settings/macos/karabiner-elements/automatic_backups/
 
 
 ## Files
