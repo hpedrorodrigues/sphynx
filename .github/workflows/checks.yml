@@ -19,11 +19,24 @@ jobs:
         shell: bash
   tests:
     name: Tests
-    timeout-minutes: 1
+    timeout-minutes: 5
     runs-on: ubuntu-latest
     permissions:
       contents: read
     steps:
       - uses: actions/checkout@v7
+      - run: ./sx test
+        shell: bash
+  tests-macos:
+    name: Tests (macOS)
+    timeout-minutes: 5
+    runs-on: macos-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+      - run: brew install bash
+        env:
+          HOMEBREW_NO_AUTO_UPDATE: '1'
       - run: ./sx test
         shell: bash
