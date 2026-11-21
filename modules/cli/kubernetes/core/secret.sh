@@ -75,29 +75,10 @@ function sx::k8s_command::secret::list() {
   local -r context="${5:-}"
   local -r selector="${6:-}"
 
-  if ${all_namespaces}; then
-    local flags='--all-namespaces'
-  elif [ -n "${namespace}" ]; then
-    local flags="--namespace ${namespace}"
-  else
-    local flags=''
-  fi
+  local -r flags="$(sx::k8s::scope_flags "${namespace}" "${all_namespaces}" "${selector}")"
+  local -r context_flags="$(sx::k8s::context_flags "${context}")"
 
-  if [ -n "${selector}" ]; then
-    flags+=" --selector ${selector}"
-  fi
-
-  if [ -n "${context}" ]; then
-    local -r context_flags="--context ${context}"
-  else
-    local -r context_flags=''
-  fi
-
-  if [ -n "${query}" ]; then
-    local -r query_pattern="${query}"
-  else
-    local -r query_pattern='.*'
-  fi
+  local -r query_pattern="${query:-.*}"
 
   local -r template='
   {{range .items}}
@@ -138,11 +119,7 @@ function sx::k8s_command::secret() {
   local -r key="${3:-}"
   local -r context="${4:-}"
 
-  if [ -n "${context}" ]; then
-    local -r context_flags="--context ${context}"
-  else
-    local -r context_flags=''
-  fi
+  local -r context_flags="$(sx::k8s::context_flags "${context}")"
 
   # shellcheck disable=SC2016  # Expressions don't expand in single quotes, use double quotes for that
   local -r template='

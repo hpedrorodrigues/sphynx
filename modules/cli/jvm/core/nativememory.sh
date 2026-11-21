@@ -69,7 +69,7 @@ function sx::jvm_command::nativememory() {
   local -r jdk_container="${7:-}"
   local -r level="${8}"
 
-  local -r context_flags="$(sx::jvm::context_flags "${context}")"
+  local -r context_flags="$(sx::k8s::context_flags "${context}")"
 
   local -r filename="nativememory-${name}-${timestamp}.txt"
   local -r local_file="./${filename}"

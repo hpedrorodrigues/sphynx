@@ -77,11 +77,7 @@ function sx::k8s_command::network::dump_traffic() {
   local -r image="${7:-ghcr.io/hpedrorodrigues/debug}"
   local -r context="${8:-}"
 
-  if [ -n "${context}" ]; then
-    local -r context_flags="--context ${context}"
-  else
-    local -r context_flags=''
-  fi
+  local -r context_flags="$(sx::k8s::context_flags "${context}")"
 
   local -r timestamp="$(date '+%Y%m%d-%H%M%S')"
   local -r filename="traffic-${name}-${timestamp}.pcap"

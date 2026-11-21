@@ -65,11 +65,7 @@ function sx::k8s_command::describe() {
   local -r name="${3:-}"
   local -r context="${4:-}"
 
-  if [ -n "${context}" ]; then
-    local -r context_flags="--context ${context}"
-  else
-    local -r context_flags=''
-  fi
+  local -r context_flags="$(sx::k8s::context_flags "${context}")"
 
   sx::log::info "Describing ${kind} \"${ns}/${name}\"\n"
 

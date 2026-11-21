@@ -15,14 +15,42 @@ function sx::k8s::check_requirements() {
   sx::require 'kubectl'
 }
 
-function sx::k8s::can_access_api() {
+function sx::k8s::context_flags() {
   local -r context="${1:-}"
 
   if [ -n "${context}" ]; then
-    local -r context_flags="--context ${context}"
-  else
-    local -r context_flags=''
+    echo "--context ${context}"
   fi
+}
+
+function sx::k8s::scope_flags() {
+  local -r namespace="${1:-}"
+  local -r all_namespaces="${2:-false}"
+  local -r selector="${3:-}"
+  local -r context="${4:-}"
+
+  local flags=''
+  if ${all_namespaces}; then
+    flags+=' --all-namespaces'
+  elif [ -n "${namespace}" ]; then
+    flags+=" --namespace ${namespace}"
+  fi
+
+  if [ -n "${selector}" ]; then
+    flags+=" --selector ${selector}"
+  fi
+
+  if [ -n "${context}" ]; then
+    flags+=" --context ${context}"
+  fi
+
+  echo "${flags# }"
+}
+
+function sx::k8s::can_access_api() {
+  local -r context="${1:-}"
+
+  local -r context_flags="$(sx::k8s::context_flags "${context}")"
 
   # https://kubernetes.io/docs/reference/using-api/health-checks/
   # shellcheck disable=SC2086  # quote this to prevent word splitting
@@ -83,27 +111,8 @@ function sx::k8s::running_pods() {
   local -r print_header="${5:-false}"
   local -r context="${6:-}"
 
-  if ${all_namespaces}; then
-    local flags='--all-namespaces'
-  elif [ -n "${namespace}" ]; then
-    local flags="--namespace ${namespace}"
-  else
-    local flags=''
-  fi
-
-  if [ -n "${selector}" ]; then
-    flags+=" --selector ${selector}"
-  fi
-
-  if [ -n "${context}" ]; then
-    flags+=" --context ${context}"
-  fi
-
-  if [ -n "${query}" ]; then
-    local -r query_pattern="${query}"
-  else
-    local -r query_pattern='.*'
-  fi
+  local -r flags="$(sx::k8s::scope_flags "${namespace}" "${all_namespaces}" "${selector}" "${context}")"
+  local -r query_pattern="${query:-.*}"
 
   # shellcheck disable=SC2016  # Expressions don't expand in single quotes, use double quotes for that
   local -r template='
@@ -174,11 +183,7 @@ function sx::k8s::current_context() {
 function sx::k8s::current_namespace() {
   local -r context="${1:-}"
 
-  if [ -n "${context}" ]; then
-    local -r context_flags="--context ${context}"
-  else
-    local -r context_flags=''
-  fi
+  local -r context_flags="$(sx::k8s::context_flags "${context}")"
 
   # shellcheck disable=SC2086  # quote this to prevent word splitting
   local -r namespace="$(
@@ -225,23 +230,8 @@ function sx::k8s::shared::resources() {
   local -r context="${6:-}"
   local -r selector="${7:-}"
 
-  if ${all_namespaces}; then
-    local flags='--all-namespaces'
-  elif [ -n "${namespace}" ]; then
-    local flags="--namespace ${namespace}"
-  else
-    local flags=''
-  fi
-
-  if [ -n "${selector}" ]; then
-    flags+=" --selector ${selector}"
-  fi
-
-  if [ -n "${query}" ]; then
-    local -r query_pattern="$(echo "${query}" | sx::string::lowercase)"
-  else
-    local -r query_pattern='.*'
-  fi
+  local -r flags="$(sx::k8s::scope_flags "${namespace}" "${all_namespaces}" "${selector}")"
+  local -r query_pattern="$(sx::string::lowercase "${query:-.*}")"
 
   # shellcheck disable=SC2016  # Expressions don't expand in single quotes, use double quotes for that
   local -r template='
@@ -252,11 +242,7 @@ function sx::k8s::shared::resources() {
     {{$namespace}}{{","}}{{$kind}}{{","}}{{$name}}{{"\n"}}
   {{end}}'
 
-  if [ -n "${context}" ]; then
-    local -r context_flags="--context ${context}"
-  else
-    local -r context_flags=''
-  fi
+  local -r context_flags="$(sx::k8s::context_flags "${context}")"
 
   # Fetch each resource type in parallel. A single kubectl get with comma-separated
   # types makes sequential API calls internally, so splitting them into separate
@@ -296,11 +282,7 @@ function sx::k8s::nodes() {
     flags+=" --selector ${selector}"
   fi
 
-  if [ -n "${query}" ]; then
-    local -r query_pattern="${query}"
-  else
-    local -r query_pattern='.*'
-  fi
+  local -r query_pattern="${query:-.*}"
 
   local -r header='NAME,STATUS,AGE'
 
@@ -341,11 +323,7 @@ function sx::k8s::copy_from_pod() {
   local -r local_file="${5}"
   local -r context="${6:-}"
 
-  if [ -n "${context}" ]; then
-    local -r context_flags="--context ${context}"
-  else
-    local -r context_flags=''
-  fi
+  local -r context_flags="$(sx::k8s::context_flags "${context}")"
 
   # shellcheck disable=SC2086  # quote this to prevent word splitting
   if ! sx::k8s::cli ${context_flags} cp \

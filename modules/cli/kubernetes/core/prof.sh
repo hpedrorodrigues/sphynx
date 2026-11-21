@@ -151,11 +151,7 @@ function sx::k8s_command::prof() {
 
   # kubectl breaks plugin dispatch when global flags precede the plugin name,
   # so the context must be passed to kubectl-prof itself
-  if [ -n "${context}" ]; then
-    local -r context_flags="--context ${context}"
-  else
-    local -r context_flags=''
-  fi
+  local -r context_flags="$(sx::k8s::context_flags "${context}")"
 
   local exit_code=0
 
@@ -189,11 +185,7 @@ function sx::k8s_command::prof::cleanup_orphaned_jobs() {
   local -r name="${2}"
   local -r context="${3:-}"
 
-  if [ -n "${context}" ]; then
-    local -r context_flags="--context ${context}"
-  else
-    local -r context_flags=''
-  fi
+  local -r context_flags="$(sx::k8s::context_flags "${context}")"
 
   # kubectl-prof only deletes its job on success. This run's jobs are matched by the target pod UID
   # shellcheck disable=SC2086  # quote this to prevent word splitting
@@ -232,11 +224,7 @@ function sx::k8s_command::prof::fix_permissions() {
   local -r image="${4:-ghcr.io/hpedrorodrigues/debug}"
   local -r context="${5:-}"
 
-  if [ -n "${context}" ]; then
-    local -r context_flags="--context ${context}"
-  else
-    local -r context_flags=''
-  fi
+  local -r context_flags="$(sx::k8s::context_flags "${context}")"
 
   local -r debugger_container="profiler-fix-$(uuidgen | cut -d '-' -f 1 | tr '[:upper:]' '[:lower:]')"
   local -r custom_profile_path="$(mktemp -t partial_container_spec || echo '/tmp/partial_container_spec.yaml')"

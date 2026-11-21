@@ -71,11 +71,7 @@ function sx::k8s_command::exec() {
   local -r command="${4}"
   local -r context="${5:-}"
 
-  if [ -n "${context}" ]; then
-    local -r context_flags="--context ${context}"
-  else
-    local -r context_flags=''
-  fi
+  local -r context_flags="$(sx::k8s::context_flags "${context}")"
 
   local -r shells=(
     '/bin/bash'

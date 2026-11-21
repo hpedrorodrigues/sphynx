@@ -20,19 +20,8 @@ function sx::flux::resources() {
   local -r namespace="${2:-}"
   local -r all_namespaces="${3:-false}"
 
-  if ${all_namespaces}; then
-    local -r flags='--all-namespaces'
-  elif [ -n "${namespace}" ]; then
-    local -r flags="--namespace ${namespace}"
-  else
-    local -r flags=''
-  fi
-
-  if [ -n "${query}" ]; then
-    local -r selector="$(echo "${query}" | sx::string::lowercase)"
-  else
-    local -r selector='.*'
-  fi
+  local -r flags="$(sx::k8s::scope_flags "${namespace}" "${all_namespaces}")"
+  local -r selector="$(sx::string::lowercase "${query:-.*}")"
 
   # shellcheck disable=SC2086  # quote this to prevent word splitting
   sx::k8s::cli get "${SX_FLUX_RESOURCES}" \
@@ -48,19 +37,8 @@ function sx::flux::suspended_resources() {
   local -r namespace="${2:-}"
   local -r all_namespaces="${3:-false}"
 
-  if ${all_namespaces}; then
-    local -r flags='--all-namespaces'
-  elif [ -n "${namespace}" ]; then
-    local -r flags="--namespace ${namespace}"
-  else
-    local -r flags=''
-  fi
-
-  if [ -n "${query}" ]; then
-    local -r selector="$(echo "${query}" | sx::string::lowercase)"
-  else
-    local -r selector='.*'
-  fi
+  local -r flags="$(sx::k8s::scope_flags "${namespace}" "${all_namespaces}")"
+  local -r selector="$(sx::string::lowercase "${query:-.*}")"
 
   # shellcheck disable=SC2086  # quote this to prevent word splitting
   sx::k8s::cli get "${SX_FLUX_RESOURCES}" \

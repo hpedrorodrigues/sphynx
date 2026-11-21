@@ -97,27 +97,9 @@ function sx::k8s::resources_and_ports() {
   local -r all_namespaces="${4:-false}"
   local -r context="${5:-}"
 
-  if ${all_namespaces}; then
-    local flags='--all-namespaces'
-  elif [ -n "${namespace}" ]; then
-    local flags="--namespace ${namespace}"
-  else
-    local flags=''
-  fi
+  local -r flags="$(sx::k8s::scope_flags "${namespace}" "${all_namespaces}" "${selector}" "${context}")"
 
-  if [ -n "${selector}" ]; then
-    flags+=" --selector ${selector}"
-  fi
-
-  if [ -n "${context}" ]; then
-    flags+=" --context ${context}"
-  fi
-
-  if [ -n "${query}" ]; then
-    local -r query_pattern="${query}"
-  else
-    local -r query_pattern='.*'
-  fi
+  local -r query_pattern="${query:-.*}"
 
   # shellcheck disable=SC2016  # expressions don't expand in single quotes
   local -r pods_template='
@@ -235,11 +217,7 @@ function sx::k8s_command::port_forward() {
       fi
     done
   else
-    if [ -n "${context}" ]; then
-      local -r context_flags="--context ${context}"
-    else
-      local -r context_flags=''
-    fi
+    local -r context_flags="$(sx::k8s::context_flags "${context}")"
 
     # shellcheck disable=SC2086  # quote this to prevent word splitting
     sx::k8s::cli ${context_flags} port-forward \

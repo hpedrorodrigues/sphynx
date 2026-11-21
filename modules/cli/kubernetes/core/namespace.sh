@@ -73,11 +73,7 @@ function sx::k8s::namespace() {
 function sx::k8s_command::namespace::names() {
   local -r query="${1:-}"
 
-  if [ -n "${query}" ]; then
-    local -r selector="$(echo "${query}" | sx::string::lowercase)"
-  else
-    local -r selector='.*'
-  fi
+  local -r selector="$(sx::string::lowercase "${query:-.*}")"
 
   local -r namespaces="$(
     sx::k8s::cli get namespaces \

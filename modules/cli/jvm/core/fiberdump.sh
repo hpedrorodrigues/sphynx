@@ -46,7 +46,7 @@ function sx::jvm_command::fiberdump() {
   local -r context="${6:-}"
   local -r force="${7:-false}"
 
-  local -r context_flags="$(sx::jvm::context_flags "${context}")"
+  local -r context_flags="$(sx::k8s::context_flags "${context}")"
 
   local -r filename="fiberdump-${name}-${timestamp}.txt"
   local -r local_file="./${filename}"

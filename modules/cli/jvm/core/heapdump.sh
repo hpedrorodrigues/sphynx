@@ -56,7 +56,7 @@ function sx::jvm_command::heapdump() {
   local -r context="${6:-}"
   local -r jdk_container="${7:-}"
 
-  local -r context_flags="$(sx::jvm::context_flags "${context}")"
+  local -r context_flags="$(sx::k8s::context_flags "${context}")"
 
   local -r filename="heapdump-${name}-${timestamp}.hprof"
   local -r remote_file="/tmp/${filename}"

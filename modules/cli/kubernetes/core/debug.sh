@@ -76,11 +76,7 @@ function sx::k8s_command::debug() {
   local -r restricted="${7:-false}"
   local -r context="${8:-}"
 
-  if [ -n "${context}" ]; then
-    local -r context_flags="--context ${context}"
-  else
-    local -r context_flags=''
-  fi
+  local -r context_flags="$(sx::k8s::context_flags "${context}")"
 
   local -r shell='/bin/bash'
   local -r debugger_container="debugger-$(uuidgen | cut -d '-' -f 1 | tr '[:upper:]' '[:lower:]')"

@@ -64,11 +64,7 @@ function sx::k8s::context() {
 function sx::k8s_command::context::names() {
   local -r query="${1:-}"
 
-  if [ -n "${query}" ]; then
-    local -r selector="$(echo "${query}" | sx::string::lowercase)"
-  else
-    local -r selector='.*'
-  fi
+  local -r selector="$(sx::string::lowercase "${query:-.*}")"
 
   local -r contexts="$(
     sx::k8s::cli config get-contexts \

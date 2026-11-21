@@ -51,11 +51,7 @@ function sx::eg::proxy_pods() {
     flags="--namespace $(sx::k8s::current_namespace)"
   fi
 
-  if [ -n "${query}" ]; then
-    local -r selector="${query}"
-  else
-    local -r selector='.*'
-  fi
+  local -r selector="${query:-.*}"
 
   local -r header='NAMESPACE,NAME,GATEWAY'
 

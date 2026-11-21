@@ -14,16 +14,8 @@ function sx::k8s::list::resources() {
   local -r all_namespaces="${3:-false}"
   local -r show_labels="${4:-false}"
 
-  local flags=''
-  if ${all_namespaces}; then
-    flags+=' --all-namespaces'
-  elif [ -n "${namespace}" ]; then
-    flags+=" --namespace ${namespace}"
-  fi
-
-  if [ -n "${selector}" ]; then
-    flags+=" --selector ${selector}"
-  fi
+  local flags
+  flags="$(sx::k8s::scope_flags "${namespace}" "${all_namespaces}" "${selector}" "${context}")"
 
   if ${show_labels}; then
     flags+=' --show-labels'
@@ -31,10 +23,6 @@ function sx::k8s::list::resources() {
 
   if [ "${output}" != 'default' ]; then
     flags+=" --output ${output}"
-  fi
-
-  if [ -n "${context}" ]; then
-    flags+=" --context ${context}"
   fi
 
   # shellcheck disable=SC2086  # quote this to prevent word splitting

@@ -60,11 +60,7 @@ function sx::k8s_command::ssm() {
   local -r node_name="$(echo "${1}" | awk '{ print $1 }')"
   local -r context="${2:-}"
 
-  if [ -n "${context}" ]; then
-    local -r context_flags="--context ${context}"
-  else
-    local -r context_flags=''
-  fi
+  local -r context_flags="$(sx::k8s::context_flags "${context}")"
 
   # shellcheck disable=SC2086  # quote this to prevent word splitting
   local -r provider_id="$(
@@ -89,11 +85,7 @@ function sx::k8s_command::shell() {
   local -r node_name="$(echo "${1}" | awk '{ print $1 }')"
   local -r context="${2:-}"
 
-  if [ -n "${context}" ]; then
-    local -r context_flags="--context ${context}"
-  else
-    local -r context_flags=''
-  fi
+  local -r context_flags="$(sx::k8s::context_flags "${context}")"
 
   local -r image_name='alpine'
   local -r container_name='sphynx-shell'

@@ -176,7 +176,7 @@ function sx::jvm_command::arenas::collect() {
   local -r pid="${4}"
   local -r context="${5:-}"
 
-  local -r context_flags="$(sx::jvm::context_flags "${context}")"
+  local -r context_flags="$(sx::k8s::context_flags "${context}")"
 
   # shellcheck disable=SC2016  # expressions don't expand in single quotes
   local -r payload='
@@ -494,7 +494,7 @@ function sx::jvm_command::arenas::attach() {
   local -r gdb_container="${6}"
   local -r trim="${7:-false}"
 
-  local -r context_flags="$(sx::jvm::context_flags "${context}")"
+  local -r context_flags="$(sx::k8s::context_flags "${context}")"
   local -r before_file="$(sx::jvm_command::arenas::dump_path "${pid}" 'before')"
   local -r after_file="$(sx::jvm_command::arenas::dump_path "${pid}" 'after')"
 
@@ -595,7 +595,7 @@ function sx::jvm_command::arenas::malloc_info() {
   local -r context="${5:-}"
   local -r phase="${6}"
 
-  local -r context_flags="$(sx::jvm::context_flags "${context}")"
+  local -r context_flags="$(sx::k8s::context_flags "${context}")"
   local -r remote_file="$(sx::jvm_command::arenas::dump_path "${pid}" "${phase}")"
 
   local xml

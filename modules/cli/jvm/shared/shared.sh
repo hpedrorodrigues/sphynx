@@ -1,13 +1,5 @@
 #!/usr/bin/env bash
 
-function sx::jvm::context_flags() {
-  local -r context="${1:-}"
-
-  if [ -n "${context}" ]; then
-    echo "--context ${context}"
-  fi
-}
-
 # Prints the target as "namespace,pod,container", or an empty line when the user cancels the
 # picker. Only the target goes to stdout, so callers can read it from a command substitution:
 # "fzf" draws on /dev/tty and "select" writes its menu and PS3 to stderr.
@@ -84,7 +76,7 @@ function sx::jvm::start_jdk_container() {
   local -r image="${5:-eclipse-temurin:21-jdk}"
   local -r context="${6:-}"
 
-  local -r context_flags="$(sx::jvm::context_flags "${context}")"
+  local -r context_flags="$(sx::k8s::context_flags "${context}")"
 
   local -r custom_profile_path="$(mktemp -t partial_container_spec || echo '/tmp/partial_container_spec.yaml')"
 
@@ -145,7 +137,7 @@ function sx::jvm::stop_jdk_container() {
     return 0
   fi
 
-  local -r context_flags="$(sx::jvm::context_flags "${context}")"
+  local -r context_flags="$(sx::k8s::context_flags "${context}")"
 
   # The JDK container shares the process namespace of the target container, where PID 1 is the JVM
   # itself, so nothing in there can be signalled. It watches for this sentinel file instead.
@@ -163,7 +155,7 @@ function sx::jvm::jdk_exec() {
   local -r context="${5:-}"
   shift 5
 
-  local -r context_flags="$(sx::jvm::context_flags "${context}")"
+  local -r context_flags="$(sx::k8s::context_flags "${context}")"
 
   # The JVM creates its attach socket at "/tmp/.java_pid<pid>" inside its own mount namespace, and
   # the JDK only looks for it under "/proc/<pid>/root" when the PID differs from the one in the
@@ -204,7 +196,7 @@ function sx::jvm::detect_pid() {
   local -r container="${3}"
   local -r context="${4:-}"
 
-  local -r context_flags="$(sx::jvm::context_flags "${context}")"
+  local -r context_flags="$(sx::k8s::context_flags "${context}")"
 
   # shellcheck disable=SC2016,SC2086  # expressions don't expand in single quotes; quote this to prevent word splitting
   local -r jcmd_pid="$(
@@ -300,7 +292,7 @@ function sx::jvm::copy_dump() {
   local -r local_file="${5}"
   local -r context="${6:-}"
 
-  local -r context_flags="$(sx::jvm::context_flags "${context}")"
+  local -r context_flags="$(sx::k8s::context_flags "${context}")"
 
   # shellcheck disable=SC2086  # quote this to prevent word splitting
   local -r remote_size="$(
@@ -381,7 +373,7 @@ function sx::jvm::copy_dump::read_from() {
   local -r compressed="${6:-false}"
   local -r offset="${7:-0}"
 
-  local -r context_flags="$(sx::jvm::context_flags "${context}")"
+  local -r context_flags="$(sx::k8s::context_flags "${context}")"
 
   # "tail -c +N" seeks, so resuming does not re-read what was already transferred
   local -r remote_command="tail -c +$((offset + 1)) '${remote_file}'"
@@ -406,7 +398,7 @@ function sx::jvm::capture_dump_from_logs() {
   local -r start_re="${6}"
   local -r end_re="${7}"
 
-  local -r context_flags="$(sx::jvm::context_flags "${context}")"
+  local -r context_flags="$(sx::k8s::context_flags "${context}")"
 
   # Signal-triggered dumps (kill -3 / SIGUSR1) print to the JVM's stdout/stderr, i.e.
   # the pod logs, not a file. awk keeps the LAST complete "start_re ... end_re" block;

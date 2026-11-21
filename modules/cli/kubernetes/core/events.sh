@@ -73,16 +73,8 @@ function sx::k8s_command::events() {
   local -r watch="${6:-false}"
   local -r context="${7:-}"
 
-  local flags=''
-  if ${all_namespaces}; then
-    flags+=' --all-namespaces'
-  elif [ -n "${ns}" ]; then
-    flags+=" --namespace ${ns}"
-  fi
-
-  if [ -n "${context}" ]; then
-    flags+=" --context ${context}"
-  fi
+  local flags
+  flags="$(sx::k8s::scope_flags "${ns}" "${all_namespaces}" '' "${context}")"
 
   local field_selector=''
   if [ -n "${kind}" ] && [ -n "${name}" ]; then

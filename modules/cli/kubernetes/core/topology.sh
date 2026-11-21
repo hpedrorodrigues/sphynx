@@ -84,11 +84,7 @@ function sx::k8s::topology::collect_pods() {
   local -r query="${1:-}"
   local -r flags=("${@:2}")
 
-  if [ -n "${query}" ]; then
-    local -r query_pattern="$(echo "${query}" | sx::string::lowercase)"
-  else
-    local -r query_pattern='.*'
-  fi
+  local -r query_pattern="$(sx::string::lowercase "${query:-.*}")"
 
   sx::k8s::cli get pods \
     "${flags[@]}" \
