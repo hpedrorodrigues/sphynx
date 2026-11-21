@@ -30,28 +30,52 @@ function sx::k8s::topology() {
     pod_flags+=(--selector "${selector}")
   fi
 
-  local pods
-  pods="$(sx::k8s::topology::collect_pods "${query}" "${pod_flags[@]}")" || true
+  if ${show_resource_usage}; then
+    sx::require 'jq'
+  fi
 
-  if [ -z "${pods}" ]; then
+  local -r output_directory="$(mktemp -d)"
+
+  sx::k8s::topology::collect_pods "${query}" "${pod_flags[@]}" >"${output_directory}/pods" &
+  local -r pods_request="${!}"
+
+  sx::k8s::topology::collect_nodes "${context_flags[@]}" >"${output_directory}/nodes" &
+  local -r nodes_request="${!}"
+
+  if ${show_resource_usage}; then
+    sx::k8s::topology::collect_node_usage "${context_flags[@]}" >"${output_directory}/node-usage" &
+    sx::k8s::topology::collect_pod_usage "${pod_flags[@]}" >"${output_directory}/pod-usage" &
+  fi
+
+  wait "${pods_request}" || true
+
+  if ! [ -s "${output_directory}/pods" ]; then
+    wait
+    rm -r "${output_directory}"
     sx::log::fatal 'No resources found'
   fi
 
-  local records="${pods}"
-  records+=$'\n'"$(sx::k8s::topology::collect_nodes "${context_flags[@]}")"
-
   if ${show_resource_usage}; then
-    sx::require 'jq'
-
     local node_names
     readarray -t node_names < <(
-      awk -F ',' '$5 != "" { print $5 }' <<<"${pods}" | sort -u
+      awk -F ',' '$5 != "" { print $5 }' "${output_directory}/pods" | sort -u
     )
 
-    records+=$'\n'"$(sx::k8s::topology::collect_node_usage "${context_flags[@]}")"
-    records+=$'\n'"$(sx::k8s::topology::collect_pod_usage "${pod_flags[@]}")"
-    records+=$'\n'"$(sx::k8s::topology::collect_storage "${#node_names[@]}" "${node_names[@]}" "${context_flags[@]}")"
+    (
+      sx::k8s::topology::collect_storage "${#node_names[@]}" "${node_names[@]}" "${context_flags[@]}"
+    ) >"${output_directory}/storage"
   fi
+
+  if ! wait "${nodes_request}"; then
+    wait
+    rm -r "${output_directory}"
+    sx::log::fatal 'Cannot list the nodes'
+  fi
+
+  wait
+
+  local -r records="$(cat "${output_directory}"/*)"
+  rm -r "${output_directory}"
 
   sx::k8s::topology::render "${show_resource_usage}" "${show_labels}" <<<"${records}"
 }
