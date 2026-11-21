@@ -15,7 +15,7 @@ function sx::k8s::port_forward() {
   local -r random_port="${5:-false}"
   local -r user_port="${6:-}"
   local -r retry="${7:-false}"
-  local -r context="${8:-}"
+  local -r context="${8:-$(sx::k8s::current_context)}"
 
   sx::k8s::validate_context "${context}"
   sx::k8s::ensure_api_access "${context}"

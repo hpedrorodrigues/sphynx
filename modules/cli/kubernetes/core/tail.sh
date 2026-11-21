@@ -9,7 +9,7 @@ function sx::k8s::tail() {
   local -r namespace="${2:-}"
   local -r all_namespaces="${3:-false}"
   local -r extra_flags="${4:-}"
-  local -r context="${5:-}"
+  local -r context="${5:-$(sx::k8s::current_context)}"
   local -r selector="${6:-}"
 
   sx::k8s::validate_context "${context}"

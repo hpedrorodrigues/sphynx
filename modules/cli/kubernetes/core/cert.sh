@@ -46,7 +46,7 @@ function sx::k8s::cert::pick() {
   local -r exact="${5:-}"
   local -r namespace="${6:-}"
   local -r all_namespaces="${7:-false}"
-  local -r context="${8:-}"
+  local -r context="${8:-$(sx::k8s::current_context)}"
   local -r selector="${9:-}"
 
   sx::k8s::validate_context "${context}"

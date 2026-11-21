@@ -7,7 +7,7 @@ function sx::k8s::pods::resource_summary() {
   local -r namespace="${2:-}"
   local -r all_namespaces="${3:-false}"
   local -r selector="${4:-}"
-  local -r context="${5:-}"
+  local -r context="${5:-$(sx::k8s::current_context)}"
 
   sx::k8s::validate_context "${context}"
   sx::k8s::ensure_api_access "${context}"
@@ -114,7 +114,7 @@ function sx::k8s::resource_summary::watch() {
   local -r namespace="${4:-}"
   local -r all_namespaces="${5:-false}"
   local -r selector="${6:-}"
-  local -r context="${7:-}"
+  local -r context="${7:-$(sx::k8s::current_context)}"
 
   sx::k8s::validate_context "${context}"
   sx::k8s::ensure_api_access "${context}"
@@ -162,7 +162,7 @@ function sx::k8s::nodes::resource_summary() {
   sx::k8s::check_requirements
 
   local -r query="${1:-}"
-  local -r context="${2:-}"
+  local -r context="${2:-$(sx::k8s::current_context)}"
   local -r selector="${3:-}"
 
   sx::k8s::validate_context "${context}"

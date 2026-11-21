@@ -9,7 +9,7 @@ function sx::k8s::events() {
   local -r list="${4:-false}"
   local -r warnings="${5:-false}"
   local -r watch="${6:-false}"
-  local -r context="${7:-}"
+  local -r context="${7:-$(sx::k8s::current_context)}"
   local -r selector="${8:-}"
 
   sx::k8s::validate_context "${context}"

@@ -3,7 +3,7 @@
 function sx::k8s::list::resources() {
   sx::k8s::check_requirements
 
-  local -r context="${5:-}"
+  local -r context="${5:-$(sx::k8s::current_context)}"
   local -r selector="${6:-}"
 
   sx::k8s::validate_context "${context}"

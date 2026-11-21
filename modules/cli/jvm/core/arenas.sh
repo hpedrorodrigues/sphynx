@@ -7,7 +7,7 @@ function sx::jvm::arenas() {
   local -r pod="${4:-}"
   local -r container="${5:-}"
   local -r all_namespaces="${6:-false}"
-  local -r context="${7:-}"
+  local -r context="${7:-$(sx::k8s::current_context)}"
   local -r image="${8:-}"
   local -r trim="${9:-false}"
 

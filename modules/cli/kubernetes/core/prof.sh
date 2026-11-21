@@ -21,7 +21,7 @@ function sx::k8s::prof() {
   local -r timeout="${9:-10m}"
   local -r image="${10:-}"
   local -r extra_flags="${11:-}"
-  local -r context="${12:-}"
+  local -r context="${12:-$(sx::k8s::current_context)}"
 
   sx::k8s::validate_context "${context}"
   sx::k8s::ensure_api_access "${context}"
@@ -54,7 +54,7 @@ function sx::k8s::prof::cleanup() {
 
   local -r namespace="${1:-}"
   local -r all_namespaces="${2:-false}"
-  local -r context="${3:-}"
+  local -r context="${3:-$(sx::k8s::current_context)}"
 
   sx::k8s::validate_context "${context}"
   sx::k8s::ensure_api_access "${context}"

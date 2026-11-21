@@ -10,7 +10,7 @@ function sx::k8s::logs() {
   local -r container="${5:-}"
   local -r all_namespaces="${6:-false}"
   local -r previous_log="${7:-false}"
-  local -r context="${8:-}"
+  local -r context="${8:-$(sx::k8s::current_context)}"
 
   sx::k8s::validate_context "${context}"
   sx::k8s::ensure_api_access "${context}"

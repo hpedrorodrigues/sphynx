@@ -5,7 +5,7 @@ function sx::k8s::shell() {
 
   local -r query="${1:-}"
   local -r use_ssm="${2:-false}"
-  local -r context="${3:-}"
+  local -r context="${3:-$(sx::k8s::current_context)}"
   local -r selector="${4:-}"
 
   sx::k8s::validate_context "${context}"

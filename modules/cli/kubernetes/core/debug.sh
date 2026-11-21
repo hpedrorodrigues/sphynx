@@ -13,7 +13,7 @@ function sx::k8s::debug() {
   local -r user="${8:-}"
   local -r group="${9:-}"
   local -r restricted="${10:-false}"
-  local -r context="${11:-}"
+  local -r context="${11:-$(sx::k8s::current_context)}"
 
   sx::k8s::validate_context "${context}"
   sx::k8s::ensure_api_access "${context}"

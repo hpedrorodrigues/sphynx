@@ -6,7 +6,7 @@ function sx::k8s::describe() {
   local -r query="${1:-}"
   local -r namespace="${2:-}"
   local -r all_namespaces="${3:-false}"
-  local -r context="${4:-}"
+  local -r context="${4:-$(sx::k8s::current_context)}"
   local -r selector="${5:-}"
 
   sx::k8s::validate_context "${context}"

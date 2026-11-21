@@ -8,7 +8,7 @@ function sx::k8s::topology() {
   local -r all_namespaces="${3:-false}"
   local -r show_resource_usage="${4:-false}"
   local -r show_labels="${5:-false}"
-  local -r context="${6:-}"
+  local -r context="${6:-$(sx::k8s::current_context)}"
   local -r namespace="${7:-}"
 
   sx::k8s::validate_context "${context}"

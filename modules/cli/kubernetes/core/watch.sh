@@ -10,7 +10,7 @@ function sx::k8s::watch::resources() {
   local -r interval="${5:-2}"
   local -r output="${6:-default}"
   local -r show_labels="${7:-false}"
-  local -r context="${8:-}"
+  local -r context="${8:-$(sx::k8s::current_context)}"
 
   sx::k8s::validate_context "${context}"
   sx::k8s::ensure_api_access "${context}"

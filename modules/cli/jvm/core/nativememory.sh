@@ -8,7 +8,7 @@ function sx::jvm::nativememory() {
   local -r container="${5:-}"
   local -r level="${6:-summary}"
   local -r all_namespaces="${7:-false}"
-  local -r context="${8:-}"
+  local -r context="${8:-$(sx::k8s::current_context)}"
   local -r image="${9:-}"
 
   sx::k8s::check_requirements

@@ -13,7 +13,7 @@ function sx::k8s::network::dump_traffic() {
   local -r all_namespaces="${8:-false}"
   local -r extra_flags="${9:-}"
   local -r image="${10:-}"
-  local -r context="${11:-}"
+  local -r context="${11:-$(sx::k8s::current_context)}"
 
   sx::k8s::validate_context "${context}"
   sx::k8s::ensure_api_access "${context}"
