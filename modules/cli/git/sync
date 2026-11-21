@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "${SPHYNX_CLI_DIR}/.internal/all.sh"
+source "${SPHYNX_NAMESPACE_DIR}/shared/shared.sh"
+source "${SPHYNX_NAMESPACE_DIR}/core/sync.sh"
+
+##? Update the default branch of local repositories
+##?
+##? Usage:
+##?     sync [--reset] [--folder <path>]
+##?
+##? Options:
+##?     --reset  Switch to the default branch, discard local changes, and delete all other local branches
+##?     --folder <path>  Sync all repositories directly inside this folder
+##?
+##? Examples:
+##?     sync
+##?     sync --reset
+##?     sync --folder ~/Projects
+##?     sync --folder ~/Projects --reset
+
+sx::parse_arguments "${@}"
+
+sx::git::sync "${reset:-false}" "${folder:-}"
