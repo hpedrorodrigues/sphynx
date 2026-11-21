@@ -94,7 +94,7 @@ function sx::k8s::topology::collect_pods() {
     "${flags[@]}" \
     --output jsonpath='{range .items[*]}{.status.hostIP}{","}{.metadata.namespace}{","}{.metadata.name}{","}{.spec.nodeName}{","}{.status.phase}{"\n"}{end}' \
     | grep -E "${query_pattern}" 2>/dev/null \
-    | sort -t ',' -k 1,1V -k 2,2 -k 3,3 \
+    | sort -t ',' -k 2,2 -k 3,3 \
     | sed 's/^/pod,/'
 }
 
@@ -102,7 +102,7 @@ function sx::k8s::topology::collect_nodes() {
   local -r flags=("${@}")
 
   # shellcheck disable=SC2016  # Expressions don't expand in single quotes
-  local -r template='{{range .items}}node,{{.metadata.name}},{{range $key, $value := .metadata.labels}}{{$key}}={{$value}};{{end}}{{"\n"}}{{end}}'
+  local -r template='{{range .items}}node,{{.metadata.name}},{{range .status.addresses}}{{if eq .type "InternalIP"}}{{.address}} {{end}}{{end}},{{range $key, $value := .metadata.labels}}{{$key}}={{$value}};{{end}}{{"\n"}}{{end}}'
 
   sx::k8s::cli get nodes \
     "${flags[@]}" \
@@ -218,6 +218,28 @@ function sx::k8s::topology::render() {
       return count == 1 ? "pod" : "pods"
     }
 
+    function ip_sort_key(ip,    octets) {
+      if (split(ip, octets, ".") == 4) {
+        return sprintf("%03d.%03d.%03d.%03d", octets[1], octets[2], octets[3], octets[4])
+      }
+
+      return ip == "" ? "zzz" : ip
+    }
+
+    function sort_scheduled_nodes(    position, previous, current) {
+      for (position = 2; position <= scheduled_node_count; position++) {
+        current = scheduled_nodes[position]
+        previous = position - 1
+
+        while (previous >= 1 && node_sort_key[scheduled_nodes[previous]] > node_sort_key[current]) {
+          scheduled_nodes[previous + 1] = scheduled_nodes[previous]
+          previous--
+        }
+
+        scheduled_nodes[previous + 1] = current
+      }
+    }
+
     function print_pods(node,    position, pod, parts, key, row) {
       if (show_resources) {
         print "|-- CPU,MEM,EPH,STATE,NAMESPACE,NAME" | table_command
@@ -249,7 +271,7 @@ function sx::k8s::topology::render() {
       if (node == "") {
         printf "> Unscheduled (%d %s)\n", pod_count[node], pod_word(pod_count[node])
       } else {
-        printf "> %s (%s | %d %s)\n", node_ip[node], node, pod_count[node], pod_word(pod_count[node])
+        printf "> %s (%s | %d %s)\n", or_unknown(node_ip[node]), node, pod_count[node], pod_word(pod_count[node])
 
         if (show_resources) {
           printf "> CPU (%s | %s) -|- MEM (%s | %s) -|- EPH (%s | %s)\n", \
@@ -284,10 +306,13 @@ function sx::k8s::topology::render() {
 
     $1 == "pod" {
       node = $5
-      if (!(node in pod_count)) {
-        if (node != "") {
+      if (node != "") {
+        if (!(node in pod_count)) {
           scheduled_nodes[++scheduled_node_count] = node
-          node_ip[node] = $2
+        }
+
+        if (pod_host_ip[node] == "" && $2 != "") {
+          pod_host_ip[node] = $2
         }
       }
 
@@ -298,7 +323,9 @@ function sx::k8s::topology::render() {
 
     $1 == "node" {
       known_node_count++
-      node_labels[$2] = $3
+      split($3, node_addresses, " ")
+      node_address[$2] = node_addresses[1]
+      node_labels[$2] = $4
     }
 
     $1 == "node-usage" {
@@ -323,6 +350,14 @@ function sx::k8s::topology::render() {
     }
 
     END {
+      for (position = 1; position <= scheduled_node_count; position++) {
+        node = scheduled_nodes[position]
+        node_ip[node] = node_address[node] != "" ? node_address[node] : pod_host_ip[node]
+        node_sort_key[node] = ip_sort_key(node_ip[node]) "," node
+      }
+
+      sort_scheduled_nodes()
+
       for (position = 1; position <= scheduled_node_count; position++) {
         print_node(scheduled_nodes[position])
       }
