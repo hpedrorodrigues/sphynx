@@ -11,8 +11,9 @@ function _sx() {
   COMPREPLY=()
 
   local current_word="${COMP_WORDS[COMP_CWORD]}"
+  local words
   # shellcheck disable=SC2068  # Double quote array expansions
-  local words="$("${completion_dirname}/complete" "${current_word}" ${COMP_WORDS[@]})"
+  words="$("${completion_dirname}/complete" "${current_word}" ${COMP_WORDS[@]})"
 
   while IFS=$'\n' read -r line; do
     COMPREPLY+=("${line}")

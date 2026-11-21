@@ -146,7 +146,8 @@ function sx::k8s::cert::list() {
       | sort -u \
       | grep -E "${query_pattern}" 2>/dev/null \
       | while IFS=',' read -r res_namespace res_name created_at; do
-        local res_age="$(sx::k8s::age "${created_at}" "${now}")"
+        local res_age
+        res_age="$(sx::k8s::age "${created_at}" "${now}")"
 
         echo "${res_namespace},${res_name},${res_age}"
       done

@@ -44,6 +44,7 @@ DOTFILES=(
 
 for dotfile in "${DOTFILES[@]}"; do
   if [ -s "${dotfile}" ]; then
+    # shellcheck disable=SC1090  # ShellCheck can't follow non-constant source
     source "${dotfile}"
   else
     echo "!!! No such file \"${dotfile}\". Ignoring it." >&2

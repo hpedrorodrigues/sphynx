@@ -3,7 +3,8 @@
 export SX_KUBERNETES_DEFAULT_RESOURCES='po,deploy,ds,sts,rs,replicationcontrollers,hpa,pdb,endpoints,endpointslices,svc,ing,sa,cm,secrets,jobs,cj,quota,leases,nodes'
 export SX_KUBERNETES_RESOURCES="${SX_KUBERNETES_RESOURCES:-${SX_KUBERNETES_DEFAULT_RESOURCES}}"
 
-export SX_KUBERNETES_EDITABLE_RESOURCES="$(echo "${SX_KUBERNETES_RESOURCES}" | sed -E 's/,(nodes|leases|endpoints|endpointslices)//g')"
+SX_KUBERNETES_EDITABLE_RESOURCES="$(echo "${SX_KUBERNETES_RESOURCES}" | sed -E 's/,(nodes|leases|endpoints|endpointslices)//g')"
+export SX_KUBERNETES_EDITABLE_RESOURCES
 
 export SX_K8SCTL="${SX_K8SCTL:-kubectl}"
 export SX_K8S_REQUEST_TIMEOUT="${SX_K8S_REQUEST_TIMEOUT:-5s}"
@@ -134,7 +135,8 @@ function sx::k8s::running_pods() {
       | sort -u \
       | grep -E "${query_pattern}" 2>/dev/null \
       | while IFS=',' read -r pod_namespace pod_name container_name restart_count created_at; do
-        local pod_age="$(sx::k8s::age "${created_at}" "${now}")"
+        local pod_age
+        pod_age="$(sx::k8s::age "${created_at}" "${now}")"
 
         echo "${pod_namespace},${pod_name},${container_name},Running,${restart_count},${pod_age}"
       done
@@ -309,9 +311,10 @@ function sx::k8s::nodes() {
       | sort -u \
       | grep -E "${query_pattern}" 2>/dev/null \
       | while read -r node_line; do
-        local node_name="$(echo "${node_line}" | awk '{ print $1 }')"
-        local node_status="$(echo "${node_line}" | awk '{ print $2 }')"
-        local node_age="$(echo "${node_line}" | awk '{ print $4 }')"
+        local node_name node_status node_age
+        node_name="$(echo "${node_line}" | awk '{ print $1 }')"
+        node_status="$(echo "${node_line}" | awk '{ print $2 }')"
+        node_age="$(echo "${node_line}" | awk '{ print $4 }')"
 
         echo "${node_name},${node_status},${node_age}"
       done

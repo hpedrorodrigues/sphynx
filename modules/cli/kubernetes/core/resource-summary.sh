@@ -85,16 +85,17 @@ function sx::k8s::pods::resource_summary() {
 
   local resources='NAMESPACE,POD,CONTAINER,CPU (USAGE),CPU (REQUEST),CPU (LIMIT),MEMORY (USAGE),MEMORY (REQUEST),MEMORY (LIMIT)\n\n'
   while IFS='' read -r pod_output; do
-    local pod_name="$(echo "${pod_output}" | awk -F ',' '{ print $2 }')"
-    local container_name="$(echo "${pod_output}" | grep "${pod_name}" | awk -F ',' '{ print $3 }')"
-    local container_top_output="$(echo -e "${top_output}" | grep "${pod_name} " | grep " ${container_name} ")"
+    local pod_name container_name container_top_output cpu_usage memory_usage
+    pod_name="$(echo "${pod_output}" | awk -F ',' '{ print $2 }')"
+    container_name="$(echo "${pod_output}" | grep "${pod_name}" | awk -F ',' '{ print $3 }')" || true
+    container_top_output="$(echo -e "${top_output}" | grep "${pod_name} " | grep " ${container_name} ")" || true
 
     if ${all_namespaces}; then
-      local cpu_usage="$(echo -e "${container_top_output}" | awk '{ print $4 }')"
-      local memory_usage="$(echo -e "${container_top_output}" | awk '{ print $5 }')"
+      cpu_usage="$(echo -e "${container_top_output}" | awk '{ print $4 }')"
+      memory_usage="$(echo -e "${container_top_output}" | awk '{ print $5 }')"
     else
-      local cpu_usage="$(echo -e "${container_top_output}" | awk '{ print $3 }')"
-      local memory_usage="$(echo -e "${container_top_output}" | awk '{ print $4 }')"
+      cpu_usage="$(echo -e "${container_top_output}" | awk '{ print $3 }')"
+      memory_usage="$(echo -e "${container_top_output}" | awk '{ print $4 }')"
     fi
 
     if [ -z "${cpu_usage}" ]; then
@@ -219,11 +220,12 @@ function sx::k8s::nodes::resource_summary() {
 
   local resources='NODE,CPU (USAGE),CPU (CAPACITY),MEMORY (USAGE),MEMORY (CAPACITY),RUNTIME,OS,IMAGE,ARCH,KERNEL\n\n'
   while IFS='' read -r node_output; do
-    local node_name="$(echo "${node_output}" | awk -F ',' '{ print $1 }')"
-    local node_top_output="$(echo -e "${top_output}" | grep "${node_name}")"
+    local node_name node_top_output cpu_usage memory_usage
+    node_name="$(echo "${node_output}" | awk -F ',' '{ print $1 }')"
+    node_top_output="$(echo -e "${top_output}" | grep "${node_name}")" || true
 
-    local cpu_usage="$(echo -e "${node_top_output}" | awk '{ print $2 }')"
-    local memory_usage="$(echo -e "${node_top_output}" | awk '{ print $4 }')"
+    cpu_usage="$(echo -e "${node_top_output}" | awk '{ print $2 }')"
+    memory_usage="$(echo -e "${node_top_output}" | awk '{ print $4 }')"
 
     if [ -z "${cpu_usage}" ]; then
       local cpu='<unknown>'

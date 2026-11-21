@@ -86,7 +86,8 @@ function sx::postgresql::list_connected_pods() {
   local result="${result_header}"$'\n'
   while IFS='' read -r row; do
     local client_address="${row%%"${sep}"*}"
-    local pod_name="$(
+    local pod_name
+    pod_name="$(
       echo "${pods}" \
         | awk -v client_address="${client_address}" '$2 == client_address { print $1; exit }'
     )"

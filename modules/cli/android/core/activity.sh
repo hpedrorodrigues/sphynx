@@ -7,28 +7,30 @@ function sx::android::activity::current() {
 
   local -r os_version="$(sx::android::os_version "${serial}")"
 
+  local activity_name
+
   if [ "${os_version}" -lt "${ANDROID_Q_VERSION}" ]; then
-    local activity_name="$(
+    activity_name="$(
       sx::android::shell "${serial}" dumpsys activity activities \
         | grep 'mFocusedActivity' \
         | cut -d . -f 5 \
         | cut -d ' ' -f 1
-    )"
+    )" || true
   else
-    local activity_name="$(
+    activity_name="$(
       sx::android::shell "${serial}" dumpsys activity activities \
         | grep 'mResumedActivity' \
         | awk '{ print $4 }'
-    )"
+    )" || true
   fi
 
   if [ -z "${activity_name}" ]; then
-    local activity_name="$(
+    activity_name="$(
       sx::android::shell "${serial}" dumpsys activity activities \
         | grep 'mLastPausedActivity' \
         | awk '{ print $4 }' \
         | head -1
-    )"
+    )" || true
   fi
 
   if [ -n "${activity_name}" ]; then

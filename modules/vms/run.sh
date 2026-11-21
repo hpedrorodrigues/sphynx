@@ -4,7 +4,8 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-readonly script_directory="$(dirname "${BASH_SOURCE[0]}")"
+script_directory="$(dirname "${BASH_SOURCE[0]}")"
+readonly script_directory
 
 function run_action() {
   local -r operating_system="${1:-}"

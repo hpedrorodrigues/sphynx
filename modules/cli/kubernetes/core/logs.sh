@@ -153,7 +153,8 @@ function sx::k8s_command::pod::list() {
       | grep -vE 'Pending\|ContainerCreating\|Terminating\|CreateContainerConfigError' \
       | grep -E "${query_pattern}" 2>/dev/null \
       | while IFS=',' read -r pod_namespace pod_name container_name pod_status restart_count created_at description; do
-        local pod_age="$(sx::k8s::age "${created_at}" "${now}")"
+        local pod_age
+        pod_age="$(sx::k8s::age "${created_at}" "${now}")"
 
         echo "${pod_namespace},${pod_name},${container_name},${pod_status},${restart_count},${pod_age},${description}"
       done

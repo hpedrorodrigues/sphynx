@@ -46,7 +46,8 @@ function sx::k8s::topology() {
 
     # shellcheck disable=SC2068  # Double quote array expansions
     for ip in ${instance_ips[@]}; do
-      local pod_count="$(echo "${assignments}" | grep -c "^${ip},")"
+      local pod_count
+      pod_count="$(echo "${assignments}" | grep -c "^${ip},")" || true
 
       sx::k8s::topology::instance_info "${ip}" "${top_nodes}" "${top_pods}" "${instances}" "${show_labels}" "${pod_count}"
       sx::k8s::topology::pods_info "${ip}" "${assignments}" "${top_nodes}" "${top_pods}" "${all_namespaces}"
@@ -54,9 +55,10 @@ function sx::k8s::topology() {
   else
     # shellcheck disable=SC2068  # Double quote array expansions
     for ip in ${instance_ips[@]}; do
-      local pod_count="$(echo "${assignments}" | grep -c "^${ip},")"
-      local instance_name="$(echo "${assignments}" | grep "^${ip}," | cut -d ',' -f 4 | head -n 1)"
-      local instance_labels="$(echo "${instances}" | grep "${instance_name}" | awk '{ print $13 }')"
+      local pod_count instance_name instance_labels
+      pod_count="$(echo "${assignments}" | grep -c "^${ip},")" || true
+      instance_name="$(echo "${assignments}" | grep "^${ip}," | cut -d ',' -f 4 | head -n 1)" || true
+      instance_labels="$(echo "${instances}" | grep "${instance_name}" | awk '{ print $13 }')" || true
 
       if [ -z "${instance_name}" ]; then
         instance_name='Name not available'
@@ -204,19 +206,23 @@ function sx::k8s::topology::pods_info() {
   local resource_usage='|-- CPU,MEM,STATE,NAMESPACE,NAME\n'
   # shellcheck disable=SC2068  # Double quote array expansions
   for pod in ${pods[@]}; do
-    local pod_info="$(echo "${top_pods}" | grep "${pod}")"
-    local pod_state="$(echo "${assignments}" | grep "${pod}" | cut -d ',' -f 5)"
+    local pod_info pod_state pod_ns
+    pod_info="$(echo "${top_pods}" | grep "${pod}")" || true
+    pod_state="$(echo "${assignments}" | grep "${pod}" | cut -d ',' -f 5)" || true
 
-    local pod_ns="$(echo "${assignments}" | grep "${pod}" | cut -d ',' -f 2)"
+    pod_ns="$(echo "${assignments}" | grep "${pod}" | cut -d ',' -f 2)" || true
 
-    local cpu_position="$(${all_namespaces} && echo '3' || echo '2')"
-    local cpu_usage="$(echo "${pod_info}" | awk "{ print \$${cpu_position} }")"
+    local cpu_position cpu_usage
+    cpu_position="$(${all_namespaces} && echo '3' || echo '2')"
+    cpu_usage="$(echo "${pod_info}" | awk "{ print \$${cpu_position} }")"
 
-    local memory_position="$(${all_namespaces} && echo '4' || echo '3')"
-    local memory_usage="$(echo "${pod_info}" | awk "{ print \$${memory_position} }")"
+    local memory_position memory_usage
+    memory_position="$(${all_namespaces} && echo '4' || echo '3')"
+    memory_usage="$(echo "${pod_info}" | awk "{ print \$${memory_position} }")"
 
-    local final_cpu_usage="$([ -z "${cpu_usage}" ] && echo 'Unknown' || echo "${cpu_usage}")"
-    local final_mem_usage="$([ -z "${memory_usage}" ] && echo 'Unknown' || echo "${memory_usage}")"
+    local final_cpu_usage final_mem_usage
+    final_cpu_usage="$([ -z "${cpu_usage}" ] && echo 'Unknown' || echo "${cpu_usage}")"
+    final_mem_usage="$([ -z "${memory_usage}" ] && echo 'Unknown' || echo "${memory_usage}")"
 
     resource_usage+="|-- ${final_cpu_usage},${final_mem_usage},${pod_state},${pod_ns},${pod}\n"
   done

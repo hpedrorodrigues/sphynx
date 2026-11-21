@@ -272,6 +272,7 @@ function load_dot_env() {
   fi
 
   set -o allexport
+  # shellcheck disable=SC1090  # ShellCheck can't follow non-constant source
   source "${env_file}"
   set +o allexport
 

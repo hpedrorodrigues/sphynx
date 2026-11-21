@@ -115,7 +115,8 @@ function sx::k8s_command::secret::list() {
       | sort -u \
       | grep -E "${query_pattern}" 2>/dev/null \
       | while IFS=',' read -r secret_namespace secret_name secret_type created_at; do
-        local secret_age="$(sx::k8s::age "${created_at}" "${now}")"
+        local secret_age
+        secret_age="$(sx::k8s::age "${created_at}" "${now}")"
 
         echo "${secret_namespace},${secret_name},${secret_type},${secret_age}"
       done
@@ -177,7 +178,8 @@ function sx::k8s_command::secret() {
     local -r result="$(
       echo "${data}" \
         | while IFS=$'\t' read -r secret_key encoded_value; do
-          local decoded_value="$(printf '%s' "${encoded_value}" | base64 --decode)"
+          local decoded_value
+          decoded_value="$(printf '%s' "${encoded_value}" | base64 --decode)"
           decoded_value="${decoded_value//$'\t'/\\t}"
           decoded_value="${decoded_value//$'\n'/\\n}"
 

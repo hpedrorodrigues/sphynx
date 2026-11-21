@@ -90,7 +90,8 @@ function sx::k8s::prof::cleanup() {
   elif [ -n "${namespace}" ]; then
     local flags="--namespace ${namespace}"
   else
-    local flags="--namespace $(sx::k8s::current_namespace "${context}")"
+    local flags
+    flags="--namespace $(sx::k8s::current_namespace "${context}")"
   fi
 
   if [ -n "${context}" ]; then
