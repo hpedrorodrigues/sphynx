@@ -21,8 +21,8 @@ export DO_NOT_TRACK='1'
 
 ### Loading personal scripts
 
-export DOTFILES_DIR="${HOME}/.sphynx"
-export DOTFILES=(
+DOTFILES_DIR="${HOME}/.sphynx"
+DOTFILES=(
   # Common
   "${DOTFILES_DIR}/aliases.sh"
   "${DOTFILES_DIR}/os_aliases.sh"
@@ -42,8 +42,7 @@ export DOTFILES=(
   "${HOME}/.chilipiperrc"
 )
 
-# shellcheck disable=SC2048  # Use "$@" (with quotes) to prevent whitespace problems
-for dotfile in ${DOTFILES[*]}; do
+for dotfile in "${DOTFILES[@]}"; do
   if [ -s "${dotfile}" ]; then
     source "${dotfile}"
   else
@@ -57,7 +56,7 @@ unset DOTFILES
 #|> Krew
 export KREW_BIN="${HOME}/.krew/bin"
 
-if [ -d "${KREW_BIN}" ] && [[ "${PATH}" != *"${KREW_BIN}"* ]]; then
+if [ -d "${KREW_BIN}" ] && [[ ":${PATH}:" != *":${KREW_BIN}:"* ]]; then
   export PATH="${PATH}:${KREW_BIN}"
 fi
 
@@ -65,14 +64,15 @@ fi
 export GOPATH="${HOME}/.go"
 export GO_WORKSPACE="${GOPATH}/src"
 
-if [ -d "${GOPATH}/bin" ] && [[ "${PATH}" != *"${GOPATH}/bin"* ]]; then
+if [ -d "${GOPATH}/bin" ] && [[ ":${PATH}:" != *":${GOPATH}/bin:"* ]]; then
   export PATH="${PATH}:${GOPATH}/bin"
 fi
 
 #|> Non-public scripts
-export SECRETS_BIN="${HOME}/Code/Personal/secrets/bin"
+export SECRETS_DIR="${HOME}/Code/Personal/secrets"
+export SECRETS_BIN="${SECRETS_DIR}/modules/executables"
 
-if [ -d "${SECRETS_BIN}" ] && [[ "${PATH}" != *"${SECRETS_BIN}"* ]]; then
+if [ -d "${SECRETS_BIN}" ] && [[ ":${PATH}:" != *":${SECRETS_BIN}:"* ]]; then
   export PATH="${PATH}:${SECRETS_BIN}"
 fi
 
@@ -95,6 +95,6 @@ export SX_CONFIRMATION_REQUIRED='false'
 #|> Rancher Desktop
 export RANCHER_DESKTOP_BIN="${HOME}/.rd/bin"
 
-if [ -d "${RANCHER_DESKTOP_BIN}" ] && [[ "${PATH}" != *"${RANCHER_DESKTOP_BIN}"* ]]; then
+if [ -d "${RANCHER_DESKTOP_BIN}" ] && [[ ":${PATH}:" != *":${RANCHER_DESKTOP_BIN}:"* ]]; then
   export PATH="${PATH}:${RANCHER_DESKTOP_BIN}"
 fi
