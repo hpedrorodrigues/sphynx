@@ -80,5 +80,7 @@
   trustExitCode = true
 [init]
   defaultBranch = main
+[user]
+  useConfigOnly = true
 [url "git@github.com:hpedrorodrigues/"]
   insteadOf = "my:"
