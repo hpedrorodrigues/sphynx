@@ -21,44 +21,18 @@ function sx::flow::status() {
     type_flags=' --tests'
   fi
 
-  if sx::os::is_command_available 'fzf'; then
-    local -r options="$(sx::flow::specs "${query}" true "${type_flags}")"
+  local -r options="$(sx::flow::specs "${query}" true "${type_flags}")"
 
-    if [ -z "${options}" ]; then
-      sx::log::fatal 'No specifications found'
-    fi
+  if [ -z "${options}" ]; then
+    sx::log::fatal 'No specifications found'
+  fi
 
-    # shellcheck disable=SC2086  # quote this to prevent word splitting
-    local -r selected="$(echo -e "${options}" | fzf --header-lines 1 ${SX_FZF_ARGS})"
+  local -r selected="$(sx::select_one 'Please, choose the specification' 1 <<<"${options}")"
 
-    if [ -n "${selected}" ]; then
-      local -r spec="$(echo "${selected}" | awk '{ print $1 }')"
+  if [ -n "${selected}" ]; then
+    local -r spec="$(echo "${selected}" | awk '{ print $1 }')"
 
-      sx::flow_command::status "${spec}" "${connected}"
-    fi
-  else
-    export PS3=$'\n''Please, choose the specification: '$'\n'
-
-    local options
-    readarray -t options < <(
-      sx::flow::specs "${query}" false "${type_flags}"
-    )
-
-    if [ "${#options[@]}" -eq 0 ]; then
-      sx::log::fatal 'No specifications found'
-    fi
-
-    select selected in "${options[@]}"; do
-      if [ -z "${selected}" ]; then
-        sx::log::err "Invalid option \"${REPLY}\". Please, type the number of the desired option."
-        continue
-      fi
-
-      local -r spec="$(echo "${selected}" | awk '{ print $1 }')"
-
-      sx::flow_command::status "${spec}" "${connected}"
-      break
-    done
+    sx::flow_command::status "${spec}" "${connected}"
   fi
 }
 

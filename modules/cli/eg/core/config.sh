@@ -10,48 +10,21 @@ function sx::eg::config() {
   local -r output="${4:-yaml}"
   local -r resource="${5:-all}"
 
-  if sx::os::is_command_available 'fzf'; then
-    local -r options="$(
-      sx::eg::proxy_pods "${query}" "${namespace}" "${all_namespaces}" true
-    )"
+  local -r options="$(
+    sx::eg::proxy_pods "${query}" "${namespace}" "${all_namespaces}" true
+  )"
 
-    if [ -z "${options}" ]; then
-      sx::log::fatal 'No Envoy proxy pods found'
-    fi
+  if [ -z "${options}" ]; then
+    sx::log::fatal 'No Envoy proxy pods found'
+  fi
 
-    # shellcheck disable=SC2086  # quote this to prevent word splitting
-    local -r selected="$(echo -e "${options}" | fzf --header-lines 1 ${SX_FZF_ARGS})"
+  local -r selected="$(sx::select_one 'Please, choose the pod' 1 <<<"${options}")"
 
-    if [ -n "${selected}" ]; then
-      local -r ns="$(echo "${selected}" | awk '{ print $1 }')"
-      local -r name="$(echo "${selected}" | awk '{ print $2 }')"
+  if [ -n "${selected}" ]; then
+    local -r ns="$(echo "${selected}" | awk '{ print $1 }')"
+    local -r name="$(echo "${selected}" | awk '{ print $2 }')"
 
-      sx::eg_command::config "${ns}" "${name}" "${output}" "${resource}"
-    fi
-  else
-    export PS3=$'\n''Please, choose the pod: '$'\n'
-
-    local options
-    readarray -t options < <(
-      sx::eg::proxy_pods "${query}" "${namespace}" "${all_namespaces}"
-    )
-
-    if [ "${#options[@]}" -eq 0 ]; then
-      sx::log::fatal 'No Envoy proxy pods found'
-    fi
-
-    select selected in "${options[@]}"; do
-      if [ -z "${selected}" ]; then
-        sx::log::err "Invalid option \"${REPLY}\". Please, type the number of the desired option."
-        continue
-      fi
-
-      local -r ns="$(echo "${selected}" | awk '{ print $1 }')"
-      local -r name="$(echo "${selected}" | awk '{ print $2 }')"
-
-      sx::eg_command::config "${ns}" "${name}" "${output}" "${resource}"
-      break
-    done
+    sx::eg_command::config "${ns}" "${name}" "${output}" "${resource}"
   fi
 }
 

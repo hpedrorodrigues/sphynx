@@ -20,36 +20,16 @@ function sx::gcloud::impersonate() {
     sx::log::info 'Clearing service account impersonation\n'
 
     sx::gcloud::cli config unset auth/impersonate_service_account
-  elif sx::os::is_command_available 'fzf'; then
+  else
     local -r options="$(sx::gcloud_command::impersonate::search "${query}" "${project}")"
 
     if [ -z "${options}" ]; then
       sx::log::fatal 'No service accounts found'
     fi
 
-    # shellcheck disable=SC2086  # quote this to prevent word splitting
-    local -r selected="$(echo -e "${options}" | fzf ${SX_FZF_ARGS})"
+    local -r selected="$(sx::select_one 'Please, choose the service account' <<<"${options}")"
 
     [ -n "${selected}" ] && sx::gcloud_command::impersonate::change "${selected}"
-  else
-    export PS3=$'\n''Please, choose the service account: '$'\n'
-
-    local options
-    readarray -t options < <(sx::gcloud_command::impersonate::search "${query}" "${project}")
-
-    if [ "${#options[@]}" -eq 0 ]; then
-      sx::log::fatal 'No service accounts found'
-    fi
-
-    select selected in "${options[@]}"; do
-      if [ -z "${selected}" ]; then
-        sx::log::err "Invalid option \"${REPLY}\". Please, type the number of the desired option."
-        continue
-      fi
-
-      sx::gcloud_command::impersonate::change "${selected}"
-      break
-    done
   fi
 }
 

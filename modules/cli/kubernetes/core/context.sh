@@ -28,36 +28,16 @@ function sx::k8s::context() {
         echo "${context}"
       fi
     done < <(sx::k8s::cli config get-contexts)
-  elif sx::os::is_command_available 'fzf'; then
+  else
     local -r options="$(sx::k8s_command::context::names "${query}")"
 
     if [ -z "${options}" ]; then
       sx::log::fatal 'No resources found'
     fi
 
-    # shellcheck disable=SC2086  # quote this to prevent word splitting
-    local -r selected="$(echo -e "${options}" | fzf ${SX_FZF_ARGS})"
+    local -r selected="$(sx::select_one 'Please, choose the resource' <<<"${options}")"
 
     [ -n "${selected}" ] && sx::k8s_command::context::change "${selected}"
-  else
-    export PS3=$'\n''Please, choose the resource: '$'\n'
-
-    local options
-    readarray -t options < <(sx::k8s_command::context::names "${query}")
-
-    if [ "${#options[@]}" -eq 0 ]; then
-      sx::log::fatal 'No resources found'
-    fi
-
-    select selected in "${options[@]}"; do
-      if [ -z "${selected}" ]; then
-        sx::log::err "Invalid option \"${REPLY}\". Please, type the number of the desired option."
-        continue
-      fi
-
-      sx::k8s_command::context::change "${selected}"
-      break
-    done
   fi
 }
 

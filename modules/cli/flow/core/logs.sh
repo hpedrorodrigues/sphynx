@@ -34,44 +34,18 @@ function sx::flow::logs() {
     flags+=" --not-before ${not_before}"
   fi
 
-  if sx::os::is_command_available 'fzf'; then
-    local -r options="$(sx::flow::tasks "${query}" true "${task_type}")"
+  local -r options="$(sx::flow::tasks "${query}" true "${task_type}")"
 
-    if [ -z "${options}" ]; then
-      sx::log::fatal 'No tasks found'
-    fi
+  if [ -z "${options}" ]; then
+    sx::log::fatal 'No tasks found'
+  fi
 
-    # shellcheck disable=SC2086  # quote this to prevent word splitting
-    local -r selected="$(echo -e "${options}" | fzf --header-lines 1 ${SX_FZF_ARGS})"
+  local -r selected="$(sx::select_one 'Please, choose the task' 1 <<<"${options}")"
 
-    if [ -n "${selected}" ]; then
-      local -r task="$(echo "${selected}" | awk '{ print $1 }')"
+  if [ -n "${selected}" ]; then
+    local -r task="$(echo "${selected}" | awk '{ print $1 }')"
 
-      sx::flow_command::logs "${task}" "${flags}" "${extra_flags}"
-    fi
-  else
-    export PS3=$'\n''Please, choose the task: '$'\n'
-
-    local options
-    readarray -t options < <(
-      sx::flow::tasks "${query}" false "${task_type}"
-    )
-
-    if [ "${#options[@]}" -eq 0 ]; then
-      sx::log::fatal 'No tasks found'
-    fi
-
-    select selected in "${options[@]}"; do
-      if [ -z "${selected}" ]; then
-        sx::log::err "Invalid option \"${REPLY}\". Please, type the number of the desired option."
-        continue
-      fi
-
-      local -r task="$(echo "${selected}" | awk '{ print $1 }')"
-
-      sx::flow_command::logs "${task}" "${flags}" "${extra_flags}"
-      break
-    done
+    sx::flow_command::logs "${task}" "${flags}" "${extra_flags}"
   fi
 }
 

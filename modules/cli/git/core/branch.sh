@@ -18,35 +18,13 @@ function sx::git::branch::switch() {
 
   local -r query="${1:-}"
 
-  if sx::os::is_command_available 'fzf'; then
-    local -r options="$(sx::git::branches "${query}")"
+  local -r options="$(sx::git::branches "${query}")"
 
-    if [ -z "${options}" ]; then
-      sx::log::fatal 'No branches found'
-    fi
-
-    # shellcheck disable=SC2086  # quote this to prevent word splitting
-    local -r selected="$(echo -e "${options}" | fzf ${SX_FZF_ARGS})"
-
-    [ -n "${selected}" ] && git switch "${selected}"
-  else
-    export PS3=$'\n''Please, choose the branch: '$'\n'
-
-    local options
-    readarray -t options < <(sx::git::branches "${query}")
-
-    if [ "${#options[@]}" -eq 0 ]; then
-      sx::log::fatal 'No branches found'
-    fi
-
-    select selected in "${options[@]}"; do
-      if [ -z "${selected}" ]; then
-        sx::log::err "Invalid option \"${REPLY}\". Please, type the number of the desired option."
-        continue
-      fi
-
-      git switch "${selected}"
-      break
-    done
+  if [ -z "${options}" ]; then
+    sx::log::fatal 'No branches found'
   fi
+
+  local -r selected="$(sx::select_one 'Please, choose the branch' <<<"${options}")"
+
+  [ -n "${selected}" ] && git switch "${selected}"
 }

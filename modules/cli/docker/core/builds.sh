@@ -16,27 +16,7 @@ function sx::docker::builds::pick() {
     sx::log::fatal 'No build records found'
   fi
 
-  if sx::os::is_command_available 'fzf'; then
-    # shellcheck disable=SC2086  # quote this to prevent word splitting
-    echo -e "${options}" \
-      | fzf ${SX_FZF_ARGS} \
-      | awk '{ print $1 }'
-  else
-    export PS3=$'\n'"${prompt}: "$'\n'
-
-    local items
-    readarray -t items <<<"${options}"
-
-    select selected in "${items[@]}"; do
-      if [ -z "${selected}" ]; then
-        sx::log::err "Invalid option \"${REPLY}\". Please, type the number of the desired option."
-        continue
-      fi
-
-      echo "${selected}" | awk '{ print $1 }'
-      break
-    done
-  fi
+  sx::select_one "${prompt}" <<<"${options}" | awk '{ print $1 }'
 }
 
 function sx::docker::builds::inspect() {

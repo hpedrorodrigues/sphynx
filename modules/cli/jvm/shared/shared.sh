@@ -18,50 +18,23 @@ function sx::jvm::resolve_target() {
     return
   fi
 
-  if sx::os::is_command_available 'fzf'; then
-    local -r options="$(
-      sx::k8s::running_pods "${query}" "${selector}" "${namespace}" "${all_namespaces}" true "${context}"
-    )"
+  local -r options="$(
+    sx::k8s::running_pods "${query}" "${selector}" "${namespace}" "${all_namespaces}" true "${context}"
+  )"
 
-    if [ -z "${options}" ]; then
-      sx::log::fatal 'No running pods found'
-    fi
+  if [ -z "${options}" ]; then
+    sx::log::fatal 'No running pods found'
+  fi
 
-    # shellcheck disable=SC2086  # quote this to prevent word splitting
-    local -r selected="$(echo -e "${options}" | fzf --header-lines 1 ${SX_FZF_ARGS})"
+  local -r selected="$(sx::select_one 'Please, choose the pod' 1 <<<"${options}")"
 
-    if [ -z "${selected}" ]; then
-      echo
-
-      return
-    fi
-
-    echo "${selected}" | awk '{ print $1 "," $2 "," $3 }'
+  if [ -z "${selected}" ]; then
+    echo
 
     return
   fi
 
-  export PS3=$'\n''Please, choose the pod: '$'\n'
-
-  local options
-  readarray -t options < <(
-    sx::k8s::running_pods "${query}" "${selector}" "${namespace}" "${all_namespaces}" false "${context}"
-  )
-
-  if [ "${#options[@]}" -eq 0 ]; then
-    sx::log::fatal 'No running pods found'
-  fi
-
-  local selected
-  select selected in "${options[@]}"; do
-    if [ -z "${selected}" ]; then
-      sx::log::err "Invalid option \"${REPLY}\". Please, type the number of the desired option."
-      continue
-    fi
-
-    echo "${selected}" | awk '{ print $1 "," $2 "," $3 }'
-    break
-  done
+  echo "${selected}" | awk '{ print $1 "," $2 "," $3 }'
 }
 
 function sx::jvm::jdk_container_name() {

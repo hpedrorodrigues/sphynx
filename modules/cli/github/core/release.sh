@@ -51,55 +51,23 @@ function sx::github::release::download_assets() {
   local -r username="${1}"
   local -r project_name="${2}"
 
-  if sx::os::is_command_available 'fzf'; then
-    local -r options="$(sx::github::release::list_assets "${username}" "${project_name}")"
+  local -r options="$(sx::github::release::list_assets "${username}" "${project_name}")"
 
-    if [ -z "${options}" ]; then
-      sx::log::fatal 'No release or assets found'
+  if [ -z "${options}" ]; then
+    sx::log::fatal 'No release or assets found'
+  fi
+
+  local -r selected="$(sx::select_one 'Please, choose the file' <<<"${options}")"
+
+  if [ -n "${selected}" ]; then
+    local -r name="$(echo "${selected}" | awk '{ print $1 }')"
+    local -r url="$(echo "${selected}" | awk '{ print $2 }')"
+
+    if [ -f "${name}" ]; then
+      sx::log::fatal "A file named \"${name}\" already exists"
     fi
 
-    # shellcheck disable=SC2086  # quote this to prevent word splitting
-    local -r selected="$(echo -e "${options}" | fzf ${SX_FZF_ARGS})"
-
-    if [ -n "${selected}" ]; then
-      local -r name="$(echo "${selected}" | awk '{ print $1 }')"
-      local -r url="$(echo "${selected}" | awk '{ print $2 }')"
-
-      if [ -f "${name}" ]; then
-        sx::log::fatal "A file named \"${name}\" already exists"
-      fi
-
-      sx::log::info "Downloading \"${url}\" into \"${name}\"...\n"
-      sx::github::detect_api "${url}" >"${name}" && sx::log::info "Done! (File: ${name})"
-    fi
-  else
-    export PS3=$'\n''Please, choose the file: '$'\n'
-
-    local options
-    readarray -t options < <(
-      sx::github::release::list_assets "${username}" "${project_name}"
-    )
-
-    if [ "${#options[@]}" -eq 0 ]; then
-      sx::log::fatal 'No release or assets found'
-    fi
-
-    select selected in "${options[@]}"; do
-      if [ -z "${selected}" ]; then
-        sx::log::err "Invalid option \"${REPLY}\". Please, type the number of the desired option."
-        continue
-      fi
-
-      local -r name="$(echo "${selected}" | awk '{ print $1 }')"
-      local -r url="$(echo "${selected}" | awk '{ print $2 }')"
-
-      if [ -f "${name}" ]; then
-        sx::log::fatal "A file named \"${name}\" already exists"
-      fi
-
-      sx::log::info "Downloading \"${url}\" into \"${name}\"...\n"
-      sx::github::detect_api "${url}" >"${name}" && sx::log::info "Done! (File: ${name})"
-      break
-    done
+    sx::log::info "Downloading \"${url}\" into \"${name}\"...\n"
+    sx::github::detect_api "${url}" >"${name}" && sx::log::info "Done! (File: ${name})"
   fi
 }

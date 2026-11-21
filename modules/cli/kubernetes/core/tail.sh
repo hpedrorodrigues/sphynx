@@ -23,50 +23,22 @@ function sx::k8s::tail() {
     sx::log::fatal 'This command requires "stern" or "kubetail" to be installed'
   fi
 
-  if sx::os::is_command_available 'fzf'; then
-    local -r options="$(
-      sx::k8s::shared::resources "${SX_KUBERNETES_TAIL_RESOURCES}" "${query}" "${namespace}" "${all_namespaces}" true "${context}" "${selector}"
-    )"
+  local -r options="$(
+    sx::k8s::shared::resources "${SX_KUBERNETES_TAIL_RESOURCES}" "${query}" "${namespace}" "${all_namespaces}" true "${context}" "${selector}"
+  )"
 
-    if [ -z "${options}" ]; then
-      sx::log::fatal 'No workloads found'
-    fi
+  if [ -z "${options}" ]; then
+    sx::log::fatal 'No workloads found'
+  fi
 
-    # shellcheck disable=SC2086  # quote this to prevent word splitting
-    local -r selected="$(echo -e "${options}" | fzf --header-lines 1 ${SX_FZF_ARGS})"
+  local -r selected="$(sx::select_one 'Please, choose the workload' 1 <<<"${options}")"
 
-    if [ -n "${selected}" ]; then
-      local -r ns="$(echo "${selected}" | awk '{ print $1 }')"
-      local -r kind="$(echo "${selected}" | awk '{ print $2 }')"
-      local -r name="$(echo "${selected}" | awk '{ print $3 }')"
+  if [ -n "${selected}" ]; then
+    local -r ns="$(echo "${selected}" | awk '{ print $1 }')"
+    local -r kind="$(echo "${selected}" | awk '{ print $2 }')"
+    local -r name="$(echo "${selected}" | awk '{ print $3 }')"
 
-      sx::k8s_command::tail "${ns}" "${kind}" "${name}" "${tool}" "${extra_flags}" "${context}"
-    fi
-  else
-    export PS3=$'\n''Please, choose the workload: '$'\n'
-
-    local options
-    readarray -t options < <(
-      sx::k8s::shared::resources "${SX_KUBERNETES_TAIL_RESOURCES}" "${query}" "${namespace}" "${all_namespaces}" false "${context}" "${selector}"
-    )
-
-    if [ "${#options[@]}" -eq 0 ]; then
-      sx::log::fatal 'No workloads found'
-    fi
-
-    select selected in "${options[@]}"; do
-      if [ -z "${selected}" ]; then
-        sx::log::err "Invalid option \"${REPLY}\". Please, type the number of the desired option."
-        continue
-      fi
-
-      local -r ns="$(echo "${selected}" | awk '{ print $1 }')"
-      local -r kind="$(echo "${selected}" | awk '{ print $2 }')"
-      local -r name="$(echo "${selected}" | awk '{ print $3 }')"
-
-      sx::k8s_command::tail "${ns}" "${kind}" "${name}" "${tool}" "${extra_flags}" "${context}"
-      break
-    done
+    sx::k8s_command::tail "${ns}" "${kind}" "${name}" "${tool}" "${extra_flags}" "${context}"
   fi
 }
 

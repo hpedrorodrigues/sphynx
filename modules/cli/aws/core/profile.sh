@@ -11,38 +11,16 @@ function sx::aws::profile::switch() {
 
   local -r query="${1:-}"
 
-  if sx::os::is_command_available 'fzf'; then
-    local -r options="$(sx::aws_command::list_profiles "${query}")"
+  local -r options="$(sx::aws_command::list_profiles "${query}")"
 
-    if [ -z "${options}" ]; then
-      sx::log::fatal 'No profiles found'
-    fi
+  if [ -z "${options}" ]; then
+    sx::log::fatal 'No profiles found'
+  fi
 
-    # shellcheck disable=SC2086  # quote this to prevent word splitting
-    local -r selected="$(echo -e "${options}" | fzf ${SX_FZF_ARGS})"
+  local -r selected="$(sx::select_one 'Please, choose the profile' <<<"${options}")"
 
-    if [ -n "${selected}" ]; then
-      echo "export AWS_PROFILE=\"${selected}\""
-    fi
-  else
-    export PS3=$'\n''Please, choose the profile: '$'\n'
-
-    local options
-    readarray -t options < <(sx::aws_command::list_profiles)
-
-    if [ "${#options[@]}" -eq 0 ]; then
-      sx::log::fatal 'No profiles found'
-    fi
-
-    select selected in "${options[@]}"; do
-      if [ -z "${selected}" ]; then
-        sx::log::err "Invalid option \"${REPLY}\". Please, type the number of the desired option."
-        continue
-      fi
-
-      echo "export AWS_PROFILE=\"${selected}\""
-      break
-    done
+  if [ -n "${selected}" ]; then
+    echo "export AWS_PROFILE=\"${selected}\""
   fi
 }
 

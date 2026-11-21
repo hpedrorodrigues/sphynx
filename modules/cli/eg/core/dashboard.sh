@@ -36,30 +36,14 @@ function sx::eg::dashboard() {
         sx::log::fatal "Unknown dashboard target: ${target}. Supported: envoy-gateway, envoy-proxy"
         ;;
     esac
-  elif sx::os::is_command_available 'fzf'; then
+  else
     local -r options="$(sx::eg::dashboard_targets true)"
 
-    # shellcheck disable=SC2086  # quote this to prevent word splitting
-    local -r selected="$(echo -e "${options}" | fzf --header-lines 1 ${SX_FZF_ARGS})"
+    local -r selected="$(sx::select_one 'Please, choose the dashboard target' 1 <<<"${options}")"
 
     if [ -n "${selected}" ]; then
       sx::eg::dashboard "${selected}" "${query}" "${namespace}" "${all_namespaces}" "${port}"
     fi
-  else
-    export PS3=$'\n''Please, choose the dashboard target: '$'\n'
-
-    local options
-    readarray -t options < <(sx::eg::dashboard_targets)
-
-    select selected in "${options[@]}"; do
-      if [ -z "${selected}" ]; then
-        sx::log::err "Invalid option \"${REPLY}\". Please, type the number of the desired option."
-        continue
-      fi
-
-      sx::eg::dashboard "${selected}" "${query}" "${namespace}" "${all_namespaces}" "${port}"
-      break
-    done
   fi
 }
 
@@ -69,49 +53,19 @@ function sx::eg::dashboard_envoy_proxy() {
   local -r all_namespaces="${3:-false}"
   local -r port="${4:-}"
 
-  if sx::os::is_command_available 'fzf'; then
-    local options
-    readarray -t options < <(
-      sx::eg::proxy_pods "${query}" "${namespace}" "${all_namespaces}" true
-    )
+  local -r options="$(sx::eg::proxy_pods "${query}" "${namespace}" "${all_namespaces}" true)"
 
-    if [ "${#options[@]}" -eq 0 ]; then
-      sx::log::fatal 'No Envoy proxy pods found'
-    fi
+  if [ -z "${options}" ]; then
+    sx::log::fatal 'No Envoy proxy pods found'
+  fi
 
-    # shellcheck disable=SC2086  # quote this to prevent word splitting
-    local -r selected="$(printf '%s\n' "${options[@]}" | fzf --header-lines 1 ${SX_FZF_ARGS})"
+  local -r selected="$(sx::select_one 'Please, choose the pod' 1 <<<"${options}")"
 
-    if [ -n "${selected}" ]; then
-      local -r ns="$(echo "${selected}" | awk '{ print $1 }')"
-      local -r name="$(echo "${selected}" | awk '{ print $2 }')"
+  if [ -n "${selected}" ]; then
+    local -r ns="$(echo "${selected}" | awk '{ print $1 }')"
+    local -r name="$(echo "${selected}" | awk '{ print $2 }')"
 
-      sx::eg_command::dashboard_envoy_proxy "${ns}" "${name}" "${port}"
-    fi
-  else
-    export PS3=$'\n''Please, choose the pod: '$'\n'
-
-    local options
-    readarray -t options < <(
-      sx::eg::proxy_pods "${query}" "${namespace}" "${all_namespaces}"
-    )
-
-    if [ "${#options[@]}" -eq 0 ]; then
-      sx::log::fatal 'No Envoy proxy pods found'
-    fi
-
-    select selected in "${options[@]}"; do
-      if [ -z "${selected}" ]; then
-        sx::log::err "Invalid option \"${REPLY}\". Please, type the number of the desired option."
-        continue
-      fi
-
-      local -r ns="$(echo "${selected}" | awk '{ print $1 }')"
-      local -r name="$(echo "${selected}" | awk '{ print $2 }')"
-
-      sx::eg_command::dashboard_envoy_proxy "${ns}" "${name}" "${port}"
-      break
-    done
+    sx::eg_command::dashboard_envoy_proxy "${ns}" "${name}" "${port}"
   fi
 }
 

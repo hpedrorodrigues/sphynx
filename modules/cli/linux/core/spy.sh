@@ -8,32 +8,12 @@ function sx::spy::namespaces() {
   sx::spy::check_requirements
   sx::require 'nsenter'
 
-  if sx::os::is_command_available 'fzf'; then
-    # shellcheck disable=SC2086  # quote this to prevent word splitting
-    local -r selected="$(sx::spy::get_processes | fzf ${SX_FZF_ARGS})"
+  local -r selected="$(sx::spy::get_processes | sx::select_one 'Please, choose the process')"
 
-    if [ -n "${selected}" ]; then
-      local -r pid="$(echo "${selected}" | awk '{ print $2 }')"
+  if [ -n "${selected}" ]; then
+    local -r pid="$(echo "${selected}" | awk '{ print $2 }')"
 
-      sx::spy::nsenter "${pid}"
-    fi
-  else
-    export PS3=$'\n''Please, choose the process: '$'\n'
-
-    local options
-    readarray -t options < <(sx::spy::get_processes)
-
-    select selected in "${options[@]}"; do
-      if [ -z "${selected}" ]; then
-        sx::log::err "Invalid option \"${REPLY}\". Please, type the number of the desired option."
-        continue
-      fi
-
-      local -r pid="$(echo "${selected}" | awk '{ print $2 }')"
-
-      sx::spy::nsenter "${pid}"
-      break
-    done
+    sx::spy::nsenter "${pid}"
   fi
 }
 
@@ -41,32 +21,12 @@ function sx::spy::syscalls() {
   sx::spy::check_requirements
   sx::require 'strace'
 
-  if sx::os::is_command_available 'fzf'; then
-    # shellcheck disable=SC2086  # quote this to prevent word splitting
-    local -r selected="$(sx::spy::get_processes | fzf ${SX_FZF_ARGS})"
+  local -r selected="$(sx::spy::get_processes | sx::select_one 'Please, choose the process')"
 
-    if [ -n "${selected}" ]; then
-      local -r pid="$(echo "${selected}" | awk '{ print $2 }')"
+  if [ -n "${selected}" ]; then
+    local -r pid="$(echo "${selected}" | awk '{ print $2 }')"
 
-      sx::spy::strace "${pid}"
-    fi
-  else
-    export PS3=$'\n''Please, choose the process: '$'\n'
-
-    local options
-    readarray -t options < <(sx::spy::get_processes)
-
-    select selected in "${options[@]}"; do
-      if [ -z "${selected}" ]; then
-        sx::log::err "Invalid option \"${REPLY}\". Please, type the number of the desired option."
-        continue
-      fi
-
-      local -r pid="$(echo "${selected}" | awk '{ print $2 }')"
-
-      sx::spy::strace "${pid}"
-      break
-    done
+    sx::spy::strace "${pid}"
   fi
 }
 

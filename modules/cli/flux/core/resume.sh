@@ -14,7 +14,7 @@ function sx::flux::resume() {
     local -r resolved_kind="$(echo "${kind}" | sx::string::lowercase)"
 
     sx::flux_command::resume "${namespace}" "${resolved_kind}" "${name}"
-  elif sx::os::is_command_available 'fzf'; then
+  else
     local -r options="$(
       sx::flux::resources "${query}" "${namespace}" "${all_namespaces}"
     )"
@@ -23,8 +23,7 @@ function sx::flux::resume() {
       sx::log::fatal 'No resources found'
     fi
 
-    # shellcheck disable=SC2086  # quote this to prevent word splitting
-    local -r selected="$(echo -e "${options}" | fzf ${SX_FZF_ARGS})"
+    local -r selected="$(sx::select_one 'Please, choose the resource' <<<"${options}")"
 
     if [ -n "${selected}" ]; then
       local -r selected_ns="$(echo "${selected}" | awk '{ print $1 }')"
@@ -33,31 +32,6 @@ function sx::flux::resume() {
 
       sx::flux_command::resume "${selected_ns}" "${selected_kind}" "${selected_name}"
     fi
-  else
-    export PS3=$'\n''Please, choose the resource: '$'\n'
-
-    local options
-    readarray -t options < <(
-      sx::flux::resources "${query}" "${namespace}" "${all_namespaces}"
-    )
-
-    if [ "${#options[@]}" -eq 0 ]; then
-      sx::log::fatal 'No resources found'
-    fi
-
-    select selected in "${options[@]}"; do
-      if [ -z "${selected}" ]; then
-        sx::log::err "Invalid option \"${REPLY}\". Please, type the number of the desired option."
-        continue
-      fi
-
-      local -r selected_ns="$(echo "${selected}" | awk '{ print $1 }')"
-      local -r selected_kind="$(echo "${selected}" | awk '{ print $2 }')"
-      local -r selected_name="$(echo "${selected}" | awk '{ print $3 }')"
-
-      sx::flux_command::resume "${selected_ns}" "${selected_kind}" "${selected_name}"
-      break
-    done
   fi
 }
 

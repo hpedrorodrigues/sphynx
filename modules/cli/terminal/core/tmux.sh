@@ -61,7 +61,7 @@ function sx::terminal::tmux::attach() {
 
   if [ -n "${session_name}" ]; then
     sx::library::tmux::attach_session "${session_name}"
-  elif sx::os::is_command_available 'fzf'; then
+  else
     local -r options="$(
       sx::library::tmux::list_sessions \
         | grep -v -E "^$(sx::library::tmux::current_session)$"
@@ -71,33 +71,10 @@ function sx::terminal::tmux::attach() {
       sx::log::fatal 'No sessions found'
     fi
 
-    # shellcheck disable=SC2086  # quote this to prevent word splitting
-    local -r selected="$(echo -e "${options}" | fzf ${SX_FZF_ARGS})"
+    local -r selected="$(sx::select_one 'Please, choose the session' <<<"${options}")"
 
     [ -n "${selected}" ] \
       && sx::library::tmux::attach_session "${selected}"
-  else
-    export PS3=$'\n''Please, choose the session: '$'\n'
-
-    local options
-    readarray -t options < <(
-      sx::library::tmux::list_sessions \
-        | grep -v -E "^$(sx::library::tmux::current_session)$"
-    )
-
-    if [ "${#options[@]}" -eq 0 ]; then
-      sx::log::fatal 'No sessions found'
-    fi
-
-    select selected in "${options[@]}"; do
-      if [ -z "${selected}" ]; then
-        sx::log::err "Invalid option \"${REPLY}\". Please, type the number of the desired option."
-        continue
-      fi
-
-      sx::library::tmux::attach_session "${selected}"
-      break
-    done
   fi
 }
 
@@ -120,37 +97,17 @@ function sx::terminal::tmux::kill() {
 
   if [ -n "${session_name}" ]; then
     sx::library::tmux::kill_session "${session_name}"
-  elif sx::os::is_command_available 'fzf'; then
+  else
     local -r options="$(sx::terminal::tmux::ls 2>/dev/null)"
 
     if [ -z "${options}" ]; then
       sx::log::fatal 'No sessions found'
     fi
 
-    # shellcheck disable=SC2086  # quote this to prevent word splitting
-    local -r selected="$(echo -e "${options}" | fzf ${SX_FZF_ARGS})"
+    local -r selected="$(sx::select_one 'Please, choose the session' <<<"${options}")"
 
     [ -n "${selected}" ] \
       && sx::library::tmux::kill_session "${selected}"
-  else
-    export PS3=$'\n''Please, choose the session: '$'\n'
-
-    local options
-    readarray -t options < <(sx::terminal::tmux::ls 2>/dev/null)
-
-    if [ "${#options[@]}" -eq 0 ]; then
-      sx::log::fatal 'No sessions found'
-    fi
-
-    select selected in "${options[@]}"; do
-      if [ -z "${selected}" ]; then
-        sx::log::err "Invalid option \"${REPLY}\". Please, type the number of the desired option."
-        continue
-      fi
-
-      sx::library::tmux::kill_session "${selected}"
-      break
-    done
   fi
 }
 

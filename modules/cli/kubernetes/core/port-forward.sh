@@ -25,68 +25,31 @@ function sx::k8s::port_forward() {
     sx::log::fatal "Invalid port provided: \"${user_port}\". Valid range \"${min_port_number}..${max_port_number}\"."
   fi
 
-  if sx::os::is_command_available 'fzf'; then
-    local -r options="$(
-      sx::k8s::resources_and_ports "${query}" "${selector}" "${namespace}" "${all_namespaces}" "${context}"
-    )"
+  local -r options="$(
+    sx::k8s::resources_and_ports "${query}" "${selector}" "${namespace}" "${all_namespaces}" "${context}"
+  )"
 
-    if [ -z "${options}" ]; then
-      sx::log::fatal 'No resources found'
-    fi
+  if [ -z "${options}" ]; then
+    sx::log::fatal 'No resources found'
+  fi
 
-    # shellcheck disable=SC2086  # quote this to prevent word splitting
-    local -r selected="$(echo -e "${options}" | fzf ${SX_FZF_ARGS})"
+  local -r selected="$(sx::select_one 'Please, choose the resource' <<<"${options}")"
 
-    if [ -n "${selected}" ]; then
-      local -r ns="$(echo "${selected}" | awk '{ print $1 }')"
-      local -r kind="$(echo "${selected}" | awk '{ print $2 }')"
-      local -r name="$(echo "${selected}" | awk '{ print $3 }')"
-      local -r port="$(echo "${selected}" | awk '{ print $4 }')"
+  if [ -n "${selected}" ]; then
+    local -r ns="$(echo "${selected}" | awk '{ print $1 }')"
+    local -r kind="$(echo "${selected}" | awk '{ print $2 }')"
+    local -r name="$(echo "${selected}" | awk '{ print $3 }')"
+    local -r port="$(echo "${selected}" | awk '{ print $4 }')"
 
-      sx::k8s_command::port_forward \
-        "${ns}" \
-        "${kind}" \
-        "${name}" \
-        "${port}" \
-        "${random_port}" \
-        "${user_port}" \
-        "${retry}" \
-        "${context}"
-    fi
-  else
-    export PS3=$'\n''Please, choose the resource: '$'\n'
-
-    local options
-    readarray -t options < <(
-      sx::k8s::resources_and_ports "${query}" "${selector}" "${namespace}" "${all_namespaces}" "${context}"
-    )
-
-    if [ "${#options[@]}" -eq 0 ]; then
-      sx::log::fatal 'No resources found'
-    fi
-
-    select selected in "${options[@]}"; do
-      if [ -z "${selected}" ]; then
-        sx::log::err "Invalid option \"${REPLY}\". Please, type the number of the desired option."
-        continue
-      fi
-
-      local -r ns="$(echo "${selected}" | awk '{ print $1 }')"
-      local -r kind="$(echo "${selected}" | awk '{ print $2 }')"
-      local -r name="$(echo "${selected}" | awk '{ print $3 }')"
-      local -r port="$(echo "${selected}" | awk '{ print $4 }')"
-
-      sx::k8s_command::port_forward \
-        "${ns}" \
-        "${kind}" \
-        "${name}" \
-        "${port}" \
-        "${random_port}" \
-        "${user_port}" \
-        "${retry}" \
-        "${context}"
-      break
-    done
+    sx::k8s_command::port_forward \
+      "${ns}" \
+      "${kind}" \
+      "${name}" \
+      "${port}" \
+      "${random_port}" \
+      "${user_port}" \
+      "${retry}" \
+      "${context}"
   fi
 }
 

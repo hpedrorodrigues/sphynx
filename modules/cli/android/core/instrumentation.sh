@@ -25,7 +25,7 @@ function sx::android::instrumentation::select_package() {
     sx::log::fatal "No instrumentation apps found matching \"${query}\""
   fi
 
-  printf '%s\n' "${candidates[@]}" | sx::android::select_one
+  printf '%s\n' "${candidates[@]}" | sx::select_one
 }
 
 function sx::android::instrumentation::uninstall() {

@@ -33,7 +33,7 @@ function sx::k8s::namespace() {
         echo "${namespace}"
       fi
     done < <(sx::k8s::cli get namespaces)
-  elif sx::os::is_command_available 'fzf'; then
+  else
     sx::k8s::ensure_api_access
 
     local -r options="$(sx::k8s_command::namespace::names "${query}")"
@@ -42,31 +42,9 @@ function sx::k8s::namespace() {
       sx::log::fatal 'No resources found'
     fi
 
-    # shellcheck disable=SC2086  # quote this to prevent word splitting
-    local -r selected="$(echo -e "${options}" | fzf ${SX_FZF_ARGS})"
+    local -r selected="$(sx::select_one 'Please, choose the resource' <<<"${options}")"
 
     [ -n "${selected}" ] && sx::k8s_command::namespace::change "${selected}"
-  else
-    sx::k8s::ensure_api_access
-
-    export PS3=$'\n''Please, choose the resource: '$'\n'
-
-    local options
-    readarray -t options < <(sx::k8s_command::namespace::names "${query}")
-
-    if [ "${#options[@]}" -eq 0 ]; then
-      sx::log::fatal 'No resources found'
-    fi
-
-    select selected in "${options[@]}"; do
-      if [ -z "${selected}" ]; then
-        sx::log::err "Invalid option \"${REPLY}\". Please, type the number of the desired option."
-        continue
-      fi
-
-      sx::k8s_command::namespace::change "${selected}"
-      break
-    done
   fi
 }
 

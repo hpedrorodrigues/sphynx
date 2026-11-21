@@ -56,7 +56,7 @@ function sx::k8s::cert::pick() {
     local -r ns="${namespace:-$(sx::k8s::current_namespace "${context}")}"
 
     "${exec_fn}" "${ns}" "${exact}" "${context}"
-  elif sx::os::is_command_available 'fzf'; then
+  else
     local -r options="$(
       sx::k8s::cert::list "${resource}" "${template}" "${query}" "${namespace}" "${all_namespaces}" true "${context}" "${selector}"
     )"
@@ -65,8 +65,7 @@ function sx::k8s::cert::pick() {
       sx::log::fatal 'No resources found'
     fi
 
-    # shellcheck disable=SC2086  # quote this to prevent word splitting
-    local -r selected="$(echo -e "${options}" | fzf --header-lines 1 ${SX_FZF_ARGS})"
+    local -r selected="$(sx::select_one 'Please, choose the resource' 1 <<<"${options}")"
 
     if [ -n "${selected}" ]; then
       local -r ns="$(echo "${selected}" | awk '{ print $1 }')"
@@ -74,30 +73,6 @@ function sx::k8s::cert::pick() {
 
       "${exec_fn}" "${ns}" "${name}" "${context}"
     fi
-  else
-    export PS3=$'\n''Please, choose the resource: '$'\n'
-
-    local options
-    readarray -t options < <(
-      sx::k8s::cert::list "${resource}" "${template}" "${query}" "${namespace}" "${all_namespaces}" false "${context}" "${selector}"
-    )
-
-    if [ "${#options[@]}" -eq 0 ]; then
-      sx::log::fatal 'No resources found'
-    fi
-
-    select selected in "${options[@]}"; do
-      if [ -z "${selected}" ]; then
-        sx::log::err "Invalid option \"${REPLY}\". Please, type the number of the desired option."
-        continue
-      fi
-
-      local -r ns="$(echo "${selected}" | awk '{ print $1 }')"
-      local -r name="$(echo "${selected}" | awk '{ print $2 }')"
-
-      "${exec_fn}" "${ns}" "${name}" "${context}"
-      break
-    done
   fi
 }
 

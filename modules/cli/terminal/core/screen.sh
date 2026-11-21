@@ -52,37 +52,17 @@ function sx::terminal::screen::attach() {
 
   if [ -n "${session_name}" ]; then
     sx::library::screen::attach_session "${session_name}"
-  elif sx::os::is_command_available 'fzf'; then
+  else
     local -r options="$(sx::library::screen::list_sessions)"
 
     if [ -z "${options}" ]; then
       sx::log::fatal 'No sessions found'
     fi
 
-    # shellcheck disable=SC2086  # quote this to prevent word splitting
-    local -r selected="$(echo -e "${options}" | fzf ${SX_FZF_ARGS})"
+    local -r selected="$(sx::select_one 'Please, choose the session' <<<"${options}")"
 
     [ -n "${selected}" ] \
       && sx::library::screen::attach_session "${selected}"
-  else
-    export PS3=$'\n''Please, choose the session: '$'\n'
-
-    local options
-    readarray -t options < <(sx::library::screen::list_sessions)
-
-    if [ "${#options[@]}" -eq 0 ]; then
-      sx::log::fatal 'No sessions found'
-    fi
-
-    select selected in "${options[@]}"; do
-      if [ -z "${selected}" ]; then
-        sx::log::err "Invalid option \"${REPLY}\". Please, type the number of the desired option."
-        continue
-      fi
-
-      sx::library::screen::attach_session "${selected}"
-      break
-    done
   fi
 }
 
@@ -105,37 +85,17 @@ function sx::terminal::screen::kill() {
 
   if [ -n "${session_name}" ]; then
     sx::library::screen::kill_session "${session_name}"
-  elif sx::os::is_command_available 'fzf'; then
+  else
     local -r options="$(sx::library::screen::list_sessions)"
 
     if [ -z "${options}" ]; then
       sx::log::fatal 'No sessions found'
     fi
 
-    # shellcheck disable=SC2086  # quote this to prevent word splitting
-    local -r selected="$(echo -e "${options}" | fzf ${SX_FZF_ARGS})"
+    local -r selected="$(sx::select_one 'Please, choose the session' <<<"${options}")"
 
     [ -n "${selected}" ] \
       && sx::library::screen::kill_session "${selected}"
-  else
-    export PS3=$'\n''Please, choose the session: '$'\n'
-
-    local options
-    readarray -t options < <(sx::library::screen::list_sessions)
-
-    if [ "${#options[@]}" -eq 0 ]; then
-      sx::log::fatal 'No sessions found'
-    fi
-
-    select selected in "${options[@]}"; do
-      if [ -z "${selected}" ]; then
-        sx::log::err "Invalid option \"${REPLY}\". Please, type the number of the desired option."
-        continue
-      fi
-
-      sx::library::screen::kill_session "${selected}"
-      break
-    done
   fi
 }
 

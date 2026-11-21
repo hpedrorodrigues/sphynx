@@ -11,30 +11,14 @@ function sx::eg::status() {
 
   if [ -n "${kind}" ]; then
     sx::eg_command::status "${kind}" "${namespace}" "${all_namespaces}" "${verbose}"
-  elif sx::os::is_command_available 'fzf'; then
+  else
     local -r options="$(sx::eg::resource_kinds true true)"
 
-    # shellcheck disable=SC2086  # quote this to prevent word splitting
-    local -r selected="$(echo -e "${options}" | fzf --header-lines 1 ${SX_FZF_ARGS})"
+    local -r selected="$(sx::select_one 'Please, choose the resource kind' 1 <<<"${options}")"
 
     if [ -n "${selected}" ]; then
       sx::eg_command::status "${selected}" "${namespace}" "${all_namespaces}" "${verbose}"
     fi
-  else
-    export PS3=$'\n''Please, choose the resource kind: '$'\n'
-
-    local options
-    readarray -t options < <(sx::eg::resource_kinds false true)
-
-    select selected in "${options[@]}"; do
-      if [ -z "${selected}" ]; then
-        sx::log::err "Invalid option \"${REPLY}\". Please, type the number of the desired option."
-        continue
-      fi
-
-      sx::eg_command::status "${selected}" "${namespace}" "${all_namespaces}" "${verbose}"
-      break
-    done
   fi
 }
 

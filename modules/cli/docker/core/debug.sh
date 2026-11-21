@@ -15,29 +15,14 @@ function sx::docker::debug() {
     else
       sx::log::fatal 'No such container'
     fi
-  elif sx::os::is_command_available 'fzf'; then
+  else
     local -r options="$(sx::docker::running_containers)"
 
     if [ -z "${options}" ]; then
       sx::log::fatal 'No running containers found'
     fi
 
-    # shellcheck disable=SC2086  # quote this to prevent word splitting
-    local -r selected="$(echo -e "${options}" | fzf ${SX_FZF_ARGS})"
-  else
-    export PS3=$'\n''Type the container ID: '$'\n'
-
-    local options
-    readarray -t options < <(sx::docker::running_containers)
-
-    if [ "${#options[@]}" -eq 0 ]; then
-      sx::log::fatal 'No running containers found'
-    fi
-
-    select option in "${options[@]}"; do
-      local -r selected="${option}"
-      break
-    done
+    local -r selected="$(sx::select_one 'Type the container ID' <<<"${options}")"
   fi
 
   if [ -n "${selected}" ]; then

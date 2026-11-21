@@ -3,46 +3,20 @@
 function sx::docker::delete() {
   sx::docker::check_requirements
 
-  if sx::os::is_command_available 'fzf'; then
-    local -r options="$(sx::docker::list_resources)"
+  local -r options="$(sx::docker::list_resources)"
 
-    if [ -z "${options}" ]; then
-      sx::log::fatal 'No objects found'
-    fi
+  if [ -z "${options}" ]; then
+    sx::log::fatal 'No objects found'
+  fi
 
-    # shellcheck disable=SC2086  # quote this to prevent word splitting
-    local -r selected="$(echo -e "${options}" | fzf ${SX_FZF_ARGS})"
+  local -r selected="$(sx::select_one 'Type the respective resource number' <<<"${options}")"
 
-    if [ -n "${selected}" ]; then
-      local -r type="$(echo "${selected}" | awk '{ print $1 }')"
-      local -r id="$(echo "${selected}" | awk '{ print $2 }')"
-      local -r description="$(echo "${selected}" | awk '{ print $3 }')"
+  if [ -n "${selected}" ]; then
+    local -r type="$(echo "${selected}" | awk '{ print $1 }')"
+    local -r id="$(echo "${selected}" | awk '{ print $2 }')"
+    local -r description="$(echo "${selected}" | awk '{ print $3 }')"
 
-      sx::docker_command::delete "${type}" "${id}" "${description}"
-    fi
-  else
-    export PS3=$'\n''Type the respective resource number: '$'\n'
-
-    local options
-    readarray -t options < <(sx::docker::list_resources)
-
-    if [ "${#options[@]}" -eq 0 ]; then
-      sx::log::fatal 'No objects found'
-    fi
-
-    select selected in "${options[@]}"; do
-      if [ -z "${selected}" ]; then
-        sx::log::err "Invalid option \"${REPLY}\". Please, type the number of the desired option."
-        continue
-      fi
-
-      local -r type="$(echo "${selected}" | awk '{ print $1 }')"
-      local -r id="$(echo "${selected}" | awk '{ print $2 }')"
-      local -r description="$(echo "${selected}" | awk '{ print $3 }')"
-
-      sx::docker_command::delete "${type}" "${id}" "${description}"
-      break
-    done
+    sx::docker_command::delete "${type}" "${id}" "${description}"
   fi
 }
 

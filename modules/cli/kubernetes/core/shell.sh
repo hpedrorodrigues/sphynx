@@ -11,46 +11,20 @@ function sx::k8s::shell() {
   sx::k8s::validate_context "${context}"
   sx::k8s::ensure_api_access "${context}"
 
-  if sx::os::is_command_available 'fzf'; then
-    local -r options="$(sx::k8s::nodes "${query}" true "${context}" "${selector}")"
+  local -r options="$(sx::k8s::nodes "${query}" true "${context}" "${selector}")"
 
-    if [ -z "${options}" ]; then
-      sx::log::fatal 'No nodes found'
+  if [ -z "${options}" ]; then
+    sx::log::fatal 'No nodes found'
+  fi
+
+  local -r selected="$(sx::select_one 'Please, choose the node' 1 <<<"${options}")"
+
+  if [ -n "${selected}" ]; then
+    if ${use_ssm}; then
+      sx::k8s_command::ssm "${selected}" "${context}"
+    else
+      sx::k8s_command::shell "${selected}" "${context}"
     fi
-
-    # shellcheck disable=SC2086  # quote this to prevent word splitting
-    local -r selected="$(echo -e "${options}" | fzf --header-lines 1 ${SX_FZF_ARGS})"
-
-    if [ -n "${selected}" ]; then
-      if ${use_ssm}; then
-        sx::k8s_command::ssm "${selected}" "${context}"
-      else
-        sx::k8s_command::shell "${selected}" "${context}"
-      fi
-    fi
-  else
-    export PS3=$'\n''Please, choose the node: '$'\n'
-
-    local options
-    readarray -t options < <(sx::k8s::nodes "${query}" false "${context}" "${selector}")
-
-    if [ "${#options[@]}" -eq 0 ]; then
-      sx::log::fatal 'No nodes found'
-    fi
-
-    select selected in "${options[@]}"; do
-      if [ -z "${selected}" ]; then
-        sx::log::err "Invalid option \"${REPLY}\". Please, type the number of the desired option."
-        continue
-      fi
-
-      if ${use_ssm}; then
-        sx::k8s_command::ssm "${selected}" "${context}"
-      else
-        sx::k8s_command::shell "${selected}" "${context}"
-      fi
-      break
-    done
   fi
 }
 

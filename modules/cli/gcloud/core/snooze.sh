@@ -70,34 +70,14 @@ function sx::gcloud::snooze::create() {
   local -r name="${6:-}"
   local -r project="${7:-}"
 
-  local selected
-  if sx::os::is_command_available 'fzf'; then
-    local -r options="$(sx::gcloud::snooze::search_policies "${query}" "${project}")"
-    if [ -z "${options}" ]; then
-      sx::log::fatal 'No alert policies found'
-    fi
+  local -r options="$(sx::gcloud::snooze::search_policies "${query}" "${project}")"
+  if [ -z "${options}" ]; then
+    sx::log::fatal 'No alert policies found'
+  fi
 
-    # shellcheck disable=SC2086  # quote this to prevent word splitting
-    selected="$(echo -e "${options}" | fzf ${SX_FZF_ARGS})"
-    if [ -z "${selected}" ]; then
-      return 0
-    fi
-  else
-    export PS3=$'\n''Please, choose the alert policy: '$'\n'
-
-    local options
-    readarray -t options < <(sx::gcloud::snooze::search_policies "${query}" "${project}")
-    if [ "${#options[@]}" -eq 0 ]; then
-      sx::log::fatal 'No alert policies found'
-    fi
-
-    select selected in "${options[@]}"; do
-      if [ -z "${selected}" ]; then
-        sx::log::err "Invalid option \"${REPLY}\". Please, type the number of the desired option."
-        continue
-      fi
-      break
-    done
+  local -r selected="$(sx::select_one 'Please, choose the alert policy' <<<"${options}")"
+  if [ -z "${selected}" ]; then
+    return 0
   fi
 
   read -r policy_id policy_name <<<"${selected}"

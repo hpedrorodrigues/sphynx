@@ -12,50 +12,22 @@ function sx::k8s::describe() {
   sx::k8s::validate_context "${context}"
   sx::k8s::ensure_api_access "${context}"
 
-  if sx::os::is_command_available 'fzf'; then
-    local -r options="$(
-      sx::k8s::resources "${query}" "${namespace}" "${all_namespaces}" true "${context}" "${selector}"
-    )"
+  local -r options="$(
+    sx::k8s::resources "${query}" "${namespace}" "${all_namespaces}" true "${context}" "${selector}"
+  )"
 
-    if [ -z "${options}" ]; then
-      sx::log::fatal 'No resources found'
-    fi
+  if [ -z "${options}" ]; then
+    sx::log::fatal 'No resources found'
+  fi
 
-    # shellcheck disable=SC2086  # quote this to prevent word splitting
-    local -r selected="$(echo -e "${options}" | fzf --header-lines 1 ${SX_FZF_ARGS})"
+  local -r selected="$(sx::select_one 'Please, choose the resource' 1 <<<"${options}")"
 
-    if [ -n "${selected}" ]; then
-      local -r ns="$(echo "${selected}" | awk '{ print $1 }')"
-      local -r kind="$(echo "${selected}" | awk '{ print $2 }')"
-      local -r name="$(echo "${selected}" | awk '{ print $3 }')"
+  if [ -n "${selected}" ]; then
+    local -r ns="$(echo "${selected}" | awk '{ print $1 }')"
+    local -r kind="$(echo "${selected}" | awk '{ print $2 }')"
+    local -r name="$(echo "${selected}" | awk '{ print $3 }')"
 
-      sx::k8s_command::describe "${ns}" "${kind}" "${name}" "${context}"
-    fi
-  else
-    export PS3=$'\n''Please, choose the resource: '$'\n'
-
-    local options
-    readarray -t options < <(
-      sx::k8s::resources "${query}" "${namespace}" "${all_namespaces}" false "${context}" "${selector}"
-    )
-
-    if [ "${#options[@]}" -eq 0 ]; then
-      sx::log::fatal 'No resources found'
-    fi
-
-    select selected in "${options[@]}"; do
-      if [ -z "${selected}" ]; then
-        sx::log::err "Invalid option \"${REPLY}\". Please, type the number of the desired option."
-        continue
-      fi
-
-      local -r ns="$(echo "${selected}" | awk '{ print $1 }')"
-      local -r kind="$(echo "${selected}" | awk '{ print $2 }')"
-      local -r name="$(echo "${selected}" | awk '{ print $3 }')"
-
-      sx::k8s_command::describe "${ns}" "${kind}" "${name}" "${context}"
-      break
-    done
+    sx::k8s_command::describe "${ns}" "${kind}" "${name}" "${context}"
   fi
 }
 

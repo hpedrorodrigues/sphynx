@@ -94,33 +94,6 @@ function sx::android::find_apk_name_by_package() {
   echo "${package}" | sed 's/\./_/g' | awk '{ print $1".apk" }'
 }
 
-function sx::android::select_one() {
-  local candidates
-  readarray -t candidates
-
-  if [ "${#candidates[@]}" -eq 0 ]; then
-    return 0
-  fi
-
-  if sx::os::is_command_available 'fzf'; then
-    # shellcheck disable=SC2086  # quote this to prevent word splitting
-    printf '%s\n' "${candidates[@]}" | fzf ${SX_FZF_ARGS}
-  else
-    export PS3=$'\n''Please, choose an option: '$'\n'
-
-    local selected
-    select selected in "${candidates[@]}"; do
-      if [ -z "${selected}" ]; then
-        sx::log::err "Invalid option \"${REPLY}\". Please, type the number of the desired option."
-        continue
-      fi
-
-      echo "${selected}"
-      break
-    done </dev/tty
-  fi
-}
-
 function sx::android::select_package() {
   local -r query="${1:-}"
   local -r serial="${2:-}"
@@ -132,13 +105,13 @@ function sx::android::select_package() {
     sx::log::fatal "No packages found matching \"${query}\""
   fi
 
-  printf '%s\n' "${candidates[@]}" | sx::android::select_one
+  printf '%s\n' "${candidates[@]}" | sx::select_one
 }
 
 function sx::android::select_device() {
   sx::android::available_devices \
     | awk '{ print $1 }' \
-    | sx::android::select_one
+    | sx::select_one
 }
 
 function sx::android::pull_apk() {
