@@ -193,7 +193,6 @@ function sx::k8s::nodes::resource_summary() {
     local -r query_pattern='.*'
   fi
 
-  # shellcheck disable=SC2016  # Expressions don't expand in single quotes, use double quotes for that
   local -r template='
   {{range .items}}
     {{.metadata.name}}{{",_cpu_usage_,"}}

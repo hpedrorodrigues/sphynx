@@ -20,7 +20,6 @@ function sx::k8s::topology() {
     local -r context_flags=''
   fi
 
-  # shellcheck disable=SC2086  # Double quote to prevent globbing and word splitting
   local -r assignments="$(
     sx::k8s::topology::assignments "${query}" "${selector}" "${all_namespaces}" "${context}" "${namespace}"
   )"
@@ -43,7 +42,6 @@ function sx::k8s::topology() {
   if ${show_resource_usage}; then
     # shellcheck disable=SC2086  # quote this to prevent word splitting
     local -r top_nodes="$(sx::k8s::cli ${context_flags} top nodes --no-headers 2>/dev/null)"
-    # shellcheck disable=SC2086  # Double quote to prevent globbing and word splitting
     local -r top_pods="$(sx::k8s::topology::top_pods "${all_namespaces}" "${selector}" "${context}" "${namespace}")"
 
     # shellcheck disable=SC2068  # Double quote array expansions

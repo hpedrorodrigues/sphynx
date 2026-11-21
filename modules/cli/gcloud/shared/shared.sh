@@ -11,7 +11,6 @@ function sx::gcloud::check_requirements() {
 }
 
 function sx::gcloud::cli() {
-  # shellcheck disable=SC2086  # quote this to prevent word splitting
   ${SX_GCLOUDCTL} "${@}"
 }
 

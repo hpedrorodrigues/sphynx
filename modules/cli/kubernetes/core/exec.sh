@@ -87,7 +87,6 @@ function sx::k8s_command::exec() {
     if sx::k8s::cli ${context_flags} exec --namespace "${ns}" "${name}" --container "${container}" -- "${shell}" -c 'exit' &>/dev/null; then
       sx::log::info "Now you can execute commands in pod \"${name}/${container}\" using \"${shell}(${command:-*})\"\n"
 
-      # shellcheck disable=SC2086  # quote this to prevent word splitting
       sx::k8s::cli ${context_flags} exec "${name}" \
         --stdin \
         --tty \

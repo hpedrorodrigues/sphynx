@@ -99,7 +99,6 @@ function sx::k8s_command::secret::list() {
     local -r query_pattern='.*'
   fi
 
-  # shellcheck disable=SC2016  # Expressions don't expand in single quotes, use double quotes for that
   local -r template='
   {{range .items}}
     {{.metadata.namespace}}{{","}}{{.metadata.name}}{{","}}{{.type}}{{","}}{{.metadata.creationTimestamp}}{{"\n"}}

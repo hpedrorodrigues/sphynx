@@ -12,7 +12,6 @@ function sx::flux::check_requirements() {
 }
 
 function sx::flux::cli() {
-  # shellcheck disable=SC2086  # quote this to prevent word splitting
   ${SX_FLUXCTL} "${@}"
 }
 

@@ -9,7 +9,6 @@ function sx::flow::check_requirements() {
 }
 
 function sx::flow::cli() {
-  # shellcheck disable=SC2086  # quote this to prevent word splitting
   ${SX_FLOWCTL} "${@}"
 }
 
