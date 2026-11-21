@@ -66,15 +66,23 @@ function sx::k8s::pods::resource_summary() {
 
   local resources='NAMESPACE,POD,CONTAINER,CPU (USAGE),CPU (REQUEST),CPU (LIMIT),MEMORY (USAGE),MEMORY (REQUEST),MEMORY (LIMIT)\n\n'
   while IFS='' read -r pod_output; do
-    local pod_name container_name container_top_output cpu_usage memory_usage
+    local pod_namespace pod_name container_name container_top_output cpu_usage memory_usage
+    pod_namespace="$(echo "${pod_output}" | awk -F ',' '{ print $1 }')"
     pod_name="$(echo "${pod_output}" | awk -F ',' '{ print $2 }')"
-    container_name="$(echo "${pod_output}" | grep "${pod_name}" | awk -F ',' '{ print $3 }')" || true
-    container_top_output="$(echo -e "${top_output}" | grep "${pod_name} " | grep " ${container_name} ")" || true
+    container_name="$(echo "${pod_output}" | awk -F ',' '{ print $3 }')"
 
     if ${all_namespaces}; then
+      container_top_output="$(
+        awk -v pod_namespace="${pod_namespace}" -v pod_name="${pod_name}" -v container_name="${container_name}" \
+          '$1 == pod_namespace && $2 == pod_name && $3 == container_name' <<<"${top_output}"
+      )"
       cpu_usage="$(echo -e "${container_top_output}" | awk '{ print $4 }')"
       memory_usage="$(echo -e "${container_top_output}" | awk '{ print $5 }')"
     else
+      container_top_output="$(
+        awk -v pod_name="${pod_name}" -v container_name="${container_name}" \
+          '$1 == pod_name && $2 == container_name' <<<"${top_output}"
+      )"
       cpu_usage="$(echo -e "${container_top_output}" | awk '{ print $3 }')"
       memory_usage="$(echo -e "${container_top_output}" | awk '{ print $4 }')"
     fi
@@ -199,7 +207,7 @@ function sx::k8s::nodes::resource_summary() {
   while IFS='' read -r node_output; do
     local node_name node_top_output cpu_usage memory_usage
     node_name="$(echo "${node_output}" | awk -F ',' '{ print $1 }')"
-    node_top_output="$(echo -e "${top_output}" | grep "${node_name}")" || true
+    node_top_output="$(awk -v node_name="${node_name}" '$1 == node_name' <<<"${top_output}")"
 
     cpu_usage="$(echo -e "${node_top_output}" | awk '{ print $2 }')"
     memory_usage="$(echo -e "${node_top_output}" | awk '{ print $4 }')"
