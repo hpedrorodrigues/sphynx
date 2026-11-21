@@ -16,7 +16,7 @@ source "${SPHYNX_NAMESPACE_DIR}/core/topology.sh"
 ##? Options:
 ##?     -n --namespace <name>  The namespace scope for requests
 ##?     -A --all-namespaces  Run this command considering all pods of all namespaces
-##?     -r --resources  Run this command considering resource usage
+##?     -r --resources  Show CPU, memory, and ephemeral storage usage
 ##?     --show-labels  Show instance labels
 ##?     -l --selector <selector>  Selector (label query) to filter on
 ##?     --context <name>  The name of the kubeconfig context to use
