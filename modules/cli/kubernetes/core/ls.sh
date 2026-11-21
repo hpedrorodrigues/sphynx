@@ -15,16 +15,15 @@ function sx::k8s::list::resources() {
   local -r show_labels="${4:-false}"
 
   local flags
-  flags="$(sx::k8s::scope_flags "${namespace}" "${all_namespaces}" "${selector}" "${context}")"
+  readarray -t flags < <(sx::k8s::scope_flags "${namespace}" "${all_namespaces}" "${selector}" "${context}")
 
   if ${show_labels}; then
-    flags+=' --show-labels'
+    flags+=(--show-labels)
   fi
 
   if [ "${output}" != 'default' ]; then
-    flags+=" --output ${output}"
+    flags+=(--output "${output}")
   fi
 
-  # shellcheck disable=SC2086  # quote this to prevent word splitting
-  sx::k8s::cli get "${SX_KUBERNETES_RESOURCES}" ${flags}
+  sx::k8s::cli get "${SX_KUBERNETES_RESOURCES}" "${flags[@]}"
 }

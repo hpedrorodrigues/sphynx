@@ -60,7 +60,8 @@ function sx::k8s::resources_and_ports() {
   local -r all_namespaces="${4:-false}"
   local -r context="${5:-}"
 
-  local -r flags="$(sx::k8s::scope_flags "${namespace}" "${all_namespaces}" "${selector}" "${context}")"
+  local flags
+  readarray -t flags < <(sx::k8s::scope_flags "${namespace}" "${all_namespaces}" "${selector}" "${context}")
 
   local -r query_pattern="${query:-.*}"
 
@@ -106,18 +107,17 @@ function sx::k8s::resources_and_ports() {
     {{end}}
   {{end}}'
 
-  # shellcheck disable=SC2086  # quote this to prevent word splitting
   local -r output="$(
     sx::k8s::cli get services \
-      ${flags} \
+      "${flags[@]}" \
       --output go-template \
       --template="$(sx::k8s::clear_template "${services_template}")" &
     sx::k8s::cli get deployments \
-      ${flags} \
+      "${flags[@]}" \
       --output go-template \
       --template="$(sx::k8s::clear_template "${deployments_template}")" &
     sx::k8s::cli get pods \
-      ${flags} \
+      "${flags[@]}" \
       --output go-template \
       --template="$(sx::k8s::clear_template "${pods_template}")" &
     wait

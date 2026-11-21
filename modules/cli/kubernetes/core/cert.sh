@@ -86,7 +86,9 @@ function sx::k8s::cert::list() {
   local -r context="${7:-}"
   local -r selector="${8:-}"
 
-  local -r flags="$(sx::k8s::scope_flags "${namespace}" "${all_namespaces}" "${selector}")"
+  local flags
+  readarray -t flags < <(sx::k8s::scope_flags "${namespace}" "${all_namespaces}" "${selector}")
+
   local -r context_flags="$(sx::k8s::context_flags "${context}")"
 
   local -r query_pattern="${query:-.*}"
@@ -96,7 +98,7 @@ function sx::k8s::cert::list() {
   # shellcheck disable=SC2086  # quote this to prevent word splitting
   local -r result="$(
     sx::k8s::cli ${context_flags} get "${resource}" \
-      ${flags} \
+      "${flags[@]}" \
       --output='go-template' \
       --template="$(sx::k8s::clear_template "${template}")" 2>/dev/null \
       | sort -u \

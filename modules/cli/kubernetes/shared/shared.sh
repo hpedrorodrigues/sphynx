@@ -29,22 +29,19 @@ function sx::k8s::scope_flags() {
   local -r selector="${3:-}"
   local -r context="${4:-}"
 
-  local flags=''
   if ${all_namespaces}; then
-    flags+=' --all-namespaces'
+    printf '%s\n' '--all-namespaces'
   elif [ -n "${namespace}" ]; then
-    flags+=" --namespace ${namespace}"
+    printf '%s\n' '--namespace' "${namespace}"
   fi
 
   if [ -n "${selector}" ]; then
-    flags+=" --selector ${selector}"
+    printf '%s\n' '--selector' "${selector}"
   fi
 
   if [ -n "${context}" ]; then
-    flags+=" --context ${context}"
+    printf '%s\n' '--context' "${context}"
   fi
-
-  echo "${flags# }"
 }
 
 function sx::k8s::can_access_api() {
@@ -111,7 +108,9 @@ function sx::k8s::running_pods() {
   local -r print_header="${5:-false}"
   local -r context="${6:-}"
 
-  local -r flags="$(sx::k8s::scope_flags "${namespace}" "${all_namespaces}" "${selector}" "${context}")"
+  local flags
+  readarray -t flags < <(sx::k8s::scope_flags "${namespace}" "${all_namespaces}" "${selector}" "${context}")
+
   local -r query_pattern="${query:-.*}"
 
   # shellcheck disable=SC2016  # Expressions don't expand in single quotes, use double quotes for that
@@ -134,10 +133,9 @@ function sx::k8s::running_pods() {
 
   local -r now="$(date '+%s')"
 
-  # shellcheck disable=SC2086  # quote this to prevent word splitting
   local -r result="$(
     sx::k8s::cli get pods \
-      ${flags} \
+      "${flags[@]}" \
       --field-selector='status.phase=Running' \
       --output='go-template' \
       --template="$(sx::k8s::clear_template "${template}")" 2>/dev/null \
@@ -230,7 +228,9 @@ function sx::k8s::shared::resources() {
   local -r context="${6:-}"
   local -r selector="${7:-}"
 
-  local -r flags="$(sx::k8s::scope_flags "${namespace}" "${all_namespaces}" "${selector}")"
+  local flags
+  readarray -t flags < <(sx::k8s::scope_flags "${namespace}" "${all_namespaces}" "${selector}")
+
   local -r query_pattern="$(sx::string::lowercase "${query:-.*}")"
 
   # shellcheck disable=SC2016  # Expressions don't expand in single quotes, use double quotes for that
@@ -251,7 +251,7 @@ function sx::k8s::shared::resources() {
   local -r result="$(
     echo "${resources}" | tr ',' '\n' \
       | xargs --max-procs='0' --max-args='1' ${SX_K8SCTL} ${context_flags} get \
-        ${flags} \
+        "${flags[@]}" \
         --output='go-template' \
         --template="$(sx::k8s::clear_template "${template}")" 2>/dev/null \
       | grep -E "${query_pattern}" 2>/dev/null
@@ -273,22 +273,21 @@ function sx::k8s::nodes() {
   local -r context="${3:-}"
   local -r selector="${4:-}"
 
-  local flags=''
+  local flags=()
   if [ -n "${context}" ]; then
-    flags+=" --context ${context}"
+    flags+=(--context "${context}")
   fi
 
   if [ -n "${selector}" ]; then
-    flags+=" --selector ${selector}"
+    flags+=(--selector "${selector}")
   fi
 
   local -r query_pattern="${query:-.*}"
 
   local -r header='NAME,STATUS,AGE'
 
-  # shellcheck disable=SC2086  # quote this to prevent word splitting
   local -r result="$(
-    sx::k8s::cli ${flags} get nodes \
+    sx::k8s::cli "${flags[@]}" get nodes \
       --no-headers \
       | sort -u \
       | grep -E "${query_pattern}" 2>/dev/null \

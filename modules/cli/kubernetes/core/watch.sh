@@ -16,16 +16,16 @@ function sx::k8s::watch::resources() {
   sx::k8s::ensure_api_access "${context}"
 
   local flags
-  flags="$(sx::k8s::scope_flags "${namespace}" "${all_namespaces}" "${selector}" "${context}")"
+  readarray -t flags < <(sx::k8s::scope_flags "${namespace}" "${all_namespaces}" "${selector}" "${context}")
 
   if ${show_labels}; then
-    flags+=' --show-labels'
+    flags+=(--show-labels)
   fi
 
   if [ "${output}" != 'default' ]; then
-    flags+=" --output ${output}"
+    flags+=(--output "${output}")
   fi
 
   # shellcheck disable=SC2086  # intentional word splitting on flags
-  sx::os::watcher "${interval}" ${SX_K8SCTL} get ${resources} ${flags}
+  sx::os::watcher "${interval}" ${SX_K8SCTL} get ${resources} "${flags[@]}"
 }

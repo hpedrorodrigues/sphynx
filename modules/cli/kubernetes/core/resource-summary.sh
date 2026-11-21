@@ -12,7 +12,9 @@ function sx::k8s::pods::resource_summary() {
   sx::k8s::validate_context "${context}"
   sx::k8s::ensure_api_access "${context}"
 
-  local -r flags="$(sx::k8s::scope_flags "${namespace}" "${all_namespaces}" "${selector}" "${context}")"
+  local flags
+  readarray -t flags < <(sx::k8s::scope_flags "${namespace}" "${all_namespaces}" "${selector}" "${context}")
+
   local -r query_pattern="$(sx::string::lowercase "${query:-.*}")"
 
   # shellcheck disable=SC2016  # Expressions don't expand in single quotes, use double quotes for that
@@ -42,20 +44,18 @@ function sx::k8s::pods::resource_summary() {
     {{end}}
   {{end}}'
 
-  # shellcheck disable=SC2086  # quote this to prevent word splitting
   local -r raw_pod_output="$(
     sx::k8s::cli get pods \
-      ${flags} \
+      "${flags[@]}" \
       --output go-template \
       --template="$(sx::k8s::clear_template "${template}")" \
       | sort -u \
       | sx::string::lowercase \
       | grep -E "${query_pattern}" 2>/dev/null
   )"
-  # shellcheck disable=SC2086  # quote this to prevent word splitting
   local -r top_output="$(
     sx::k8s::cli top pods \
-      ${flags} \
+      "${flags[@]}" \
       --containers \
       --no-headers 2>/dev/null
   )"
@@ -119,33 +119,33 @@ function sx::k8s::resource_summary::watch() {
   sx::k8s::validate_context "${context}"
   sx::k8s::ensure_api_access "${context}"
 
-  local args=''
+  local args=()
   if ${pods}; then
-    args='pods'
+    args+=(pods)
 
     if ${all_namespaces}; then
-      args+=' --all-namespaces'
+      args+=(--all-namespaces)
     elif [ -n "${namespace}" ]; then
-      args+=" --namespace ${namespace}"
+      args+=(--namespace "${namespace}")
     fi
 
     if [ -n "${selector}" ]; then
-      args+=" --selector ${selector}"
+      args+=(--selector "${selector}")
     fi
   else
-    args='nodes'
+    args+=(nodes)
 
     if [ -n "${selector}" ]; then
-      args+=" --selector ${selector}"
+      args+=(--selector "${selector}")
     fi
   fi
 
   if [ -n "${query}" ]; then
-    args+=" ${query}"
+    args+=("${query}")
   fi
 
   if [ -n "${context}" ]; then
-    args+=" --context ${context}"
+    args+=(--context "${context}")
   fi
 
   if sx::os::is_command_available "${SPHYNX_EXEC_NAME}"; then
@@ -154,8 +154,7 @@ function sx::k8s::resource_summary::watch() {
     local -r sphynx_command="${SPHYNX_EXEC}"
   fi
 
-  # shellcheck disable=SC2086  # intentional word splitting on flags
-  sx::os::watcher "${interval}" "${sphynx_command}" kubernetes resource-summary ${args}
+  sx::os::watcher "${interval}" "${sphynx_command}" kubernetes resource-summary "${args[@]}"
 }
 
 function sx::k8s::nodes::resource_summary() {
@@ -168,13 +167,13 @@ function sx::k8s::nodes::resource_summary() {
   sx::k8s::validate_context "${context}"
   sx::k8s::ensure_api_access "${context}"
 
-  local flags=''
+  local flags=()
   if [ -n "${context}" ]; then
-    flags+=" --context ${context}"
+    flags+=(--context "${context}")
   fi
 
   if [ -n "${selector}" ]; then
-    flags+=" --selector ${selector}"
+    flags+=(--selector "${selector}")
   fi
 
   local -r query_pattern="$(sx::string::lowercase "${query:-.*}")"
@@ -191,17 +190,15 @@ function sx::k8s::nodes::resource_summary() {
     {{.status.nodeInfo.kernelVersion}}{{"\n"}}
   {{end}}'
 
-  # shellcheck disable=SC2086  # quote this to prevent word splitting
   local -r raw_node_output="$(
-    sx::k8s::cli ${flags} get nodes \
+    sx::k8s::cli "${flags[@]}" get nodes \
       --output go-template \
       --template="$(sx::k8s::clear_template "${template}")" \
       | sort -u \
       | sx::string::lowercase \
       | grep -E "${query_pattern}" 2>/dev/null
   )"
-  # shellcheck disable=SC2086  # quote this to prevent word splitting
-  local -r top_output="$(sx::k8s::cli ${flags} top nodes --no-headers 2>/dev/null)"
+  local -r top_output="$(sx::k8s::cli "${flags[@]}" top nodes --no-headers 2>/dev/null)"
 
   local resources='NODE,CPU (USAGE),CPU (CAPACITY),MEMORY (USAGE),MEMORY (CAPACITY),RUNTIME,OS,IMAGE,ARCH,KERNEL\n\n'
   while IFS='' read -r node_output; do

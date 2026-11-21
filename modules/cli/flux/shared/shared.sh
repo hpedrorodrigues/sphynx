@@ -20,12 +20,13 @@ function sx::flux::resources() {
   local -r namespace="${2:-}"
   local -r all_namespaces="${3:-false}"
 
-  local -r flags="$(sx::k8s::scope_flags "${namespace}" "${all_namespaces}")"
+  local flags
+  readarray -t flags < <(sx::k8s::scope_flags "${namespace}" "${all_namespaces}")
+
   local -r selector="$(sx::string::lowercase "${query:-.*}")"
 
-  # shellcheck disable=SC2086  # quote this to prevent word splitting
   sx::k8s::cli get "${SX_FLUX_RESOURCES}" \
-    ${flags} \
+    "${flags[@]}" \
     --output custom-columns=NAMESPACE:.metadata.namespace,KIND:.kind,NAME:.metadata.name \
     --no-headers 2>/dev/null \
     | sx::string::lowercase \
@@ -37,12 +38,13 @@ function sx::flux::suspended_resources() {
   local -r namespace="${2:-}"
   local -r all_namespaces="${3:-false}"
 
-  local -r flags="$(sx::k8s::scope_flags "${namespace}" "${all_namespaces}")"
+  local flags
+  readarray -t flags < <(sx::k8s::scope_flags "${namespace}" "${all_namespaces}")
+
   local -r selector="$(sx::string::lowercase "${query:-.*}")"
 
-  # shellcheck disable=SC2086  # quote this to prevent word splitting
   sx::k8s::cli get "${SX_FLUX_RESOURCES}" \
-    ${flags} \
+    "${flags[@]}" \
     --output custom-columns=NAMESPACE:.metadata.namespace,KIND:.kind,NAME:.metadata.name,SUSPENDED:.spec.suspend \
     --no-headers 2>/dev/null \
     | sx::string::lowercase \

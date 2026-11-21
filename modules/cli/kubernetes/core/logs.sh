@@ -72,7 +72,8 @@ function sx::k8s_command::pod::list() {
   local -r print_header="${5:-false}"
   local -r context="${6:-}"
 
-  local -r flags="$(sx::k8s::scope_flags "${namespace}" "${all_namespaces}" "${selector}" "${context}")"
+  local flags
+  readarray -t flags < <(sx::k8s::scope_flags "${namespace}" "${all_namespaces}" "${selector}" "${context}")
 
   local -r query_pattern="${query:-.*}"
 
@@ -99,10 +100,9 @@ function sx::k8s_command::pod::list() {
 
   local -r now="$(date '+%s')"
 
-  # shellcheck disable=SC2086  # quote this to prevent word splitting
   local -r result="$(
     sx::k8s::cli get pods \
-      ${flags} \
+      "${flags[@]}" \
       --output go-template \
       --template="$(sx::k8s::clear_template "${template}")" 2>/dev/null \
       | sort -u \

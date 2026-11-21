@@ -48,7 +48,7 @@ function sx::k8s_command::events() {
   local -r context="${7:-}"
 
   local flags
-  flags="$(sx::k8s::scope_flags "${ns}" "${all_namespaces}" '' "${context}")"
+  readarray -t flags < <(sx::k8s::scope_flags "${ns}" "${all_namespaces}" '' "${context}")
 
   local field_selector=''
   if [ -n "${kind}" ] && [ -n "${name}" ]; then
@@ -64,19 +64,18 @@ function sx::k8s_command::events() {
   fi
 
   if [ -n "${field_selector}" ]; then
-    flags+=" --field-selector ${field_selector}"
+    flags+=(--field-selector "${field_selector}")
   fi
 
   if ${watch}; then
-    flags+=' --watch'
+    flags+=(--watch)
   else
-    flags+=' --sort-by=.lastTimestamp'
+    flags+=(--sort-by=.lastTimestamp)
   fi
 
   if [ -n "${kind}" ] && [ -n "${name}" ]; then
     sx::log::info "Showing events for ${kind} \"${ns}/${name}\"\n"
   fi
 
-  # shellcheck disable=SC2086  # quote this to prevent word splitting
-  sx::k8s::cli get events ${flags}
+  sx::k8s::cli get events "${flags[@]}"
 }
