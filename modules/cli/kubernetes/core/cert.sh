@@ -4,7 +4,6 @@ function sx::k8s::cert::inspect() {
   sx::k8s::check_requirements
   sx::require 'cmctl' 'cert-manager CLI (cmctl)'
 
-  # shellcheck disable=SC2016  # Expressions don't expand in single quotes, use double quotes for that
   local -r template='
   {{range .items}}
     {{if eq .type "kubernetes.io/tls"}}
@@ -19,7 +18,6 @@ function sx::k8s::cert::status() {
   sx::k8s::check_requirements
   sx::require 'cmctl' 'cert-manager CLI (cmctl)'
 
-  # shellcheck disable=SC2016  # Expressions don't expand in single quotes, use double quotes for that
   local -r template='
   {{range .items}}
     {{.metadata.namespace}}{{","}}{{.metadata.name}}{{","}}{{.metadata.creationTimestamp}}{{"\n"}}
@@ -32,7 +30,6 @@ function sx::k8s::cert::renew() {
   sx::k8s::check_requirements
   sx::require 'cmctl' 'cert-manager CLI (cmctl)'
 
-  # shellcheck disable=SC2016  # Expressions don't expand in single quotes, use double quotes for that
   local -r template='
   {{range .items}}
     {{.metadata.namespace}}{{","}}{{.metadata.name}}{{","}}{{.metadata.creationTimestamp}}{{"\n"}}

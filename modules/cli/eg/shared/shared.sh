@@ -12,7 +12,6 @@ function sx::eg::check_requirements() {
 }
 
 function sx::eg::cli() {
-  # shellcheck disable=SC2086  # quote this to prevent word splitting
   ${SX_EGCTL} "${@}"
 }
 

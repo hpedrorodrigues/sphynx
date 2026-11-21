@@ -69,7 +69,7 @@ function management() {
 function sphynx() {
   # shellcheck disable=SC2086  # quote this to prevent word splitting
   # shellcheck disable=SC2048  # Use "$@" (with quotes) to prevent whitespace problems
-  management "${HOME}/Code/Personal/sphynx" ${*}
+  management "${SPHYNX_DIR}" ${*}
 }
 
 ## Function to help me handle the secrets repository
@@ -79,5 +79,5 @@ function sphynx() {
 function secrets() {
   # shellcheck disable=SC2086  # quote this to prevent word splitting
   # shellcheck disable=SC2048  # Use "$@" (with quotes) to prevent whitespace problems
-  management "${HOME}/Code/Personal/secrets" ${*}
+  management "${SECRETS_DIR}" ${*}
 }

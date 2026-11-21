@@ -90,7 +90,6 @@ formulas:
   - ncdu
   - nmap
   - openssh
-  - pidcat
   - poetry
   - postgresql@18
   - redis
@@ -138,12 +137,15 @@ casks:
   - github
   - google-chrome
   - grammarly-desktop
+  - herdr-app
   - iina
   - istat-menus
   - jetbrains-toolbox
   - keepingyouawake
   - licecap
   - memoryanalyzer
+  - microsoft-auto-update
+  - microsoft-teams
   - monitorcontrol
   - obsidian
   - parallels

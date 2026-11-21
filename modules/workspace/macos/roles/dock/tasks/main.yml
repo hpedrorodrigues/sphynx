@@ -1,17 +1,21 @@
 - name: Loading existing items
-  shell: "dockutil --list | awk -F '\t' '{ print $1 }'"
+  shell: >-
+    dockutil --list | awk -F '\t' '$3 == "persistentApps" { print $2 }'
   register: current_items
   changed_when: false
+  check_mode: false
+
+- name: Converting existing items to application paths
+  set_fact:
+    current_applications: "{{ current_items.stdout_lines | map('urldecode') | map('regex_replace', '^file://|/$', '') | list }}"
 
 - name: Removing all existing items
   command: dockutil --no-restart --remove all
-  when:
-    - applications != current_items.stdout.split('\n')
+  when: applications != current_applications
 
 - name: Adding new items
   shell: 'dockutil --no-restart --add ''{{ item }}'' ''{{ ansible_facts["user_dir"] }}/Library/Preferences/com.apple.dock.plist'''
   loop: '{{ applications }}'
   notify:
     - Restart Dock
-  when:
-    - item not in current_items.stdout.split('\n') or applications != current_items.stdout.split('\n')
+  when: applications != current_applications
