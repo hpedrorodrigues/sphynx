@@ -12,13 +12,14 @@ source "${SPHYNX_NAMESPACE_DIR}/core/config.sh"
 ##? Retrieve information from envoy proxy
 ##?
 ##? Usage:
-##?     config [<query>] [--namespace <name> | --all-namespaces] [--output <format>] [--resource <type>]
+##?     config [<query>] [--namespace <name> | --all-namespaces] [--output <format>] [--resource <type>] [--context <name>]
 ##?
 ##? Options:
 ##?     -n --namespace <name>   Namespace scope for requests
 ##?     -A --all-namespaces     Search all namespaces
 ##?     -o --output <format>    Output format (json|yaml) [default: yaml]
 ##?     -r --resource <type>    Resource type (all|bootstrap|cluster|endpoint|listener|route) [default: all]
+##?     --context <name>        The name of the kubeconfig context to use
 ##?
 ##? Examples:
 ##?     config
@@ -28,6 +29,7 @@ source "${SPHYNX_NAMESPACE_DIR}/core/config.sh"
 ##?     config --output json
 ##?     config --resource listener
 ##?     config --resource cluster --output json
+##?     config --context staging
 
 sx::parse_arguments "${@}"
 
@@ -36,4 +38,5 @@ sx::eg::config \
   "${namespace:-}" \
   "${all_namespaces:-false}" \
   "${output:-yaml}" \
-  "${resource:-all}"
+  "${resource:-all}" \
+  "${context:-}"

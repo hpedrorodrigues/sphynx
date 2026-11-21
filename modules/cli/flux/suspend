@@ -12,9 +12,9 @@ source "${SPHYNX_NAMESPACE_DIR}/core/suspend.sh"
 ##? Suspend a Flux resource
 ##?
 ##? Usage:
-##?     suspend --list [[<query>] [--namespace <name> | --all-namespaces]]
-##?     suspend [<query>] [--namespace <name> | --all-namespaces]
-##?     suspend <kind> <name> [--namespace <name>]
+##?     suspend --list [[<query>] [--namespace <name> | --all-namespaces]] [--context <name>]
+##?     suspend [<query>] [--namespace <name> | --all-namespaces] [--context <name>]
+##?     suspend <kind> <name> [--namespace <name>] [--context <name>]
 ##?
 ##? Arguments:
 ##?     <kind>  The Flux resource kind (e.g., kustomization, helmrelease, gitrepository)
@@ -24,6 +24,7 @@ source "${SPHYNX_NAMESPACE_DIR}/core/suspend.sh"
 ##?     -l --list  List all suspended resources
 ##?     -n --namespace <name>  The namespace scope for requests
 ##?     -A --all-namespaces  All namespaces
+##?     --context <name>  The name of the kubeconfig context to use
 ##?
 ##? Examples:
 ##?     suspend --list
@@ -35,6 +36,7 @@ source "${SPHYNX_NAMESPACE_DIR}/core/suspend.sh"
 ##?     suspend --all-namespaces
 ##?     suspend kustomization my-app
 ##?     suspend kustomization my-app --namespace flux-system
+##?     suspend --context staging
 
 sx::parse_arguments "${@}"
 
@@ -42,12 +44,14 @@ if ${list:-false}; then
   sx::flux::suspend::list \
     "${query:-}" \
     "${namespace:-}" \
-    "${all_namespaces:-false}"
+    "${all_namespaces:-false}" \
+    "${context:-}"
 else
   sx::flux::suspend \
     "${query:-}" \
     "${namespace:-}" \
     "${all_namespaces:-false}" \
     "${kind:-}" \
-    "${name:-}"
+    "${name:-}" \
+    "${context:-}"
 fi

@@ -19,9 +19,10 @@ function sx::flux::resources() {
   local -r query="${1:-}"
   local -r namespace="${2:-}"
   local -r all_namespaces="${3:-false}"
+  local -r context="${4:-}"
 
   local flags
-  readarray -t flags < <(sx::k8s::scope_flags "${namespace}" "${all_namespaces}")
+  readarray -t flags < <(sx::k8s::scope_flags "${namespace}" "${all_namespaces}" '' "${context}")
 
   local -r selector="$(sx::string::lowercase "${query:-.*}")"
 
@@ -37,9 +38,10 @@ function sx::flux::suspended_resources() {
   local -r query="${1:-}"
   local -r namespace="${2:-}"
   local -r all_namespaces="${3:-false}"
+  local -r context="${4:-}"
 
   local flags
-  readarray -t flags < <(sx::k8s::scope_flags "${namespace}" "${all_namespaces}")
+  readarray -t flags < <(sx::k8s::scope_flags "${namespace}" "${all_namespaces}" '' "${context}")
 
   local -r selector="$(sx::string::lowercase "${query:-.*}")"
 

@@ -41,6 +41,7 @@ function sx::eg::proxy_pods() {
   local -r namespace="${2:-}"
   local -r all_namespaces="${3:-false}"
   local -r print_header="${4:-false}"
+  local -r context="${5:-}"
 
   local flags=''
   if ${all_namespaces}; then
@@ -48,8 +49,10 @@ function sx::eg::proxy_pods() {
   elif [ -n "${namespace}" ]; then
     flags="--namespace ${namespace}"
   else
-    flags="--namespace $(sx::k8s::current_namespace)"
+    flags="--namespace $(sx::k8s::current_namespace "${context}")"
   fi
+
+  local -r context_flags="$(sx::k8s::context_flags "${context}")"
 
   local -r selector="${query:-.*}"
 
@@ -57,7 +60,7 @@ function sx::eg::proxy_pods() {
 
   # shellcheck disable=SC2086  # quote this to prevent word splitting
   local -r result="$(
-    sx::k8s::cli get pods \
+    sx::k8s::cli ${context_flags} get pods \
       ${flags} \
       --selector gateway.envoyproxy.io/owning-gateway-name \
       --output custom-columns=NAMESPACE:.metadata.namespace,NAME:.metadata.name,GATEWAY:.metadata.labels.gateway\\.envoyproxy\\.io/owning-gateway-name \

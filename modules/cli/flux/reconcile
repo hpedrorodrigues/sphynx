@@ -12,9 +12,9 @@ source "${SPHYNX_NAMESPACE_DIR}/core/reconcile.sh"
 ##? Reconcile a Flux resource
 ##?
 ##? Usage:
-##?     reconcile --list [[<query>] [--namespace <name> | --all-namespaces]]
-##?     reconcile [<query>] [--namespace <name> | --all-namespaces]
-##?     reconcile <kind> <name> [--namespace <name>]
+##?     reconcile --list [[<query>] [--namespace <name> | --all-namespaces]] [--context <name>]
+##?     reconcile [<query>] [--namespace <name> | --all-namespaces] [--context <name>]
+##?     reconcile <kind> <name> [--namespace <name>] [--context <name>]
 ##?
 ##? Arguments:
 ##?     <kind>  The Flux resource kind (e.g., kustomization, helmrelease, gitrepository)
@@ -24,6 +24,7 @@ source "${SPHYNX_NAMESPACE_DIR}/core/reconcile.sh"
 ##?     -l --list  List all resources that can be reconciled
 ##?     -n --namespace <name>  The namespace scope for requests
 ##?     -A --all-namespaces  All namespaces
+##?     --context <name>  The name of the kubeconfig context to use
 ##?
 ##? Examples:
 ##?     reconcile --list
@@ -35,6 +36,7 @@ source "${SPHYNX_NAMESPACE_DIR}/core/reconcile.sh"
 ##?     reconcile --all-namespaces
 ##?     reconcile kustomization my-app
 ##?     reconcile kustomization my-app --namespace flux-system
+##?     reconcile --context staging
 
 sx::parse_arguments "${@}"
 
@@ -42,12 +44,14 @@ if ${list:-false}; then
   sx::flux::reconcile::list \
     "${query:-}" \
     "${namespace:-}" \
-    "${all_namespaces:-false}"
+    "${all_namespaces:-false}" \
+    "${context:-}"
 else
   sx::flux::reconcile \
     "${query:-}" \
     "${namespace:-}" \
     "${all_namespaces:-false}" \
     "${kind:-}" \
-    "${name:-}"
+    "${name:-}" \
+    "${context:-}"
 fi

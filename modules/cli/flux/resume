@@ -12,8 +12,8 @@ source "${SPHYNX_NAMESPACE_DIR}/core/resume.sh"
 ##? Resume a Flux resource
 ##?
 ##? Usage:
-##?     resume [<query>] [--namespace <name> | --all-namespaces]
-##?     resume <kind> <name> [--namespace <name>]
+##?     resume [<query>] [--namespace <name> | --all-namespaces] [--context <name>]
+##?     resume <kind> <name> [--namespace <name>] [--context <name>]
 ##?
 ##? Arguments:
 ##?     <kind>  The Flux resource kind (e.g., kustomization, helmrelease, gitrepository)
@@ -22,6 +22,7 @@ source "${SPHYNX_NAMESPACE_DIR}/core/resume.sh"
 ##? Options:
 ##?     -n --namespace <name>  The namespace scope for requests
 ##?     -A --all-namespaces  All namespaces
+##?     --context <name>  The name of the kubeconfig context to use
 ##?
 ##? Examples:
 ##?     resume
@@ -30,6 +31,7 @@ source "${SPHYNX_NAMESPACE_DIR}/core/resume.sh"
 ##?     resume --all-namespaces
 ##?     resume kustomization my-app
 ##?     resume kustomization my-app --namespace flux-system
+##?     resume --context staging
 
 sx::parse_arguments "${@}"
 
@@ -38,4 +40,5 @@ sx::flux::resume \
   "${namespace:-}" \
   "${all_namespaces:-false}" \
   "${kind:-}" \
-  "${name:-}"
+  "${name:-}" \
+  "${context:-}"
