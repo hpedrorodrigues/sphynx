@@ -14,111 +14,51 @@ function sx::k8s::topology() {
   sx::k8s::validate_context "${context}"
   sx::k8s::ensure_api_access "${context}"
 
+  local context_flags=()
   if [ -n "${context}" ]; then
-    local -r context_flags="--context ${context}"
-  else
-    local -r context_flags=''
+    context_flags+=(--context "${context}")
   fi
 
-  local -r assignments="$(
-    sx::k8s::topology::assignments "${query}" "${selector}" "${all_namespaces}" "${context}" "${namespace}"
-  )"
+  local pod_flags=("${context_flags[@]}")
+  if ${all_namespaces}; then
+    pod_flags+=(--all-namespaces)
+  elif [ -n "${namespace}" ]; then
+    pod_flags+=(--namespace "${namespace}")
+  fi
 
-  if [ -z "${assignments}" ]; then
+  if [ -n "${selector}" ]; then
+    pod_flags+=(--selector "${selector}")
+  fi
+
+  local pods
+  pods="$(sx::k8s::topology::collect_pods "${query}" "${pod_flags[@]}")" || true
+
+  if [ -z "${pods}" ]; then
     sx::log::fatal 'No resources found'
   fi
 
-  # shellcheck disable=SC2086  # quote this to prevent word splitting
-  local -r instances="$(sx::k8s::cli ${context_flags} get nodes --output wide --no-headers --show-labels)"
-  local -r n_instances="$(echo "${instances}" | wc -l | tr -d ' ')"
-
-  local instance_ips
-  # References:
-  # - https://www.madboa.com/geek/sort-addr
-  readarray -t instance_ips < <(
-    echo "${assignments}" | cut -d ',' -f 1 | sort -u -V
-  )
+  local records="${pods}"
+  records+=$'\n'"$(sx::k8s::topology::collect_nodes "${context_flags[@]}")"
 
   if ${show_resource_usage}; then
     sx::require 'jq'
 
-    # shellcheck disable=SC2086  # quote this to prevent word splitting
-    local -r top_nodes="$(sx::k8s::cli ${context_flags} top nodes --no-headers 2>/dev/null)"
-    local -r top_pods="$(sx::k8s::topology::top_pods "${all_namespaces}" "${selector}" "${context}" "${namespace}")"
-
     local node_names
     readarray -t node_names < <(
-      echo "${assignments}" | awk -F ',' '$4 != "" { print $4 }' | sort -u
+      awk -F ',' '$5 != "" { print $5 }' <<<"${pods}" | sort -u
     )
-    local -r storage_stats="$(sx::k8s::topology::storage_stats "${context}" "${node_names[@]}")"
 
-    # shellcheck disable=SC2068  # Double quote array expansions
-    for ip in ${instance_ips[@]}; do
-      local pod_count
-      pod_count="$(echo "${assignments}" | grep -c "^${ip},")" || true
-
-      sx::k8s::topology::instance_info "${ip}" "${top_nodes}" "${top_pods}" "${instances}" "${show_labels}" "${pod_count}" "${storage_stats}"
-      sx::k8s::topology::pods_info "${ip}" "${assignments}" "${top_nodes}" "${top_pods}" "${all_namespaces}" "${storage_stats}"
-    done
-  else
-    # shellcheck disable=SC2068  # Double quote array expansions
-    for ip in ${instance_ips[@]}; do
-      local pod_count instance_name instance_labels
-      pod_count="$(echo "${assignments}" | grep -c "^${ip},")" || true
-      instance_name="$(echo "${assignments}" | grep "^${ip}," | cut -d ',' -f 4 | head -n 1)" || true
-      instance_labels="$(echo "${instances}" | grep "${instance_name}" | awk '{ print $13 }')" || true
-
-      if [ -z "${instance_name}" ]; then
-        instance_name='Name not available'
-      fi
-
-      echo "> ${ip} (${instance_name} | ${pod_count} $([ "${pod_count}" -eq 1 ] && echo 'pod' || echo 'pods'))"
-
-      if ${show_labels} && [ -n "${instance_labels}" ]; then
-        echo
-        IFS=',' read -ra labels <<<"${instance_labels}"
-        for label in "${labels[@]}"; do
-          echo "* ${label}"
-        done
-      fi
-
-      echo
-      echo -e "|-- STATE,NAMESPACE,NAME\n$(echo "${assignments}" | grep "^${ip}," | awk -F ',' '{ print $5 "," $2 "," $3 }' | xargs -I % echo "|-- %")\n" | column -t -s ','
-      echo
-    done
+    records+=$'\n'"$(sx::k8s::topology::collect_node_usage "${context_flags[@]}")"
+    records+=$'\n'"$(sx::k8s::topology::collect_pod_usage "${pod_flags[@]}")"
+    records+=$'\n'"$(sx::k8s::topology::collect_storage "${#node_names[@]}" "${node_names[@]}" "${context_flags[@]}")"
   fi
 
-  if [ -n "${n_instances}" ]; then
-    echo
-    local -r n_referenced_instances="${#instance_ips[@]}"
-    local -r total_instances="$(
-      sx::math::max "${n_referenced_instances}" "${n_instances}"
-    )"
-    echo "${n_referenced_instances} out of ${total_instances} nodes"
-  fi
+  sx::k8s::topology::render "${show_resource_usage}" "${show_labels}" <<<"${records}"
 }
 
-function sx::k8s::topology::assignments() {
+function sx::k8s::topology::collect_pods() {
   local -r query="${1:-}"
-  local -r selector="${2:-}"
-  local -r all_namespaces="${3:-false}"
-  local -r context="${4:-}"
-  local -r namespace="${5:-}"
-
-  local flags=''
-  if ${all_namespaces}; then
-    flags+=' --all-namespaces'
-  elif [ -n "${namespace}" ]; then
-    flags+=" --namespace ${namespace}"
-  fi
-
-  if [ -n "${selector}" ]; then
-    flags+=" --selector ${selector}"
-  fi
-
-  if [ -n "${context}" ]; then
-    flags+=" --context ${context}"
-  fi
+  local -r flags=("${@:2}")
 
   if [ -n "${query}" ]; then
     local -r query_pattern="$(echo "${query}" | sx::string::lowercase)"
@@ -126,47 +66,57 @@ function sx::k8s::topology::assignments() {
     local -r query_pattern='.*'
   fi
 
-  # shellcheck disable=SC2086  # quote this to prevent word splitting
   sx::k8s::cli get pods \
-    ${flags} \
+    "${flags[@]}" \
     --output jsonpath='{range .items[*]}{.status.hostIP}{","}{.metadata.namespace}{","}{.metadata.name}{","}{.spec.nodeName}{","}{.status.phase}{"\n"}{end}' \
-    --sort-by '{.status.hostIP}' \
-    | grep -E "${query_pattern}" 2>/dev/null
+    | grep -E "${query_pattern}" 2>/dev/null \
+    | sort -t ',' -k 1,1V -k 2,2 -k 3,3 \
+    | sed 's/^/pod,/'
 }
 
-function sx::k8s::topology::top_pods() {
-  local -r all_namespaces="${1:-false}"
-  local -r selector="${2:-}"
-  local -r context="${3:-}"
-  local -r namespace="${4:-}"
+function sx::k8s::topology::collect_nodes() {
+  local -r flags=("${@}")
 
-  local flags=''
-  if ${all_namespaces}; then
-    flags+=' --all-namespaces'
-  elif [ -n "${namespace}" ]; then
-    flags+=" --namespace ${namespace}"
-  fi
+  # shellcheck disable=SC2016  # Expressions don't expand in single quotes
+  local -r template='{{range .items}}node,{{.metadata.name}},{{range $key, $value := .metadata.labels}}{{$key}}={{$value}};{{end}}{{"\n"}}{{end}}'
 
-  if [ -n "${selector}" ]; then
-    flags+=" --selector ${selector}"
-  fi
-
-  if [ -n "${context}" ]; then
-    flags+=" --context ${context}"
-  fi
-
-  # shellcheck disable=SC2086  # quote this to prevent word splitting
-  sx::k8s::cli top pods \
-    ${flags} \
-    --no-headers 2>/dev/null
+  sx::k8s::cli get nodes \
+    "${flags[@]}" \
+    --output go-template \
+    --template "${template}"
 }
 
-# Prints the ephemeral storage usage from the kubelet Summary API as lines of
-# "node,<node>,<used>,<percentage>" and "pod,<namespace>,<name>,<used>".
-# A node that does not answer gives no lines.
-function sx::k8s::topology::storage_stats() {
-  local -r context="${1:-}"
-  local -r node_names=("${@:2}")
+function sx::k8s::topology::collect_node_usage() {
+  local -r flags=("${@}")
+
+  local output
+  if ! output="$(sx::k8s::cli top nodes "${flags[@]}" --no-headers 2>/dev/null)"; then
+    sx::log::err 'Cannot read the node metrics, so the node CPU and memory show as "Unknown"'
+    return 0
+  fi
+
+  awk 'NF >= 5 { print "node-usage," $1 "," $2 "," $3 "," $4 "," $5 }' <<<"${output}"
+}
+
+function sx::k8s::topology::collect_pod_usage() {
+  local -r flags=("${@}")
+
+  local output
+  if ! output="$(sx::k8s::cli top pods "${flags[@]}" --no-headers 2>/dev/null)"; then
+    sx::log::err 'Cannot read the pod metrics, so the pod CPU and memory show as "Unknown"'
+    return 0
+  fi
+
+  awk '
+    NF == 4 { print "pod-usage," $1 "," $2 "," $3 "," $4 }
+    NF == 3 { print "pod-usage,*," $1 "," $2 "," $3 }
+  ' <<<"${output}"
+}
+
+function sx::k8s::topology::collect_storage() {
+  local -r node_count="${1}"
+  local -r node_names=("${@:2:node_count}")
+  local -r flags=("${@:2+node_count}")
   local -r max_parallel_requests='8'
 
   local -r output_directory="$(mktemp -d)"
@@ -174,7 +124,7 @@ function sx::k8s::topology::storage_stats() {
   local running_requests='0'
   local node_index='0'
   for node_name in "${node_names[@]}"; do
-    sx::k8s::topology::node_storage_stats "${context}" "${node_name}" >"${output_directory}/${node_index}" &
+    sx::k8s::topology::collect_node_storage "${node_name}" "${flags[@]}" >"${output_directory}/${node_index}" &
 
     node_index="$((node_index + 1))"
     running_requests="$((running_requests + 1))"
@@ -185,22 +135,24 @@ function sx::k8s::topology::storage_stats() {
   done
   wait
 
+  local output=''
   if [ "${node_index}" -gt 0 ]; then
-    cat "${output_directory}"/*
+    output="$(cat "${output_directory}"/*)"
   fi
 
   rm -r "${output_directory}"
+
+  if [ -z "${output}" ]; then
+    sx::log::err 'Cannot read the kubelet stats, so the ephemeral storage shows as "Unknown"'
+    return 0
+  fi
+
+  echo "${output}"
 }
 
-function sx::k8s::topology::node_storage_stats() {
-  local -r context="${1:-}"
-  local -r node_name="${2}"
-
-  if [ -n "${context}" ]; then
-    local -r context_flags="--context ${context}"
-  else
-    local -r context_flags=''
-  fi
+function sx::k8s::topology::collect_node_storage() {
+  local -r node_name="${1}"
+  local -r flags=("${@:2}")
 
   # shellcheck disable=SC2016  # Expressions don't expand in single quotes
   local -r jq_program='
@@ -217,106 +169,153 @@ function sx::k8s::topology::node_storage_stats() {
       else "Unknown"
       end
     ) as $percentage
-    | "node,\($node_name),\($fs.usedBytes | human_size),\($percentage)",
-      (.pods[]? | "pod,\(.podRef.namespace),\(.podRef.name),\(."ephemeral-storage".usedBytes | human_size)")
+    | "node-storage,\($node_name),\($fs.usedBytes | human_size),\($percentage)",
+      (.pods[]? | "pod-storage,\(.podRef.namespace),\(.podRef.name),\(."ephemeral-storage".usedBytes | human_size)")
   '
 
-  # shellcheck disable=SC2086  # quote this to prevent word splitting
-  sx::k8s::cli ${context_flags} get \
+  sx::k8s::cli get \
+    "${flags[@]}" \
     --raw "/api/v1/nodes/${node_name}/proxy/stats/summary" \
     --request-timeout "${SX_K8S_REQUEST_TIMEOUT}" 2>/dev/null \
     | jq --raw-output --arg node_name "${node_name}" "${jq_program}" 2>/dev/null
 }
 
-function sx::k8s::topology::instance_info() {
-  local -r ip="${1}"
-  local -r top_nodes="${2}"
-  local -r top_pods="${3}"
-  local -r instances="${4}"
-  local -r show_labels="${5}"
-  local -r pod_count="${6}"
-  local -r storage_stats="${7:-}"
+function sx::k8s::topology::render() {
+  local -r show_resource_usage="${1:-false}"
+  local -r show_labels="${2:-false}"
 
-  local -r current_instance_name="$(echo -e "${instances}" | grep -w "${ip}" | awk '{ print $1 }')"
-  if [ -z "${current_instance_name}" ]; then
-    local -r instance_name='Name not available'
-  else
-    local -r instance_name="${current_instance_name}"
-  fi
+  # shellcheck disable=SC2016  # Expressions don't expand in single quotes
+  local -r awk_program='
+    function or_unknown(value) {
+      return value == "" ? "Unknown" : value
+    }
 
-  local -r instance_labels="$(echo "${instances}" | grep "${instance_name}" | awk '{ print $13 }')"
-  local -r instance_usage="$(echo -e "${top_nodes}" | grep "${instance_name}")"
+    function pod_word(count) {
+      return count == 1 ? "pod" : "pods"
+    }
 
-  local -r cpu_usage="$(echo "${instance_usage}" | awk '{ print $2 }')"
-  local -r cpu_percentage="$(echo "${instance_usage}" | awk '{ print $3 }')"
+    function print_pods(node,    position, pod, parts, key, row) {
+      if (show_resources) {
+        print "|-- CPU,MEM,EPH,STATE,NAMESPACE,NAME" | table_command
+      } else {
+        print "|-- STATE,NAMESPACE,NAME" | table_command
+      }
 
-  local -r memory_usage="$(echo "${instance_usage}" | awk '{ print $4 }')"
-  local -r memory_percentage="$(echo "${instance_usage}" | awk '{ print $5 }')"
+      for (position = 1; position <= pod_count[node]; position++) {
+        pod = pods[node, position]
+        split(pod, parts, SUBSEP)
+        key = parts[1] SUBSEP parts[2]
 
-  local -r storage_usage="$(
-    awk -F ',' -v node_name="${instance_name}" '$1 == "node" && $2 == node_name { print $3 }' <<<"${storage_stats}"
-  )"
-  local -r storage_percentage="$(
-    awk -F ',' -v node_name="${instance_name}" '$1 == "node" && $2 == node_name { print $4 }' <<<"${storage_stats}"
-  )"
+        row = pod_phase[node, position] "," parts[1] "," parts[2]
+        if (show_resources) {
+          if (!(key in pod_cpu)) {
+            key = "*" SUBSEP parts[2]
+          }
 
-  echo "> ${ip} (${instance_name} | ${pod_count} $([ "${pod_count}" -eq 1 ] && echo 'pod' || echo 'pods'))"
-  echo "> CPU (${cpu_usage} | ${cpu_percentage}) -|- MEM (${memory_usage} | ${memory_percentage}) -|- EPH (${storage_usage:-Unknown} | ${storage_percentage:-Unknown})"
+          row = or_unknown(pod_cpu[key]) "," or_unknown(pod_memory[key]) "," or_unknown(pod_storage[parts[1], parts[2]]) "," row
+        }
 
-  if ${show_labels} && [ -n "${instance_labels}" ]; then
-    echo
-    IFS=',' read -ra labels <<<"${instance_labels}"
-    for label in "${labels[@]}"; do
-      echo "* ${label}"
-    done
-  fi
+        print "|-- " row | table_command
+      }
 
-  echo
-}
+      close(table_command)
+    }
 
-function sx::k8s::topology::pods_info() {
-  local -r ip="${1}"
-  local -r assignments="${2}"
-  local -r top_nodes="${3}"
-  local -r top_pods="${4}"
-  local -r all_namespaces="${5}"
-  local -r storage_stats="${6:-}"
+    function print_node(node,    label_count, label_list, position) {
+      if (node == "") {
+        printf "> Unscheduled (%d %s)\n", pod_count[node], pod_word(pod_count[node])
+      } else {
+        printf "> %s (%s | %d %s)\n", node_ip[node], node, pod_count[node], pod_word(pod_count[node])
 
-  local pods
-  readarray -t pods < <(
-    echo "${assignments}" | grep "^${ip}," | cut -d ',' -f 3 | sort -u
-  )
+        if (show_resources) {
+          printf "> CPU (%s | %s) -|- MEM (%s | %s) -|- EPH (%s | %s)\n", \
+            or_unknown(node_cpu[node]), or_unknown(node_cpu_percentage[node]), \
+            or_unknown(node_memory[node]), or_unknown(node_memory_percentage[node]), \
+            or_unknown(node_storage[node]), or_unknown(node_storage_percentage[node])
+        }
 
-  local resource_usage='|-- CPU,MEM,EPH,STATE,NAMESPACE,NAME\n'
-  # shellcheck disable=SC2068  # Double quote array expansions
-  for pod in ${pods[@]}; do
-    local pod_info pod_state pod_ns
-    pod_info="$(echo "${top_pods}" | grep "${pod}")" || true
-    pod_state="$(echo "${assignments}" | grep "${pod}" | cut -d ',' -f 5)" || true
+        if (show_labels && node_labels[node] != "") {
+          print ""
+          label_count = split(node_labels[node], label_list, ";")
+          for (position = 1; position <= label_count; position++) {
+            if (label_list[position] != "") {
+              print "* " label_list[position]
+            }
+          }
+        }
+      }
 
-    pod_ns="$(echo "${assignments}" | grep "${pod}" | cut -d ',' -f 2)" || true
+      print ""
+      fflush()
+      print_pods(node)
+      print ""
+    }
 
-    local cpu_position cpu_usage
-    cpu_position="$(${all_namespaces} && echo '3' || echo '2')"
-    cpu_usage="$(echo "${pod_info}" | awk "{ print \$${cpu_position} }")"
+    BEGIN {
+      FS = ","
+      table_command = "column -t -s ,"
+      show_resources = (show_resources == "true")
+      show_labels = (show_labels == "true")
+    }
 
-    local memory_position memory_usage
-    memory_position="$(${all_namespaces} && echo '4' || echo '3')"
-    memory_usage="$(echo "${pod_info}" | awk "{ print \$${memory_position} }")"
+    $1 == "pod" {
+      node = $5
+      if (!(node in pod_count)) {
+        if (node != "") {
+          scheduled_nodes[++scheduled_node_count] = node
+          node_ip[node] = $2
+        }
+      }
 
-    local final_cpu_usage final_mem_usage
-    final_cpu_usage="$([ -z "${cpu_usage}" ] && echo 'Unknown' || echo "${cpu_usage}")"
-    final_mem_usage="$([ -z "${memory_usage}" ] && echo 'Unknown' || echo "${memory_usage}")"
+      pod_count[node]++
+      pods[node, pod_count[node]] = $3 SUBSEP $4
+      pod_phase[node, pod_count[node]] = $6
+    }
 
-    local storage_usage
-    storage_usage="$(
-      awk -F ',' -v pod_namespace="${pod_ns}" -v pod_name="${pod}" \
-        '$1 == "pod" && $2 == pod_namespace && $3 == pod_name { print $4 }' <<<"${storage_stats}"
-    )" || true
+    $1 == "node" {
+      known_node_count++
+      node_labels[$2] = $3
+    }
 
-    resource_usage+="|-- ${final_cpu_usage},${final_mem_usage},${storage_usage:-Unknown},${pod_state},${pod_ns},${pod}\n"
-  done
+    $1 == "node-usage" {
+      node_cpu[$2] = $3
+      node_cpu_percentage[$2] = $4
+      node_memory[$2] = $5
+      node_memory_percentage[$2] = $6
+    }
 
-  echo -e "${resource_usage}" | column -t -s ','
-  echo
+    $1 == "pod-usage" {
+      pod_cpu[$2, $3] = $4
+      pod_memory[$2, $3] = $5
+    }
+
+    $1 == "node-storage" {
+      node_storage[$2] = $3
+      node_storage_percentage[$2] = $4
+    }
+
+    $1 == "pod-storage" {
+      pod_storage[$2, $3] = $4
+    }
+
+    END {
+      for (position = 1; position <= scheduled_node_count; position++) {
+        print_node(scheduled_nodes[position])
+      }
+
+      if ("" in pod_count) {
+        print_node("")
+      }
+
+      total_node_count = known_node_count > scheduled_node_count ? known_node_count : scheduled_node_count
+
+      print ""
+      printf "%d out of %d nodes\n", scheduled_node_count, total_node_count
+    }
+  '
+
+  awk \
+    -v show_resources="${show_resource_usage}" \
+    -v show_labels="${show_labels}" \
+    "${awk_program}"
 }
