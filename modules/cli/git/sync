@@ -14,7 +14,7 @@ source "${SPHYNX_NAMESPACE_DIR}/core/sync.sh"
 ##?     sync [--reset] [--folder <path>]
 ##?
 ##? Options:
-##?     --reset  Switch to the default branch, discard local changes, and delete all other local branches
+##?     --reset  Switch to the default branch, discard local changes, remove all linked worktrees, and delete all other local branches
 ##?     --folder <path>  Sync all repositories directly inside this folder
 ##?
 ##? Examples:
