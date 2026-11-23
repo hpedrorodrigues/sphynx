@@ -61,3 +61,4 @@ Desktop.ini
 *.iml
 
 **/.claude/settings.local.json
+**/.claude/worktrees/
